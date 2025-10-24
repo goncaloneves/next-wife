@@ -63,7 +63,7 @@ const Index = () => {
             background: 'var(--gradient-sunset)',
             boxShadow: 'var(--shadow-warm)'
           }}
-          onClick={() => window.open('https://t.me/your_bot_username', '_blank')}
+          onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
         >
           Start Your Journey on Telegram
         </Button>
@@ -104,7 +104,7 @@ const Index = () => {
               background: 'var(--gradient-sunset)',
               boxShadow: 'var(--shadow-warm)'
             }}
-            onClick={() => window.open('https://t.me/your_bot_username', '_blank')}
+            onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
           >
             Launch Next Wife Bot
           </Button>
