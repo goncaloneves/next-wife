@@ -113,9 +113,18 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground font-body;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+  }
+
+  p {
+    line-height: 1.7;
+    letter-spacing: 0.015em;
   }
 }
