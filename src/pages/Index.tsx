@@ -1,37 +1,36 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Sparkles, Camera, MessageCircle, Video, ImageIcon } from "lucide-react";
 import logo from "@/assets/next-wife-logo.jpeg";
 
 const Index = () => {
   const features = [
     {
-      icon: <Heart className="w-8 h-8" />,
+      icon: "🌺",
       title: "Authentic Daily Life",
       description: "Experience genuine moments and cultural exchanges in your tropical paradise"
     },
     {
-      icon: <Sparkles className="w-8 h-8" />,
+      icon: "⭐",
       title: "Discover New Relationships",
       description: "Create multiple unique girlfriends and explore different connections"
     },
     {
-      icon: <MessageCircle className="w-8 h-8" />,
+      icon: "❤️",
       title: "Romantic Moments",
       description: "Discover intimate conversations and build meaningful connections"
     },
     {
-      icon: <Camera className="w-8 h-8" />,
+      icon: "📸",
       title: "Photo Interactions",
       description: "Share and receive beautiful photos in your journey together"
     },
     {
-      icon: <Video className="w-8 h-8" />,
+      icon: "🎬",
       title: "Voice & Video",
       description: "Engage with voice messages and video content for deeper connection"
     },
     {
-      icon: <ImageIcon className="w-8 h-8" />,
+      icon: "🌟",
       title: "Secret Stories",
       description: "Uncover hidden desires and exclusive intimate moments"
     }
@@ -79,7 +78,7 @@ const Index = () => {
               className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60"
               style={{ boxShadow: 'var(--shadow-warm)' }}
             >
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-accent" style={{ background: 'var(--gradient-sunset)' }}>
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl" style={{ background: 'var(--gradient-sunset)' }}>
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
