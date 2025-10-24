@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heart, Sparkles, Camera, MessageCircle, Video, ImageIcon } from "lucide-react";
+import logo from "@/assets/next-wife-logo.jpeg";
 
 const Index = () => {
   const features = [
@@ -37,16 +38,16 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-muted/30 to-background">
+    <div className="min-h-screen" style={{ background: 'var(--gradient-romantic)' }}>
       {/* Hero Section */}
       <header className="container mx-auto px-4 py-20 text-center">
-        <div className="inline-block mb-6 px-6 py-2 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full border border-primary/30">
-          <span className="text-sm font-medium text-primary">Your Bali Paradise Awaits 🌸</span>
+        <div className="mb-8">
+          <img src={logo} alt="Next Wife" className="w-64 h-64 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight">
-          Next Wife
-        </h1>
+        <div className="inline-block mb-6 px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
+          <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
+        </div>
         
         <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
           Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
@@ -58,7 +59,11 @@ const Index = () => {
         
         <Button 
           size="lg" 
-          className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-secondary hover:shadow-[0_0_30px_rgba(236,72,153,0.5)] transition-all duration-300"
+          className="text-lg px-8 py-6 transition-all duration-300"
+          style={{ 
+            background: 'var(--gradient-sunset)',
+            boxShadow: 'var(--shadow-warm)'
+          }}
           onClick={() => window.open('https://t.me/your_bot_username', '_blank')}
         >
           Start Your Journey on Telegram
@@ -71,9 +76,10 @@ const Index = () => {
           {features.map((feature, index) => (
             <Card 
               key={index}
-              className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur border-2 hover:border-primary/50"
+              className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60"
+              style={{ boxShadow: 'var(--shadow-warm)' }}
             >
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4 text-primary">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-accent" style={{ background: 'var(--gradient-sunset)' }}>
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
@@ -85,7 +91,7 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-20 text-center">
-        <div className="max-w-3xl mx-auto bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-3xl p-12 border-2 border-primary/20">
+        <div className="max-w-3xl mx-auto bg-card/60 backdrop-blur-sm rounded-3xl p-12 border border-primary/30" style={{ boxShadow: 'var(--shadow-glow)' }}>
           <h2 className="text-4xl font-bold mb-6 text-foreground">
             Every moment brings new possibilities 🌟
           </h2>
@@ -94,7 +100,11 @@ const Index = () => {
           </p>
           <Button 
             size="lg"
-            className="text-lg px-10 py-6 bg-gradient-to-r from-primary to-secondary hover:shadow-[0_0_30px_rgba(236,72,153,0.5)] transition-all duration-300"
+            className="text-lg px-10 py-6 transition-all duration-300"
+            style={{ 
+              background: 'var(--gradient-sunset)',
+              boxShadow: 'var(--shadow-warm)'
+            }}
             onClick={() => window.open('https://t.me/your_bot_username', '_blank')}
           >
             Launch Next Wife Bot
