@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import logo from "@/assets/next-wife-logo.jpeg";
+import logo from "@/assets/next-wife-logo-squared.jpeg";
 
 const Index = () => {
   const features = [
