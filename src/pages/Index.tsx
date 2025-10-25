@@ -143,7 +143,7 @@ const Index = () => {
           >
             @nextwifebot
           </span>
-          . Made with 💖 from Bali.
+          . Made with 💖 in Bali.
         </p>
       </footer>
     </div>
