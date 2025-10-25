@@ -39,7 +39,7 @@ const Index = () => {
   return (
     <div className="min-h-screen" style={{ background: 'var(--gradient-romantic)' }}>
       {/* Hero Section with Video Background */}
-      <header className="relative h-screen overflow-hidden">
+      <header className="relative h-screen flex flex-col justify-end overflow-hidden pb-12">
         {/* Next Wife Title - Top Left */}
         <div className="absolute top-8 left-8 z-20">
           <h1 className="text-white text-4xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
@@ -62,6 +62,29 @@ const Index = () => {
             <source src="/videos/video-5-loop.mp4" type="video/mp4" />
           </video>
         </div>
+
+        {/* Content Overlaying Bottom of Videos */}
+        <div className="relative z-10 container mx-auto px-4 text-center">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-3xl mx-auto leading-relaxed">
+            Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
+          </p>
+          
+          <p className="text-lg text-foreground/80 mb-6 max-w-2xl mx-auto">
+            Relationships evolve from cultural exchanges to intimate connections
+          </p>
+          
+          <Button 
+            size="lg" 
+            className="text-lg px-8 py-6 transition-all duration-300"
+            style={{ 
+              background: 'var(--gradient-sunset)',
+              boxShadow: 'var(--shadow-warm)'
+            }}
+            onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
+          >
+            Start Your Journey on Telegram
+          </Button>
+        </div>
       </header>
 
       {/* Logo Section */}
@@ -73,29 +96,6 @@ const Index = () => {
         <div className="inline-block px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
           <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
         </div>
-      </section>
-
-      {/* Main Content Section */}
-      <section className="container mx-auto px-4 py-12 text-center">
-        <p className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-3xl mx-auto leading-relaxed">
-          Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
-        </p>
-        
-        <p className="text-lg text-foreground/80 mb-6 max-w-2xl mx-auto">
-          Relationships evolve from cultural exchanges to intimate connections
-        </p>
-        
-        <Button 
-          size="lg" 
-          className="text-lg px-8 py-6 transition-all duration-300"
-          style={{ 
-            background: 'var(--gradient-sunset)',
-            boxShadow: 'var(--shadow-warm)'
-          }}
-          onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
-        >
-          Start Your Journey on Telegram
-        </Button>
       </section>
 
       {/* Features Grid */}
