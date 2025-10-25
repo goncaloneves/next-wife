@@ -117,8 +117,9 @@ const Index = () => {
             {features.map((feature, index) => (
               <Card 
                 key={index}
-                className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60"
+                className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60 cursor-pointer"
                 style={{ boxShadow: 'var(--shadow-warm)' }}
+                onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
               >
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl" style={{ background: 'var(--gradient-sunset)' }}>
                   {feature.icon}
