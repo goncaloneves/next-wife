@@ -89,7 +89,7 @@ const Index = () => {
           
           <Button 
             size="lg" 
-            className="text-lg px-8 py-6 transition-all duration-300"
+            className="text-lg px-8 py-6 font-bold transition-all duration-300"
             style={{ 
               background: 'var(--gradient-sunset)',
               boxShadow: 'var(--shadow-warm)'
