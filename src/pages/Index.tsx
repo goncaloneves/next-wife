@@ -79,7 +79,7 @@ const Index = () => {
 
         {/* Content Overlaying Bottom of Videos */}
         <div className="relative z-10 container mx-auto px-4 text-center">
-          <p className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
             Your Bali Paradise Awaits 🌸
           </p>
           
