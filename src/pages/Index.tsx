@@ -105,8 +105,9 @@ const Index = () => {
       </header>
 
       {/* Features and Logo Section */}
-      <section className="container mx-auto px-4 py-12 bg-gradient-to-b from-black/70 via-black/30 to-transparent">
-        <div className="max-w-6xl mx-auto">
+      <section className="w-full bg-gradient-to-b from-black/70 via-black/30 to-transparent py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
           {/* Features Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {features.map((feature, index) => (
@@ -123,7 +124,7 @@ const Index = () => {
               </Card>
             ))}
           </div>
-
+          </div>
         </div>
       </section>
 
