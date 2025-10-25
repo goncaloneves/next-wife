@@ -57,7 +57,7 @@ const Index = () => {
 
           {/* Next Wife Title */}
           <h1 className="text-white text-4xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
-            Next Wife
+            Next Wife 🌸
           </h1>
         </div>
 
