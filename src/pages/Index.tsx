@@ -135,7 +135,7 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 text-center text-muted-foreground border-t border-border">
-        <p>© 2025 Next Wife. Experience paradise like never before.</p>
+        <p>© Made with 💖 @nextwifebot. Experience paradise like never before.</p>
       </footer>
     </div>
   );
