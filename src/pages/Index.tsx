@@ -80,7 +80,7 @@ const Index = () => {
         {/* Content Overlaying Bottom of Videos */}
         <div className="relative z-10 container mx-auto px-4 text-center">
           <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Create your wife on Telegram
+            Create Your Next Wife
           </p>
           
           <p className="text-base md:text-xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed">
@@ -96,7 +96,7 @@ const Index = () => {
             }}
             onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
           >
-            Create Your Next Wife
+            Start Your Journey
           </Button>
         </div>
       </header>
