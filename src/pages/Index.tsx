@@ -96,7 +96,7 @@ const Index = () => {
             }}
             onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
           >
-            Open Next Wife
+            Start Next Wife 🌸
           </Button>
         </div>
       </header>
