@@ -84,7 +84,7 @@ const Index = () => {
           </p>
           
           <p className="text-base md:text-xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed">
-            Live in a luxurious ocean-front palace in Bali with the girlfriend you create, where unique stories meet tropical elegance.
+            Experience genuine moments in your tropical paradise
           </p>
           
           <Button 
