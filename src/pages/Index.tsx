@@ -96,7 +96,7 @@ const Index = () => {
             }}
             onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
           >
-            Start Your Journey on Telegram
+            Create Your Next Wife
           </Button>
         </div>
       </header>
