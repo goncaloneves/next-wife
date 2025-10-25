@@ -7,28 +7,35 @@ interface PingPongVideoProps {
 
 const PingPongVideo = ({ src, className }: PingPongVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const directionRef = useRef<'forward' | 'backward'>('forward');
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleTimeUpdate = () => {
-      if (directionRef.current === 'forward' && video.currentTime >= video.duration - 0.1) {
-        directionRef.current = 'backward';
-      } else if (directionRef.current === 'backward' && video.currentTime <= 0.1) {
-        directionRef.current = 'forward';
-      }
+    const handleEnded = () => {
+      // When video ends, play it backwards
+      video.playbackRate = -1;
+      video.currentTime = video.duration;
+      video.play();
+    };
 
-      if (directionRef.current === 'backward') {
-        video.currentTime -= 0.033; // Step backwards
+    const handleTimeUpdate = () => {
+      // When playing backwards and reaching the start, play forward again
+      if (video.playbackRate === -1 && video.currentTime <= 0.1) {
+        video.playbackRate = 1;
+        video.currentTime = 0;
+        video.play();
       }
     };
 
+    video.addEventListener('ended', handleEnded);
     video.addEventListener('timeupdate', handleTimeUpdate);
+    
+    // Start playing
     video.play();
 
     return () => {
+      video.removeEventListener('ended', handleEnded);
       video.removeEventListener('timeupdate', handleTimeUpdate);
     };
   }, []);
