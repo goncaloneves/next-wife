@@ -101,14 +101,14 @@ const Index = () => {
               <source src="/videos/video-2-loop.mp4" type="video/mp4" />
             </video>
           )}
-          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
             <source src="/videos/video-3-loop.mp4" type="video/mp4" />
           </video>
-          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
+          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
             <source src="/videos/video-4-loop.mp4" type="video/mp4" />
           </video>
           {!isMobile && (
-            <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.9s', animationFillMode: 'forwards' }}>
+            <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
               <source src="/videos/video-5-loop.mp4" type="video/mp4" />
             </video>
           )}
