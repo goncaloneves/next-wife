@@ -133,6 +133,9 @@ const Index = () => {
             Open Next Wife 🌸
           </Button>
         </div>
+
+        {/* QR Code positioned in bottom right of video section */}
+        {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
       </header>
 
       {/* Features and Logo Section */}
@@ -177,8 +180,6 @@ const Index = () => {
         </p>
       </footer>
 
-      {/* QR Widget */}
-      {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
     </div>
   );
 };
