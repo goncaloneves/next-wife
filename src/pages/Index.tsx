@@ -83,7 +83,7 @@ const Index = () => {
             Your Bali Paradise Awaits
           </p>
           
-          <p className="text-base md:text-lg text-white/90 mb-6 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm md:text-base text-white/90 mb-6 max-w-3xl mx-auto leading-relaxed">
             Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
           </p>
           
