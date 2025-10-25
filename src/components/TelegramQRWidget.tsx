@@ -17,9 +17,10 @@ export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
     >
       <QRCodeSVG 
         value={botLink} 
-        size={100}
+        size={80}
         level="M"
         includeMargin={false}
+        className="w-16 h-16 sm:w-20 sm:h-20"
       />
     </a>
   );
