@@ -8,7 +8,7 @@ export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
   const botLink = "https://t.me/nextwifebot";
 
   return (
-    <div className="absolute bottom-6 right-6 z-50 flex flex-col items-center gap-2 animate-fade-in">
+    <div className="absolute bottom-24 right-4 sm:bottom-20 sm:right-6 md:bottom-12 md:right-8 lg:bottom-8 lg:right-10 z-50 flex flex-col items-center gap-2 animate-fade-in">
       {/* Text Message */}
       <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
         <p className="text-xs sm:text-sm font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent whitespace-nowrap">
