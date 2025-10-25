@@ -41,13 +41,8 @@ const Index = () => {
       {/* Hero Section with Video Background */}
       <header className="relative h-screen flex flex-col justify-end overflow-hidden pb-12">
         {/* Top Navigation Bar */}
-        <div className="absolute top-8 left-8 right-8 z-20 flex items-center justify-between">
-          {/* Next Wife Title - Left */}
-          <h1 className="text-white text-4xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
-            Next Wife
-          </h1>
-
-          {/* Logo Profile Button - Right */}
+        <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
+          {/* Logo Profile Button - Left */}
           <button
             onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
             className="hover:scale-110 transition-transform duration-300"
@@ -59,6 +54,11 @@ const Index = () => {
               style={{ boxShadow: 'var(--shadow-glow)' }} 
             />
           </button>
+
+          {/* Next Wife Title */}
+          <h1 className="text-white text-4xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
+            Next Wife
+          </h1>
         </div>
 
         {/* Video Background */}
