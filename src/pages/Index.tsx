@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-squared.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [isQRVisible, setIsQRVisible] = useState(true);
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -94,18 +96,22 @@ const Index = () => {
 
         {/* Video Background */}
         <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-30">
-          <video autoPlay muted loop playsInline preload="metadata" className="hidden md:block w-full h-full object-cover">
-            <source src="/videos/video-2-loop.mp4" type="video/mp4" />
-          </video>
+          {!isMobile && (
+            <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
+              <source src="/videos/video-2-loop.mp4" type="video/mp4" />
+            </video>
+          )}
           <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
             <source src="/videos/video-3-loop.mp4" type="video/mp4" />
           </video>
           <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
             <source src="/videos/video-4-loop.mp4" type="video/mp4" />
           </video>
-          <video autoPlay muted loop playsInline preload="metadata" className="hidden md:block w-full h-full object-cover">
-            <source src="/videos/video-5-loop.mp4" type="video/mp4" />
-          </video>
+          {!isMobile && (
+            <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
+              <source src="/videos/video-5-loop.mp4" type="video/mp4" />
+            </video>
+          )}
         </div>
 
         {/* Gradient Overlay for Text Readability */}
