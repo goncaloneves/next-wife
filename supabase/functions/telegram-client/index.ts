@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { TelegramClient } from "npm:telegram@2.26.22";
-import { StringSession } from "npm:telegram@2.26.22/sessions";
-import { Api } from "npm:telegram@2.26.22/tl";
+import telegram from "npm:telegram@2.26.22";
 import bigInt from "npm:big-integer@1.6.52";
+
+const { TelegramClient, sessions, Api } = telegram;
+const { StringSession } = sessions;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,7 +11,7 @@ const corsHeaders = {
 };
 
 // Store sessions in memory (in production, use a database)
-const sessions = new Map<string, string>();
+const sessionStore = new Map<string, string>();
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -45,7 +46,7 @@ serve(async (req) => {
 
       case "signIn": {
         const { phoneNumber, code, phoneCodeHash, sessionId } = params;
-        const sessionString = sessions.get(sessionId) || "";
+        const sessionString = sessionStore.get(sessionId) || "";
         const session = new StringSession(sessionString);
         const client = new TelegramClient(session, apiId, apiHash, {
           connectionRetries: 5,
@@ -63,7 +64,7 @@ serve(async (req) => {
           );
 
           const newSessionString = client.session.save() as unknown as string;
-          sessions.set(sessionId, newSessionString);
+          sessionStore.set(sessionId, newSessionString);
 
           return new Response(
             JSON.stringify({ sessionString: newSessionString, requires2FA: false }),
@@ -82,7 +83,7 @@ serve(async (req) => {
 
       case "checkPassword": {
         const { password, sessionId } = params;
-        const sessionString = sessions.get(sessionId) || "";
+        const sessionString = sessionStore.get(sessionId) || "";
         const session = new StringSession(sessionString);
         const client = new TelegramClient(session, apiId, apiHash, {
           connectionRetries: 5,
@@ -97,7 +98,7 @@ serve(async (req) => {
         });
 
         const newSessionString = client.session.save() as unknown as string;
-        sessions.set(sessionId, newSessionString);
+        sessionStore.set(sessionId, newSessionString);
 
         return new Response(
           JSON.stringify({ sessionString: newSessionString }),
