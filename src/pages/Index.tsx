@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-squared.jpeg";
-import { TelegramChatWidget } from "@/components/TelegramChatWidget";
+import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { MessageCircle } from "lucide-react";
 
 const Index = () => {
@@ -167,8 +167,8 @@ const Index = () => {
         </Button>
       )}
 
-      {/* Chat Widget */}
-      {isChatOpen && <TelegramChatWidget onClose={() => setIsChatOpen(false)} />}
+      {/* QR Widget */}
+      {isChatOpen && <TelegramQRWidget onClose={() => setIsChatOpen(false)} />}
     </div>
   );
 };
