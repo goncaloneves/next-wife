@@ -79,12 +79,12 @@ const Index = () => {
 
         {/* Content Overlaying Bottom of Videos */}
         <div className="relative z-10 container mx-auto px-4 text-center">
-          <p className="text-xl md:text-2xl text-white/90 mb-4 max-w-3xl mx-auto leading-relaxed">
-            Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
+          <p className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Your Bali Paradise Awaits 🌸
           </p>
           
-          <p className="text-lg text-white/75 mb-6 max-w-2xl mx-auto">
-            Relationships evolve from cultural exchanges to intimate connections
+          <p className="text-xl md:text-2xl text-white/90 mb-6 max-w-3xl mx-auto leading-relaxed">
+            Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
           </p>
           
           <Button 
@@ -121,12 +121,6 @@ const Index = () => {
             ))}
           </div>
 
-          {/* Signature Text */}
-          <div className="text-center">
-            <p className="text-3xl md:text-4xl font-bold text-foreground">
-              Your Bali Paradise Awaits 🌸
-            </p>
-          </div>
         </div>
       </section>
 
