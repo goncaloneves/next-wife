@@ -116,7 +116,7 @@ const Index = () => {
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                <p className="text-sm text-muted-foreground leading-snug line-clamp-2">{feature.description}</p>
               </Card>
             ))}
           </div>
