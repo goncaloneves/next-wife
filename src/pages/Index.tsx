@@ -62,7 +62,7 @@ const Index = () => {
         </div>
 
         {/* Video Background */}
-        <div className="absolute inset-0 grid grid-cols-4 opacity-25">
+        <div className="absolute inset-0 grid grid-cols-4 opacity-30">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
             <source src="/videos/video-2-loop.mp4" type="video/mp4" />
           </video>
@@ -76,6 +76,9 @@ const Index = () => {
             <source src="/videos/video-5-loop.mp4" type="video/mp4" />
           </video>
         </div>
+
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70"></div>
 
         {/* Content Overlaying Bottom of Videos */}
         <div className="relative z-10 container mx-auto px-4 text-center">
