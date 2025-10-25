@@ -133,9 +133,6 @@ const Index = () => {
             Open Next Wife 🌸
           </Button>
         </div>
-
-        {/* QR Widget - Positioned in hero section */}
-        {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
       </header>
 
       {/* Features and Logo Section */}
@@ -179,6 +176,9 @@ const Index = () => {
           . Made with 💖 in Bali.
         </p>
       </footer>
+
+      {/* QR Widget */}
+      {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
     </div>
   );
 };
