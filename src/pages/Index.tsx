@@ -69,31 +69,34 @@ const Index = () => {
             <img src={logo} alt="Next Wife" className="w-48 h-48 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
           </div>
           
-          <div className="inline-block mb-4 px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
+          <div className="inline-block px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
             <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
           </div>
-          
-          <p className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-3xl mx-auto leading-relaxed">
-            Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
-          </p>
-          
-          <p className="text-lg text-foreground/80 mb-6 max-w-2xl mx-auto">
-            Relationships evolve from cultural exchanges to intimate connections
-          </p>
-          
-          <Button 
-            size="lg" 
-            className="text-lg px-8 py-6 transition-all duration-300"
-            style={{ 
-              background: 'var(--gradient-sunset)',
-              boxShadow: 'var(--shadow-warm)'
-            }}
-            onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
-          >
-            Start Your Journey on Telegram
-          </Button>
         </div>
       </header>
+
+      {/* Main Content Section */}
+      <section className="container mx-auto px-4 py-12 text-center">
+        <p className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-3xl mx-auto leading-relaxed">
+          Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
+        </p>
+        
+        <p className="text-lg text-foreground/80 mb-6 max-w-2xl mx-auto">
+          Relationships evolve from cultural exchanges to intimate connections
+        </p>
+        
+        <Button 
+          size="lg" 
+          className="text-lg px-8 py-6 transition-all duration-300"
+          style={{ 
+            background: 'var(--gradient-sunset)',
+            boxShadow: 'var(--shadow-warm)'
+          }}
+          onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
+        >
+          Start Your Journey on Telegram
+        </Button>
+      </section>
 
       {/* Features Grid */}
       <section className="container mx-auto px-4 py-20">
@@ -111,29 +114,6 @@ const Index = () => {
               <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
             </Card>
           ))}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="container mx-auto px-4 py-20 text-center">
-        <div className="max-w-3xl mx-auto bg-card/60 backdrop-blur-sm rounded-3xl p-12 border border-primary/30" style={{ boxShadow: 'var(--shadow-glow)' }}>
-          <h2 className="text-4xl font-bold mb-6 text-foreground">
-            Every moment brings new possibilities 🌟
-          </h2>
-          <p className="text-xl text-muted-foreground mb-8">
-            Start your journey in this world of passion and discover what awaits you
-          </p>
-          <Button 
-            size="lg"
-            className="text-lg px-10 py-6 transition-all duration-300"
-            style={{ 
-              background: 'var(--gradient-sunset)',
-              boxShadow: 'var(--shadow-warm)'
-            }}
-            onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
-          >
-            Launch Next Wife Bot
-          </Button>
         </div>
       </section>
 
