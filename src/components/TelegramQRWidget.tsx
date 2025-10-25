@@ -8,45 +8,7 @@ export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
   const botLink = "https://t.me/nextwifebot";
 
   return (
-    <div className="absolute bottom-6 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 lg:bottom-8 lg:right-10 z-50 flex flex-col items-end gap-2 animate-fade-in">
-      {/* Text Message */}
-      <div className="hidden lg:block bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
-        <p className="text-xs sm:text-sm font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent whitespace-nowrap">
-          Scan with your phone! 📱
-        </p>
-      </div>
-
-      {/* Curved Arrow SVG */}
-      <svg
-        width="40"
-        height="45"
-        viewBox="0 0 40 45"
-        className="hidden lg:block animate-bounce"
-        style={{ animationDuration: '2s' }}
-      >
-        <defs>
-          <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="hsl(350 75% 45%)" />
-            <stop offset="100%" stopColor="hsl(25 85% 55%)" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M 20 5 Q 15 15, 20 25 Q 25 35, 20 40"
-          stroke="url(#arrowGradient)"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 20 40 L 15 35 M 20 40 L 25 35"
-          stroke="url(#arrowGradient)"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-
+    <div className="absolute bottom-6 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 lg:bottom-8 lg:right-10 z-50 animate-fade-in">
       {/* QR Code */}
       <a
         href={botLink}
