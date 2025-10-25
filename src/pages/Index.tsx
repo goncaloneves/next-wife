@@ -97,18 +97,18 @@ const Index = () => {
         {/* Video Background */}
         <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-30">
           {!isMobile && (
-            <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
+            <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0s', animationFillMode: 'forwards' }}>
               <source src="/videos/video-2-loop.mp4" type="video/mp4" />
             </video>
           )}
-          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
+          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
             <source src="/videos/video-3-loop.mp4" type="video/mp4" />
           </video>
-          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
+          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
             <source src="/videos/video-4-loop.mp4" type="video/mp4" />
           </video>
           {!isMobile && (
-            <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
+            <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-0 animate-fade-in" style={{ animationDelay: '0.9s', animationFillMode: 'forwards' }}>
               <source src="/videos/video-5-loop.mp4" type="video/mp4" />
             </video>
           )}
