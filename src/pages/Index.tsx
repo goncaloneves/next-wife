@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-squared.jpeg";
-import TelegramChat from "@/components/TelegramChat";
 
 const Index = () => {
   const features = [
@@ -131,21 +130,6 @@ const Index = () => {
             ))}
           </div>
           </div>
-        </div>
-      </section>
-
-      {/* Telegram Chat Section */}
-      <section className="w-full bg-gradient-to-b from-transparent to-black/30 py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={{ fontFamily: 'var(--font-heading)' }}>
-              Chat with Your Next Wife
-            </h2>
-            <p className="text-lg text-white/80 max-w-2xl mx-auto">
-              Start your journey now. Send a message directly to our bot and create your perfect girlfriend.
-            </p>
-          </div>
-          <TelegramChat />
         </div>
       </section>
 
