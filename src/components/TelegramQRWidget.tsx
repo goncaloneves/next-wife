@@ -12,7 +12,7 @@ export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
       href={botLink}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 bg-white p-3 rounded-2xl shadow-2xl z-50 animate-in fade-in duration-300 hover:scale-105 transition-transform cursor-pointer"
+      className="fixed bottom-6 right-6 bg-white p-3 rounded-2xl shadow-2xl z-50 animate-in fade-in duration-300 hover:scale-105 transition-transform cursor-pointer animate-pulse-slow"
       onClick={(e) => e.stopPropagation()}
     >
       <QRCodeSVG 

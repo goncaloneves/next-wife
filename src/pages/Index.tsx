@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-squared.jpeg";
@@ -6,6 +6,29 @@ import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 
 const Index = () => {
   const [isQRVisible, setIsQRVisible] = useState(true);
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (heroRef.current) observer.observe(heroRef.current);
+    if (featuresRef.current) {
+      const cards = featuresRef.current.querySelectorAll('.feature-card');
+      cards.forEach((card) => observer.observe(card));
+    }
+
+    return () => observer.disconnect();
+  }, []);
   
   const features = [
     {
@@ -43,7 +66,7 @@ const Index = () => {
   return (
     <div className="min-h-screen" style={{ background: 'var(--gradient-romantic)' }}>
       {/* Hero Section with Video Background */}
-      <header className="relative h-screen flex flex-col justify-end overflow-hidden pb-12">
+      <header ref={heroRef} className="relative h-screen flex flex-col justify-end overflow-hidden pb-12 opacity-0">
         {/* Top Navigation Bar */}
         <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
           {/* Logo Profile Button - Left */}
@@ -117,12 +140,15 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
           {/* Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {features.map((feature, index) => (
               <Card 
                 key={index}
-                className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60 cursor-pointer"
-                style={{ boxShadow: 'var(--shadow-warm)' }}
+                className="feature-card p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60 cursor-pointer opacity-0"
+                style={{ 
+                  boxShadow: 'var(--shadow-warm)',
+                  animationDelay: `${index * 0.1}s`
+                }}
                 onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
               >
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl" style={{ background: 'var(--gradient-sunset)' }}>
