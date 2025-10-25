@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Loader2, Phone, KeyRound, Lock } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { sendCode, signIn, checkPassword } from "@/lib/telegramClient";
+import { sendCode, signIn, checkPassword } from "@/lib/telegramApi";
 
 interface TelegramAuthProps {
   onAuthenticated: (sessionString: string) => void;

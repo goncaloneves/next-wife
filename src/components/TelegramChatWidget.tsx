@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2, MessageCircle } from "lucide-react";
 import { TelegramAuth } from "@/components/TelegramAuth";
 import { TelegramMessenger } from "@/components/TelegramMessenger";
-import { restoreSession } from "@/lib/telegramClient";
+import { restoreSession } from "@/lib/telegramApi";
 
 interface TelegramChatWidgetProps {
   onClose: () => void;

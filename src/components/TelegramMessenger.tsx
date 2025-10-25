@@ -6,9 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import {
   getMessages,
   sendMessage,
-  addMessageListener,
-  disconnect,
-} from "@/lib/telegramClient";
+} from "@/lib/telegramApi";
 
 interface Message {
   id: number;
@@ -45,7 +43,17 @@ export const TelegramMessenger = ({
   useEffect(() => {
     const loadHistory = async () => {
       try {
-        const history = await getMessages(BOT_USERNAME, 50);
+        const sessionString = localStorage.getItem("telegram_session");
+        if (!sessionString) {
+          toast({
+            title: "Error",
+            description: "No session found. Please log in again.",
+            variant: "destructive",
+          });
+          onLogout();
+          return;
+        }
+        const history = await getMessages(sessionString, BOT_USERNAME, 50);
         setMessages(history);
       } catch (error) {
         console.error("Error loading message history:", error);
@@ -61,15 +69,21 @@ export const TelegramMessenger = ({
 
     loadHistory();
 
-    // Set up message listener for new messages
-    try {
-      addMessageListener(BOT_USERNAME, (newMessage) => {
-        setMessages((prev) => [...prev, newMessage]);
-      });
-    } catch (error) {
-      console.error("Error setting up message listener:", error);
-    }
-  }, []);
+    // Poll for new messages every 3 seconds
+    const interval = setInterval(async () => {
+      try {
+        const sessionString = localStorage.getItem("telegram_session");
+        if (sessionString) {
+          const history = await getMessages(sessionString, BOT_USERNAME, 50);
+          setMessages(history);
+        }
+      } catch (error) {
+        console.error("Error polling messages:", error);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [onLogout]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isSending) return;
@@ -82,11 +96,32 @@ export const TelegramMessenger = ({
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const messageText = inputValue;
     setInputValue("");
     setIsSending(true);
 
     try {
-      await sendMessage(BOT_USERNAME, inputValue);
+      const sessionString = localStorage.getItem("telegram_session");
+      if (!sessionString) {
+        toast({
+          title: "Error",
+          description: "No session found. Please log in again.",
+          variant: "destructive",
+        });
+        onLogout();
+        return;
+      }
+      await sendMessage(sessionString, BOT_USERNAME, messageText);
+      
+      // Reload messages after a short delay to get bot response
+      setTimeout(async () => {
+        try {
+          const history = await getMessages(sessionString, BOT_USERNAME, 50);
+          setMessages(history);
+        } catch (error) {
+          console.error("Error reloading messages:", error);
+        }
+      }, 1000);
     } catch (error) {
       console.error("Error sending message:", error);
       toast({
@@ -106,8 +141,8 @@ export const TelegramMessenger = ({
     }
   };
 
-  const handleLogout = async () => {
-    await disconnect();
+  const handleLogout = () => {
+    localStorage.removeItem("telegram_session");
     onLogout();
     toast({
       title: "Logged Out",
