@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-squared.jpeg";
-import PingPongVideo from "@/components/PingPongVideo";
 
 const Index = () => {
   const features = [
@@ -43,10 +42,18 @@ const Index = () => {
       <header className="relative container mx-auto px-4 py-20 text-center overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 -mx-4 grid grid-cols-4 opacity-30">
-          <PingPongVideo src="/videos/video-2.mp4" className="w-full h-full object-cover" />
-          <PingPongVideo src="/videos/video-3.mp4" className="w-full h-full object-cover" />
-          <PingPongVideo src="/videos/video-4.mp4" className="w-full h-full object-cover" />
-          <PingPongVideo src="/videos/video-5.mp4" className="w-full h-full object-cover" />
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/videos/video-2-loop.mp4" type="video/mp4" />
+          </video>
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/videos/video-3-loop.mp4" type="video/mp4" />
+          </video>
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/videos/video-4-loop.mp4" type="video/mp4" />
+          </video>
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/videos/video-5-loop.mp4" type="video/mp4" />
+          </video>
         </div>
         
         {/* Content with backdrop */}
