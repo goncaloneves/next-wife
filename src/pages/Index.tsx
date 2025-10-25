@@ -79,11 +79,11 @@ const Index = () => {
 
         {/* Content Overlaying Bottom of Videos */}
         <div className="relative z-10 container mx-auto px-4 text-center">
-          <p className="text-xl md:text-2xl text-white mb-4 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-white/90 mb-4 max-w-3xl mx-auto leading-relaxed">
             Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
           </p>
           
-          <p className="text-lg text-white/90 mb-6 max-w-2xl mx-auto">
+          <p className="text-lg text-white/75 mb-6 max-w-2xl mx-auto">
             Relationships evolve from cultural exchanges to intimate connections
           </p>
           
