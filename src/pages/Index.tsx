@@ -80,7 +80,7 @@ const Index = () => {
         {/* Content Overlaying Bottom of Videos */}
         <div className="relative z-10 container mx-auto px-4 text-center">
           <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Your Bali Paradise Awaits on Telegram
+            Your Bali Paradise on Telegram
           </p>
           
           <p className="text-base md:text-xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed">
