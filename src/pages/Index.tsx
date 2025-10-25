@@ -41,7 +41,21 @@ const Index = () => {
       {/* Hero Section with Video Background */}
       <header className="relative h-screen flex flex-col justify-end overflow-hidden pb-12">
         {/* Top Navigation Bar */}
-        <div className="absolute top-8 left-8 z-20">
+        <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
+          {/* Logo Profile Button - Left */}
+          <button
+            onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
+            className="hover:scale-110 transition-transform duration-300"
+          >
+            <img 
+              src={logo} 
+              alt="Next Wife Profile" 
+              className="w-12 h-12 rounded-full object-cover shadow-lg cursor-pointer" 
+              style={{ boxShadow: 'var(--shadow-glow)' }} 
+            />
+          </button>
+
+          {/* Next Wife Title */}
           <h1 className="text-white text-4xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
             Next Wife
           </h1>
@@ -65,19 +79,8 @@ const Index = () => {
 
         {/* Content Overlaying Bottom of Videos */}
         <div className="relative z-10 container mx-auto px-4 text-center">
-          <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 flex items-center justify-center gap-3">
+          <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
             Your Bali Paradise Awaits
-            <button
-              onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
-              className="hover:scale-110 transition-transform duration-300 inline-block"
-            >
-              <img 
-                src={logo} 
-                alt="Next Wife" 
-                className="w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full object-cover shadow-lg cursor-pointer" 
-                style={{ boxShadow: 'var(--shadow-glow)' }} 
-              />
-            </button>
           </p>
           
           <p className="text-lg md:text-xl text-white/90 mb-6 max-w-3xl mx-auto leading-relaxed">
