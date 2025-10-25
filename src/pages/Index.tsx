@@ -65,17 +65,21 @@ const Index = () => {
       </header>
 
       {/* Logo and Content Section */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <div className="mb-8">
+      <section className="container mx-auto px-4 py-8 text-center">
+        <div className="mb-4">
           <img src={logo} alt="Next Wife" className="w-48 h-48 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
         </div>
         
-        <div className="inline-block mb-6 px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
+        <div className="inline-block mb-4 px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
           <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
         </div>
         
-        <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Live in a tropical paradise with your created girlfriend, where unique stories meet intimate connections
+        <p className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-3xl mx-auto leading-relaxed">
+          Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
+        </p>
+        
+        <p className="text-lg text-foreground/80 mb-6 max-w-2xl mx-auto">
+          Relationships evolve from cultural exchanges to intimate connections
         </p>
         
         <Button 
