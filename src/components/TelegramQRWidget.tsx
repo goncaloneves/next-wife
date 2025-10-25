@@ -20,7 +20,7 @@ export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
         size={80}
         level="M"
         includeMargin={false}
-        className="w-16 h-16 sm:w-20 sm:h-20"
+        className="w-14 h-14 lg:w-20 lg:h-20"
       />
     </a>
   );
