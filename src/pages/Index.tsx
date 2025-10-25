@@ -39,7 +39,7 @@ const Index = () => {
   return (
     <div className="min-h-screen" style={{ background: 'var(--gradient-romantic)' }}>
       {/* Hero Section with Video Background */}
-      <header className="relative h-screen flex flex-col justify-end overflow-hidden pb-12">
+      <header className="relative h-screen overflow-hidden">
         {/* Next Wife Title - Top Left */}
         <div className="absolute top-8 left-8 z-20">
           <h1 className="text-white text-4xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
@@ -62,18 +62,18 @@ const Index = () => {
             <source src="/videos/video-5-loop.mp4" type="video/mp4" />
           </video>
         </div>
-
-        {/* Content Overlaying Bottom of Videos */}
-        <div className="relative z-10 container mx-auto px-4 text-center">
-          <div className="mb-4">
-            <img src={logo} alt="Next Wife" className="w-48 h-48 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
-          </div>
-          
-          <div className="inline-block px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
-            <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
-          </div>
-        </div>
       </header>
+
+      {/* Logo Section */}
+      <section className="container mx-auto px-4 py-8 text-center">
+        <div className="mb-4">
+          <img src={logo} alt="Next Wife" className="w-48 h-48 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
+        </div>
+        
+        <div className="inline-block px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
+          <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
+        </div>
+      </section>
 
       {/* Main Content Section */}
       <section className="container mx-auto px-4 py-12 text-center">
