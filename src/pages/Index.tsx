@@ -83,7 +83,7 @@ const Index = () => {
             Create your girlfriend on Telegram
           </p>
           
-          <p className="text-base md:text-xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
             Live in a luxurious ocean-front palace in Bali with the girlfriend you want, where unique stories meet tropical elegance.
           </p>
           
