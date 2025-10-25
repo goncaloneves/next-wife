@@ -38,10 +38,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--gradient-romantic)' }}>
-      {/* Hero Section */}
-      <header className="relative container mx-auto px-4 py-20 text-center overflow-hidden">
+      {/* Hero Section with Video Background */}
+      <header className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Next Wife Title - Top Left */}
+        <div className="absolute top-8 left-8 z-20">
+          <h1 className="text-white text-4xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
+            Next Wife
+          </h1>
+        </div>
+
         {/* Video Background */}
-        <div className="absolute inset-0 -mx-4 grid grid-cols-4 opacity-30">
+        <div className="absolute inset-0 grid grid-cols-4 opacity-30">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
             <source src="/videos/video-2-loop.mp4" type="video/mp4" />
           </video>
@@ -55,23 +62,20 @@ const Index = () => {
             <source src="/videos/video-5-loop.mp4" type="video/mp4" />
           </video>
         </div>
-        
-        {/* Content with backdrop */}
-        <div className="relative z-10">
+      </header>
+
+      {/* Logo and Content Section */}
+      <section className="container mx-auto px-4 py-16 text-center">
         <div className="mb-8">
-          <img src={logo} alt="Next Wife" className="w-64 h-64 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
+          <img src={logo} alt="Next Wife" className="w-48 h-48 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
         </div>
         
         <div className="inline-block mb-6 px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
           <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
         </div>
         
-        <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-          Live in a luxurious ocean-front palace with the girlfriend you create, where unique stories meet tropical elegance
-        </p>
-        
-        <p className="text-lg text-foreground/80 mb-12 max-w-2xl mx-auto">
-          Relationships evolve from cultural exchanges to intimate connections
+        <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Live in a tropical paradise with your created girlfriend, where unique stories meet intimate connections
         </p>
         
         <Button 
@@ -85,8 +89,7 @@ const Index = () => {
         >
           Start Your Journey on Telegram
         </Button>
-        </div>
-      </header>
+      </section>
 
       {/* Features Grid */}
       <section className="container mx-auto px-4 py-20">
