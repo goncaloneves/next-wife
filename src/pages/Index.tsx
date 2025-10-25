@@ -93,8 +93,8 @@ const Index = () => {
         </div>
 
         {/* Video Background */}
-        <div className="absolute inset-0 grid grid-cols-4 opacity-30">
-          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
+        <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-30">
+          <video autoPlay muted loop playsInline preload="metadata" className="hidden md:block w-full h-full object-cover">
             <source src="/videos/video-2-loop.mp4" type="video/mp4" />
           </video>
           <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
@@ -103,7 +103,7 @@ const Index = () => {
           <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
             <source src="/videos/video-4-loop.mp4" type="video/mp4" />
           </video>
-          <video autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover">
+          <video autoPlay muted loop playsInline preload="metadata" className="hidden md:block w-full h-full object-cover">
             <source src="/videos/video-5-loop.mp4" type="video/mp4" />
           </video>
         </div>
