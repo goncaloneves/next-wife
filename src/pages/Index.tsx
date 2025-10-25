@@ -47,6 +47,19 @@ const Index = () => {
           </h1>
         </div>
 
+        {/* Logo Profile Button - Top Right */}
+        <button
+          onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
+          className="absolute top-8 right-8 z-20 hover:scale-110 transition-transform duration-300"
+        >
+          <img 
+            src={logo} 
+            alt="Next Wife Profile" 
+            className="w-16 h-16 rounded-full object-cover shadow-lg cursor-pointer" 
+            style={{ boxShadow: 'var(--shadow-glow)' }} 
+          />
+        </button>
+
         {/* Video Background */}
         <div className="absolute inset-0 grid grid-cols-4 opacity-30">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
@@ -107,12 +120,8 @@ const Index = () => {
             ))}
           </div>
 
-          {/* Logo and Badge */}
+          {/* Badge CTA */}
           <div className="text-center">
-            <div className="mb-4">
-              <img src={logo} alt="Next Wife" className="w-48 h-48 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
-            </div>
-            
             <button
               onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
               className="inline-block px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm hover:bg-primary/30 transition-all duration-300 cursor-pointer"
