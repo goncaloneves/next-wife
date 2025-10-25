@@ -87,33 +87,53 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Logo Section */}
-      <section className="container mx-auto px-4 py-8 text-center">
-        <div className="mb-4">
-          <img src={logo} alt="Next Wife" className="w-48 h-48 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
-        </div>
-        
-        <div className="inline-block px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
-          <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
-        </div>
-      </section>
+      {/* Logo and Features Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto">
+          {/* Top row of features */}
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {features.slice(0, 3).map((feature, index) => (
+              <Card 
+                key={index}
+                className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60"
+                style={{ boxShadow: 'var(--shadow-warm)' }}
+              >
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl" style={{ background: 'var(--gradient-sunset)' }}>
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              </Card>
+            ))}
+          </div>
 
-      {/* Features Grid */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {features.map((feature, index) => (
-            <Card 
-              key={index}
-              className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60"
-              style={{ boxShadow: 'var(--shadow-warm)' }}
-            >
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl" style={{ background: 'var(--gradient-sunset)' }}>
-                {feature.icon}
-              </div>
-              <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-            </Card>
-          ))}
+          {/* Center: Logo and Badge */}
+          <div className="text-center mb-8">
+            <div className="mb-4">
+              <img src={logo} alt="Next Wife" className="w-48 h-48 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
+            </div>
+            
+            <div className="inline-block px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm">
+              <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
+            </div>
+          </div>
+
+          {/* Bottom row of features */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {features.slice(3, 6).map((feature, index) => (
+              <Card 
+                key={index + 3}
+                className="p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60"
+                style={{ boxShadow: 'var(--shadow-warm)' }}
+              >
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl" style={{ background: 'var(--gradient-sunset)' }}>
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
