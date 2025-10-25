@@ -39,7 +39,49 @@ const Index = () => {
   return (
     <div className="min-h-screen" style={{ background: 'var(--gradient-romantic)' }}>
       {/* Hero Section */}
-      <header className="container mx-auto px-4 py-20 text-center">
+      <header className="relative container mx-auto px-4 py-20 text-center overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0 -mx-4 grid grid-cols-4 opacity-30">
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/videos/video-2.mp4" type="video/mp4" />
+          </video>
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/videos/video-3.mp4" type="video/mp4" />
+          </video>
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/videos/video-4.mp4" type="video/mp4" />
+          </video>
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/videos/video-5.mp4" type="video/mp4" />
+          </video>
+        </div>
+        
+        {/* Content with backdrop */}
+        <div className="relative z-10">
         <div className="mb-8">
           <img src={logo} alt="Next Wife" className="w-64 h-64 mx-auto rounded-full object-cover shadow-2xl" style={{ boxShadow: 'var(--shadow-glow)' }} />
         </div>
@@ -67,6 +109,7 @@ const Index = () => {
         >
           Start Your Journey on Telegram
         </Button>
+        </div>
       </header>
 
       {/* Features Grid */}
