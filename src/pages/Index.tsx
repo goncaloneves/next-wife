@@ -56,7 +56,11 @@ const Index = () => {
           </button>
 
           {/* Next Wife Title */}
-          <h1 className="text-white text-4xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h1 
+            className="text-white text-4xl font-bold cursor-pointer hover:opacity-80 transition-opacity duration-300" 
+            style={{ fontFamily: 'var(--font-heading)' }}
+            onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
+          >
             Next Wife
           </h1>
         </div>
