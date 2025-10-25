@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-squared.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
-import { MessageCircle } from "lucide-react";
 
 const Index = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isQRVisible, setIsQRVisible] = useState(true);
   
   const features = [
     {
@@ -152,23 +151,8 @@ const Index = () => {
         </p>
       </footer>
 
-      {/* Floating Chat Button */}
-      {!isChatOpen && (
-        <Button
-          onClick={() => setIsChatOpen(true)}
-          size="lg"
-          className="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-2xl z-40 transition-all duration-300 hover:scale-110"
-          style={{ 
-            background: 'var(--gradient-sunset)',
-            boxShadow: 'var(--shadow-warm)'
-          }}
-        >
-          <MessageCircle className="w-6 h-6" />
-        </Button>
-      )}
-
       {/* QR Widget */}
-      {isChatOpen && <TelegramQRWidget onClose={() => setIsChatOpen(false)} />}
+      {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
     </div>
   );
 };
