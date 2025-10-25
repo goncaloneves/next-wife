@@ -7,7 +7,7 @@ const Index = () => {
     {
       icon: "🌺",
       title: "Authentic Daily Life",
-      description: "Experience genuine moments and cultural exchanges in your tropical paradise"
+      description: "Experience genuine moments in your Bali tropical paradise"
     },
     {
       icon: "⭐",
