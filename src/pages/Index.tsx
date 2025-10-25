@@ -64,7 +64,7 @@ const Index = () => {
         {/* Video Background */}
         <div className="absolute inset-0 grid grid-cols-4 opacity-30">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-            <source src="/videos/video-6-loop.mp4" type="video/mp4" />
+            <source src="/videos/video-7-loop.mp4" type="video/mp4" />
           </video>
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
             <source src="/videos/video-3-loop.mp4" type="video/mp4" />
