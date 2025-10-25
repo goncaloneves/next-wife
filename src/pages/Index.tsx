@@ -136,14 +136,14 @@ const Index = () => {
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 text-center text-muted-foreground border-t border-border">
         <p>
-          © Next Wife{' '}
+          © 2025 Next Wife{' '}
           <span 
             className="cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
           >
             @nextwifebot
           </span>
-          . Made with 💖 dreaming of Bali sunsets.
+          . Made with 💖 from Bali.
         </p>
       </footer>
     </div>
