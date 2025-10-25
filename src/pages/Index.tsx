@@ -121,14 +121,11 @@ const Index = () => {
             ))}
           </div>
 
-          {/* Badge CTA */}
+          {/* Signature Text */}
           <div className="text-center">
-            <button
-              onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
-              className="inline-block px-6 py-2 bg-primary/20 rounded-full border border-primary/40 backdrop-blur-sm hover:bg-primary/30 transition-all duration-300 cursor-pointer"
-            >
-              <span className="text-sm font-medium text-accent">Your Bali Paradise Awaits 🌸</span>
-            </button>
+            <p className="text-3xl md:text-4xl font-bold text-foreground">
+              Your Bali Paradise Awaits 🌸
+            </p>
           </div>
         </div>
       </section>
