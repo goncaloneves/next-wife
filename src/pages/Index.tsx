@@ -174,8 +174,9 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
+      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 bg-black overflow-hidden">
+        {/* Top fade from black to transparent (blends with red above) */}
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black via-black/50 to-transparent pointer-events-none z-10" />
         
         {/* Video - Full Height, Left Edge */}
         <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block">

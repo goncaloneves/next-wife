@@ -30,8 +30,17 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
     ? post.text 
     : post.text.slice(0, 150) + '...';
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking the "more" button
+    if ((e.target as HTMLElement).tagName === 'BUTTON') {
+      return;
+    }
+    window.open(post.link, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <Card
+      onClick={handleCardClick}
       className="feature-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur opacity-0 animate-fade-in transition-transform duration-300 hover:scale-105 hover:border-primary/60 hover:shadow-xl cursor-pointer"
       style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards', boxShadow: 'var(--shadow-warm)' }}
     >
@@ -60,6 +69,7 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
           href={post.link}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
           className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors group"
           aria-label="View on Telegram"
         >
@@ -94,7 +104,10 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
             {displayText}
             {shouldTruncate && !expanded && (
               <button
-                onClick={() => setExpanded(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpanded(true);
+                }}
                 className="text-muted-foreground hover:text-foreground ml-1"
               >
                 more

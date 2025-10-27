@@ -161,8 +161,8 @@ All colors MUST be HSL.
 
   /* Softly fade right, top and bottom edges to transparent so underlying romantic gradient shows through */
   .mask-soft-edges {
-    -webkit-mask-image: radial-gradient(135% 160% at 45% 50%, #000 70%, transparent 100%);
-    mask-image: radial-gradient(135% 160% at 45% 50%, #000 70%, transparent 100%);
+    -webkit-mask-image: radial-gradient(120% 160% at 42% 50%, #000 65%, transparent 100%);
+    mask-image: radial-gradient(120% 160% at 42% 50%, #000 65%, transparent 100%);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
   }
