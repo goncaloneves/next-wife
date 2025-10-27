@@ -12,6 +12,7 @@ interface TelegramPostCardProps {
     date: string;
     link: string;
     media?: string | null;
+    avatar?: string | null;
   };
   channelInfo?: {
     name: string;
@@ -38,7 +39,7 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
       <div className="flex items-center gap-3 p-4">
         <Avatar className="w-10 h-10">
           <AvatarImage 
-            src={channelInfo?.avatar || undefined} 
+            src={post.avatar || channelInfo?.avatar || undefined} 
             alt={channelInfo?.name || 'Channel'}
           />
           <AvatarFallback className="bg-primary/10 text-primary text-sm">

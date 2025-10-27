@@ -12,6 +12,7 @@ interface TelegramPost {
   date: string;
   link: string;
   media?: string | null;
+  avatar?: string | null;
 }
 
 interface ChannelInfo {

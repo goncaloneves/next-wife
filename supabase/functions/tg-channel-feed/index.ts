@@ -142,13 +142,18 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     const imageMatch = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
     const media = imageMatch ? imageMatch[1] : null;
 
+    // Extract per-message avatar from tgme_widget_message_user_photo
+    const avatarMatch = /class="[^"]*tgme_widget_message_user_photo[^"]*"[\s\S]*?style="[^"]*background-image:\s*url\('([^']+)'\)/i.exec(postContent);
+    const avatar = avatarMatch ? avatarMatch[1] : null;
+
     if (text || media) {
       posts.push({
         id: postId.split('/').pop(),
         text,
         date,
         link: `https://t.me/${channelName}/${postId.split('/').pop()}`,
-        media
+        media,
+        avatar
       });
     }
   }
