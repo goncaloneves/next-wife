@@ -42,7 +42,7 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
     <Card
       onClick={handleCardClick}
       className="telegram-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur opacity-0 animate-fade-in transition-all duration-300 hover:scale-105 cursor-pointer w-full md:w-[350px] lg:w-[600px] mx-auto"
-      style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
+      style={{ animationDelay: `${index * 0.1 + 0.3}s`, animationFillMode: 'forwards' }}
     >
       {/* Post Header */}
       <div className="flex items-center gap-3 p-6">

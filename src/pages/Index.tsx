@@ -207,17 +207,20 @@ const Index = () => {
       {/* Telegram Channel Feed Section */}
       <section ref={videoSectionRef} className="relative min-h-screen flex items-center justify-center py-4 pb-20 bg-black overflow-hidden">
         {/* Video - Full Height, Left Edge with top and right fade */}
-        <div ref={feedVideoRef} className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges">
+        <div 
+          ref={feedVideoRef} 
+          className={`feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges ${
+            isVideoVisible ? 'opacity-100 animate-fade-in' : 'opacity-0'
+          }`}
+          style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+        >
           <video
             autoPlay
             muted
             loop
             playsInline
             preload="metadata"
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-              isVideoVisible ? 'opacity-30 animate-fade-in' : 'opacity-0'
-            }`}
-            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+            className="absolute inset-0 w-full h-full object-cover opacity-30"
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
