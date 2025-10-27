@@ -69,17 +69,17 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
 
       {/* Media Section */}
       {post.media && (
-        <div className="relative w-full bg-muted">
+        <div className="relative w-full bg-muted/30">
           {!imageLoaded && (
-            <Skeleton className="w-full aspect-square" />
+            <Skeleton className="w-full h-64" />
           )}
           <img
             src={post.media}
             alt="Post media"
-            className={`w-full object-cover transition-opacity duration-300 ${
+            className={`w-full object-contain transition-opacity duration-300 ${
               imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
             }`}
-            style={{ maxHeight: '500px' }}
+            style={{ maxHeight: '800px', minHeight: '200px' }}
             onLoad={() => setImageLoaded(true)}
           />
         </div>
