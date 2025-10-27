@@ -185,7 +185,8 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-30 animate-fade-in"
+            className="absolute inset-0 w-full h-full object-cover opacity-0 animate-fade-in"
+            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
@@ -194,7 +195,7 @@ const Index = () => {
         </div>
 
         {/* Content - Right Side */}
-        <div className="relative z-10 w-full container mx-auto max-w-6xl animate-fade-in px-4 md:px-6 lg:px-8 md:text-right md:pr-4">
+        <div className="relative z-10 w-full md:w-[45%] lg:w-[55%] md:ml-auto animate-fade-in px-4 md:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center md:text-left text-white">
             Live from Bali 🏝️
           </h2>
