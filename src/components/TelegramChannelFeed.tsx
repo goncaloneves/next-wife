@@ -70,27 +70,6 @@ export const TelegramChannelFeed = ({
     return () => clearInterval(interval);
   }, [channelUsername, refreshInterval, maxPosts]);
 
-  useEffect(() => {
-    if (posts.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-fade-in');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const postElements = document.querySelectorAll('.feed-post');
-    postElements.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, [posts]);
-
   if (loading) {
     return (
       <Card className="p-8 text-center bg-card/80 backdrop-blur border border-border">
@@ -119,19 +98,14 @@ export const TelegramChannelFeed = ({
 
   return (
     <ScrollArea className="h-[900px] rounded-lg">
-      <div className="space-y-4 feed-posts">
+      <div className="space-y-4">
         {posts.map((post, index) => (
-          <div
+          <TelegramPostCard
             key={post.id || index}
-            className="feed-post opacity-0"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <TelegramPostCard
-              post={post}
-              channelInfo={channelInfo}
-              index={index}
-            />
-          </div>
+            post={post}
+            channelInfo={channelInfo}
+            index={index}
+          />
         ))}
       </div>
     </ScrollArea>
