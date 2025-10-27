@@ -194,7 +194,7 @@ const Index = () => {
         </div>
 
         {/* Content - Right Side */}
-        <div className="relative z-10 w-full mx-auto md:pl-[40%] lg:pl-[35%] animate-fade-in px-4 md:px-8 lg:px-12 xl:px-16">
+        <div className="relative z-10 w-full max-w-4xl mx-auto md:pl-[40%] lg:pl-[35%] animate-fade-in px-4 md:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center md:text-left text-white">
             Live from Bali 🏝️
           </h2>
