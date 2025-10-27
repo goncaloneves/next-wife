@@ -174,7 +174,7 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 bg-gradient-to-b from-[hsl(350,40%,18%)] to-black overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 overflow-hidden" style={{ background: 'var(--gradient-romantic)' }}>
         {/* Video - Full Height, Left Edge with top fade */}
         <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-top">
           <video
@@ -191,12 +191,15 @@ const Index = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/40 to-black pointer-events-none" />
         </div>
 
-        {/* Content - Right Side */}
+        {/* Content - Right Side with matching gradient */}
         <div className="relative z-10 w-full max-w-7xl mx-auto md:pl-[50%] animate-fade-in px-4 md:px-12">
-          <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left text-white">
-            Live from Our Telegram
-          </h2>
-          <TelegramChannelFeed channelUsername="nextwifeai" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 pointer-events-none" />
+          <div className="relative z-10">
+            <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left text-white">
+              Live from Our Telegram
+            </h2>
+            <TelegramChannelFeed channelUsername="nextwifeai" />
+          </div>
         </div>
       </section>
 
