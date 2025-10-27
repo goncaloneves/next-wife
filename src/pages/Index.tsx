@@ -216,7 +216,7 @@ const Index = () => {
         </div>
 
         {/* Content - Right Side */}
-        <div className="relative z-10 container mx-auto">
+        <div className="relative z-10 mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="px-4 md:w-[55%] md:ml-auto animate-fade-in">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center md:text-left text-white">
