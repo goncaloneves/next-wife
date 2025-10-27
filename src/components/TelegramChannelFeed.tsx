@@ -98,14 +98,19 @@ export const TelegramChannelFeed = ({
 
   return (
     <ScrollArea className="h-[900px] rounded-lg">
-      <div className="space-y-4">
+      <div className="space-y-4 feed-posts">
         {posts.map((post, index) => (
-          <TelegramPostCard
+          <div
             key={post.id || index}
-            post={post}
-            channelInfo={channelInfo}
-            index={index}
-          />
+            className="feed-post opacity-0"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <TelegramPostCard
+              post={post}
+              channelInfo={channelInfo}
+              index={index}
+            />
+          </div>
         ))}
       </div>
     </ScrollArea>
