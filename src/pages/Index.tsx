@@ -195,7 +195,7 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section ref={videoSectionRef} className="relative min-h-screen flex items-center justify-center py-4 px-4 pb-20 bg-black overflow-hidden">
+      <section ref={videoSectionRef} className="relative min-h-screen flex items-center justify-center py-4 pb-20 bg-black overflow-hidden">
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges">
           <video
