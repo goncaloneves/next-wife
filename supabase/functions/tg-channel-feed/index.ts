@@ -134,18 +134,75 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
       .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
       .trim() : '';
 
-    // Filter out service messages by text patterns
+    // Filter out service messages by text patterns - comprehensive list covering all Telegram MessageAction types
     const serviceMessagePatterns = [
-      /^Channel created$/i,
-      /^Channel (name|title) was changed to/i,
-      /^Channel photo (updated|changed)/i,
-      /joined the (channel|group)/i,
-      /left the (channel|group)/i,
+      // Channel/Chat creation and migration
+      /^(Channel|Chat|Group) (was )?created$/i,
+      /^(Channel|Chat|Group) (name|title) was changed to/i,
+      /^(Channel|Chat|Group) photo (updated|changed|was deleted)/i,
+      
+      // User join/leave actions
+      /joined the (channel|group|chat)/i,
+      /left the (channel|group|chat)/i,
+      /joined via invite link/i,
+      /joined by request/i,
+      /joined Telegram/i,
+      
+      // Pinning and history
       /^(Message|Post) was pinned/i,
+      /^History was cleared/i,
+      
+      // Voice/Video calls
+      /(Voice|Video) chat (started|ended|scheduled)/i,
+      /invited to (voice|video) chat/i,
+      /^Phone call/i,
+      /^Call duration:/i,
+      
+      // Giveaways and boosts
+      /^Giveaway (started|ended|launched)/i,
       /(Channel|Group) was boosted/i,
-      /^Giveaway (started|ended)/i,
+      /^Boost applied/i,
+      
+      // Topics (forums)
       /^Topic created:/i,
-      /^Service notification/i
+      /^Topic (renamed|edited)/i,
+      
+      // Payments and games
+      /^Payment (of|sent)/i,
+      /^Game score:/i,
+      
+      // Settings changes
+      /^Auto-delete timer set to/i,
+      /^Chat theme changed to/i,
+      /^Wallpaper changed/i,
+      
+      // Screenshots and security
+      /^Screenshot was taken/i,
+      /^Secure values/i,
+      
+      // Proximity and location
+      /is within \d+ meters/i,
+      
+      // Gifts and premium
+      /^Premium (gift|subscription)/i,
+      /^Gift code/i,
+      
+      // Profile and suggestions
+      /^Profile photo suggested/i,
+      
+      // Migration messages
+      /upgraded to (supergroup|channel)/i,
+      /migrated (from|to)/i,
+      
+      // Bot permissions
+      /^Bot was allowed/i,
+      
+      // Web view and data
+      /^Web view data/i,
+      
+      // Generic service notification
+      /^Service notification/i,
+      /^System message/i
     ];
 
     const isServiceMessage = serviceMessagePatterns.some(pattern => pattern.test(text));
