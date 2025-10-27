@@ -55,6 +55,16 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
             {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
           </p>
         </div>
+
+        <a
+          href={post.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors group"
+          aria-label="View on Telegram"
+        >
+          <ExternalLink className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+        </a>
       </div>
 
       {/* Media Section */}
@@ -78,7 +88,7 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
 
       {/* Content Section */}
       {post.text && (
-        <div className="px-6 pb-4">
+        <div className="px-6 pb-6">
           <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
             <span className="font-semibold">{channelInfo?.name || 'Channel'}</span>{' '}
             {displayText}
@@ -93,19 +103,6 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
           </p>
         </div>
       )}
-
-      {/* Footer */}
-      <div className="px-6 pb-6">
-        <a
-          href={post.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors group"
-          aria-label="View on Telegram"
-        >
-          <ExternalLink className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-        </a>
-      </div>
     </Card>
   );
 };
