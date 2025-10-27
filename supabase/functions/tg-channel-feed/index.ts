@@ -58,6 +58,24 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     }
   }
   
+  // Pattern 5: Open Graph image
+  if (!avatarUrl) {
+    const ogImageMatch = html.match(/<meta\s+property="og:image"\s+content="([^"]+)"/i);
+    if (ogImageMatch) {
+      avatarUrl = ogImageMatch[1];
+      console.log('Avatar found with pattern 5 (og:image):', avatarUrl);
+    }
+  }
+  
+  // Pattern 6: Twitter image
+  if (!avatarUrl) {
+    const twitterImageMatch = html.match(/<meta\s+property="twitter:image"\s+content="([^"]+)"/i);
+    if (twitterImageMatch) {
+      avatarUrl = twitterImageMatch[1];
+      console.log('Avatar found with pattern 6 (twitter:image):', avatarUrl);
+    }
+  }
+  
   if (avatarUrl) {
     channelInfo.avatar = avatarUrl;
     console.log('Final avatar URL:', avatarUrl);
