@@ -146,37 +146,20 @@ const Index = () => {
       </header>
 
       {/* Features and Logo Section */}
-      <section className="w-full bg-gradient-to-b from-black/70 via-black/30 to-transparent py-12">
+      <section className="relative w-full bg-gradient-to-b from-black/70 via-black/30 to-transparent py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-          {/* Features Grid */}
-          <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {features.map((feature, index) => (
-              <Card 
-                key={index}
-                className="feature-card p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60 cursor-pointer opacity-0"
-                style={{ 
-                  boxShadow: 'var(--shadow-warm)',
-                  animationDelay: `${index * 0.1}s`
-                }}
-                onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
-              >
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl" style={{ background: 'var(--gradient-sunset)' }}>
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
-                <p className="text-base text-muted-foreground leading-snug line-clamp-2">{feature.description}</p>
-              </Card>
-            ))}
-          </div>
+...
           </div>
         </div>
+        {/* Fade to full black at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black pointer-events-none" />
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 overflow-hidden" style={{ background: 'var(--gradient-romantic)' }}>
-        {/* Video - Full Height, Left Edge with top fade */}
-        <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-top">
+      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 bg-black overflow-hidden">
+        {/* Video - Full Height, Left Edge with top and right fade */}
+        <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges">
           <video
             autoPlay
             muted
@@ -188,18 +171,15 @@ const Index = () => {
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
           {/* Black gradient overlay - intensifies fade on right edge to black */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/40 to-black pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/60 to-black pointer-events-none" />
         </div>
 
-        {/* Content - Right Side with matching gradient */}
+        {/* Content - Right Side */}
         <div className="relative z-10 w-full max-w-7xl mx-auto md:pl-[50%] animate-fade-in px-4 md:px-12">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 pointer-events-none" />
-          <div className="relative z-10">
-            <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left text-white">
-              Live from Our Telegram
-            </h2>
-            <TelegramChannelFeed channelUsername="nextwifeai" />
-          </div>
+          <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left text-white">
+            Live from Our Telegram
+          </h2>
+          <TelegramChannelFeed channelUsername="nextwifeai" />
         </div>
       </section>
 

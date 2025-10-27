@@ -167,9 +167,25 @@ All colors MUST be HSL.
     mask-repeat: no-repeat;
   }
 
-  /* Video fade effect - makes video transparent at top edge */
-  .video-fade-top {
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 100%);
+  /* Video fade effect - top and right edges to black */
+  .video-fade-edges {
+    -webkit-mask-image: 
+      linear-gradient(to bottom, transparent 0%, #000 20%, #000 100%), 
+      linear-gradient(to right, #000 0%, #000 80%, transparent 100%);
+    mask-image: 
+      linear-gradient(to bottom, transparent 0%, #000 20%, #000 100%), 
+      linear-gradient(to right, #000 0%, #000 80%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Telegram card hover effect */
+  .telegram-card {
+    transition: all 0.3s ease;
+  }
+  
+  .telegram-card:hover {
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3);
   }
 }
