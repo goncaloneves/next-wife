@@ -174,7 +174,7 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 bg-gradient-to-b from-black via-background to-black overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
         
         {/* Video - Full Height, Left Edge */}
@@ -189,9 +189,9 @@ const Index = () => {
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-l from-black/70 via-black/30 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-l from-black/90 via-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
         </div>
 
         {/* Content - Right Side */}
