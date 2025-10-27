@@ -8,8 +8,10 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [isQRVisible, setIsQRVisible] = useState(true);
+  const [isVideoVisible, setIsVideoVisible] = useState(false);
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const videoSectionRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   
   useEffect(() => {
@@ -29,6 +31,23 @@ const Index = () => {
       const cards = featuresRef.current.querySelectorAll('.feature-card');
       cards.forEach((card) => observer.observe(card));
     }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVideoVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (videoSectionRef.current) observer.observe(videoSectionRef.current);
 
     return () => observer.disconnect();
   }, []);
@@ -176,7 +195,7 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section className="relative min-h-screen flex items-center justify-center py-4 px-4 pb-20 bg-black overflow-hidden">
+      <section ref={videoSectionRef} className="relative min-h-screen flex items-center justify-center py-4 px-4 pb-20 bg-black overflow-hidden">
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges">
           <video
@@ -185,8 +204,10 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-0 animate-fade-in"
-            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+              isVideoVisible ? 'opacity-30 animate-fade-in' : 'opacity-0'
+            }`}
+            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
@@ -196,7 +217,7 @@ const Index = () => {
 
         {/* Content - Right Side */}
         <div className="relative z-10 w-full container mx-auto max-w-6xl animate-fade-in">
-          <div className="md:w-[55%] md:ml-auto px-4 md:px-6 lg:px-8">
+          <div className="md:w-[55%] md:ml-auto px-4">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center md:text-left text-white">
               Live from Bali 🏝️
             </h2>
