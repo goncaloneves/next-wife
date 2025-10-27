@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Grid3x3, List } from "lucide-react";
-import { TelegramChannelHeader } from "./TelegramChannelHeader";
+import { Loader2 } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 
 interface TelegramPost {
@@ -37,7 +35,6 @@ export const TelegramChannelFeed = ({
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'feed' | 'grid'>('feed');
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -100,63 +97,17 @@ export const TelegramChannelFeed = ({
   }
 
   return (
-    <div className="rounded-lg overflow-hidden border border-border bg-card/80 backdrop-blur">
-      <TelegramChannelHeader 
-        channelUsername={channelUsername}
-        channelInfo={channelInfo}
-      />
-      
-      <div className="flex items-center justify-end gap-2 px-4 py-2 border-b border-border">
-        <Button
-          variant={viewMode === 'feed' ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => setViewMode('feed')}
-        >
-          <List className="w-4 h-4" />
-        </Button>
-        <Button
-          variant={viewMode === 'grid' ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => setViewMode('grid')}
-        >
-          <Grid3x3 className="w-4 h-4" />
-        </Button>
+    <ScrollArea className="h-[600px] rounded-lg">
+      <div className="space-y-4">
+        {posts.map((post, index) => (
+          <TelegramPostCard
+            key={post.id || index}
+            post={post}
+            channelInfo={channelInfo}
+            index={index}
+          />
+        ))}
       </div>
-
-      <ScrollArea className="h-[600px]">
-        {viewMode === 'feed' ? (
-          <div>
-            {posts.map((post, index) => (
-              <TelegramPostCard
-                key={post.id || index}
-                post={post}
-                channelInfo={channelInfo}
-                index={index}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 gap-1 p-1">
-            {posts.map((post, index) => (
-              post.media && (
-                <div
-                  key={post.id || index}
-                  className="aspect-square bg-muted relative overflow-hidden group cursor-pointer opacity-0 animate-fade-in"
-                  style={{ animationDelay: `${index * 0.03}s`, animationFillMode: 'forwards' }}
-                  onClick={() => window.open(post.link, '_blank')}
-                >
-                  <img
-                    src={post.media}
-                    alt="Post thumbnail"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                </div>
-              )
-            ))}
-          </div>
-        )}
-      </ScrollArea>
-    </div>
+    </ScrollArea>
   );
 };
