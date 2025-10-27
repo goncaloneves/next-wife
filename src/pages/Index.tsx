@@ -185,13 +185,10 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-30 animate-fade-in"
+            className="absolute inset-0 w-full h-full object-cover opacity-30 animate-fade-in mask-soft-edges"
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-l from-black/90 via-black/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
         </div>
 
         {/* Content - Right Side */}

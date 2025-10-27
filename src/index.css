@@ -158,4 +158,12 @@ All colors MUST be HSL.
   .animate-pulse-slow {
     animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  /* Softly fade right, top and bottom edges to transparent so underlying romantic gradient shows through */
+  .mask-soft-edges {
+    -webkit-mask-image: radial-gradient(135% 160% at 45% 50%, #000 70%, transparent 100%);
+    mask-image: radial-gradient(135% 160% at 45% 50%, #000 70%, transparent 100%);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
 }
