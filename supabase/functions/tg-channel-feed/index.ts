@@ -143,8 +143,50 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     const media = imageMatch ? imageMatch[1] : null;
 
     // Extract per-message avatar from tgme_widget_message_user_photo
-    const avatarMatch = /class="[^"]*tgme_widget_message_user_photo[^"]*"[\s\S]*?style="[^"]*background-image:\s*url\('([^']+)'\)/i.exec(postContent);
-    const avatar = avatarMatch ? avatarMatch[1] : null;
+    let avatar = null;
+    
+    // Pattern 1: Standard (class before style, single quotes)
+    const avatarMatch1 = /class="[^"]*tgme_widget_message_user_photo[^"]*"[\s\S]*?style="[^"]*background-image:\s*url\('([^']+)'\)/i.exec(postContent);
+    if (avatarMatch1) {
+      avatar = avatarMatch1[1];
+      console.log('Avatar found with pattern 1:', avatar);
+    }
+    
+    // Pattern 2: Reversed (style before class)
+    if (!avatar) {
+      const avatarMatch2 = /style="[^"]*background-image:\s*url\('([^']+)'\)[^"]*"[\s\S]*?class="[^"]*tgme_widget_message_user_photo[^"]*"/i.exec(postContent);
+      if (avatarMatch2) {
+        avatar = avatarMatch2[1];
+        console.log('Avatar found with pattern 2:', avatar);
+      }
+    }
+    
+    // Pattern 3: Double quotes in url()
+    if (!avatar) {
+      const avatarMatch3 = /class="[^"]*tgme_widget_message_user_photo[^"]*"[\s\S]*?background-image:\s*url\("([^"]+)"\)/i.exec(postContent);
+      if (avatarMatch3) {
+        avatar = avatarMatch3[1];
+        console.log('Avatar found with pattern 3:', avatar);
+      }
+    }
+    
+    // Pattern 4: Lenient - search within div
+    if (!avatar) {
+      const avatarMatch4 = /<div[^>]*class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*>[\s\S]*?url\(['"]([^'"]+)['"]\)/i.exec(postContent);
+      if (avatarMatch4) {
+        avatar = avatarMatch4[1];
+        console.log('Avatar found with pattern 4:', avatar);
+      }
+    }
+    
+    // Pattern 5: Most lenient
+    if (!avatar) {
+      const avatarMatch5 = /tgme_widget_message_user_photo[^>]*style="[^"]*background-image:\s*url\(['"]([^'"]+)['"]\)/i.exec(postContent);
+      if (avatarMatch5) {
+        avatar = avatarMatch5[1];
+        console.log('Avatar found with pattern 5:', avatar);
+      }
+    }
 
     if (text || media) {
       posts.push({
