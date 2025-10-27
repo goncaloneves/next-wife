@@ -190,12 +190,14 @@ const Index = () => {
             >
               <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
             </video>
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-l from-black/70 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
           </div>
 
           {/* Right Column: Telegram Feed */}
           <div className="w-full">
-            <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left bg-clip-text text-transparent bg-gradient-to-r from-white via-primary to-white">
+            <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left text-white">
               Live from Our Telegram
             </h2>
             <TelegramChannelFeed channelUsername="nextwifeai" />
