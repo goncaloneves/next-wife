@@ -209,10 +209,7 @@ const Index = () => {
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div 
           ref={feedVideoRef} 
-          className={`feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges ${
-            isVideoVisible ? 'opacity-100 animate-fade-in' : 'opacity-0'
-          }`}
-          style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges opacity-30"
         >
           <video
             autoPlay
@@ -220,7 +217,10 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
+            className={`absolute inset-0 w-full h-full object-cover ${
+              isVideoVisible ? 'opacity-100 animate-fade-in' : 'opacity-0'
+            }`}
+            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
