@@ -149,7 +149,26 @@ const Index = () => {
       <section className="relative w-full bg-gradient-to-b from-black/70 via-black/30 to-transparent py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-...
+          {/* Features Grid */}
+          <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {features.map((feature, index) => (
+              <Card 
+                key={index}
+                className="feature-card p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60 cursor-pointer opacity-0"
+                style={{ 
+                  boxShadow: 'var(--shadow-warm)',
+                  animationDelay: `${index * 0.1}s`
+                }}
+                onClick={() => window.open('https://t.me/nextwifebot', '_blank')}
+              >
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl" style={{ background: 'var(--gradient-sunset)' }}>
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
+                <p className="text-base text-muted-foreground leading-snug line-clamp-2">{feature.description}</p>
+              </Card>
+            ))}
+          </div>
           </div>
         </div>
         {/* Fade to full black at bottom */}
