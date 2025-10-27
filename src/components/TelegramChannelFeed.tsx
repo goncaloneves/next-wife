@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowUp } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
+import { Button } from "@/components/ui/button";
 
 interface TelegramPost {
   id: string;
@@ -38,97 +38,109 @@ export const TelegramChannelFeed = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isNearTop, setIsNearTop] = useState(true);
+  const [pendingNewCount, setPendingNewCount] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            }
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
           }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch posts');
         }
+      );
 
-        const data = await response.json();
-        const fetchedPosts = data.posts || [];
-        
-        setAllPosts(fetchedPosts);
-        
-        // Only set displayed posts on initial load
-        if (isInitialLoad) {
-          setDisplayedPosts(fetchedPosts.slice(0, displayCount));
-          setIsInitialLoad(false);
-        }
-        
-        setChannelInfo(data.channelInfo);
-        setError(null);
-        setLoading(false);
-        
-        console.log(`Fetched ${fetchedPosts.length} total posts, displaying first ${displayCount}`);
-      } catch (err) {
-        console.error('Error fetching Telegram posts:', err);
-        setError('Unable to load channel posts');
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts');
       }
-    };
 
+      const data = await response.json();
+      const fetchedPosts = data.posts || [];
+      
+      // Check for new posts
+      if (allPosts.length > 0 && fetchedPosts.length > 0) {
+        const newPostIds = fetchedPosts.slice(0, 5).map((p: TelegramPost) => p.id);
+        const existingIds = allPosts.slice(0, 5).map(p => p.id);
+        const hasNewPosts = newPostIds.some((id: string) => !existingIds.includes(id));
+        
+        if (hasNewPosts && !isNearTop) {
+          // Show banner instead of disrupting scroll
+          const newCount = fetchedPosts.findIndex((p: TelegramPost) => allPosts.some(existing => existing.id === p.id));
+          setPendingNewCount(newCount > 0 ? newCount : 1);
+          return;
+        }
+      }
+      
+      setAllPosts(fetchedPosts);
+      setDisplayedPosts(fetchedPosts.slice(0, Math.max(displayCount, displayedPosts.length)));
+      setChannelInfo(data.channelInfo);
+      setError(null);
+      setLoading(false);
+      setPendingNewCount(0);
+      
+      console.log(`Fetched ${fetchedPosts.length} total posts`);
+    } catch (err) {
+      console.error('Error fetching Telegram posts:', err);
+      setError('Unable to load channel posts');
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPosts();
-    const interval = setInterval(fetchPosts, refreshInterval);
-
-    return () => clearInterval(interval);
-  }, [channelUsername, refreshInterval]);
-
-  useEffect(() => {
-    // Preserve current display count if user has scrolled, only update content
-    const currentDisplayCount = Math.max(displayCount, displayedPosts.length);
-    setDisplayedPosts(allPosts.slice(0, currentDisplayCount));
-  }, [allPosts, displayCount]);
-
-  useEffect(() => {
-    if (!observerTarget.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        
-        if (target.isIntersecting && displayCount < allPosts.length && !isLoadingMore) {
-          loadMorePosts();
-        }
-      },
-      { 
-        threshold: 0.1,
-        rootMargin: '200px'
+    
+    // Only refetch when page becomes visible and user is near top
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isNearTop) {
+        fetchPosts();
       }
-    );
-
-    observer.observe(observerTarget.current);
-
-    return () => {
-      observer.disconnect();
     };
-  }, [displayCount, allPosts.length, isLoadingMore]);
+    
+    window.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [channelUsername, isNearTop]);
+
+  const handleScroll = () => {
+    if (!listRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+    const nearTop = scrollTop < 100;
+    setIsNearTop(nearTop);
+    
+    // Load more when near bottom
+    const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
+    if (nearBottom && displayCount < allPosts.length && !isLoadingMore) {
+      loadMorePosts();
+    }
+  };
+
+  const handleNewPostsClick = () => {
+    fetchPosts();
+    setPendingNewCount(0);
+    if (listRef.current) {
+      listRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
 
   const loadMorePosts = () => {
     if (isLoadingMore || displayCount >= allPosts.length) return;
     
     setIsLoadingMore(true);
     
-    setTimeout(() => {
-      const newCount = Math.min(displayCount + 10, allPosts.length);
-      setDisplayCount(newCount);
-      setDisplayedPosts(allPosts.slice(0, newCount));
-      setIsLoadingMore(false);
-      
-      console.log(`Showing ${newCount} of ${allPosts.length} posts`);
-    }, 300);
+    const newCount = Math.min(displayCount + 10, allPosts.length);
+    setDisplayCount(newCount);
+    setDisplayedPosts(allPosts.slice(0, newCount));
+    setIsLoadingMore(false);
+    
+    console.log(`Showing ${newCount} of ${allPosts.length} posts`);
   };
 
   if (loading) {
@@ -158,39 +170,53 @@ export const TelegramChannelFeed = ({
   }
 
   return (
-    <ScrollArea className="h-[900px] rounded-lg">
-      <div className="space-y-4">
-        {displayedPosts.map((post, index) => (
-          <TelegramPostCard
-            key={post.id || index}
-            post={post}
-            channelInfo={channelInfo}
-            index={index}
-          />
-        ))}
-        
-        {displayCount < allPosts.length && (
-          <div 
-            ref={observerTarget} 
-            className="py-8 text-center"
-          >
-            {isLoadingMore && (
-              <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">Loading more posts...</span>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {displayCount >= allPosts.length && allPosts.length > 10 && (
-          <div className="py-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              You've reached the end • {allPosts.length} posts total
-            </p>
-          </div>
-        )}
+    <div className="relative">
+      {pendingNewCount > 0 && (
+        <Button
+          onClick={handleNewPostsClick}
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-10 shadow-lg"
+          size="sm"
+        >
+          <ArrowUp className="w-4 h-4 mr-2" />
+          {pendingNewCount} new {pendingNewCount === 1 ? 'post' : 'posts'}
+        </Button>
+      )}
+      
+      <div
+        ref={listRef}
+        onScroll={handleScroll}
+        className="h-[900px] overflow-y-auto rounded-lg"
+      >
+        <div className="space-y-4">
+          {displayedPosts.map((post) => (
+            <TelegramPostCard
+              key={post.id}
+              post={post}
+              channelInfo={channelInfo}
+              animate={false}
+            />
+          ))}
+          
+          {displayCount < allPosts.length && (
+            <div className="py-8 text-center">
+              {isLoadingMore && (
+                <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">Loading more posts...</span>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {displayCount >= allPosts.length && allPosts.length > 10 && (
+            <div className="py-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                You've reached the end • {allPosts.length} posts total
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </ScrollArea>
+    </div>
   );
 };

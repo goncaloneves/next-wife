@@ -18,10 +18,11 @@ interface TelegramPostCardProps {
     name: string;
     avatar: string | null;
   };
-  index: number;
+  index?: number;
+  animate?: boolean;
 }
 
-export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardProps) => {
+export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: TelegramPostCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [expanded, setExpanded] = useState(false);
   
@@ -41,8 +42,8 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
   return (
     <Card
       onClick={handleCardClick}
-      className="telegram-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur opacity-0 animate-fade-in transition-all duration-300 hover:scale-105 cursor-pointer w-full md:w-[350px] lg:w-[600px] mx-auto"
-      style={{ animationDelay: `${index * 0.1 + 0.3}s`, animationFillMode: 'forwards' }}
+      className={`telegram-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur transition-all duration-300 hover:scale-105 cursor-pointer w-full md:w-[350px] lg:w-[600px] mx-auto ${animate ? 'opacity-0 animate-fade-in' : ''}`}
+      style={animate ? { animationDelay: `${(index || 0) * 0.1 + 0.3}s`, animationFillMode: 'forwards' } : undefined}
     >
       {/* Post Header */}
       <div className="flex items-center gap-3 p-6">
