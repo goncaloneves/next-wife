@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import logo from "@/assets/next-wife-logo-squared.jpeg";
+import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { useIsMobile } from "@/hooks/use-mobile";
