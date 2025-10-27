@@ -285,13 +285,13 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
     const channel = url.searchParams.get('channel') || 'nextwifeai';
-    const limit = parseInt(url.searchParams.get('limit') || '50');
+    // Fetch ALL posts available - no limit
     const channelName = channel.replace('@', '');
 
     console.log(`Fetching posts from channel: ${channelName}`);
 
     // Check cache
-    const cacheKey = `${channelName}-${limit}`;
+    const cacheKey = `${channelName}:full`;
     const cached = cache.get(cacheKey);
     const now = Date.now();
 
@@ -314,13 +314,16 @@ Deno.serve(async (req) => {
     
     // Parse HTML to extract channel info and posts
     const { channelInfo, posts: allPosts } = parseChannelHTML(html, channelName);
-    const posts = allPosts.slice(0, limit);
 
-    // Update cache
-    const responseData = { channelInfo, posts };
+    console.log(`Successfully parsed ${allPosts.length} total posts from HTML`);
+
+    // Update cache with all posts
+    const responseData = { 
+      channelInfo, 
+      posts: allPosts,
+      totalPosts: allPosts.length 
+    };
     cache.set(cacheKey, { data: responseData, timestamp: now });
-
-    console.log(`Successfully fetched ${posts.length} posts`);
 
     return new Response(
       JSON.stringify({ ...responseData, cached: false }),
