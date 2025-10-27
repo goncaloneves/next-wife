@@ -17,10 +17,52 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     subscribers: null as string | null,
   };
 
-  // Extract channel avatar
-  const avatarMatch = html.match(/<img class="tgme_page_photo_image"[^>]+src="([^"]+)"/);
-  if (avatarMatch) {
-    channelInfo.avatar = avatarMatch[1];
+  // Extract channel avatar - try multiple patterns
+  console.log('HTML length:', html.length);
+  console.log('Looking for avatar in HTML snippet:', html.substring(0, 2000));
+  
+  // Try multiple avatar extraction patterns
+  let avatarUrl = null;
+  
+  // Pattern 1: Standard img tag with class tgme_page_photo_image
+  const avatarMatch1 = html.match(/<img\s+class="tgme_page_photo_image"\s+src="([^"]+)"/);
+  if (avatarMatch1) {
+    avatarUrl = avatarMatch1[1];
+    console.log('Avatar found with pattern 1:', avatarUrl);
+  }
+  
+  // Pattern 2: Reversed attributes (src before class)
+  if (!avatarUrl) {
+    const avatarMatch2 = html.match(/<img[^>]*src="([^"]+)"[^>]*class="tgme_page_photo_image"/);
+    if (avatarMatch2) {
+      avatarUrl = avatarMatch2[1];
+      console.log('Avatar found with pattern 2:', avatarUrl);
+    }
+  }
+  
+  // Pattern 3: More lenient - any img in tgme_page_photo div
+  if (!avatarUrl) {
+    const avatarMatch3 = html.match(/<div class="tgme_page_photo"[^>]*>[\s\S]*?<img[^>]+src="([^"]+)"/);
+    if (avatarMatch3) {
+      avatarUrl = avatarMatch3[1];
+      console.log('Avatar found with pattern 3:', avatarUrl);
+    }
+  }
+  
+  // Pattern 4: Background image style
+  if (!avatarUrl) {
+    const avatarMatch4 = html.match(/class="tgme_page_photo"[^>]*style="[^"]*background-image:\s*url\('([^']+)'\)/);
+    if (avatarMatch4) {
+      avatarUrl = avatarMatch4[1];
+      console.log('Avatar found with pattern 4:', avatarUrl);
+    }
+  }
+  
+  if (avatarUrl) {
+    channelInfo.avatar = avatarUrl;
+    console.log('Final avatar URL:', avatarUrl);
+  } else {
+    console.log('No avatar found with any pattern');
   }
 
   // Extract channel title/name
