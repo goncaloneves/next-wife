@@ -97,7 +97,7 @@ export const TelegramChannelFeed = ({
   }
 
   return (
-    <ScrollArea className="h-[600px] rounded-lg">
+    <ScrollArea className="h-[900px] rounded-lg">
       <div className="space-y-4">
         {posts.map((post, index) => (
           <TelegramPostCard
