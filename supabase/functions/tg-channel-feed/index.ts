@@ -7,6 +7,51 @@ const corsHeaders = {
 const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 3000; // 3 seconds
 
+// Check if a message is a service/admin message
+function isServiceMessage(text: string): boolean {
+  if (!text || text.trim().length === 0) return false;
+  
+  const servicePatterns = [
+    // Channel/Group management
+    /^Channel (created|photo updated|name was changed|converted)/i,
+    /^Chat created/i,
+    /^Group created/i,
+    /^(Photo|Title|Name|Description|Username) (was )?(updated|changed|removed)/i,
+    /Supergroup has been created/i,
+    
+    // Member actions
+    /joined the (channel|group|chat)/i,
+    /left the (channel|group|chat)/i,
+    /was added( by)?/i,
+    /was removed( by)?/i,
+    /joined via invite/i,
+    /was (kicked|banned|unbanned)/i,
+    
+    // Permission changes
+    /Admin rights were (changed|removed)/i,
+    /is now an admin/i,
+    
+    // Messages & pins
+    /Message was (pinned|unpinned)/i,
+    /Messages? (was|were) deleted/i,
+    /pinned (.+)/i,
+    
+    // Other service actions
+    /Poll was stopped/i,
+    /Video chat (started|ended|scheduled)/i,
+    /Invite link was (created|revoked|edited)/i,
+    /History is now (visible|hidden)/i,
+    /Slow mode was (enabled|disabled)/i,
+    /Bot was allowed/i,
+    /Forwarding.*restricted/i,
+    
+    // Generic service message indicator
+    /^Service message:/i
+  ];
+  
+  return servicePatterns.some(pattern => pattern.test(text.trim()));
+}
+
 // Parse HTML to extract channel info and posts
 function parseChannelHTML(html: string, channelName: string): { channelInfo: any; posts: any[] } {
   // Extract channel metadata
@@ -146,7 +191,7 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     const avatarMatch = /class="[^"]*tgme_widget_message_user_photo[^"]*"[\s\S]*?style="[^"]*background-image:\s*url\('([^']+)'\)/i.exec(postContent);
     const avatar = avatarMatch ? avatarMatch[1] : null;
 
-    if (text || media) {
+    if ((text || media) && !isServiceMessage(text)) {
       posts.push({
         id: postId.split('/').pop(),
         text,
