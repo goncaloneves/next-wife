@@ -176,7 +176,7 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section className="relative min-h-screen flex items-center justify-center py-20 px-4 bg-black overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center py-12 px-4 bg-black overflow-hidden">
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges">
           <video
@@ -194,9 +194,9 @@ const Index = () => {
         </div>
 
         {/* Content - Right Side */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto md:pl-[50%] animate-fade-in px-4 md:px-12">
-          <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left text-white">
-            Live from Our Telegram
+        <div className="relative z-10 w-full max-w-7xl mx-auto md:pl-[48%] animate-fade-in px-4 md:px-8">
+          <h2 className="text-3xl md:text-4xl font-heading mb-12 text-center md:text-left text-white">
+            Live from Bali 🏝️
           </h2>
           <TelegramChannelFeed channelUsername="nextwifeai" />
         </div>

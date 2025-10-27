@@ -41,7 +41,7 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
   return (
     <Card
       onClick={handleCardClick}
-      className="telegram-card overflow-hidden border border-border rounded-lg bg-black/60 backdrop-blur opacity-0 animate-fade-in transition-all duration-300 hover:scale-105 cursor-pointer"
+      className="telegram-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur opacity-0 animate-fade-in transition-all duration-300 hover:scale-105 cursor-pointer"
       style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
     >
       {/* Post Header */}
