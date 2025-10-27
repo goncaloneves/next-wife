@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-squared.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
+import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
@@ -168,6 +169,18 @@ const Index = () => {
               </Card>
             ))}
           </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Telegram Channel Feed Section */}
+      <section className="w-full bg-gradient-to-b from-transparent to-black/70 py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-8">
+              Live from our Telegram
+            </h2>
+            <TelegramChannelFeed channelUsername="nextwifeai" />
           </div>
         </div>
       </section>
