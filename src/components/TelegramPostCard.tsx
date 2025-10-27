@@ -48,7 +48,11 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
       <div className="flex items-center gap-3 p-6">
         <Avatar className="w-10 h-10">
           <AvatarImage 
-            src={channelInfo?.avatar || undefined} 
+            src={
+              (post.avatar && !post.avatar.includes('/emoji/')) 
+                ? post.avatar 
+                : channelInfo?.avatar || undefined
+            } 
             alt={channelInfo?.name || 'Channel'}
           />
           <AvatarFallback className="bg-primary/10 text-primary text-sm">
