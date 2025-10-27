@@ -120,6 +120,15 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     const postId = match[1];
     const postContent = match[2];
 
+    // Filter out service messages (channel admin/system messages)
+    const isServiceMessage = /class="[^"]*tgme_widget_message_service[^"]*"/.test(postContent);
+    const hasTextDiv = /<div class="tgme_widget_message_text/.test(postContent);
+
+    if (isServiceMessage || !hasTextDiv) {
+      console.log(`Filtered out service message: ${postId}`);
+      continue;
+    }
+
     // Extract text content
     const textMatch = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
     const text = textMatch ? textMatch[1]
