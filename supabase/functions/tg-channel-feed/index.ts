@@ -60,10 +60,13 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     const text = textMatch ? textMatch[1]
       .replace(/<br\s*\/?>/gi, '\n')
       .replace(/<[^>]*>/g, '')
+      .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num)))
+      .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
       .replace(/&quot;/g, '"')
       .replace(/&amp;/g, '&')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
+      .replace(/&nbsp;/g, ' ')
       .trim() : '';
 
     // Extract date
