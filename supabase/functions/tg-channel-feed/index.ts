@@ -120,16 +120,7 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     const postId = match[1];
     const postContent = match[2];
 
-    // Filter out service messages (channel admin/system messages)
-    const isServiceMessage = /class="[^"]*tgme_widget_message_service[^"]*"/.test(postContent);
-    const hasTextDiv = /<div class="tgme_widget_message_text/.test(postContent);
-
-    if (isServiceMessage || !hasTextDiv) {
-      console.log(`Filtered out service message: ${postId}`);
-      continue;
-    }
-
-    // Extract text content
+    // Extract text content first
     const textMatch = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
     const text = textMatch ? textMatch[1]
       .replace(/<br\s*\/?>/gi, '\n')
@@ -142,6 +133,27 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
       .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num)))
       .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
       .trim() : '';
+
+    // Filter out service messages by text patterns
+    const serviceMessagePatterns = [
+      /^Channel created$/i,
+      /^Channel (name|title) was changed to/i,
+      /^Channel photo (updated|changed)/i,
+      /joined the (channel|group)/i,
+      /left the (channel|group)/i,
+      /^(Message|Post) was pinned/i,
+      /(Channel|Group) was boosted/i,
+      /^Giveaway (started|ended)/i,
+      /^Topic created:/i,
+      /^Service notification/i
+    ];
+
+    const isServiceMessage = serviceMessagePatterns.some(pattern => pattern.test(text));
+    
+    if (isServiceMessage) {
+      console.log(`Filtered out service message: ${postId} - "${text}"`);
+      continue;
+    }
 
     // Extract date
     const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(postContent);
