@@ -7,8 +7,44 @@ const corsHeaders = {
 const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 3000; // 3 seconds
 
-// Parse HTML to extract posts
-function parseChannelHTML(html: string, channelName: string): any[] {
+// Parse HTML to extract channel info and posts
+function parseChannelHTML(html: string, channelName: string): { channelInfo: any; posts: any[] } {
+  // Extract channel metadata
+  const channelInfo = {
+    name: channelName,
+    avatar: null as string | null,
+    description: null as string | null,
+    subscribers: null as string | null,
+  };
+
+  // Extract channel avatar
+  const avatarMatch = html.match(/<img class="tgme_page_photo_image"[^>]+src="([^"]+)"/);
+  if (avatarMatch) {
+    channelInfo.avatar = avatarMatch[1];
+  }
+
+  // Extract channel title/name
+  const titleMatch = html.match(/<div class="tgme_page_title"[^>]*><span[^>]*>([^<]+)<\/span>/);
+  if (titleMatch) {
+    channelInfo.name = titleMatch[1].trim();
+  }
+
+  // Extract channel description
+  const descMatch = html.match(/<div class="tgme_page_description[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+  if (descMatch) {
+    channelInfo.description = descMatch[1]
+      .replace(/<[^>]+>/g, '')
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&')
+      .trim();
+  }
+
+  // Extract subscriber count
+  const subsMatch = html.match(/<div class="tgme_page_extra">([^<]+subscribers?)<\/div>/i);
+  if (subsMatch) {
+    channelInfo.subscribers = subsMatch[1].trim();
+  }
+  
   const posts: any[] = [];
   
   // Extract post blocks - Telegram uses specific class names
@@ -49,7 +85,7 @@ function parseChannelHTML(html: string, channelName: string): any[] {
     }
   }
 
-  return posts;
+  return { channelInfo, posts };
 }
 
 Deno.serve(async (req) => {
@@ -74,7 +110,7 @@ Deno.serve(async (req) => {
     if (cached && (now - cached.timestamp) < CACHE_TTL) {
       console.log('Returning cached data');
       return new Response(
-        JSON.stringify({ posts: cached.data, cached: true }),
+        JSON.stringify({ ...cached.data, cached: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -88,17 +124,18 @@ Deno.serve(async (req) => {
 
     const html = await response.text();
     
-    // Parse HTML to extract posts
-    const allPosts = parseChannelHTML(html, channelName);
+    // Parse HTML to extract channel info and posts
+    const { channelInfo, posts: allPosts } = parseChannelHTML(html, channelName);
     const posts = allPosts.slice(0, limit);
 
     // Update cache
-    cache.set(cacheKey, { data: posts, timestamp: now });
+    const responseData = { channelInfo, posts };
+    cache.set(cacheKey, { data: responseData, timestamp: now });
 
     console.log(`Successfully fetched ${posts.length} posts`);
 
     return new Response(
-      JSON.stringify({ posts, cached: false }),
+      JSON.stringify({ ...responseData, cached: false }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

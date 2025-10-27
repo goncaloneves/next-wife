@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatDistanceToNow } from "date-fns";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { Loader2, Grid3x3, List } from "lucide-react";
+import { TelegramChannelHeader } from "./TelegramChannelHeader";
+import { TelegramPostCard } from "./TelegramPostCard";
 
 interface TelegramPost {
   id: string;
@@ -10,6 +12,13 @@ interface TelegramPost {
   date: string;
   link: string;
   media?: string | null;
+}
+
+interface ChannelInfo {
+  name: string;
+  avatar: string | null;
+  description: string | null;
+  subscribers: string | null;
 }
 
 interface TelegramChannelFeedProps {
@@ -24,8 +33,10 @@ export const TelegramChannelFeed = ({
   maxPosts = 20
 }: TelegramChannelFeedProps) => {
   const [posts, setPosts] = useState<TelegramPost[]>([]);
+  const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'feed' | 'grid'>('feed');
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -45,6 +56,7 @@ export const TelegramChannelFeed = ({
 
         const data = await response.json();
         setPosts(data.posts || []);
+        setChannelInfo(data.channelInfo);
         setError(null);
         setLoading(false);
       } catch (err) {
@@ -87,42 +99,63 @@ export const TelegramChannelFeed = ({
   }
 
   return (
-    <ScrollArea className="h-[600px] rounded-lg border border-border bg-card/80 backdrop-blur">
-      <div className="p-6 space-y-4">
-        {posts.map((post, index) => (
-          <Card
-            key={post.id || index}
-            className="p-4 hover:shadow-lg transition-all duration-300 bg-background/60 border border-border hover:border-primary/60 opacity-0 animate-fade-in"
-            style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
-          >
-            {post.media && (
-              <img
-                src={post.media}
-                alt="Post media"
-                className="w-full rounded-lg mb-3 object-cover max-h-64"
-              />
-            )}
-            <p className="text-foreground mb-3 whitespace-pre-wrap leading-relaxed">
-              {post.text}
-            </p>
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>
-                {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
-              </span>
-              {post.link && (
-                <a
-                  href={post.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 hover:text-primary transition-colors"
-                >
-                  View on Telegram <ExternalLink className="w-3 h-3" />
-                </a>
-              )}
-            </div>
-          </Card>
-        ))}
+    <div className="rounded-lg overflow-hidden border border-border bg-card/80 backdrop-blur">
+      <TelegramChannelHeader 
+        channelUsername={channelUsername}
+        channelInfo={channelInfo}
+      />
+      
+      <div className="flex items-center justify-end gap-2 px-4 py-2 border-b border-border">
+        <Button
+          variant={viewMode === 'feed' ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => setViewMode('feed')}
+        >
+          <List className="w-4 h-4" />
+        </Button>
+        <Button
+          variant={viewMode === 'grid' ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => setViewMode('grid')}
+        >
+          <Grid3x3 className="w-4 h-4" />
+        </Button>
       </div>
-    </ScrollArea>
+
+      <ScrollArea className="h-[600px]">
+        {viewMode === 'feed' ? (
+          <div>
+            {posts.map((post, index) => (
+              <TelegramPostCard
+                key={post.id || index}
+                post={post}
+                channelInfo={channelInfo}
+                index={index}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-1 p-1">
+            {posts.map((post, index) => (
+              post.media && (
+                <div
+                  key={post.id || index}
+                  className="aspect-square bg-muted relative overflow-hidden group cursor-pointer opacity-0 animate-fade-in"
+                  style={{ animationDelay: `${index * 0.03}s`, animationFillMode: 'forwards' }}
+                  onClick={() => window.open(post.link, '_blank')}
+                >
+                  <img
+                    src={post.media}
+                    alt="Post thumbnail"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </ScrollArea>
+    </div>
   );
 };
