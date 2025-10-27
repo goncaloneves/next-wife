@@ -3,7 +3,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
-import { Heart, MessageCircle, Send, Bookmark, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 interface TelegramPostCardProps {
   post: {
@@ -32,11 +32,11 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
 
   return (
     <Card
-      className="overflow-hidden border-0 rounded-none border-b border-border bg-card opacity-0 animate-fade-in"
+      className="overflow-hidden border border-border/50 rounded-lg bg-card/80 backdrop-blur-sm opacity-0 animate-fade-in transition-all duration-300 hover:shadow-lg hover:border-border"
       style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
     >
       {/* Post Header */}
-      <div className="flex items-center gap-3 p-4">
+      <div className="flex items-center gap-3 p-6">
         <Avatar className="w-10 h-10">
           <AvatarImage 
             src={post.avatar || channelInfo?.avatar || undefined} 
@@ -69,31 +69,16 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
             className={`w-full object-cover transition-opacity duration-300 ${
               imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
             }`}
-            style={{ aspectRatio: '1/1' }}
+            style={{ maxHeight: '500px' }}
             onLoad={() => setImageLoaded(true)}
           />
         </div>
       )}
 
-      {/* Action Bar */}
-      <div className="flex items-center gap-4 px-4 py-3">
-        <button className="hover:text-destructive transition-colors">
-          <Heart className="w-6 h-6" />
-        </button>
-        <button className="hover:text-primary transition-colors">
-          <MessageCircle className="w-6 h-6" />
-        </button>
-        <button className="hover:text-primary transition-colors">
-          <Send className="w-6 h-6" />
-        </button>
-        <button className="ml-auto hover:text-primary transition-colors">
-          <Bookmark className="w-6 h-6" />
-        </button>
-      </div>
 
       {/* Content Section */}
       {post.text && (
-        <div className="px-4 pb-3">
+        <div className="px-6 pb-4">
           <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
             <span className="font-semibold">{channelInfo?.name || 'Channel'}</span>{' '}
             {displayText}
@@ -110,14 +95,15 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
       )}
 
       {/* Footer */}
-      <div className="px-4 pb-4">
+      <div className="px-6 pb-6">
         <a
           href={post.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
+          className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors font-medium group"
         >
-          View on Telegram <ExternalLink className="w-3 h-3" />
+          View on Telegram 
+          <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </a>
       </div>
     </Card>
