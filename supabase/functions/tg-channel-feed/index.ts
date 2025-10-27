@@ -145,47 +145,42 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     // Extract per-message avatar from tgme_widget_message_user_photo
     let avatar = null;
     
-    // Pattern 1: Standard (class before style, single quotes)
-    const avatarMatch1 = /class="[^"]*tgme_widget_message_user_photo[^"]*"[\s\S]*?style="[^"]*background-image:\s*url\('([^']+)'\)/i.exec(postContent);
+    // Pattern 1: Same tag (class before style), allow single/double quotes
+    const avatarMatch1 = /<[^>]*class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*style="[^"]*background-image:\s*url\((?:'|")?([^'")]+)(?:'|")?\)[^"]*"[^>]*>/i.exec(postContent);
     if (avatarMatch1) {
       avatar = avatarMatch1[1];
-      console.log('Avatar found with pattern 1:', avatar);
+      console.log('Avatar found with strict pattern 1:', avatar);
     }
-    
-    // Pattern 2: Reversed (style before class)
+
+    // Pattern 2: Same tag (style before class)
     if (!avatar) {
-      const avatarMatch2 = /style="[^"]*background-image:\s*url\('([^']+)'\)[^"]*"[\s\S]*?class="[^"]*tgme_widget_message_user_photo[^"]*"/i.exec(postContent);
+      const avatarMatch2 = /<[^>]*style="[^"]*background-image:\s*url\((?:'|")?([^'")]+)(?:'|")?\)[^"]*"[^>]*class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*>/i.exec(postContent);
       if (avatarMatch2) {
         avatar = avatarMatch2[1];
-        console.log('Avatar found with pattern 2:', avatar);
+        console.log('Avatar found with strict pattern 2:', avatar);
       }
     }
-    
-    // Pattern 3: Double quotes in url()
+
+    // Pattern 3: Fallback within the same tag regardless of attribute order
     if (!avatar) {
-      const avatarMatch3 = /class="[^"]*tgme_widget_message_user_photo[^"]*"[\s\S]*?background-image:\s*url\("([^"]+)"\)/i.exec(postContent);
+      const avatarMatch3 = /<[^>]*class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*style="[^"]*url\((?:'|")?([^'")]+)(?:'|")?\)[^"]*"[^>]*>/i.exec(postContent);
       if (avatarMatch3) {
         avatar = avatarMatch3[1];
-        console.log('Avatar found with pattern 3:', avatar);
+        console.log('Avatar found with strict pattern 3:', avatar);
       }
     }
-    
-    // Pattern 4: Lenient - search within div
-    if (!avatar) {
-      const avatarMatch4 = /<div[^>]*class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*>[\s\S]*?url\(['"]([^'"]+)['"]\)/i.exec(postContent);
-      if (avatarMatch4) {
-        avatar = avatarMatch4[1];
-        console.log('Avatar found with pattern 4:', avatar);
-      }
+
+    // Normalize and filter invalid avatar URLs
+    if (avatar && avatar.startsWith('//')) {
+      avatar = 'https:' + avatar;
     }
-    
-    // Pattern 5: Most lenient
+    if (avatar && /telegram\.org\/img\/emoji/.test(avatar)) {
+      console.log('Discarding emoji fallback avatar');
+      avatar = null;
+    }
+    // Fallback to channel avatar when no per-message avatar available or only emoji found
     if (!avatar) {
-      const avatarMatch5 = /tgme_widget_message_user_photo[^>]*style="[^"]*background-image:\s*url\(['"]([^'"]+)['"]\)/i.exec(postContent);
-      if (avatarMatch5) {
-        avatar = avatarMatch5[1];
-        console.log('Avatar found with pattern 5:', avatar);
-      }
+      avatar = channelInfo.avatar || null;
     }
 
     if (text || media) {
