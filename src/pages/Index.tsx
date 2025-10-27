@@ -177,31 +177,29 @@ const Index = () => {
       <section className="relative min-h-screen flex items-center justify-center py-20 px-4 bg-gradient-to-b from-black via-background to-black overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
         
-        <div className="relative z-10 w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in">
-          {/* Left Column: Video */}
-          <div className="relative hidden md:block h-full min-h-[600px]">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="absolute inset-0 w-full h-full object-cover opacity-30 animate-fade-in"
-            >
-              <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-gradient-to-l from-black/70 via-black/30 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          </div>
+        {/* Video - Full Height, Left Edge */}
+        <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="absolute inset-0 w-full h-full object-cover opacity-30 animate-fade-in"
+          >
+            <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-l from-black/70 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        </div>
 
-          {/* Right Column: Telegram Feed */}
-          <div className="w-full">
-            <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left text-white">
-              Live from Our Telegram
-            </h2>
-            <TelegramChannelFeed channelUsername="nextwifeai" />
-          </div>
+        {/* Content - Right Side */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto md:pl-[50%] animate-fade-in px-4 md:px-12">
+          <h2 className="text-4xl md:text-5xl font-heading mb-12 text-center md:text-left text-white">
+            Live from Our Telegram
+          </h2>
+          <TelegramChannelFeed channelUsername="nextwifeai" />
         </div>
       </section>
 
