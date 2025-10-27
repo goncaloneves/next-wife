@@ -70,6 +70,27 @@ export const TelegramChannelFeed = ({
     return () => clearInterval(interval);
   }, [channelUsername, refreshInterval, maxPosts]);
 
+  useEffect(() => {
+    if (posts.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const postElements = document.querySelectorAll('.feed-post');
+    postElements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [posts]);
+
   if (loading) {
     return (
       <Card className="p-8 text-center bg-card/80 backdrop-blur border border-border">
