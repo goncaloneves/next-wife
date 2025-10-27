@@ -175,8 +175,8 @@ const Index = () => {
 
       {/* Telegram Channel Feed Section */}
       <section className="relative min-h-screen flex items-center justify-center py-20 px-4 bg-black overflow-hidden">
-        {/* Top fade from black to transparent (blends with red above) */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black via-black/50 to-transparent pointer-events-none z-10" />
+        {/* Top fade from red to black (blends with red section above) */}
+        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-red-900/50 via-black/80 to-black pointer-events-none z-10" />
         
         {/* Video - Full Height, Left Edge */}
         <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block">
@@ -186,10 +186,12 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-30 animate-fade-in mask-soft-edges"
+            className="absolute inset-0 w-full h-full object-cover opacity-30 animate-fade-in"
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
+          {/* Black gradient overlay - intensifies fade on right edge to black */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black pointer-events-none" />
         </div>
 
         {/* Content - Right Side */}
