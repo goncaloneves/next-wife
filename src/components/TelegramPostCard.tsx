@@ -100,7 +100,6 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
       {post.text && (
         <div className="px-6 pb-6">
           <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-            <span className="font-semibold">{channelInfo?.name || 'Channel'}</span>{' '}
             {displayText}
             {shouldTruncate && !expanded && (
               <button
