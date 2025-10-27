@@ -12,6 +12,8 @@ const Index = () => {
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const videoSectionRef = useRef<HTMLDivElement>(null);
+  const feedVideoRef = useRef<HTMLDivElement>(null);
+  const feedContentRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   
   useEffect(() => {
@@ -41,13 +43,21 @@ const Index = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVideoVisible(true);
+            // Add animation class to feed video wrapper and content
+            if (entry.target.classList.contains('feed-video-wrapper')) {
+              entry.target.classList.add('animate-fade-in');
+            }
+            if (entry.target.classList.contains('feed-content-wrapper')) {
+              entry.target.classList.add('animate-fade-in');
+            }
           }
         });
       },
       { threshold: 0.1 }
     );
 
-    if (videoSectionRef.current) observer.observe(videoSectionRef.current);
+    if (feedVideoRef.current) observer.observe(feedVideoRef.current);
+    if (feedContentRef.current) observer.observe(feedContentRef.current);
 
     return () => observer.disconnect();
   }, []);
@@ -197,17 +207,14 @@ const Index = () => {
       {/* Telegram Channel Feed Section */}
       <section ref={videoSectionRef} className="relative min-h-screen flex items-center justify-center py-4 pb-20 bg-black overflow-hidden">
         {/* Video - Full Height, Left Edge with top and right fade */}
-        <div className="absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges">
+        <div ref={feedVideoRef} className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
           <video
             autoPlay
             muted
             loop
             playsInline
             preload="metadata"
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-              isVideoVisible ? 'opacity-30 animate-fade-in' : 'opacity-0'
-            }`}
-            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+            className="absolute inset-0 w-full h-full object-cover opacity-30"
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
@@ -218,7 +225,7 @@ const Index = () => {
         {/* Content - Right Side */}
         <div className="relative z-10 container mx-auto px-0 md:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="px-4 md:w-[55%] md:ml-auto animate-fade-in">
+            <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center md:text-left text-white">
                 Live from Bali 🏝️
               </h2>
