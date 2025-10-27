@@ -38,6 +38,7 @@ export const TelegramChannelFeed = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,7 +61,13 @@ export const TelegramChannelFeed = ({
         const fetchedPosts = data.posts || [];
         
         setAllPosts(fetchedPosts);
-        setDisplayedPosts(fetchedPosts.slice(0, displayCount));
+        
+        // Only set displayed posts on initial load
+        if (isInitialLoad) {
+          setDisplayedPosts(fetchedPosts.slice(0, displayCount));
+          setIsInitialLoad(false);
+        }
+        
         setChannelInfo(data.channelInfo);
         setError(null);
         setLoading(false);
@@ -80,7 +87,9 @@ export const TelegramChannelFeed = ({
   }, [channelUsername, refreshInterval]);
 
   useEffect(() => {
-    setDisplayedPosts(allPosts.slice(0, displayCount));
+    // Preserve current display count if user has scrolled, only update content
+    const currentDisplayCount = Math.max(displayCount, displayedPosts.length);
+    setDisplayedPosts(allPosts.slice(0, currentDisplayCount));
   }, [allPosts, displayCount]);
 
   useEffect(() => {
