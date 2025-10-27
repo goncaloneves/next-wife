@@ -100,10 +100,10 @@ export const TelegramPostCard = ({ post, channelInfo, index }: TelegramPostCardP
           href={post.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors font-medium group"
+          className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors group"
+          aria-label="View on Telegram"
         >
-          View on Telegram 
-          <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          <ExternalLink className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
         </a>
       </div>
     </Card>
