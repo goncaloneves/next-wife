@@ -215,8 +215,8 @@ const Index = () => {
               loop
               playsInline
               preload="metadata"
-              className={`absolute inset-0 w-full h-full object-cover ${isVideoVisible ? 'animate-fade-in' : 'opacity-0'}`}
-              style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+              className="absolute inset-0 w-full h-full object-cover opacity-0 animate-fade-in"
+              style={{ animationDelay: '0.1s', animationFillMode: 'forwards', animationPlayState: isVideoVisible ? 'running' : 'paused' }}
             >
               <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
             </video>
