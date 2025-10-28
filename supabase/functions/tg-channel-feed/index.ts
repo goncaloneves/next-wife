@@ -115,6 +115,10 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
   // Extract post blocks - Telegram uses specific class names
   const postRegex = /<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/g;
   let match;
+  
+  // Debug: Count total data-post attributes for verification
+  const debugPostMatches = html.match(/data-post="([^"]+\/(\d+))"/gi);
+  console.log(`DEBUG: Found ${debugPostMatches?.length || 0} data-post attributes in HTML`);
 
   while ((match = postRegex.exec(html)) !== null) {
     const postId = match[1];
