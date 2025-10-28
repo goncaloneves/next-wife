@@ -225,6 +225,8 @@ const Index = () => {
                   <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
                 </video>
               </div>
+              {/* Colored gradient overlay - adds warmth */}
+              <div className="absolute inset-0 z-15 bg-gradient-to-br from-rose-900/20 via-pink-800/15 to-purple-900/20 pointer-events-none" />
               {/* Top edge - fade to black */}
               <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none z-20" />
               {/* Left edge - strong fade to black */}
