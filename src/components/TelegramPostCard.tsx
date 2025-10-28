@@ -112,7 +112,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
               Your browser does not support the video tag.
             </video>
           ) : (
-            <div className="relative cursor-pointer">
+            <div className="relative cursor-pointer" aria-label="Play on Telegram">
               <img 
                 src={post.media} 
                 alt="Video thumbnail" 
@@ -124,6 +124,9 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
                   <svg className="w-8 h-8 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
+                </div>
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-2 py-1 rounded border border-border bg-background/80 text-foreground text-xs">
+                  Play on Telegram
                 </div>
               </div>
             </div>

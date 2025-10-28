@@ -7,6 +7,11 @@ const corsHeaders = {
 const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 3000; // 3 seconds
 
+// Embed video URL cache (for resolving mp4 from embed pages)
+const embedCache = new Map<string, { url: string | null; timestamp: number }>();
+const EMBED_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+const EMBED_FETCH_TIMEOUT = 2500; // 2.5 seconds
+
 // Parse HTML to extract channel info and posts
 function parseChannelHTML(html: string, channelName: string): { channelInfo: any; posts: any[] } {
   // Extract channel metadata
@@ -113,7 +118,7 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
   const posts: any[] = [];
   
   // Extract post blocks - Telegram uses specific class names
-  const postRegex = /<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/g;
+  const postRegex = /<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)(?=<div class=\"tgme_widget_message\b|$)/g;
   let match;
 
   while ((match = postRegex.exec(html)) !== null) {
@@ -310,7 +315,7 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
       avatar = channelInfo.avatar || null;
     }
 
-    if (text || media) {
+    if (text || media || mediaType === 'video') {
       posts.push({
         id: postId.split('/').pop(),
         text,
@@ -325,6 +330,40 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
   }
 
   return { channelInfo, posts };
+}
+
+// Resolve video URLs from embed pages (with cache and timeout)
+async function resolveEmbedVideoUrl(channelName: string, postId: string): Promise<string | null> {
+  const key = `${channelName}/${postId}`;
+  const now = Date.now();
+  const cached = embedCache.get(key);
+  if (cached && (now - cached.timestamp) < EMBED_CACHE_TTL) {
+    return cached.url;
+  }
+  const embedUrl = `https://t.me/${channelName}/${postId}?single=1&embed=1`;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), EMBED_FETCH_TIMEOUT);
+    const res = await fetch(embedUrl, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!res.ok) throw new Error(`Embed fetch failed: ${res.status}`);
+    const html = await res.text();
+
+    let mp4: string | null = null;
+    const ogMatch = html.match(/<meta\s+(?:property|name)=["']og:video["']\s+content=["']([^"']+\.mp4[^"']*)["']/i);
+    const twMatch = html.match(/<meta\s+(?:property|name)=["']twitter:player:stream["']\s+content=["']([^"']+\.mp4[^"']*)["']/i);
+    const videoTag = html.match(/<video[^>]*src=["']([^"']+\.mp4[^"']*)["']/i);
+    mp4 = (ogMatch?.[1]) || (twMatch?.[1]) || (videoTag?.[1]) || null;
+    if (mp4 && mp4.startsWith('//')) mp4 = 'https:' + mp4;
+
+    embedCache.set(key, { url: mp4, timestamp: now });
+    console.log(`Resolved embed video for ${key}: ${mp4 ? 'success' : 'none'}`);
+    return mp4;
+  } catch (e) {
+    console.warn(`Failed to resolve embed for ${key}:`, e);
+    embedCache.set(key, { url: null, timestamp: Date.now() });
+    return null;
+  }
 }
 
 Deno.serve(async (req) => {
@@ -367,6 +406,27 @@ Deno.serve(async (req) => {
 
     const html = await response.text();
     const result = parseChannelHTML(html, channelName);
+
+    // Attempt to resolve missing video URLs from embed pages (limit 5 per request)
+    const toResolve = result.posts
+      .filter((p: any) => p.mediaType === 'video' && !p.videoUrl)
+      .slice(0, 5);
+
+    if (toResolve.length > 0) {
+      console.log(`Attempting embed resolution for ${toResolve.length} video posts`);
+      const settled = await Promise.allSettled(
+        toResolve.map((p: any) => resolveEmbedVideoUrl(channelName, p.id))
+      );
+      settled.forEach((res, idx) => {
+        if (res.status === 'fulfilled' && res.value) {
+          toResolve[idx].videoUrl = res.value;
+        }
+      });
+    }
+
+    const videoCount = result.posts.filter((p: any) => p.mediaType === 'video').length;
+    const resolvedCount = result.posts.filter((p: any) => p.videoUrl).length;
+    console.log(`Video posts detected: ${videoCount}, with videoUrl: ${resolvedCount}`);
     
     // Sort by date descending (newest first)
     const posts = result.posts.sort((a, b) => {
