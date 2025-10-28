@@ -217,7 +217,7 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className={`absolute inset-0 w-full h-full object-contain ${
+            className={`absolute inset-0 w-full h-full object-cover ${
               isVideoVisible ? 'opacity-100 animate-fade-in' : 'opacity-0'
             }`}
             style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
