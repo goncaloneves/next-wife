@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { ExternalLink } from "lucide-react";
-import { HlsVideoPlayer } from "./HlsVideoPlayer";
 
 interface TelegramPostCardProps {
   post: {
@@ -13,9 +12,6 @@ interface TelegramPostCardProps {
     date: string;
     link: string;
     media?: string | null;
-    mediaType?: 'image' | 'video' | null;
-    videoUrl?: string | null;
-    streamUrl?: string | null;
     avatar?: string | null;
   };
   channelInfo?: {
@@ -83,7 +79,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
       </div>
 
       {/* Media Section */}
-      {post.media && post.mediaType === 'image' && (
+      {post.media && (
         <div className="relative w-full bg-muted/30">
           {!imageLoaded && (
             <Skeleton className="w-full h-64" />
@@ -97,49 +93,6 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
             style={{ maxHeight: '800px', minHeight: '200px' }}
             onLoad={() => setImageLoaded(true)}
           />
-        </div>
-      )}
-
-      {post.media && post.mediaType === 'video' && (
-        <div className="relative w-full bg-muted/30">
-          {post.videoUrl ? (
-            <video
-              poster={post.media}
-              src={post.videoUrl}
-              controls
-              className="w-full object-contain"
-              style={{ maxHeight: '800px', minHeight: '200px' }}
-            >
-              <source src={post.videoUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          ) : post.streamUrl ? (
-            <HlsVideoPlayer
-              src={post.streamUrl}
-              poster={post.media}
-              className="w-full object-contain"
-              style={{ maxHeight: '800px', minHeight: '200px' }}
-            />
-          ) : (
-            <div className="relative cursor-pointer" aria-label="Play on Telegram">
-              <img 
-                src={post.media} 
-                alt="Video thumbnail" 
-                className="w-full object-contain"
-                style={{ maxHeight: '800px', minHeight: '200px' }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                </div>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-2 py-1 rounded border border-border bg-background/80 text-foreground text-xs">
-                  Play on Telegram
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
