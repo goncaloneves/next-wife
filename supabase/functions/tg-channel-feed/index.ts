@@ -285,68 +285,45 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
     const channel = url.searchParams.get('channel') || 'nextwifeai';
-    const before = url.searchParams.get('before'); // Cursor for pagination
-    const limit = parseInt(url.searchParams.get('limit') || '20');
+    const limit = parseInt(url.searchParams.get('limit') || '50');
     const channelName = channel.replace('@', '');
 
-    console.log(`Fetching page from channel: ${channelName} (before: ${before || 'first'}, limit: ${limit})`);
+    console.log(`Fetching posts from channel: ${channelName}`);
 
-    // Check cache - per-page caching
-    const cacheKey = `${channelName}:page:${before || 'first'}:${limit}`;
+    // Check cache
+    const cacheKey = `${channelName}-${limit}`;
     const cached = cache.get(cacheKey);
     const now = Date.now();
 
     if (cached && (now - cached.timestamp) < CACHE_TTL) {
-      console.log(`Returning cached page (${cached.data.posts.length} posts)`);
+      console.log('Returning cached data');
       return new Response(
         JSON.stringify({ ...cached.data, cached: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Fetch single page
-    const pageUrl = before 
-      ? `https://t.me/s/${channelName}?before=${before}`
-      : `https://t.me/s/${channelName}`;
+    // Fetch channel HTML from public preview page
+    const response = await fetch(`https://t.me/s/${channelName}`);
     
-    const response = await fetch(pageUrl);
     if (!response.ok) {
       throw new Error(`Failed to fetch channel: ${response.statusText}`);
     }
 
     const html = await response.text();
-    const result = parseChannelHTML(html, channelName);
     
-    // Sort by date descending (newest first)
-    const posts = result.posts.sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return dateB - dateA;
-    });
-
-    // Extract oldest ID as next cursor
-    const oldestId = posts.length > 0 
-      ? Math.min(...posts.map(p => parseInt(p.id)).filter(id => !isNaN(id)))
-      : null;
-
-    const nextBefore = oldestId ? String(oldestId) : null;
-    const hasMore = posts.length > 0;
-
-    console.log(`Fetched page (before=${before || 'first'}): ${posts.length} posts, nextCursor=${nextBefore}, hasMore=${hasMore}`);
-
-    const responseData = { 
-      channelInfo: before ? undefined : result.channelInfo, // Only include channel info on first page
-      posts,
-      nextBefore,
-      hasMore,
-      cached: false
-    };
+    // Parse HTML to extract channel info and posts
+    const { channelInfo, posts: allPosts } = parseChannelHTML(html, channelName);
+    const posts = allPosts.slice(0, limit);
 
     // Update cache
+    const responseData = { channelInfo, posts };
     cache.set(cacheKey, { data: responseData, timestamp: now });
 
+    console.log(`Successfully fetched ${posts.length} posts`);
+
     return new Response(
-      JSON.stringify(responseData),
+      JSON.stringify({ ...responseData, cached: false }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
