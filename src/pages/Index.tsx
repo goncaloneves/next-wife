@@ -206,7 +206,7 @@ const Index = () => {
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div 
           ref={feedVideoRef} 
-          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[40%] hidden md:block opacity-10"
+          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[40%] hidden md:block opacity-50"
         >
           {/* Background gradient layer */}
           <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-romantic)' }} aria-hidden="true" />
