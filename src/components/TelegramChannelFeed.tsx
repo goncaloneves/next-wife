@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Loader2, ArrowUp } from "lucide-react";
-import { TelegramEmbedPost } from "./TelegramEmbedPost";
+import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 
 interface TelegramPost {
@@ -242,10 +242,11 @@ export const TelegramChannelFeed = ({
       >
         <div className="space-y-4">
           {allPosts.map((post) => (
-            <TelegramEmbedPost
+            <TelegramPostCard
               key={post.id}
-              channelUsername={channelUsername}
-              postId={post.id}
+              post={post}
+              channelInfo={channelInfo}
+              animate={false}
             />
           ))}
           
