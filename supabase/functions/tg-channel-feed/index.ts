@@ -216,9 +216,44 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(postContent);
     const date = dateMatch ? dateMatch[1] : new Date().toISOString();
 
-    // Extract media/image
+    // Extract media (image or video)
+    let media = null;
+    let mediaType: 'image' | 'video' | null = null;
+    
+    // Try to extract image first
     const imageMatch = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
-    const media = imageMatch ? imageMatch[1] : null;
+    if (imageMatch) {
+      media = imageMatch[1];
+      mediaType = 'image';
+    }
+    
+    // Try to extract video if no image found
+    if (!media) {
+      // Pattern 1: Video wrap with background poster image
+      const videoWrapMatch = /<a[^>]*class="[^"]*tgme_widget_message_video_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
+      if (videoWrapMatch) {
+        media = videoWrapMatch[1];
+        mediaType = 'video';
+      }
+    }
+    
+    // Pattern 2: Video player with thumb
+    if (!media) {
+      const videoThumbMatch = /<div[^>]*class="[^"]*tgme_widget_message_video_thumb[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
+      if (videoThumbMatch) {
+        media = videoThumbMatch[1];
+        mediaType = 'video';
+      }
+    }
+    
+    // Pattern 3: Direct video element
+    if (!media) {
+      const videoMatch = /<video[^>]*src="([^"]*)"/.exec(postContent);
+      if (videoMatch) {
+        media = videoMatch[1];
+        mediaType = 'video';
+      }
+    }
 
     // Extract per-message avatar from tgme_widget_message_user_photo
     let avatar = null;
@@ -268,6 +303,7 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
         date,
         link: `https://t.me/${channelName}/${postId.split('/').pop()}`,
         media,
+        mediaType,
         avatar
       });
     }

@@ -12,6 +12,7 @@ interface TelegramPostCardProps {
     date: string;
     link: string;
     media?: string | null;
+    mediaType?: 'image' | 'video' | null;
     avatar?: string | null;
   };
   channelInfo?: {
@@ -79,7 +80,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
       </div>
 
       {/* Media Section */}
-      {post.media && (
+      {post.media && post.mediaType === 'image' && (
         <div className="relative w-full bg-muted/30">
           {!imageLoaded && (
             <Skeleton className="w-full h-64" />
@@ -93,6 +94,20 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
             style={{ maxHeight: '800px', minHeight: '200px' }}
             onLoad={() => setImageLoaded(true)}
           />
+        </div>
+      )}
+
+      {post.media && post.mediaType === 'video' && (
+        <div className="relative w-full bg-muted/30">
+          <video
+            poster={post.media}
+            controls
+            className="w-full object-contain"
+            style={{ maxHeight: '800px', minHeight: '200px' }}
+          >
+            <source src={post.media} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
       )}
 

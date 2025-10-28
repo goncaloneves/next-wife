@@ -10,6 +10,7 @@ interface TelegramPost {
   date: string;
   link: string;
   media?: string | null;
+  mediaType?: 'image' | 'video' | null;
   avatar?: string | null;
 }
 
