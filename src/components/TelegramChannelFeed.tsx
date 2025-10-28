@@ -250,22 +250,12 @@ export const TelegramChannelFeed = ({
             />
           ))}
           
-          {hasMore && (
+          {hasMore && isLoadingMore && (
             <div className="py-8 text-center">
-              {isLoadingMore && (
-                <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">Loading more posts...</span>
-                </div>
-              )}
-            </div>
-          )}
-          
-          {!hasMore && allPosts.length > 10 && (
-            <div className="py-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                You've reached the end • {allPosts.length} posts total
-              </p>
+              <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-sm">Loading more posts...</span>
+              </div>
             </div>
           )}
         </div>
