@@ -98,7 +98,7 @@ const Index = () => {
   return (
     <div className="min-h-screen" style={{ background: 'var(--gradient-romantic)' }}>
       {/* Hero Section with Video Background */}
-      <header ref={heroRef} className="relative h-screen flex flex-col justify-end overflow-hidden pb-12 opacity-0">
+      <header ref={heroRef} className="relative h-screen min-h-[600px] flex flex-col justify-end overflow-hidden pb-12 opacity-0">
         {/* Top Navigation Bar */}
         <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
           {/* Logo Profile Button - Left */}
