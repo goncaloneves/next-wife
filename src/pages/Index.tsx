@@ -227,11 +227,11 @@ const Index = () => {
           {/* Overall opacity layer */}
           <div className="absolute inset-0 bg-black/70 pointer-events-none z-10" />
           {/* Top edge - fade to black */}
-          <div className="absolute inset-x-0 top-0 h-[20%] bg-gradient-to-b from-black/70 via-black/50 to-transparent pointer-events-none z-20" />
+          <div className="absolute inset-x-0 top-0 h-[20%] bg-gradient-to-b from-black via-black/70 to-transparent pointer-events-none z-20" />
           {/* Left edge - strong fade to black */}
-          <div className="absolute inset-y-0 left-0 w-[18%] bg-gradient-to-r from-black/70 via-black/50 to-transparent pointer-events-none z-20" />
+          <div className="absolute inset-y-0 left-0 w-[18%] bg-gradient-to-r from-black via-black/70 to-transparent pointer-events-none z-20" />
           {/* Right edge - strong fade to black */}
-          <div className="absolute inset-y-0 right-0 w-[18%] bg-gradient-to-l from-black/70 via-black/50 to-transparent pointer-events-none z-20" />
+          <div className="absolute inset-y-0 right-0 w-[18%] bg-gradient-to-l from-black via-black/70 to-transparent pointer-events-none z-20" />
         </div>
 
         {/* Content - Right Side */}
