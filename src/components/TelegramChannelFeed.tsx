@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, ArrowUp } from "lucide-react";
+import { Loader2, ArrowUp, X } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { formatDistanceToNow } from "date-fns";
 
 interface TelegramPost {
   id: string;
@@ -42,6 +45,7 @@ export const TelegramChannelFeed = ({
   const [pendingNewCount, setPendingNewCount] = useState(0);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const [selectedPost, setSelectedPost] = useState<TelegramPost | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -226,50 +230,128 @@ export const TelegramChannelFeed = ({
 
   if (layout === 'grid') {
     return (
-      <div className="relative">
-        {pendingNewCount > 0 && (
-          <Button
-            onClick={handleNewPostsClick}
-            className="absolute -top-12 left-1/2 -translate-x-1/2 z-10 shadow-lg"
-            size="sm"
-          >
-            <ArrowUp className="w-4 h-4 mr-2" />
-            {pendingNewCount} new {pendingNewCount === 1 ? 'post' : 'posts'}
-          </Button>
-        )}
-        
-        <div
-          ref={listRef}
-          onScroll={handleScroll}
-          className="h-[70vh] max-h-[700px] overflow-y-auto"
-        >
-          <div className="grid grid-cols-3 gap-1">
-            {allPosts.filter(post => post.media).map((post) => (
-              <div
-                key={post.id}
-                className="aspect-square cursor-pointer overflow-hidden group relative"
-                onClick={() => window.open(post.link, '_blank', 'noopener,noreferrer')}
-              >
-                <img
-                  src={post.media!}
-                  alt="Post"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-              </div>
-            ))}
-          </div>
-          
-          {hasMore && isLoadingMore && (
-            <div className="py-8 text-center">
-              <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">Loading more posts...</span>
-              </div>
-            </div>
+      <>
+        <div className="relative">
+          {pendingNewCount > 0 && (
+            <Button
+              onClick={handleNewPostsClick}
+              className="absolute -top-12 left-1/2 -translate-x-1/2 z-10 shadow-lg"
+              size="sm"
+            >
+              <ArrowUp className="w-4 h-4 mr-2" />
+              {pendingNewCount} new {pendingNewCount === 1 ? 'post' : 'posts'}
+            </Button>
           )}
+          
+          <div
+            ref={listRef}
+            onScroll={handleScroll}
+            className="h-[70vh] max-h-[700px] overflow-y-auto"
+          >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
+              {allPosts.filter(post => post.media).map((post) => (
+                <div
+                  key={post.id}
+                  className="aspect-[3/4] cursor-pointer overflow-hidden group relative"
+                  onClick={() => setSelectedPost(post)}
+                >
+                  <img
+                    src={post.media!}
+                    alt="Post"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                </div>
+              ))}
+            </div>
+            
+            {hasMore && isLoadingMore && (
+              <div className="py-8 text-center">
+                <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">Loading more posts...</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+
+        {/* Instagram-style Lightbox */}
+        <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
+          <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black border-none">
+            <Button
+              onClick={() => setSelectedPost(null)}
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-4 z-50 rounded-full hover:bg-white/10 text-white"
+              aria-label="Close"
+            >
+              <X className="w-6 h-6" />
+            </Button>
+            
+            {selectedPost && (
+              <div className="flex flex-col md:flex-row max-h-[95vh]">
+                {/* Image */}
+                <div className="flex-shrink-0 flex items-center justify-center bg-black md:max-w-[60vw]">
+                  <img
+                    src={selectedPost.media!}
+                    alt="Post media fullscreen"
+                    className="max-h-[95vh] w-auto object-contain"
+                  />
+                </div>
+                
+                {/* Content Sidebar */}
+                <div className="md:w-[400px] bg-background flex flex-col max-h-[95vh]">
+                  {/* Header */}
+                  <div className="flex items-center gap-3 p-4 border-b border-border">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage 
+                        src={selectedPost.avatar || channelInfo?.avatar || undefined} 
+                        alt={channelInfo?.name || 'Channel'}
+                      />
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                        {(channelInfo?.name || 'CH').slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm text-foreground">
+                        {channelInfo?.name || 'Channel'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Caption */}
+                  <div className="flex-1 overflow-y-auto p-4">
+                    {selectedPost.text && (
+                      <div className="flex gap-3">
+                        <Avatar className="w-10 h-10 flex-shrink-0">
+                          <AvatarImage 
+                            src={selectedPost.avatar || channelInfo?.avatar || undefined} 
+                            alt={channelInfo?.name || 'Channel'}
+                          />
+                          <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                            {(channelInfo?.name || 'CH').slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm">
+                            <span className="font-semibold mr-2">{channelInfo?.name || 'Channel'}</span>
+                            <span className="text-foreground whitespace-pre-wrap">{selectedPost.text}</span>
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            {formatDistanceToNow(new Date(selectedPost.date), { addSuffix: true })}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </>
     );
   }
 
