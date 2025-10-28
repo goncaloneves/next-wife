@@ -301,7 +301,7 @@ export const TelegramChannelFeed = ({
           )}
           
           <div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {postsWithMedia.map((post) => (
                 <div
                   key={post.id}
