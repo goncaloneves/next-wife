@@ -98,7 +98,7 @@ const Index = () => {
   return (
     <div className="min-h-screen" style={{ background: 'var(--gradient-romantic)' }}>
       {/* Hero Section with Video Background */}
-      <header ref={heroRef} className="relative h-screen flex flex-col justify-end overflow-hidden pb-12 opacity-0">
+      <header ref={heroRef} className="relative h-screen min-h-[600px] flex flex-col justify-end overflow-hidden pb-12 opacity-0">
         {/* Top Navigation Bar */}
         <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
           {/* Logo Profile Button - Left */}
@@ -205,11 +205,11 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section ref={videoSectionRef} className="relative min-h-screen flex items-center justify-center py-4 pb-20 bg-black overflow-hidden">
+      <section ref={videoSectionRef} className="relative min-h-[600px] flex items-center justify-center pt-0 pb-12 bg-black overflow-hidden">
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div 
           ref={feedVideoRef} 
-          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges opacity-30"
+          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block opacity-30"
         >
           <video
             autoPlay
@@ -217,22 +217,26 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className={`absolute inset-0 w-full h-full object-cover ${
+            className={`absolute inset-0 w-full h-full object-contain ${
               isVideoVisible ? 'opacity-100 animate-fade-in' : 'opacity-0'
             }`}
             style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
-          {/* Black gradient overlay - intensifies fade on right edge to black */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/60 to-black pointer-events-none" />
+          {/* Top edge - fade to black */}
+          <div className="absolute inset-x-0 top-0 h-[30%] bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none" />
+          {/* Left edge - strong fade to black */}
+          <div className="absolute inset-y-0 left-0 w-[28%] bg-gradient-to-r from-black via-black/90 to-transparent pointer-events-none" />
+          {/* Right edge - strong fade to black */}
+          <div className="absolute inset-y-0 right-0 w-[28%] bg-gradient-to-l from-black via-black/90 to-transparent pointer-events-none" />
         </div>
 
         {/* Content - Right Side */}
         <div className="relative z-10 container mx-auto px-0 md:px-8">
           <div className="max-w-6xl mx-auto">
             <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center md:text-left text-white">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-6 text-center md:text-left text-white">
                 Live from Bali 🏝️
               </h2>
               <TelegramChannelFeed channelUsername="nextwifeai" />
