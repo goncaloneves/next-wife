@@ -180,6 +180,27 @@ export const TelegramChannelFeed = ({
     };
   }, [channelUsername]);
 
+  // Keyboard navigation for grid layout
+  useEffect(() => {
+    if (layout !== 'grid' || !selectedPost) return;
+
+    const postsWithMedia = allPosts.filter(post => post.media);
+    const currentIndex = postsWithMedia.findIndex(p => p.id === selectedPost.id);
+    const hasPrevious = currentIndex > 0;
+    const hasNext = currentIndex < postsWithMedia.length - 1;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && hasPrevious) {
+        setSelectedPost(postsWithMedia[currentIndex - 1]);
+      } else if (e.key === 'ArrowRight' && hasNext) {
+        setSelectedPost(postsWithMedia[currentIndex + 1]);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [layout, selectedPost, allPosts]);
+
   const handleScroll = () => {
     if (!listRef.current) return;
     
@@ -241,21 +262,6 @@ export const TelegramChannelFeed = ({
         setSelectedPost(postsWithMedia[currentIndex + 1]);
       }
     };
-
-    useEffect(() => {
-      if (!selectedPost) return;
-
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'ArrowLeft') {
-          navigateToPost('prev');
-        } else if (e.key === 'ArrowRight') {
-          navigateToPost('next');
-        }
-      };
-
-      window.addEventListener('keydown', handleKeyDown);
-      return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [selectedPost, currentIndex, postsWithMedia]);
 
     return (
       <>
