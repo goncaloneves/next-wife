@@ -201,17 +201,40 @@ export const TelegramChannelFeed = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [layout, selectedPost, allPosts]);
 
+  // Window scroll listener for grid layout
+  useEffect(() => {
+    if (layout !== 'grid') return;
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [layout, hasMore, isLoadingMore]);
+
   const handleScroll = () => {
-    if (!listRef.current) return;
-    
-    const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-    const nearTop = scrollTop < 100;
-    setIsNearTop(nearTop);
-    
-    // Load more when near bottom
-    const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
-    if (nearBottom && hasMore && !isLoadingMore) {
-      fetchNextPage();
+    if (layout === 'grid') {
+      // For grid, use window scroll
+      const scrollTop = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = window.innerHeight;
+      
+      const nearTop = scrollTop < 100;
+      setIsNearTop(nearTop);
+      
+      const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
+      if (nearBottom && hasMore && !isLoadingMore) {
+        fetchNextPage();
+      }
+    } else {
+      // For list, use container scroll
+      if (!listRef.current) return;
+      
+      const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+      const nearTop = scrollTop < 100;
+      setIsNearTop(nearTop);
+      
+      const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
+      if (nearBottom && hasMore && !isLoadingMore) {
+        fetchNextPage();
+      }
     }
   };
 
@@ -277,11 +300,7 @@ export const TelegramChannelFeed = ({
             </Button>
           )}
           
-          <div
-            ref={listRef}
-            onScroll={handleScroll}
-            className="h-[70vh] max-h-[700px] overflow-y-auto"
-          >
+          <div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
               {postsWithMedia.map((post) => (
                 <div
