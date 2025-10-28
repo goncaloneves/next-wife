@@ -285,100 +285,60 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
     const channel = url.searchParams.get('channel') || 'nextwifeai';
-    const max = parseInt(url.searchParams.get('max') || '200');
-    const maxPages = parseInt(url.searchParams.get('maxPages') || '15');
+    const before = url.searchParams.get('before'); // Cursor for pagination
+    const limit = parseInt(url.searchParams.get('limit') || '20');
     const channelName = channel.replace('@', '');
 
-    console.log(`Fetching posts from channel: ${channelName} (max: ${max}, maxPages: ${maxPages})`);
+    console.log(`Fetching page from channel: ${channelName} (before: ${before || 'first'}, limit: ${limit})`);
 
-    // Check cache
-    const cacheKey = `${channelName}:full:max:${max}`;
+    // Check cache - per-page caching
+    const cacheKey = `${channelName}:page:${before || 'first'}:${limit}`;
     const cached = cache.get(cacheKey);
     const now = Date.now();
 
     if (cached && (now - cached.timestamp) < CACHE_TTL) {
-      console.log(`Returning cached data (${cached.data.posts.length} posts)`);
+      console.log(`Returning cached page (${cached.data.posts.length} posts)`);
       return new Response(
         JSON.stringify({ ...cached.data, cached: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Fetch first page
-    const firstResponse = await fetch(`https://t.me/s/${channelName}`);
-    if (!firstResponse.ok) {
-      throw new Error(`Failed to fetch channel: ${firstResponse.statusText}`);
+    // Fetch single page
+    const pageUrl = before 
+      ? `https://t.me/s/${channelName}?before=${before}`
+      : `https://t.me/s/${channelName}`;
+    
+    const response = await fetch(pageUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch channel: ${response.statusText}`);
     }
 
-    const firstHtml = await firstResponse.text();
-    const firstResult = parseChannelHTML(firstHtml, channelName);
+    const html = await response.text();
+    const result = parseChannelHTML(html, channelName);
     
-    // Use a Map to deduplicate by ID
-    const postsMap = new Map();
-    firstResult.posts.forEach(post => postsMap.set(post.id, post));
-    
-    let channelInfo = firstResult.channelInfo;
-    let pagesFetched = 1;
-    let oldestId = firstResult.posts.length > 0 
-      ? Math.min(...firstResult.posts.map(p => parseInt(p.id)).filter(id => !isNaN(id)))
-      : null;
-
-    console.log(`Page 1: fetched ${firstResult.posts.length} posts, oldest ID: ${oldestId}`);
-
-    // Fetch older pages if needed
-    while (postsMap.size < max && pagesFetched < maxPages && oldestId) {
-      await new Promise(resolve => setTimeout(resolve, 150)); // Polite delay
-      
-      const pageUrl = `https://t.me/s/${channelName}?before=${oldestId}`;
-      console.log(`Fetching page ${pagesFetched + 1}: ${pageUrl}`);
-      
-      const pageResponse = await fetch(pageUrl);
-      if (!pageResponse.ok) {
-        console.warn(`Failed to fetch page ${pagesFetched + 1}: ${pageResponse.statusText}`);
-        break;
-      }
-
-      const pageHtml = await pageResponse.text();
-      const pageResult = parseChannelHTML(pageHtml, channelName);
-      
-      if (pageResult.posts.length === 0) {
-        console.log(`No more posts found on page ${pagesFetched + 1}, stopping`);
-        break;
-      }
-
-      const sizeBefore = postsMap.size;
-      pageResult.posts.forEach(post => postsMap.set(post.id, post));
-      const newPosts = postsMap.size - sizeBefore;
-      
-      if (newPosts === 0) {
-        console.log(`No new posts on page ${pagesFetched + 1}, stopping`);
-        break;
-      }
-
-      const newOldestId = Math.min(...pageResult.posts.map(p => parseInt(p.id)).filter(id => !isNaN(id)));
-      if (newOldestId >= oldestId) {
-        console.log(`Oldest ID didn't decrease (${newOldestId} >= ${oldestId}), stopping`);
-        break;
-      }
-      
-      oldestId = newOldestId;
-      pagesFetched++;
-      console.log(`Page ${pagesFetched}: fetched ${pageResult.posts.length} posts (${newPosts} new), total: ${postsMap.size}, oldest ID: ${oldestId}`);
-    }
-
-    // Convert to array and sort by date descending (newest first)
-    const allPosts = Array.from(postsMap.values()).sort((a, b) => {
+    // Sort by date descending (newest first)
+    const posts = result.posts.sort((a, b) => {
       const dateA = new Date(a.date).getTime();
       const dateB = new Date(b.date).getTime();
       return dateB - dateA;
     });
 
-    console.log(`Completed: fetched ${pagesFetched} pages, total ${allPosts.length} posts`);
+    // Extract oldest ID as next cursor
+    const oldestId = posts.length > 0 
+      ? Math.min(...posts.map(p => parseInt(p.id)).filter(id => !isNaN(id)))
+      : null;
+
+    const nextBefore = oldestId ? String(oldestId) : null;
+    const hasMore = posts.length > 0;
+
+    console.log(`Fetched page (before=${before || 'first'}): ${posts.length} posts, nextCursor=${nextBefore}, hasMore=${hasMore}`);
 
     const responseData = { 
-      channelInfo, 
-      posts: allPosts,
-      totalPosts: allPosts.length,
+      channelInfo: before ? undefined : result.channelInfo, // Only include channel info on first page
+      posts,
+      nextBefore,
+      hasMore,
       cached: false
     };
 
