@@ -205,11 +205,11 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section ref={videoSectionRef} className="relative min-h-[600px] flex items-center justify-center pt-0 pb-12 bg-black overflow-hidden">
+      <section ref={videoSectionRef} className="relative min-h-[500px] md:min-h-[450px] flex items-center justify-center pt-0 pb-12 bg-black overflow-hidden">
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div 
           ref={feedVideoRef} 
-          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block opacity-30"
+          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[40%] hidden md:block opacity-30"
         >
           <video
             autoPlay
