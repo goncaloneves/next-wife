@@ -227,9 +227,9 @@ const Index = () => {
           {/* Top edge - fade to black */}
           <div className="absolute inset-x-0 top-0 h-[30%] bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none" />
           {/* Left edge - strong fade to black */}
-          <div className="absolute inset-y-0 left-0 w-[35%] bg-gradient-to-r from-black via-black/90 to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 w-[28%] bg-gradient-to-r from-black via-black/90 to-transparent pointer-events-none" />
           {/* Right edge - strong fade to black */}
-          <div className="absolute inset-y-0 right-0 w-[35%] bg-gradient-to-l from-black via-black/90 to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-[28%] bg-gradient-to-l from-black via-black/90 to-transparent pointer-events-none" />
         </div>
 
         {/* Content - Right Side */}
