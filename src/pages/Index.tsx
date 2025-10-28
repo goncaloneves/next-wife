@@ -209,7 +209,7 @@ const Index = () => {
             {/* Video - Left Side, positioned relative to centered container */}
             <div 
               ref={feedVideoRef} 
-              className="feed-video-wrapper absolute top-0 -bottom-12 left-0 w-1/2 md:w-[40%] hidden md:block opacity-80"
+              className="feed-video-wrapper absolute top-0 -bottom-12 left-0 w-1/2 md:w-[40%] hidden md:block opacity-60"
             >
               {/* Video layer */}
               <div className="absolute inset-0 z-10">
