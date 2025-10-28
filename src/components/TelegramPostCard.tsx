@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { ExternalLink } from "lucide-react";
+import { HlsVideoPlayer } from "./HlsVideoPlayer";
 
 interface TelegramPostCardProps {
   post: {
@@ -14,6 +15,7 @@ interface TelegramPostCardProps {
     media?: string | null;
     mediaType?: 'image' | 'video' | null;
     videoUrl?: string | null;
+    streamUrl?: string | null;
     avatar?: string | null;
   };
   channelInfo?: {
@@ -111,6 +113,13 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
               <source src={post.videoUrl} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
+          ) : post.streamUrl ? (
+            <HlsVideoPlayer
+              src={post.streamUrl}
+              poster={post.media}
+              className="w-full object-contain"
+              style={{ maxHeight: '800px', minHeight: '200px' }}
+            />
           ) : (
             <div className="relative cursor-pointer" aria-label="Play on Telegram">
               <img 

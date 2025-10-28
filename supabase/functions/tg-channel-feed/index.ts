@@ -117,11 +117,13 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
   
   const posts: any[] = [];
   
-  // Extract post blocks - Telegram uses specific class names
-  const postRegex = /<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)(?=<div class=\"tgme_widget_message\b|$)/g;
+  // Extract post blocks - class-order tolerant regex anchored to data-post
+  const postRegex = /<div[^>]*data-post="([^"]+)"[^>]*class="[^"]*\btgme_widget_message\b[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*data-post="|$)/gi;
   let match;
+  let matchCount = 0;
 
   while ((match = postRegex.exec(html)) !== null) {
+    matchCount++;
     const postId = match[1];
     const postContent = match[2];
 
@@ -225,47 +227,53 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     let media = null;
     let mediaType: 'image' | 'video' | null = null;
     let videoUrl: string | null = null;
+    let streamUrl: string | null = null;
     
-    // Try to extract image first
-    const imageMatch = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
-    if (imageMatch) {
-      media = imageMatch[1];
-      mediaType = 'image';
+    // Always check for video player first (highest priority)
+    const videoPlayerMatch = /<div[^>]*class="[^"]*tgme_widget_message_video_player[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
+    if (videoPlayerMatch) {
+      mediaType = 'video';
+      const playerContent = videoPlayerMatch[1];
+      
+      // Extract video URL candidates (MP4 or HLS)
+      const mp4Match = /(?:data-(?:src|video|content)|src)="([^"]+\.mp4[^"]*)"/.exec(playerContent) ||
+                       /<video[^>]*src="([^"]+\.mp4[^"]*)"/.exec(playerContent) ||
+                       /<source[^>]*type="video\/mp4"[^>]*src="([^"]+)"/.exec(playerContent);
+      const hlsMatch = /<source[^>]*type="application\/x-mpegURL"[^>]*src="([^"]+)"/.exec(playerContent);
+      
+      if (mp4Match) {
+        videoUrl = mp4Match[1];
+        if (videoUrl.startsWith('//')) videoUrl = 'https:' + videoUrl;
+      }
+      if (hlsMatch) {
+        streamUrl = hlsMatch[1];
+        if (streamUrl.startsWith('//')) streamUrl = 'https:' + streamUrl;
+      }
+      
+      // Extract thumbnail/poster
+      const thumbMatch = /(?:background-image|poster):\s*url\(['"]?([^'"]+)['"]?\)/.exec(playerContent) ||
+                        /style="[^"]*background-image:url\('([^']*)'/.exec(playerContent);
+      if (thumbMatch) {
+        media = thumbMatch[1];
+      }
+      
+      console.info(`Found video player for ${postId}: videoUrl=${videoUrl}, streamUrl=${streamUrl}, thumb=${media}`);
     }
     
-    // Try to extract video using the video player class (PRIMARY METHOD)
-    if (!media) {
-      const videoPlayerMatch = /<div[^>]*class="[^"]*tgme_widget_message_video_player[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
-      if (videoPlayerMatch) {
-        mediaType = 'video';
-        const playerContent = videoPlayerMatch[1];
-        
-        // Try to extract video URL from data attributes
-        const videoUrlMatch = /data-(?:src|video|content)="([^"]+\.mp4[^"]*)"/.exec(playerContent) ||
-                             /src="([^"]+\.mp4[^"]*)"/.exec(playerContent) ||
-                             /<video[^>]*src="([^"]*)"/.exec(playerContent);
-        if (videoUrlMatch) {
-          videoUrl = videoUrlMatch[1];
-          if (videoUrl.startsWith('//')) videoUrl = 'https:' + videoUrl;
-        }
-        
-        // Extract thumbnail/poster from the video player
-        const thumbMatch = /(?:background-image|poster):\s*url\(['"]?([^'"]+)['"]?\)/.exec(playerContent) ||
-                          /style="[^"]*background-image:url\('([^']*)'/.exec(playerContent);
-        if (thumbMatch) {
-          media = thumbMatch[1];
-        }
-        
-        console.info(`Found video player for ${postId}: videoUrl=${videoUrl}, thumb=${media}`);
+    // Fallback: Try image if not a video
+    if (!mediaType) {
+      const imageMatch = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
+      if (imageMatch) {
+        media = imageMatch[1];
+        mediaType = 'image';
       }
     }
     
-    // Fallback: Try to extract video from video wrap
-    if (!media || !videoUrl) {
+    // Fallback: Try video wrap for thumbnail if we missed it
+    if (mediaType === 'video' && !media) {
       const videoWrapMatch = /<a[^>]*class="[^"]*tgme_widget_message_video_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
       if (videoWrapMatch) {
         media = videoWrapMatch[1];
-        mediaType = 'video';
       }
     }
     
@@ -324,21 +332,23 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
         media,
         mediaType,
         videoUrl,
+        streamUrl,
         avatar
       });
     }
   }
 
+  console.log(`Found ${matchCount} messages, parsed ${posts.length} posts`);
   return { channelInfo, posts };
 }
 
-// Resolve video URLs from embed pages (with cache and timeout)
-async function resolveEmbedVideoUrl(channelName: string, postId: string): Promise<string | null> {
+// Resolve video URLs from embed pages (with cache and timeout) - supports MP4 and HLS
+async function resolveEmbedVideoUrl(channelName: string, postId: string): Promise<{ videoUrl: string | null; streamUrl: string | null }> {
   const key = `${channelName}/${postId}`;
   const now = Date.now();
   const cached = embedCache.get(key);
   if (cached && (now - cached.timestamp) < EMBED_CACHE_TTL) {
-    return cached.url;
+    return cached.url ? { videoUrl: cached.url, streamUrl: null } : { videoUrl: null, streamUrl: null };
   }
   const embedUrl = `https://t.me/${channelName}/${postId}?single=1&embed=1`;
   try {
@@ -350,19 +360,34 @@ async function resolveEmbedVideoUrl(channelName: string, postId: string): Promis
     const html = await res.text();
 
     let mp4: string | null = null;
-    const ogMatch = html.match(/<meta\s+(?:property|name)=["']og:video["']\s+content=["']([^"']+\.mp4[^"']*)["']/i);
-    const twMatch = html.match(/<meta\s+(?:property|name)=["']twitter:player:stream["']\s+content=["']([^"']+\.mp4[^"']*)["']/i);
-    const videoTag = html.match(/<video[^>]*src=["']([^"']+\.mp4[^"']*)["']/i);
-    mp4 = (ogMatch?.[1]) || (twMatch?.[1]) || (videoTag?.[1]) || null;
+    let hls: string | null = null;
+    
+    // Try multiple patterns for MP4
+    const ogMatch = html.match(/<meta\s+(?:property|name)=["']og:video(?::url|:secure_url)?["']\s+content=["']([^"']+)["']/i);
+    const twMatch = html.match(/<meta\s+(?:property|name)=["']twitter:player:stream["']\s+content=["']([^"']+)["']/i);
+    const videoTag = html.match(/<video[^>]*src=["']([^"']+)["']/i);
+    const sourceMp4 = html.match(/<source[^>]*type=["']video\/mp4["'][^>]*src=["']([^"']+)["']/i);
+    const jsonMp4 = html.match(/"(?:url|src)"\s*:\s*"([^"]+\.mp4[^"]*)"/i);
+    
+    // Try pattern for HLS
+    const sourceHls = html.match(/<source[^>]*type=["']application\/x-mpegURL["'][^>]*src=["']([^"']+)["']/i);
+    const jsonHls = html.match(/"(?:url|src)"\s*:\s*"([^"]+\.m3u8[^"]*)"/i);
+    
+    mp4 = ogMatch?.[1] || twMatch?.[1] || videoTag?.[1] || sourceMp4?.[1] || jsonMp4?.[1] || null;
+    hls = sourceHls?.[1] || jsonHls?.[1] || null;
+    
     if (mp4 && mp4.startsWith('//')) mp4 = 'https:' + mp4;
+    if (hls && hls.startsWith('//')) hls = 'https:' + hls;
 
-    embedCache.set(key, { url: mp4, timestamp: now });
-    console.log(`Resolved embed video for ${key}: ${mp4 ? 'success' : 'none'}`);
-    return mp4;
+    // Prioritize MP4, store HLS as fallback
+    const result = { videoUrl: mp4, streamUrl: hls };
+    embedCache.set(key, { url: mp4 || hls, timestamp: now });
+    console.log(`Resolved embed for ${key}: mp4=${!!mp4}, hls=${!!hls}`);
+    return result;
   } catch (e) {
     console.warn(`Failed to resolve embed for ${key}:`, e);
     embedCache.set(key, { url: null, timestamp: Date.now() });
-    return null;
+    return { videoUrl: null, streamUrl: null };
   }
 }
 
@@ -409,7 +434,7 @@ Deno.serve(async (req) => {
 
     // Attempt to resolve missing video URLs from embed pages (limit 5 per request)
     const toResolve = result.posts
-      .filter((p: any) => p.mediaType === 'video' && !p.videoUrl)
+      .filter((p: any) => p.mediaType === 'video' && !p.videoUrl && !p.streamUrl)
       .slice(0, 5);
 
     if (toResolve.length > 0) {
@@ -419,14 +444,16 @@ Deno.serve(async (req) => {
       );
       settled.forEach((res, idx) => {
         if (res.status === 'fulfilled' && res.value) {
-          toResolve[idx].videoUrl = res.value;
+          if (res.value.videoUrl) toResolve[idx].videoUrl = res.value.videoUrl;
+          if (res.value.streamUrl) toResolve[idx].streamUrl = res.value.streamUrl;
         }
       });
     }
 
     const videoCount = result.posts.filter((p: any) => p.mediaType === 'video').length;
-    const resolvedCount = result.posts.filter((p: any) => p.videoUrl).length;
-    console.log(`Video posts detected: ${videoCount}, with videoUrl: ${resolvedCount}`);
+    const resolvedMp4 = result.posts.filter((p: any) => p.videoUrl).length;
+    const resolvedHls = result.posts.filter((p: any) => p.streamUrl).length;
+    console.log(`Video posts: ${videoCount}, with MP4: ${resolvedMp4}, with HLS: ${resolvedHls}`);
     
     // Sort by date descending (newest first)
     const posts = result.posts.sort((a, b) => {

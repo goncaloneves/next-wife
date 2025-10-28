@@ -12,6 +12,7 @@ interface TelegramPost {
   media?: string | null;
   mediaType?: 'image' | 'video' | null;
   videoUrl?: string | null;
+  streamUrl?: string | null;
   avatar?: string | null;
 }
 
