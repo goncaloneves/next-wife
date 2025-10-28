@@ -206,7 +206,7 @@ const Index = () => {
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div 
           ref={feedVideoRef} 
-          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[40%] hidden md:block opacity-50"
+          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[35%] lg:w-[30%] hidden md:block opacity-50"
         >
           {/* Background gradient layer */}
           <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-romantic)' }} aria-hidden="true" />
@@ -235,7 +235,7 @@ const Index = () => {
         {/* Content - Right Side */}
         <div className="relative z-10 container mx-auto px-0 md:px-8">
           <div className="max-w-6xl mx-auto">
-            <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+            <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[60%] lg:w-[65%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-6 text-center md:text-left text-white">
                 Live from Bali 🏝️
               </h2>
