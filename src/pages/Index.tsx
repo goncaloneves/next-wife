@@ -209,7 +209,7 @@ const Index = () => {
             {/* Video - Left Side, positioned relative to centered container */}
             <div 
               ref={feedVideoRef} 
-              className="feed-video-wrapper absolute top-0 -bottom-12 left-0 w-1/2 md:w-[40%] hidden md:block opacity-50"
+              className="feed-video-wrapper absolute top-0 -bottom-12 left-0 w-1/2 md:w-[40%] hidden md:block opacity-30"
             >
               {/* Background gradient layer */}
               <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-romantic)' }} aria-hidden="true" />
@@ -226,6 +226,8 @@ const Index = () => {
                 >
                   <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
                 </video>
+                {/* Red overlay for reddish tint */}
+                <div className="absolute inset-0 bg-[hsl(350,60%,40%)] mix-blend-multiply opacity-40" />
               </div>
               {/* Top edge - fade to black */}
               <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none z-20" />
