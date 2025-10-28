@@ -203,39 +203,40 @@ const Index = () => {
 
       {/* Telegram Channel Feed Section */}
       <section ref={videoSectionRef} className="relative min-h-[500px] md:min-h-[450px] flex items-center justify-center pt-0 pb-12 bg-black overflow-hidden">
-        {/* Video - Full Height, Left Edge with top and right fade */}
-        <div 
-          ref={feedVideoRef} 
-          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[35%] lg:w-[30%] hidden md:block opacity-50"
-        >
-          {/* Background gradient layer */}
-          <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-romantic)' }} aria-hidden="true" />
-          {/* Video layer */}
-          <div className="absolute inset-0 z-10">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="absolute inset-0 w-full h-full object-cover opacity-0 animate-fade-in"
-              style={{ animationDelay: '0.1s', animationFillMode: 'forwards', animationPlayState: isVideoVisible ? 'running' : 'paused' }}
+        <div className="relative z-10 container mx-auto px-0 md:px-8 h-full">
+          <div className="max-w-6xl mx-auto relative h-full">
+            
+            {/* Video - Left Side, positioned relative to centered container */}
+            <div 
+              ref={feedVideoRef} 
+              className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[40%] hidden md:block opacity-50"
             >
-              <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
-            </video>
-          </div>
-          {/* Top edge - fade to black */}
-          <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none z-20" />
-          {/* Left edge - strong fade to black */}
-          <div className="absolute inset-y-0 left-0 w-[15%] bg-gradient-to-r from-black via-black/40 to-transparent pointer-events-none z-20" />
-          {/* Right edge - strong fade to black */}
-          <div className="absolute inset-y-0 right-0 w-[15%] bg-gradient-to-l from-black via-black/40 to-transparent pointer-events-none z-20" />
-        </div>
+              {/* Background gradient layer */}
+              <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-romantic)' }} aria-hidden="true" />
+              {/* Video layer */}
+              <div className="absolute inset-0 z-10">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="absolute inset-0 w-full h-full object-cover opacity-0 animate-fade-in"
+                  style={{ animationDelay: '0.1s', animationFillMode: 'forwards', animationPlayState: isVideoVisible ? 'running' : 'paused' }}
+                >
+                  <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
+                </video>
+              </div>
+              {/* Top edge - fade to black */}
+              <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none z-20" />
+              {/* Left edge - strong fade to black */}
+              <div className="absolute inset-y-0 left-0 w-[15%] bg-gradient-to-r from-black via-black/40 to-transparent pointer-events-none z-20" />
+              {/* Right edge - strong fade to black */}
+              <div className="absolute inset-y-0 right-0 w-[15%] bg-gradient-to-l from-black via-black/40 to-transparent pointer-events-none z-20" />
+            </div>
 
-        {/* Content - Right Side */}
-        <div className="relative z-10 container mx-auto px-0 md:px-8">
-          <div className="max-w-6xl mx-auto">
-            <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[60%] lg:w-[65%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+            {/* Content - Right Side */}
+            <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-6 text-center md:text-left text-white">
                 Live from Bali 🏝️
               </h2>
