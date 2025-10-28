@@ -46,7 +46,7 @@ export const TelegramChannelFeed = ({
   const fetchPosts = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&max=200`,
         {
           headers: {
             'Content-Type': 'application/json',
