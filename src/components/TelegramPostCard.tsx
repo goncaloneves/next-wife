@@ -3,6 +3,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { ExternalLink, X } from "lucide-react";
 
@@ -129,16 +130,18 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
       {/* Lightbox - outside Card to prevent click propagation */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black/95 border-none">
-          <button
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               setLightboxOpen(false);
             }}
-            className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+            variant="ghost"
+            size="icon"
+            className="absolute top-4 right-4 z-50 rounded-full hover:bg-primary/20"
             aria-label="Close"
           >
-            <X className="w-6 h-6 text-white" />
-          </button>
+            <X className="w-5 h-5" />
+          </Button>
           <img
             src={post.media}
             alt="Post media fullscreen"
