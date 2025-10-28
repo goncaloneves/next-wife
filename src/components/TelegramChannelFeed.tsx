@@ -24,12 +24,14 @@ interface TelegramChannelFeedProps {
   channelUsername: string;
   refreshInterval?: number;
   maxPosts?: number;
+  layout?: 'list' | 'grid';
 }
 
 export const TelegramChannelFeed = ({
   channelUsername,
   refreshInterval = 3000,
-  maxPosts = 20
+  maxPosts = 20,
+  layout = 'list'
 }: TelegramChannelFeedProps) => {
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
@@ -219,6 +221,55 @@ export const TelegramChannelFeed = ({
       <Card className="p-8 text-center bg-card/80 backdrop-blur border border-border">
         <p className="text-muted-foreground">No posts yet in this channel</p>
       </Card>
+    );
+  }
+
+  if (layout === 'grid') {
+    return (
+      <div className="relative">
+        {pendingNewCount > 0 && (
+          <Button
+            onClick={handleNewPostsClick}
+            className="absolute -top-12 left-1/2 -translate-x-1/2 z-10 shadow-lg"
+            size="sm"
+          >
+            <ArrowUp className="w-4 h-4 mr-2" />
+            {pendingNewCount} new {pendingNewCount === 1 ? 'post' : 'posts'}
+          </Button>
+        )}
+        
+        <div
+          ref={listRef}
+          onScroll={handleScroll}
+          className="h-[70vh] max-h-[700px] overflow-y-auto"
+        >
+          <div className="grid grid-cols-3 gap-1">
+            {allPosts.filter(post => post.media).map((post) => (
+              <div
+                key={post.id}
+                className="aspect-square cursor-pointer overflow-hidden group relative"
+                onClick={() => window.open(post.link, '_blank', 'noopener,noreferrer')}
+              >
+                <img
+                  src={post.media!}
+                  alt="Post"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              </div>
+            ))}
+          </div>
+          
+          {hasMore && isLoadingMore && (
+            <div className="py-8 text-center">
+              <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-sm">Loading more posts...</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     );
   }
 

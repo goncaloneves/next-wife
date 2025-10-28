@@ -8,11 +8,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [isQRVisible, setIsQRVisible] = useState(true);
-  const [isVideoVisible, setIsVideoVisible] = useState(false);
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const videoSectionRef = useRef<HTMLDivElement>(null);
-  const feedVideoRef = useRef<HTMLDivElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   
@@ -42,18 +39,13 @@ const Index = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setIsVideoVisible(true);
-            // Add animation class to feed video wrapper and content
-            if (entry.target.classList.contains('feed-content-wrapper')) {
-              entry.target.classList.add('animate-fade-in');
-            }
+            entry.target.classList.add('animate-fade-in');
           }
         });
       },
       { threshold: 0.1 }
     );
 
-    if (feedVideoRef.current) observer.observe(feedVideoRef.current);
     if (feedContentRef.current) observer.observe(feedContentRef.current);
 
     return () => observer.disconnect();
@@ -202,44 +194,13 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section ref={videoSectionRef} className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center pt-0 pb-12 bg-black overflow-hidden">
-        <div className="relative z-10 container mx-auto px-0 md:px-8 h-full">
-          <div className="max-w-6xl mx-auto relative h-full">
-            
-            {/* Video - Left Side, positioned relative to centered container */}
-            <div 
-              ref={feedVideoRef} 
-              className="feed-video-wrapper absolute top-0 -bottom-12 left-0 w-1/2 md:w-[40%] hidden md:block opacity-60"
-            >
-              {/* Video layer */}
-              <div className="absolute inset-0 z-10">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  className="absolute inset-0 w-full h-full object-cover opacity-0 animate-fade-in"
-                  style={{ animationDelay: '0.1s', animationFillMode: 'forwards', animationPlayState: isVideoVisible ? 'running' : 'paused' }}
-                >
-                  <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
-                </video>
-              </div>
-              {/* Top edge - fade to black */}
-              <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none z-20" />
-              {/* Left edge - strong fade to black */}
-              <div className="absolute inset-y-0 left-0 w-[15%] bg-gradient-to-r from-black via-black/40 to-transparent pointer-events-none z-20" />
-              {/* Right edge - strong fade to black */}
-              <div className="absolute inset-y-0 right-0 w-[15%] bg-gradient-to-l from-black via-black/40 to-transparent pointer-events-none z-20" />
-            </div>
-
-            {/* Content - Right Side */}
-            <div ref={feedContentRef} className="feed-content-wrapper min-h-[500px] px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-6 text-center md:text-left text-white">
-                Live from Bali 🏝️
-              </h2>
-              <TelegramChannelFeed channelUsername="nextwifeai" />
-            </div>
+      <section ref={feedContentRef} className="relative py-12 bg-black opacity-0">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
+              Live from Bali 🏝️
+            </h2>
+            <TelegramChannelFeed channelUsername="nextwifeai" layout="grid" />
           </div>
         </div>
       </section>
