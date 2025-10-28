@@ -112,20 +112,34 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
   
   const posts: any[] = [];
   
-  // Debug: Count total data-post attributes for verification
-  const debugPostMatches = html.match(/data-post="([^"]+\/(\d+))"/gi);
-  console.log(`DEBUG: Found ${debugPostMatches?.length || 0} data-post attributes in HTML`);
-  if (debugPostMatches && debugPostMatches.length > 0) {
-    console.log(`DEBUG: First 3 data-post values:`, debugPostMatches.slice(0, 3));
+  // Step 1: Find all data-post attributes (order-agnostic)
+  const postIdMatches = [...html.matchAll(/data-post="([^"]+)"/g)];
+  console.log(`DEBUG: Found ${postIdMatches.length} data-post attributes in HTML`);
+  if (postIdMatches.length > 0) {
+    const firstThree = postIdMatches.slice(0, 3).map(m => m[1]);
+    console.log(`DEBUG: First 3 post IDs:`, firstThree);
   }
 
-  // Extract post blocks - More robust regex that captures from one message start to the next
-  const postRegex = /<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)(?=<div class="tgme_widget_message|$)/g;
-  let match;
-
-  while ((match = postRegex.exec(html)) !== null) {
-    const postId = match[1];
-    const postContent = match[2];
+  // Step 2: For each post ID, extract its content
+  for (const postMatch of postIdMatches) {
+    const fullPostId = postMatch[1]; // e.g., "nextwifeai/8"
+    const postId = fullPostId;
+    
+    // Find the message div containing this data-post, regardless of attribute order
+    // Match from the opening div tag to three closing divs (message structure)
+    const escapedPostId = fullPostId.replace(/\//g, '\\/');
+    const messageRegex = new RegExp(
+      `<div[^>]*data-post="${escapedPostId}"[^>]*>([\\s\\S]*?)<\\/div>\\s*<\\/div>\\s*<\\/div>`,
+      'i'
+    );
+    
+    const contentMatch = html.match(messageRegex);
+    if (!contentMatch) {
+      console.log(`WARNING: Could not extract content for post ${fullPostId}`);
+      continue;
+    }
+    
+    const postContent = contentMatch[1];
 
     // Extract text content first
     const textMatch = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
