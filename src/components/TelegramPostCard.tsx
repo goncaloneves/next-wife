@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { formatDistanceToNow } from "date-fns";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 
 interface TelegramPostCardProps {
   post: {
@@ -25,6 +26,7 @@ interface TelegramPostCardProps {
 export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: TelegramPostCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   
   const shouldTruncate = post.text.length > 150;
   const displayText = expanded || !shouldTruncate 
@@ -32,11 +34,17 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
     : post.text.slice(0, 150) + '...';
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't navigate if clicking the "more" button
-    if ((e.target as HTMLElement).tagName === 'BUTTON') {
+    // Don't navigate if clicking the "more" button or image
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'BUTTON' || target.tagName === 'IMG') {
       return;
     }
     window.open(post.link, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLightboxOpen(true);
   };
 
   return (
@@ -80,21 +88,39 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
 
       {/* Media Section */}
       {post.media && (
-        <div className="relative w-full bg-muted/30">
+        <div className="relative w-full bg-muted/30 cursor-pointer" onClick={handleImageClick}>
           {!imageLoaded && (
             <Skeleton className="w-full h-64" />
           )}
           <img
             src={post.media}
             alt="Post media"
-            className={`w-full object-contain transition-opacity duration-300 ${
+            className={`w-full object-cover transition-opacity duration-300 hover:opacity-90 ${
               imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
             }`}
-            style={{ maxHeight: '800px', minHeight: '200px' }}
+            style={{ maxHeight: '400px', minHeight: '200px' }}
             onLoad={() => setImageLoaded(true)}
           />
         </div>
       )}
+
+      {/* Lightbox */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black/95 border-none">
+          <button
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+            aria-label="Close"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+          <img
+            src={post.media}
+            alt="Post media fullscreen"
+            className="w-auto h-auto max-w-full max-h-[95vh] object-contain"
+          />
+        </DialogContent>
+      </Dialog>
 
 
       {/* Content Section */}
