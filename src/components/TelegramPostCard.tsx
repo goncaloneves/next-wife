@@ -48,67 +48,92 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
   };
 
   return (
-    <Card
-      onClick={handleCardClick}
-      className={`telegram-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur transition-all duration-300 hover:border-primary cursor-pointer w-full max-w-[600px] mx-auto ${animate ? 'opacity-0 animate-fade-in' : ''}`}
-      style={animate ? { animationDelay: `${(index || 0) * 0.1 + 0.3}s`, animationFillMode: 'forwards' } : undefined}
-    >
-      {/* Post Header */}
-      <div className="flex items-center gap-3 p-6">
-        <Avatar className="w-10 h-10">
-          <AvatarImage 
-            src={post.avatar || channelInfo?.avatar || undefined} 
-            alt={channelInfo?.name || 'Channel'}
-          />
-          <AvatarFallback className="bg-primary/10 text-primary text-sm">
-            {(channelInfo?.name || 'CH').slice(0, 2).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        
-        <div className="flex-1">
-          <p className="font-semibold text-sm text-foreground">
-            {channelInfo?.name || 'Channel'}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
-          </p>
+    <>
+      <Card
+        onClick={handleCardClick}
+        className={`telegram-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur transition-all duration-300 hover:border-primary cursor-pointer w-full max-w-[600px] mx-auto ${animate ? 'opacity-0 animate-fade-in' : ''}`}
+        style={animate ? { animationDelay: `${(index || 0) * 0.1 + 0.3}s`, animationFillMode: 'forwards' } : undefined}
+      >
+        {/* Post Header */}
+        <div className="flex items-center gap-3 p-6">
+          <Avatar className="w-10 h-10">
+            <AvatarImage 
+              src={post.avatar || channelInfo?.avatar || undefined} 
+              alt={channelInfo?.name || 'Channel'}
+            />
+            <AvatarFallback className="bg-primary/10 text-primary text-sm">
+              {(channelInfo?.name || 'CH').slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div className="flex-1">
+            <p className="font-semibold text-sm text-foreground">
+              {channelInfo?.name || 'Channel'}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
+            </p>
+          </div>
+
+          <a
+            href={post.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors group"
+            aria-label="View on Telegram"
+          >
+            <ExternalLink className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+          </a>
         </div>
 
-        <a
-          href={post.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors group"
-          aria-label="View on Telegram"
-        >
-          <ExternalLink className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-        </a>
-      </div>
+        {/* Media Section */}
+        {post.media && (
+          <div className="relative w-full bg-muted/30 cursor-pointer" onClick={handleImageClick}>
+            {!imageLoaded && (
+              <Skeleton className="w-full h-64" />
+            )}
+            <img
+              src={post.media}
+              alt="Post media"
+              className={`w-full object-cover transition-opacity duration-300 hover:opacity-90 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
+              }`}
+              style={{ maxHeight: '400px', minHeight: '200px' }}
+              onLoad={() => setImageLoaded(true)}
+            />
+          </div>
+        )}
 
-      {/* Media Section */}
-      {post.media && (
-        <div className="relative w-full bg-muted/30 cursor-pointer" onClick={handleImageClick}>
-          {!imageLoaded && (
-            <Skeleton className="w-full h-64" />
-          )}
-          <img
-            src={post.media}
-            alt="Post media"
-            className={`w-full object-cover transition-opacity duration-300 hover:opacity-90 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
-            }`}
-            style={{ maxHeight: '400px', minHeight: '200px' }}
-            onLoad={() => setImageLoaded(true)}
-          />
-        </div>
-      )}
+        {/* Content Section */}
+        {post.text && (
+          <div className="px-6 pb-6">
+            <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+              {displayText}
+              {shouldTruncate && !expanded && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setExpanded(true);
+                  }}
+                  className="text-muted-foreground hover:text-foreground ml-1"
+                >
+                  more
+                </button>
+              )}
+            </p>
+          </div>
+        )}
+      </Card>
 
-      {/* Lightbox */}
+      {/* Lightbox - outside Card to prevent click propagation */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black/95 border-none">
           <button
-            onClick={() => setLightboxOpen(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxOpen(false);
+            }}
             className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
             aria-label="Close"
           >
@@ -121,27 +146,6 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
           />
         </DialogContent>
       </Dialog>
-
-
-      {/* Content Section */}
-      {post.text && (
-        <div className="px-6 pb-6">
-          <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-            {displayText}
-            {shouldTruncate && !expanded && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setExpanded(true);
-                }}
-                className="text-muted-foreground hover:text-foreground ml-1"
-              >
-                more
-              </button>
-            )}
-          </p>
-        </div>
-      )}
-    </Card>
+    </>
   );
 };
