@@ -232,7 +232,7 @@ const Index = () => {
         <div className="relative z-10 container mx-auto px-0 md:px-8">
           <div className="max-w-6xl mx-auto">
             <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center md:text-left text-white">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-6 text-center md:text-left text-white">
                 Live from Bali 🏝️
               </h2>
               <TelegramChannelFeed channelUsername="nextwifeai" />
