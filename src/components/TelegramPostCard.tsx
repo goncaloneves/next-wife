@@ -13,6 +13,7 @@ interface TelegramPostCardProps {
     link: string;
     media?: string | null;
     mediaType?: 'image' | 'video' | null;
+    videoUrl?: string | null;
     avatar?: string | null;
   };
   channelInfo?: {
@@ -99,15 +100,34 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
 
       {post.media && post.mediaType === 'video' && (
         <div className="relative w-full bg-muted/30">
-          <video
-            poster={post.media}
-            controls
-            className="w-full object-contain"
-            style={{ maxHeight: '800px', minHeight: '200px' }}
-          >
-            <source src={post.media} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          {post.videoUrl ? (
+            <video
+              poster={post.media}
+              src={post.videoUrl}
+              controls
+              className="w-full object-contain"
+              style={{ maxHeight: '800px', minHeight: '200px' }}
+            >
+              <source src={post.videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <div className="relative cursor-pointer">
+              <img 
+                src={post.media} 
+                alt="Video thumbnail" 
+                className="w-full object-contain"
+                style={{ maxHeight: '800px', minHeight: '200px' }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

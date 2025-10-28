@@ -219,6 +219,7 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     // Extract media (image or video)
     let media = null;
     let mediaType: 'image' | 'video' | null = null;
+    let videoUrl: string | null = null;
     
     // Try to extract image first
     const imageMatch = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
@@ -227,9 +228,35 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
       mediaType = 'image';
     }
     
-    // Try to extract video if no image found
+    // Try to extract video using the video player class (PRIMARY METHOD)
     if (!media) {
-      // Pattern 1: Video wrap with background poster image
+      const videoPlayerMatch = /<div[^>]*class="[^"]*tgme_widget_message_video_player[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
+      if (videoPlayerMatch) {
+        mediaType = 'video';
+        const playerContent = videoPlayerMatch[1];
+        
+        // Try to extract video URL from data attributes
+        const videoUrlMatch = /data-(?:src|video|content)="([^"]+\.mp4[^"]*)"/.exec(playerContent) ||
+                             /src="([^"]+\.mp4[^"]*)"/.exec(playerContent) ||
+                             /<video[^>]*src="([^"]*)"/.exec(playerContent);
+        if (videoUrlMatch) {
+          videoUrl = videoUrlMatch[1];
+          if (videoUrl.startsWith('//')) videoUrl = 'https:' + videoUrl;
+        }
+        
+        // Extract thumbnail/poster from the video player
+        const thumbMatch = /(?:background-image|poster):\s*url\(['"]?([^'"]+)['"]?\)/.exec(playerContent) ||
+                          /style="[^"]*background-image:url\('([^']*)'/.exec(playerContent);
+        if (thumbMatch) {
+          media = thumbMatch[1];
+        }
+        
+        console.info(`Found video player for ${postId}: videoUrl=${videoUrl}, thumb=${media}`);
+      }
+    }
+    
+    // Fallback: Try to extract video from video wrap
+    if (!media || !videoUrl) {
       const videoWrapMatch = /<a[^>]*class="[^"]*tgme_widget_message_video_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
       if (videoWrapMatch) {
         media = videoWrapMatch[1];
@@ -237,22 +264,9 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
       }
     }
     
-    // Pattern 2: Video player with thumb
-    if (!media) {
-      const videoThumbMatch = /<div[^>]*class="[^"]*tgme_widget_message_video_thumb[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
-      if (videoThumbMatch) {
-        media = videoThumbMatch[1];
-        mediaType = 'video';
-      }
-    }
-    
-    // Pattern 3: Direct video element
-    if (!media) {
-      const videoMatch = /<video[^>]*src="([^"]*)"/.exec(postContent);
-      if (videoMatch) {
-        media = videoMatch[1];
-        mediaType = 'video';
-      }
+    // Normalize media URLs
+    if (media && media.startsWith('//')) {
+      media = 'https:' + media;
     }
 
     // Extract per-message avatar from tgme_widget_message_user_photo
@@ -304,6 +318,7 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
         link: `https://t.me/${channelName}/${postId.split('/').pop()}`,
         media,
         mediaType,
+        videoUrl,
         avatar
       });
     }
