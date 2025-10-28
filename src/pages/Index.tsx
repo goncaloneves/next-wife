@@ -44,9 +44,6 @@ const Index = () => {
           if (entry.isIntersecting) {
             setIsVideoVisible(true);
             // Add animation class to feed video wrapper and content
-            if (entry.target.classList.contains('feed-video-wrapper')) {
-              entry.target.classList.add('animate-fade-in');
-            }
             if (entry.target.classList.contains('feed-content-wrapper')) {
               entry.target.classList.add('animate-fade-in');
             }
@@ -209,21 +206,21 @@ const Index = () => {
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div 
           ref={feedVideoRef} 
-          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[40%] hidden md:block opacity-30"
+          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[40%] hidden md:block"
         >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className={`absolute inset-0 w-full h-full object-cover ${
-              isVideoVisible ? 'animate-fade-in' : 'opacity-0'
-            }`}
-            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
-          >
-            <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
-          </video>
+          <div className="absolute inset-0 opacity-30">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              className={`absolute inset-0 w-full h-full object-cover ${isVideoVisible ? 'animate-fade-in' : 'opacity-0'}`}
+              style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+            >
+              <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
+            </video>
+          </div>
           {/* Top edge - fade to black */}
           <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none z-20" />
           {/* Left edge - strong fade to black */}
