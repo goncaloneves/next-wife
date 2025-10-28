@@ -225,11 +225,11 @@ const Index = () => {
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
           {/* Top edge - fade to black */}
-          <div className="absolute inset-x-0 top-0 h-[30%] bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-[30%] bg-gradient-to-b from-transparent via-transparent to-black/70 pointer-events-none" />
           {/* Left edge - strong fade to black */}
-          <div className="absolute inset-y-0 left-0 w-[35%] bg-gradient-to-r from-black via-black/90 to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 w-[35%] bg-gradient-to-r from-transparent via-transparent to-black/70 pointer-events-none" />
           {/* Right edge - strong fade to black */}
-          <div className="absolute inset-y-0 right-0 w-[35%] bg-gradient-to-l from-black via-black/90 to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-[35%] bg-gradient-to-l from-transparent via-transparent to-black/70 pointer-events-none" />
         </div>
 
         {/* Content - Right Side */}
