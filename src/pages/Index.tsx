@@ -208,7 +208,10 @@ const Index = () => {
           ref={feedVideoRef} 
           className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 md:w-[40%] hidden md:block"
         >
-          <div className="absolute inset-0 opacity-30">
+          {/* Background gradient layer */}
+          <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-romantic)' }} aria-hidden="true" />
+          {/* Video layer */}
+          <div className="absolute inset-0 opacity-30 z-10">
             <video
               autoPlay
               muted
