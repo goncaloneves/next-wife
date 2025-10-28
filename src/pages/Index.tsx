@@ -202,7 +202,7 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section ref={videoSectionRef} className="relative min-h-[500px] md:min-h-[450px] flex items-center justify-center pt-0 pb-12 bg-black overflow-hidden">
+      <section ref={videoSectionRef} className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center pt-0 pb-12 bg-black overflow-hidden">
         <div className="relative z-10 container mx-auto px-0 md:px-8 h-full">
           <div className="max-w-6xl mx-auto relative h-full">
             
@@ -226,8 +226,6 @@ const Index = () => {
                 >
                   <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
                 </video>
-                {/* Red overlay for reddish tint */}
-                <div className="absolute inset-0 bg-[hsl(350,60%,40%)] mix-blend-overlay opacity-20" />
               </div>
               {/* Top edge - fade to black */}
               <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none z-20" />
@@ -238,7 +236,7 @@ const Index = () => {
             </div>
 
             {/* Content - Right Side */}
-            <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+            <div ref={feedContentRef} className="feed-content-wrapper min-h-[500px] px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-6 text-center md:text-left text-white">
                 Live from Bali 🏝️
               </h2>
