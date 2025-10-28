@@ -209,7 +209,7 @@ const Index = () => {
         {/* Video - Full Height, Left Edge with top and right fade */}
         <div 
           ref={feedVideoRef} 
-          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block"
+          className="feed-video-wrapper absolute inset-y-0 left-0 w-1/2 hidden md:block video-fade-edges opacity-30"
         >
           <video
             autoPlay
@@ -224,9 +224,8 @@ const Index = () => {
           >
             <source src="/videos/video-7-loop-3.mp4" type="video/mp4" />
           </video>
-          {/* Black gradient overlays - darken left and right edges, center stays clear */}
-          <div className="absolute inset-y-0 left-0 w-[28%] bg-gradient-to-r from-black to-transparent pointer-events-none z-10" aria-hidden="true" />
-          <div className="absolute inset-y-0 right-0 w-[28%] bg-gradient-to-l from-black to-transparent pointer-events-none z-10" aria-hidden="true" />
+          {/* Black gradient overlay - fades left and right edges to black, center stays transparent */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-20% via-transparent via-80% to-black pointer-events-none" />
         </div>
 
         {/* Content - Right Side */}
