@@ -236,7 +236,7 @@ const Index = () => {
             </div>
 
             {/* Content - Right Side */}
-            <div ref={feedContentRef} className="feed-content-wrapper px-2 md:px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+            <div ref={feedContentRef} className="feed-content-wrapper px-4 md:w-[55%] md:ml-auto opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-6 text-center md:text-left text-white">
                 Live from Bali 🏝️
               </h2>

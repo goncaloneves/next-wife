@@ -42,7 +42,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
   return (
     <Card
       onClick={handleCardClick}
-      className={`telegram-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur transition-all duration-300 hover:scale-105 cursor-pointer w-full max-w-[600px] mx-auto ${animate ? 'opacity-0 animate-fade-in' : ''}`}
+      className={`telegram-card overflow-hidden border border-border rounded-lg bg-card/80 backdrop-blur transition-all duration-300 hover:scale-105 cursor-pointer w-full md:w-[350px] lg:w-[600px] mx-auto ${animate ? 'opacity-0 animate-fade-in' : ''}`}
       style={animate ? { animationDelay: `${(index || 0) * 0.1 + 0.3}s`, animationFillMode: 'forwards' } : undefined}
     >
       {/* Post Header */}
