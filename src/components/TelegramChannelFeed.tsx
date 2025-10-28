@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, ArrowUp, X } from "lucide-react";
+import { Loader2, ArrowUp, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -229,6 +229,34 @@ export const TelegramChannelFeed = ({
   }
 
   if (layout === 'grid') {
+    const postsWithMedia = allPosts.filter(post => post.media);
+    const currentIndex = selectedPost ? postsWithMedia.findIndex(p => p.id === selectedPost.id) : -1;
+    const hasPrevious = currentIndex > 0;
+    const hasNext = currentIndex < postsWithMedia.length - 1;
+
+    const navigateToPost = (direction: 'prev' | 'next') => {
+      if (direction === 'prev' && hasPrevious) {
+        setSelectedPost(postsWithMedia[currentIndex - 1]);
+      } else if (direction === 'next' && hasNext) {
+        setSelectedPost(postsWithMedia[currentIndex + 1]);
+      }
+    };
+
+    useEffect(() => {
+      if (!selectedPost) return;
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'ArrowLeft') {
+          navigateToPost('prev');
+        } else if (e.key === 'ArrowRight') {
+          navigateToPost('next');
+        }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [selectedPost, currentIndex, postsWithMedia]);
+
     return (
       <>
         <div className="relative">
@@ -249,7 +277,7 @@ export const TelegramChannelFeed = ({
             className="h-[70vh] max-h-[700px] overflow-y-auto"
           >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
-              {allPosts.filter(post => post.media).map((post) => (
+              {postsWithMedia.map((post) => (
                 <div
                   key={post.id}
                   className="aspect-[3/4] cursor-pointer overflow-hidden group relative"
@@ -288,6 +316,32 @@ export const TelegramChannelFeed = ({
             >
               <X className="w-6 h-6" />
             </Button>
+
+            {/* Previous Button */}
+            {hasPrevious && (
+              <Button
+                onClick={() => navigateToPost('prev')}
+                variant="ghost"
+                size="icon"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-50 rounded-full hover:bg-white/10 text-white"
+                aria-label="Previous"
+              >
+                <ChevronLeft className="w-8 h-8" />
+              </Button>
+            )}
+
+            {/* Next Button */}
+            {hasNext && (
+              <Button
+                onClick={() => navigateToPost('next')}
+                variant="ghost"
+                size="icon"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-50 rounded-full hover:bg-white/10 text-white"
+                aria-label="Next"
+              >
+                <ChevronRight className="w-8 h-8" />
+              </Button>
+            )}
             
             {selectedPost && (
               <div className="flex flex-col md:flex-row max-h-[95vh]">
