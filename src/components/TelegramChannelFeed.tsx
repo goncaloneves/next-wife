@@ -238,7 +238,7 @@ export const TelegramChannelFeed = ({
       <div
         ref={listRef}
         onScroll={handleScroll}
-        className="h-[900px] overflow-y-auto rounded-lg"
+        className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg"
       >
         <div className="space-y-4">
           {allPosts.map((post) => (
