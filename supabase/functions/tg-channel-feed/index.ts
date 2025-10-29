@@ -306,10 +306,11 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fetch single page
+    // Fetch single page with timestamp to bust Telegram's CDN cache
+    const ts = Date.now();
     const pageUrl = before 
-      ? `https://t.me/s/${channelName}?before=${before}`
-      : `https://t.me/s/${channelName}`;
+      ? `https://t.me/s/${channelName}?before=${before}&_=${ts}`
+      : `https://t.me/s/${channelName}?_=${ts}`;
     
     const response = await fetch(pageUrl);
     if (!response.ok) {

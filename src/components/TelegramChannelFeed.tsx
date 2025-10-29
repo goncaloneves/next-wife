@@ -47,6 +47,11 @@ export const TelegramChannelFeed = ({
   const [imageLoadStates, setImageLoadStates] = useState<Record<string, boolean>>({});
   const listRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
+  const topFingerprintRef = useRef<string>('');
+
+  // Helper to create fingerprint of top posts
+  const fingerprint = (posts: TelegramPost[]) =>
+    JSON.stringify(posts.slice(0, 5).map(p => [p.id, p.media, p.text, p.date]));
 
   const fetchInitialPosts = async () => {
     try {
@@ -75,6 +80,7 @@ export const TelegramChannelFeed = ({
       setPendingNewCount(0);
       setRefreshKey(Date.now());
       setImageLoadStates({});
+      topFingerprintRef.current = fingerprint(fetchedPosts);
 
       console.log(`Fetched initial ${fetchedPosts.length} posts, nextCursor: ${data.nextBefore}`);
     } catch (err) {
@@ -140,13 +146,29 @@ export const TelegramChannelFeed = ({
       const data = await response.json();
       const fetchedPosts = data.posts || [];
 
-      // Check for new posts
+      console.log('[checkForNewPosts]', {
+        cached: data.cached,
+        topIds: fetchedPosts.slice(0, 3).map((p: TelegramPost) => p.id),
+        currentTopIds: allPosts.slice(0, 3).map(p => p.id),
+      });
+
+      // Check for content changes using fingerprint
       if (allPosts.length > 0 && fetchedPosts.length > 0) {
+        const newFp = fingerprint(fetchedPosts);
+        const fpChanged = newFp !== topFingerprintRef.current;
+
+        // Check for new post IDs
         const newPostIds = fetchedPosts.slice(0, 5).map((p: TelegramPost) => p.id);
         const existingIds = allPosts.slice(0, 5).map((p) => p.id);
-        const hasNewPosts = newPostIds.some((id: string) => !existingIds.includes(id));
+        const hasNewPostIds = newPostIds.some((id: string) => !existingIds.includes(id));
 
-        if (hasNewPosts && !isNearTop) {
+        console.log('[checkForNewPosts]', {
+          fpChanged,
+          hasNewPostIds,
+          isNearTop,
+        });
+
+        if ((hasNewPostIds || fpChanged) && !isNearTop) {
           const newCount = fetchedPosts.findIndex((p: TelegramPost) =>
             allPosts.some((existing) => existing.id === p.id),
           );
@@ -154,13 +176,15 @@ export const TelegramChannelFeed = ({
           return;
         }
 
-        if (hasNewPosts && isNearTop) {
+        if ((hasNewPostIds || fpChanged) && isNearTop) {
+          console.log('[checkForNewPosts] Refreshing feed with new content');
           setAllPosts(fetchedPosts);
           setNextCursor(data.nextBefore);
           setHasMore(data.hasMore);
           setPendingNewCount(0);
           setRefreshKey(Date.now());
           setImageLoadStates({});
+          topFingerprintRef.current = newFp;
         }
       }
     } catch (err) {
