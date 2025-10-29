@@ -50,8 +50,8 @@ export const TelegramChannelFeed = ({
   const topFingerprintRef = useRef<string>('');
 
   // Helper to create fingerprint of top posts
-  const fingerprint = (posts: TelegramPost[]) =>
-    JSON.stringify(posts.slice(0, 5).map(p => [p.id, p.media, p.text, p.date]));
+  const fingerprint = useCallback((posts: TelegramPost[]) =>
+    JSON.stringify(posts.slice(0, 5).map(p => [p.id, p.media, p.text, p.date])), []);
 
   const fetchInitialPosts = async () => {
     try {
@@ -190,7 +190,7 @@ export const TelegramChannelFeed = ({
     } catch (err) {
       console.error("Error checking for new posts:", err);
     }
-  }, [allPosts, isNearTop, channelUsername, refreshInterval, fingerprint]);
+  }, [allPosts, isNearTop, channelUsername, fingerprint]);
 
   useEffect(() => {
     fetchInitialPosts();
