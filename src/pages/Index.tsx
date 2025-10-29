@@ -239,7 +239,7 @@ const Index = () => {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
               Live from Next Wife 🌻
             </h2>
-            <TelegramChannelFeed channelUsername="nextwifeai" layout="grid" />
+            <TelegramChannelFeed channelUsername="nextwifeai" layout="grid" feedSectionRef={feedContentRef} />
           </div>
         </div>
       </section>

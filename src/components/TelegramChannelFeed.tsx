@@ -27,6 +27,7 @@ interface TelegramChannelFeedProps {
   refreshInterval?: number;
   maxPosts?: number;
   layout?: "list" | "grid";
+  feedSectionRef?: React.RefObject<HTMLElement | HTMLDivElement>;
 }
 
 export const TelegramChannelFeed = ({
@@ -34,6 +35,7 @@ export const TelegramChannelFeed = ({
   refreshInterval = 3000,
   maxPosts = 20,
   layout = "list",
+  feedSectionRef,
 }: TelegramChannelFeedProps) => {
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
@@ -270,12 +272,12 @@ export const TelegramChannelFeed = ({
       const clientHeight = window.innerHeight;
 
       // Check if we're near the top of the FEED SECTION, not the page
-      const feedElement = document.querySelector('section.relative.py-12.bg-black');
+      const feedElement = feedSectionRef?.current ?? document.querySelector('section.relative.py-12.bg-black');
       
       let nearTop = scrollTop < 100; // fallback
       
       if (feedElement) {
-        const feedRect = feedElement.getBoundingClientRect();
+        const feedRect = (feedElement as HTMLElement).getBoundingClientRect();
         // Near top means: feed section is within 200px of the viewport top
         nearTop = feedRect.top <= 200 && feedRect.top >= -100;
       }
@@ -323,13 +325,19 @@ export const TelegramChannelFeed = ({
   }, [layout, handleScroll]);
 
   const handleNewPostsClick = () => {
-    fetchInitialPosts();
-    setPendingNewCount(0);
-    
-    // Only scroll the container for list layout
-    if (layout === "list" && listRef.current) {
+    if (layout === "grid") {
+      const feedElement = feedSectionRef?.current ?? document.querySelector('section.relative.py-12.bg-black');
+      if (feedElement) {
+        const rect = (feedElement as HTMLElement).getBoundingClientRect();
+        const y = window.scrollY + rect.top - 80;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } else if (listRef.current) {
       listRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
+    // Do not fetch here; nearTop logic will refresh and clear the badge.
   };
 
   if (loading) {
