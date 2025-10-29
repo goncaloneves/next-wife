@@ -269,7 +269,16 @@ export const TelegramChannelFeed = ({
       const scrollHeight = document.documentElement.scrollHeight;
       const clientHeight = window.innerHeight;
 
-      const nearTop = scrollTop < 100;
+      // Check if we're near the top of the FEED SECTION, not the page
+      const feedElement = document.querySelector('section.relative.py-12.bg-black');
+      
+      let nearTop = scrollTop < 100; // fallback
+      
+      if (feedElement) {
+        const feedRect = feedElement.getBoundingClientRect();
+        // Near top means: feed section is within 200px of the viewport top
+        nearTop = feedRect.top <= 200 && feedRect.top >= -100;
+      }
       
       // If user scrolls back to top AND there are pending new posts, auto-refresh
       if (nearTop && pendingNewCount > 0) {
