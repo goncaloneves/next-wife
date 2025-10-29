@@ -394,11 +394,15 @@ export const TelegramChannelFeed = ({
 
         <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
-            {postsWithMedia.map((post) => (
+            {postsWithMedia.map((post, index) => (
               <div
                 key={`${post.id}-${refreshKey}`}
-                className="aspect-[3/4] cursor-pointer overflow-hidden group relative"
+                className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in"
                 onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
+                style={{ 
+                  animationDelay: `${index * 0.05}s`, 
+                  animationFillMode: "forwards" 
+                }}
               >
                 {!imageLoadStates[post.id] && (
                   <Skeleton className="absolute inset-0 w-full h-full" />
