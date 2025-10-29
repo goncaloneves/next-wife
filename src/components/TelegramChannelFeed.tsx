@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Card } from "@/components/ui/card";
 import { Loader2, ArrowUp } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
@@ -339,7 +340,7 @@ export const TelegramChannelFeed = ({
 
     return (
       <>
-        {pendingNewCount > 0 && !isNearTop && (
+        {pendingNewCount > 0 && !isNearTop && createPortal(
           <Button
             onClick={handleNewPostsClick}
             className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] shadow-xl animate-in fade-in slide-in-from-top-4"
@@ -347,7 +348,8 @@ export const TelegramChannelFeed = ({
           >
             <ArrowUp className="w-4 h-4 mr-2" />
             {pendingNewCount} new {pendingNewCount === 1 ? "post" : "posts"}
-          </Button>
+          </Button>,
+          document.body
         )}
 
         <div className="relative">
@@ -389,15 +391,16 @@ export const TelegramChannelFeed = ({
 
   return (
     <div className="relative">
-      {pendingNewCount > 0 && (
+      {pendingNewCount > 0 && createPortal(
         <Button
           onClick={handleNewPostsClick}
-          className="absolute top-4 left-1/2 -translate-x-1/2 z-10 shadow-lg"
+          className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] shadow-xl animate-in fade-in slide-in-from-top-4"
           size="sm"
         >
           <ArrowUp className="w-4 h-4 mr-2" />
           {pendingNewCount} new {pendingNewCount === 1 ? "post" : "posts"}
-        </Button>
+        </Button>,
+        document.body
       )}
 
       <div ref={listRef} onScroll={handleScroll} className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg">
