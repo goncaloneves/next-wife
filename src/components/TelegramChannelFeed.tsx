@@ -48,6 +48,8 @@ export const TelegramChannelFeed = ({
   const [hasMore, setHasMore] = useState(true);
   const [refreshKey, setRefreshKey] = useState(Date.now());
   const [imageLoadStates, setImageLoadStates] = useState<Record<string, boolean>>({});
+  const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const listRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
   const topFingerprintRef = useRef<string>('');
@@ -66,6 +68,21 @@ export const TelegramChannelFeed = ({
   // Helper to create fingerprint of top posts
   const fingerprint = useCallback((posts: TelegramPost[]) =>
     JSON.stringify(posts.slice(0, 5).map(p => [p.id, p.media, p.text, p.date])), []);
+
+  // Helper to build image src with retry logic
+  const buildSrc = useCallback((url: string, postId: string) => {
+    // Normalize protocol-relative URLs
+    const normalized = url.startsWith('//') ? `https:${url}` : url;
+    const tries = imageErrors[postId] || 0;
+    
+    if (tries === 0 || tries === 1) {
+      // First two attempts: use original URL
+      return normalized;
+    }
+    
+    // Third attempt: use proxy
+    return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-image-proxy?u=${encodeURIComponent(normalized)}`;
+  }, [imageErrors]);
 
   const fetchInitialPosts = async () => {
     try {
@@ -94,6 +111,8 @@ export const TelegramChannelFeed = ({
       setPendingNewCount(0);
       setRefreshKey(Date.now());
       setImageLoadStates({});
+      setImageErrors({});
+      setHiddenIds(new Set());
       topFingerprintRef.current = fingerprint(fetchedPosts);
 
       console.log(`Fetched initial ${fetchedPosts.length} posts, nextCursor: ${data.nextBefore}`);
@@ -199,6 +218,8 @@ export const TelegramChannelFeed = ({
             setPendingNewCount(0);
             setRefreshKey(Date.now()); // ONLY change refreshKey for NEW posts
             setImageLoadStates({});
+            setImageErrors({});
+            setHiddenIds(new Set());
             topFingerprintRef.current = newFp;
           } else {
             // User scrolled down: show "new posts" button
@@ -381,29 +402,57 @@ export const TelegramChannelFeed = ({
         <div className="relative">
         <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
-            {postsWithMedia.map((post, index) => (
-              <div
-                key={`${post.id}-${refreshKey}`}
-                className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in"
-                onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
-                style={{ 
-                  animationDelay: `${(index % 20) * 0.05}s`,
-                  animationFillMode: "forwards"
-                }}
-              >
-                {!imageLoadStates[post.id] && (
-                  <Skeleton className="absolute inset-0 w-full h-full" />
-                )}
-                <img
-                  src={`${post.media!}?t=${refreshKey}`}
-                  alt="Post"
-                  className={`w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 ${
-                    imageLoadStates[post.id] ? "" : "opacity-0"
-                  }`}
-                  onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
-                />
-              </div>
-            ))}
+            {postsWithMedia.map((post, index) => {
+              // Skip rendering if image failed too many times
+              if (hiddenIds.has(post.id)) {
+                return null;
+              }
+              
+              return (
+                <div
+                  key={`${post.id}-${refreshKey}`}
+                  className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in"
+                  onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
+                  style={{ 
+                    animationDelay: `${(index % 20) * 0.05}s`,
+                    animationFillMode: "forwards"
+                  }}
+                >
+                  {!imageLoadStates[post.id] && (
+                    <Skeleton className="absolute inset-0 w-full h-full" />
+                  )}
+                  <img
+                    src={buildSrc(post.media!, post.id)}
+                    alt="Post"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    className={`w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 ${
+                      imageLoadStates[post.id] ? "" : "opacity-0"
+                    }`}
+                    onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
+                    onError={() => {
+                      const currentTries = imageErrors[post.id] || 0;
+                      const delay = currentTries === 0 ? 200 : 500;
+                      
+                      console.log(`Image load failed for post ${post.id}, attempt ${currentTries + 1}`);
+                      
+                      setTimeout(() => {
+                        setImageErrors(prev => {
+                          const tries = (prev[post.id] || 0) + 1;
+                          
+                          if (tries >= 3) {
+                            console.log(`Hiding post ${post.id} after 3 failed attempts`);
+                            setHiddenIds(s => new Set(s).add(post.id));
+                          }
+                          
+                          return { ...prev, [post.id]: tries };
+                        });
+                      }, delay);
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
 
           {hasMore && isLoadingMore && (

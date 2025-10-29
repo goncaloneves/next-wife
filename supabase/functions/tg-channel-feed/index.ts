@@ -218,7 +218,12 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
 
     // Extract media/image
     const imageMatch = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
-    const media = imageMatch ? imageMatch[1] : null;
+    let media = imageMatch ? imageMatch[1] : null;
+    
+    // Normalize protocol-relative URLs
+    if (media && media.startsWith('//')) {
+      media = 'https:' + media;
+    }
 
     // Extract per-message avatar from tgme_widget_message_user_photo
     let avatar = null;

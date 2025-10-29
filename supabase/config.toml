@@ -2,3 +2,6 @@ project_id = "ecixveojhujzzawhxmrf"
 
 [functions.tg-channel-feed]
 verify_jwt = false
+
+[functions.tg-image-proxy]
+verify_jwt = false
