@@ -69,26 +69,13 @@ export const TelegramChannelFeed = ({
 
   const fetchInitialPosts = async () => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch posts");
-      }
-
-      const data = await response.json();
-      const fetchedPosts = data.posts || [];
-
+      // Temporarily disabled - return empty data
+      const fetchedPosts: TelegramPost[] = [];
+      
       setAllPosts(fetchedPosts);
-      setChannelInfo(data.channelInfo);
-      setNextCursor(data.nextBefore);
-      setHasMore(data.hasMore);
+      setChannelInfo(undefined);
+      setNextCursor(null);
+      setHasMore(false);
       setError(null);
       setLoading(false);
       setPendingNewCount(0);
@@ -96,7 +83,7 @@ export const TelegramChannelFeed = ({
       setImageLoadStates({});
       topFingerprintRef.current = fingerprint(fetchedPosts);
 
-      console.log(`Fetched initial ${fetchedPosts.length} posts, nextCursor: ${data.nextBefore}`);
+      console.log(`Fetched initial ${fetchedPosts.length} posts (disabled)`);
     } catch (err) {
       console.error("Error fetching Telegram posts:", err);
       setError("Unable to load channel posts");
@@ -105,138 +92,13 @@ export const TelegramChannelFeed = ({
   };
 
   const fetchNextPage = useCallback(async () => {
-    if (!hasMore || isLoadingMore || !nextCursor) return;
-
-    setIsLoadingMore(true);
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20&before=${nextCursor}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch more posts");
-      }
-
-      const data = await response.json();
-      const newPosts = data.posts || [];
-
-      // Deduplicate using Set
-      const existingIds = new Set(allPosts.map((p) => p.id));
-      const uniqueNewPosts = newPosts.filter((p: TelegramPost) => !existingIds.has(p.id));
-
-      setAllPosts((prev) => [...prev, ...uniqueNewPosts]);
-      setNextCursor(data.nextBefore);
-      setHasMore(data.hasMore);
-
-      console.log(
-        `Fetched ${uniqueNewPosts.length} more posts, nextCursor: ${data.nextBefore}, hasMore: ${data.hasMore}`,
-      );
-    } catch (err) {
-      console.error("Error fetching more posts:", err);
-    } finally {
-      setIsLoadingMore(false);
-    }
+    // Temporarily disabled - no pagination
+    return;
   }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts]);
 
   const checkForNewPosts = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (!response.ok) return;
-
-      const data = await response.json();
-      const fetchedPosts = data.posts || [];
-
-      // Read current state from refs (stable access)
-      const currentPosts = postsRef.current;
-      const currentNearTop = nearTopRef.current;
-
-      console.log('[checkForNewPosts]', {
-        cached: data.cached,
-        topIds: fetchedPosts.slice(0, 3).map((p: TelegramPost) => p.id),
-        currentTopIds: currentPosts.slice(0, 3).map(p => p.id),
-      });
-
-      // Check for content changes using fingerprint
-      if (currentPosts.length > 0 && fetchedPosts.length > 0) {
-        const newFp = fingerprint(fetchedPosts);
-        const fpChanged = newFp !== topFingerprintRef.current;
-
-        // Check for new post IDs (NEW posts, not just content updates)
-        const newTopIds = fetchedPosts.slice(0, 5).map((p: TelegramPost) => p.id);
-        const currentTopIds = currentPosts.slice(0, 5).map((p) => p.id);
-        const hasNewPostIds = newTopIds.some((id: string) => !currentTopIds.includes(id));
-
-        console.log('[checkForNewPosts] Decision:', {
-          fpChanged,
-          hasNewPostIds,
-          currentNearTop,
-          willChangeRefreshKey: hasNewPostIds && currentNearTop,
-        });
-
-        // Branch 1: New post IDs detected (genuine new posts)
-        if (hasNewPostIds) {
-          console.log('[checkForNewPosts] Branch: NEW IDs detected');
-          if (currentNearTop) {
-            // User is near top: refresh everything including images
-            console.log('[checkForNewPosts] -> Refreshing with NEW IDs (changing refreshKey)');
-            setAllPosts(fetchedPosts);
-            setNextCursor(data.nextBefore);
-            setHasMore(data.hasMore);
-            setPendingNewCount(0);
-            setRefreshKey(Date.now()); // ONLY change refreshKey for NEW posts
-            setImageLoadStates({});
-            topFingerprintRef.current = newFp;
-          } else {
-            // User scrolled down: show "new posts" button
-            const newCount = fetchedPosts.findIndex((p: TelegramPost) =>
-              currentPosts.some((existing) => existing.id === p.id),
-            );
-            console.log('[checkForNewPosts] -> Showing new posts button');
-            setPendingNewCount(newCount > 0 ? newCount : 1);
-          }
-          return;
-        }
-
-        // Branch 2: Content changed but same IDs (edited posts)
-        if (fpChanged) {
-          console.log('[checkForNewPosts] Branch: Content CHANGED (same IDs)');
-          if (currentNearTop) {
-            // Update content but DON'T reload images
-            console.log('[checkForNewPosts] -> Updating content ONLY (NOT changing refreshKey)');
-            setAllPosts(fetchedPosts);
-            setNextCursor(data.nextBefore);
-            setHasMore(data.hasMore);
-            setPendingNewCount(0);
-            // DO NOT call setRefreshKey - prevents image blinking
-            // DO NOT reset imageLoadStates - keeps existing images
-            topFingerprintRef.current = newFp;
-          } else {
-            console.log('[checkForNewPosts] -> Showing update button');
-            setPendingNewCount(1);
-          }
-          return;
-        }
-
-        // Branch 3: No changes
-        console.log('[checkForNewPosts] Branch: NO CHANGES');
-      }
-    } catch (err) {
-      console.error("Error checking for new posts:", err);
-    }
+    // Temporarily disabled - no polling
+    return;
   }, [channelUsername, fingerprint]);
 
   useEffect(() => {
@@ -404,7 +266,7 @@ export const TelegramChannelFeed = ({
                   <Skeleton className="absolute inset-0 w-full h-full" />
                 )}
                 <img
-                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                  src={`${post.media!}?t=${refreshKey}`}
                   alt="Post"
                   className={`w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 ${
                     imageLoadStates[post.id] ? "" : "opacity-0"
