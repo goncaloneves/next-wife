@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,12 +22,19 @@ interface TelegramPostCardProps {
   };
   index?: number;
   animate?: boolean;
+  cacheBuster?: number;
 }
 
-export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: TelegramPostCardProps) => {
+export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cacheBuster }: TelegramPostCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  
+  const mediaSrc = post.media ? `${post.media}?t=${cacheBuster || Date.now()}` : undefined;
+  
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [mediaSrc]);
   
   const shouldTruncate = post.text.length > 150;
   const displayText = expanded || !shouldTruncate 
@@ -89,13 +96,13 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
         </div>
 
         {/* Media Section */}
-        {post.media && (
+        {mediaSrc && (
           <div className="relative w-full bg-muted/30 cursor-pointer" onClick={handleImageClick}>
             {!imageLoaded && (
               <Skeleton className="w-full h-64" />
             )}
             <img
-              src={post.media}
+              src={mediaSrc}
               alt="Post media"
               className={`w-full object-cover transition-opacity duration-300 hover:opacity-90 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
@@ -143,7 +150,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true }: T
             <X className="w-5 h-5" />
           </Button>
           <img
-            src={post.media}
+            src={mediaSrc}
             alt="Post media fullscreen"
             className="w-auto h-auto max-w-full max-h-[95vh] object-contain"
           />

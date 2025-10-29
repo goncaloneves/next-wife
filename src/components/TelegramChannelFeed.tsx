@@ -125,8 +125,6 @@ export const TelegramChannelFeed = ({
   }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts]);
 
   const checkForNewPosts = async () => {
-    if (!isNearTop) return;
-
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20`,
@@ -173,12 +171,12 @@ export const TelegramChannelFeed = ({
   useEffect(() => {
     fetchInitialPosts();
 
-    // Check for new posts every 1 minute
+    // Check for new posts at specified interval
     const pollInterval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         checkForNewPosts();
       }
-    }, 60000); // 1 minute = 60,000 milliseconds
+    }, refreshInterval);
 
     // Only refetch when page becomes visible and user is near top
     const handleVisibilityChange = () => {
@@ -193,7 +191,7 @@ export const TelegramChannelFeed = ({
       clearInterval(pollInterval);
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [channelUsername]);
+  }, [channelUsername, refreshInterval]);
 
   const handleScroll = useCallback(() => {
     if (layout === "grid") {
@@ -334,7 +332,7 @@ export const TelegramChannelFeed = ({
       <div ref={listRef} onScroll={handleScroll} className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg">
         <div className="space-y-4">
           {allPosts.map((post) => (
-            <TelegramPostCard key={post.id} post={post} channelInfo={channelInfo} animate={false} />
+            <TelegramPostCard key={`${post.id}-${refreshKey}`} post={post} channelInfo={channelInfo} animate={false} cacheBuster={refreshKey} />
           ))}
 
           {hasMore && isLoadingMore && (
