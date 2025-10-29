@@ -359,11 +359,7 @@ export const TelegramChannelFeed = ({
   }
 
   if (allPosts.length === 0 && !loading) {
-    return (
-      <Card className="p-8 text-center bg-card/80 backdrop-blur border border-border">
-        <p className="text-muted-foreground">No posts yet in this channel</p>
-      </Card>
-    );
+    return null;
   }
 
   if (layout === "grid") {
