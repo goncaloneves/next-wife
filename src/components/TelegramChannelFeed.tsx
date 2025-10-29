@@ -130,7 +130,7 @@ export const TelegramChannelFeed = ({
     }
   }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts]);
 
-  const checkForNewPosts = async () => {
+  const checkForNewPosts = useCallback(async () => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20`,
@@ -190,7 +190,7 @@ export const TelegramChannelFeed = ({
     } catch (err) {
       console.error("Error checking for new posts:", err);
     }
-  };
+  }, [allPosts, isNearTop, channelUsername, refreshInterval, fingerprint]);
 
   useEffect(() => {
     fetchInitialPosts();
@@ -215,7 +215,7 @@ export const TelegramChannelFeed = ({
       clearInterval(pollInterval);
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [channelUsername, refreshInterval]);
+  }, [channelUsername, refreshInterval, checkForNewPosts, isNearTop]);
 
   const handleScroll = useCallback(() => {
     if (layout === "grid") {
