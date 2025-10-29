@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2, ArrowUp } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TelegramPost {
   id: string;
@@ -42,6 +43,8 @@ export const TelegramChannelFeed = ({
   const [pendingNewCount, setPendingNewCount] = useState(0);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(Date.now());
+  const [imageLoadStates, setImageLoadStates] = useState<Record<string, boolean>>({});
   const listRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -70,6 +73,8 @@ export const TelegramChannelFeed = ({
       setError(null);
       setLoading(false);
       setPendingNewCount(0);
+      setRefreshKey(Date.now());
+      setImageLoadStates({});
 
       console.log(`Fetched initial ${fetchedPosts.length} posts, nextCursor: ${data.nextBefore}`);
     } catch (err) {
@@ -156,6 +161,8 @@ export const TelegramChannelFeed = ({
           setNextCursor(data.nextBefore);
           setHasMore(data.hasMore);
           setPendingNewCount(0);
+          setRefreshKey(Date.now());
+          setImageLoadStates({});
         }
       }
     } catch (err) {
@@ -231,6 +238,7 @@ export const TelegramChannelFeed = ({
     if (listRef.current) {
       listRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (loading) {
@@ -279,14 +287,19 @@ export const TelegramChannelFeed = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
             {postsWithMedia.map((post) => (
               <div
-                key={post.id}
+                key={`${post.id}-${refreshKey}`}
                 className="aspect-[3/4] cursor-pointer overflow-hidden group relative"
                 onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
               >
+                {!imageLoadStates[post.id] && (
+                  <Skeleton className="absolute inset-0 w-full h-full" />
+                )}
                 <img
-                  src={post.media!}
+                  src={`${post.media!}?t=${refreshKey}`}
                   alt="Post"
                   className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+                  onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
+                  style={{ display: imageLoadStates[post.id] ? "block" : "none" }}
                 />
               </div>
             ))}
