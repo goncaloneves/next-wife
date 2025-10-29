@@ -342,7 +342,7 @@ export const TelegramChannelFeed = ({
         {pendingNewCount > 0 && !isNearTop && (
           <Button
             onClick={handleNewPostsClick}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 shadow-lg"
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-50 shadow-xl animate-in fade-in slide-in-from-top-4"
             size="sm"
           >
             <ArrowUp className="w-4 h-4 mr-2" />
