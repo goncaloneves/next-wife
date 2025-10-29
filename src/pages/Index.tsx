@@ -248,7 +248,7 @@ const Index = () => {
       <footer className="bg-black py-8 text-center">
         <div className="container mx-auto px-4">
           <p className="text-white/90 font-body">
-            © 2025 -
+            © 2025 - Made in Bali with 💖
             <br />
             <span
               className="cursor-pointer hover:opacity-80 transition-opacity"
@@ -256,7 +256,6 @@ const Index = () => {
             >
               @nextwifebot
             </span>
-            {" "}Made in Bali with 💖
           </p>
         </div>
       </footer>
