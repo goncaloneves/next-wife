@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Loader2, ArrowUp } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
@@ -79,7 +79,7 @@ export const TelegramChannelFeed = ({
     }
   };
 
-  const fetchNextPage = async () => {
+  const fetchNextPage = useCallback(async () => {
     if (!hasMore || isLoadingMore || !nextCursor) return;
 
     setIsLoadingMore(true);
@@ -117,7 +117,7 @@ export const TelegramChannelFeed = ({
     } finally {
       setIsLoadingMore(false);
     }
-  };
+  }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts]);
 
   const checkForNewPosts = async () => {
     if (!isNearTop) return;
@@ -180,15 +180,7 @@ export const TelegramChannelFeed = ({
     };
   }, [channelUsername]);
 
-  // Window scroll listener for grid layout
-  useEffect(() => {
-    if (layout !== "grid") return;
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [layout, hasMore, isLoadingMore]);
-
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (layout === "grid") {
       // For grid, use window scroll
       const scrollTop = window.scrollY;
@@ -215,7 +207,15 @@ export const TelegramChannelFeed = ({
         fetchNextPage();
       }
     }
-  };
+  }, [layout, hasMore, isLoadingMore, fetchNextPage]);
+
+  // Window scroll listener for grid layout
+  useEffect(() => {
+    if (layout !== "grid") return;
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [layout, handleScroll]);
 
   const handleNewPostsClick = () => {
     fetchInitialPosts();
