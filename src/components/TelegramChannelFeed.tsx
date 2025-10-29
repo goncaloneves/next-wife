@@ -301,10 +301,11 @@ export const TelegramChannelFeed = ({
   const handleNewPostsClick = () => {
     fetchInitialPosts();
     setPendingNewCount(0);
-    if (listRef.current) {
+    
+    // Only scroll the container for list layout
+    if (layout === "list" && listRef.current) {
       listRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (loading) {
