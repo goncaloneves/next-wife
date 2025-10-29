@@ -24,14 +24,14 @@ interface TelegramChannelFeedProps {
   channelUsername: string;
   refreshInterval?: number;
   maxPosts?: number;
-  layout?: 'list' | 'grid';
+  layout?: "list" | "grid";
 }
 
 export const TelegramChannelFeed = ({
   channelUsername,
   refreshInterval = 3000,
   maxPosts = 20,
-  layout = 'list'
+  layout = "list",
 }: TelegramChannelFeedProps) => {
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
@@ -51,18 +51,18 @@ export const TelegramChannelFeed = ({
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20`,
         {
           headers: {
-            'Content-Type': 'application/json',
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch posts');
+        throw new Error("Failed to fetch posts");
       }
 
       const data = await response.json();
       const fetchedPosts = data.posts || [];
-      
+
       setAllPosts(fetchedPosts);
       setChannelInfo(data.channelInfo);
       setNextCursor(data.nextBefore);
@@ -70,48 +70,50 @@ export const TelegramChannelFeed = ({
       setError(null);
       setLoading(false);
       setPendingNewCount(0);
-      
+
       console.log(`Fetched initial ${fetchedPosts.length} posts, nextCursor: ${data.nextBefore}`);
     } catch (err) {
-      console.error('Error fetching Telegram posts:', err);
-      setError('Unable to load channel posts');
+      console.error("Error fetching Telegram posts:", err);
+      setError("Unable to load channel posts");
       setLoading(false);
     }
   };
 
   const fetchNextPage = async () => {
     if (!hasMore || isLoadingMore || !nextCursor) return;
-    
+
     setIsLoadingMore(true);
-    
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20&before=${nextCursor}`,
         {
           headers: {
-            'Content-Type': 'application/json',
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch more posts');
+        throw new Error("Failed to fetch more posts");
       }
 
       const data = await response.json();
       const newPosts = data.posts || [];
-      
+
       // Deduplicate using Set
-      const existingIds = new Set(allPosts.map(p => p.id));
+      const existingIds = new Set(allPosts.map((p) => p.id));
       const uniqueNewPosts = newPosts.filter((p: TelegramPost) => !existingIds.has(p.id));
-      
-      setAllPosts(prev => [...prev, ...uniqueNewPosts]);
+
+      setAllPosts((prev) => [...prev, ...uniqueNewPosts]);
       setNextCursor(data.nextBefore);
       setHasMore(data.hasMore);
-      
-      console.log(`Fetched ${uniqueNewPosts.length} more posts, nextCursor: ${data.nextBefore}, hasMore: ${data.hasMore}`);
+
+      console.log(
+        `Fetched ${uniqueNewPosts.length} more posts, nextCursor: ${data.nextBefore}, hasMore: ${data.hasMore}`,
+      );
     } catch (err) {
-      console.error('Error fetching more posts:', err);
+      console.error("Error fetching more posts:", err);
     } finally {
       setIsLoadingMore(false);
     }
@@ -119,34 +121,36 @@ export const TelegramChannelFeed = ({
 
   const checkForNewPosts = async () => {
     if (!isNearTop) return;
-    
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20`,
         {
           headers: {
-            'Content-Type': 'application/json',
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (!response.ok) return;
 
       const data = await response.json();
       const fetchedPosts = data.posts || [];
-      
+
       // Check for new posts
       if (allPosts.length > 0 && fetchedPosts.length > 0) {
         const newPostIds = fetchedPosts.slice(0, 5).map((p: TelegramPost) => p.id);
-        const existingIds = allPosts.slice(0, 5).map(p => p.id);
+        const existingIds = allPosts.slice(0, 5).map((p) => p.id);
         const hasNewPosts = newPostIds.some((id: string) => !existingIds.includes(id));
-        
+
         if (hasNewPosts && !isNearTop) {
-          const newCount = fetchedPosts.findIndex((p: TelegramPost) => allPosts.some(existing => existing.id === p.id));
+          const newCount = fetchedPosts.findIndex((p: TelegramPost) =>
+            allPosts.some((existing) => existing.id === p.id),
+          );
           setPendingNewCount(newCount > 0 ? newCount : 1);
           return;
         }
-        
+
         if (hasNewPosts && isNearTop) {
           setAllPosts(fetchedPosts);
           setNextCursor(data.nextBefore);
@@ -155,46 +159,45 @@ export const TelegramChannelFeed = ({
         }
       }
     } catch (err) {
-      console.error('Error checking for new posts:', err);
+      console.error("Error checking for new posts:", err);
     }
   };
 
   useEffect(() => {
     fetchInitialPosts();
-    
+
     // Only refetch when page becomes visible and user is near top
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && isNearTop) {
+      if (document.visibilityState === "visible" && isNearTop) {
         checkForNewPosts();
       }
     };
-    
-    window.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
+    window.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
-      window.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [channelUsername]);
 
-
   // Window scroll listener for grid layout
   useEffect(() => {
-    if (layout !== 'grid') return;
+    if (layout !== "grid") return;
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [layout, hasMore, isLoadingMore]);
 
   const handleScroll = () => {
-    if (layout === 'grid') {
+    if (layout === "grid") {
       // For grid, use window scroll
       const scrollTop = window.scrollY;
       const scrollHeight = document.documentElement.scrollHeight;
       const clientHeight = window.innerHeight;
-      
+
       const nearTop = scrollTop < 100;
       setIsNearTop(nearTop);
-      
+
       const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
       if (nearBottom && hasMore && !isLoadingMore) {
         fetchNextPage();
@@ -202,11 +205,11 @@ export const TelegramChannelFeed = ({
     } else {
       // For list, use container scroll
       if (!listRef.current) return;
-      
+
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
       const nearTop = scrollTop < 100;
       setIsNearTop(nearTop);
-      
+
       const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
       if (nearBottom && hasMore && !isLoadingMore) {
         fetchNextPage();
@@ -218,7 +221,7 @@ export const TelegramChannelFeed = ({
     fetchInitialPosts();
     setPendingNewCount(0);
     if (listRef.current) {
-      listRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      listRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -248,8 +251,8 @@ export const TelegramChannelFeed = ({
     );
   }
 
-  if (layout === 'grid') {
-    const postsWithMedia = allPosts.filter(post => post.media);
+  if (layout === "grid") {
+    const postsWithMedia = allPosts.filter((post) => post.media);
 
     return (
       <div className="relative">
@@ -260,27 +263,27 @@ export const TelegramChannelFeed = ({
             size="sm"
           >
             <ArrowUp className="w-4 h-4 mr-2" />
-            {pendingNewCount} new {pendingNewCount === 1 ? 'post' : 'posts'}
+            {pendingNewCount} new {pendingNewCount === 1 ? "post" : "posts"}
           </Button>
         )}
-        
+
         <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {postsWithMedia.map((post) => (
               <div
                 key={post.id}
                 className="aspect-[3/4] cursor-pointer overflow-hidden group relative"
-                onClick={() => window.open(post.link, '_blank', 'noopener,noreferrer')}
+                onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
               >
                 <img
                   src={post.media!}
                   alt="Post"
-                  className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
                 />
               </div>
             ))}
           </div>
-          
+
           {hasMore && isLoadingMore && (
             <div className="py-8 text-center">
               <div className="flex items-center justify-center gap-2 text-muted-foreground">
@@ -303,25 +306,16 @@ export const TelegramChannelFeed = ({
           size="sm"
         >
           <ArrowUp className="w-4 h-4 mr-2" />
-          {pendingNewCount} new {pendingNewCount === 1 ? 'post' : 'posts'}
+          {pendingNewCount} new {pendingNewCount === 1 ? "post" : "posts"}
         </Button>
       )}
-      
-      <div
-        ref={listRef}
-        onScroll={handleScroll}
-        className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg"
-      >
+
+      <div ref={listRef} onScroll={handleScroll} className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg">
         <div className="space-y-4">
           {allPosts.map((post) => (
-            <TelegramPostCard
-              key={post.id}
-              post={post}
-              channelInfo={channelInfo}
-              animate={false}
-            />
+            <TelegramPostCard key={post.id} post={post} channelInfo={channelInfo} animate={false} />
           ))}
-          
+
           {hasMore && isLoadingMore && (
             <div className="py-8 text-center">
               <div className="flex items-center justify-center gap-2 text-muted-foreground">
