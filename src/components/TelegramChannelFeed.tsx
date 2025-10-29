@@ -331,7 +331,7 @@ export const TelegramChannelFeed = ({
 
         {/* Instagram-style Lightbox */}
         <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
-          <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black border-none">
+          <DialogContent hideClose className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black border-none">
             <Button
               onClick={() => setSelectedPost(null)}
               variant="ghost"
@@ -380,9 +380,9 @@ export const TelegramChannelFeed = ({
                 </div>
                 
                 {/* Content Sidebar */}
-                <div className="md:w-[400px] bg-background flex flex-col max-h-[95vh]">
+                <div className="w-full md:w-[350px] lg:w-[400px] bg-background flex flex-col max-h-[95vh] min-h-0">
                   {/* Header */}
-                  <div className="flex items-center gap-3 p-4 border-b border-border">
+                  <div className="flex items-center gap-3 p-4 border-b border-border flex-shrink-0">
                     <Avatar className="w-10 h-10">
                       <AvatarImage 
                         src={selectedPost.avatar || channelInfo?.avatar || undefined} 
