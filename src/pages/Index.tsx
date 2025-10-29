@@ -233,7 +233,7 @@ const Index = () => {
       </section>
 
       {/* Telegram Channel Feed Section */}
-      <section ref={feedContentRef} className="relative py-12 bg-black">
+      <section ref={feedContentRef} className="relative py-12 bg-black opacity-0">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
