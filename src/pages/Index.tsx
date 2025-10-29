@@ -247,7 +247,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-black py-8 text-center">
         <div className="container mx-auto px-4">
-          <p className="text-white/90">
+          <p className="text-white/90 font-body font-bold">
             © 2025{" "}
             <span
               className="cursor-pointer hover:opacity-80 transition-opacity"
