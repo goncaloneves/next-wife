@@ -338,11 +338,11 @@ export const TelegramChannelFeed = ({
     const postsWithMedia = allPosts.filter((post) => post.media);
 
     return (
-      <div className="relative">
+      <>
         {pendingNewCount > 0 && !isNearTop && (
           <Button
             onClick={handleNewPostsClick}
-            className="fixed top-4 left-1/2 -translate-x-1/2 z-50 shadow-xl animate-in fade-in slide-in-from-top-4"
+            className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] shadow-xl animate-in fade-in slide-in-from-top-4"
             size="sm"
           >
             <ArrowUp className="w-4 h-4 mr-2" />
@@ -350,6 +350,7 @@ export const TelegramChannelFeed = ({
           </Button>
         )}
 
+        <div className="relative">
         <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
             {postsWithMedia.map((post) => (
@@ -381,7 +382,8 @@ export const TelegramChannelFeed = ({
             </div>
           )}
         </div>
-      </div>
+        </div>
+      </>
     );
   }
 
