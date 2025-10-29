@@ -247,7 +247,7 @@ export const TelegramChannelFeed = ({
 
         <div className="relative">
         <div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5 min-h-[80vh]">
             {postsWithMedia.map((post, index) => (
               <div
                 key={`${post.id}-${refreshKey}`}
