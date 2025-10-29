@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Card } from "@/components/ui/card";
-import { Loader2, ArrowUp } from "lucide-react";
+import { Loader2, ArrowUp, RefreshCw } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -376,6 +376,22 @@ export const TelegramChannelFeed = ({
         )}
 
         <div className="relative">
+          {/* Refresh Button */}
+          <div className="flex justify-center mb-6">
+            <Button
+              size="lg"
+              className="text-lg px-8 py-6 font-bold transition-all duration-300"
+              style={{
+                background: "var(--gradient-sunset)",
+                boxShadow: "var(--shadow-warm)",
+              }}
+              onClick={handleNewPostsClick}
+            >
+              <RefreshCw className="w-5 h-5 mr-2" />
+              Refresh Feed 🌻
+            </Button>
+          </div>
+
         <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
             {postsWithMedia.map((post) => (
