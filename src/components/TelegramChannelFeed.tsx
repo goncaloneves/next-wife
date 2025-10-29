@@ -366,32 +366,20 @@ export const TelegramChannelFeed = ({
         {pendingNewCount > 0 && !isNearTop && createPortal(
           <Button
             onClick={handleNewPostsClick}
-            className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] shadow-xl animate-in fade-in slide-in-from-top-4"
-            size="sm"
+            className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] text-lg px-8 py-6 font-bold transition-all duration-300 animate-in fade-in slide-in-from-top-4"
+            size="lg"
+            style={{
+              background: "var(--gradient-sunset)",
+              boxShadow: "var(--shadow-warm)",
+            }}
           >
-            <ArrowUp className="w-4 h-4 mr-2" />
-            {pendingNewCount} new {pendingNewCount === 1 ? "post" : "posts"}
+            <ArrowUp className="w-5 h-5 mr-2" />
+            {pendingNewCount} new {pendingNewCount === 1 ? "post" : "posts"} 🌻
           </Button>,
           document.body
         )}
 
         <div className="relative">
-          {/* Refresh Button */}
-          <div className="flex justify-center mb-6">
-            <Button
-              size="lg"
-              className="text-lg px-8 py-6 font-bold transition-all duration-300"
-              style={{
-                background: "var(--gradient-sunset)",
-                boxShadow: "var(--shadow-warm)",
-              }}
-              onClick={handleNewPostsClick}
-            >
-              <RefreshCw className="w-5 h-5 mr-2" />
-              Refresh Feed 🌻
-            </Button>
-          </div>
-
         <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
             {postsWithMedia.map((post, index) => (
