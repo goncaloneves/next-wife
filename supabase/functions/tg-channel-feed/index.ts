@@ -296,7 +296,9 @@ Deno.serve(async (req) => {
     const cached = cache.get(cacheKey);
     const now = Date.now();
 
-    if (cached && (now - cached.timestamp) < CACHE_TTL) {
+    // Only use cache for pagination (when 'before' param exists)
+    // Always fetch fresh for first page to allow new post detection
+    if (before && cached && (now - cached.timestamp) < CACHE_TTL) {
       console.log(`Returning cached page (${cached.data.posts.length} posts)`);
       return new Response(
         JSON.stringify({ ...cached.data, cached: true }),
