@@ -393,12 +393,8 @@ export const TelegramChannelFeed = ({
             {postsWithMedia.map((post, index) => (
               <div
                 key={`${post.id}-${refreshKey}`}
-                className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in"
+                className="aspect-[3/4] cursor-pointer overflow-hidden group relative"
                 onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
-                style={{ 
-                  animationDelay: `${index * 0.05}s`, 
-                  animationFillMode: "forwards" 
-                }}
               >
                 {!imageLoadStates[post.id] && (
                   <Skeleton className="absolute inset-0 w-full h-full" />
@@ -406,9 +402,14 @@ export const TelegramChannelFeed = ({
                 <img
                   src={`${post.media!}?t=${refreshKey}`}
                   alt="Post"
-                  className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+                  className={`w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 ${
+                    imageLoadStates[post.id] ? "animate-fade-in" : "opacity-0"
+                  }`}
                   onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
-                  style={{ display: imageLoadStates[post.id] ? "block" : "none" }}
+                  style={imageLoadStates[post.id] ? { 
+                    animationDelay: `${index * 0.05}s`,
+                    animationFillMode: "forwards"
+                  } : {}}
                 />
               </div>
             ))}
