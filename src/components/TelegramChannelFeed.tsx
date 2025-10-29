@@ -313,7 +313,7 @@ export const TelegramChannelFeed = ({
                     alt="Post"
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/30 transition-colors duration-300" />
                 </div>
               ))}
             </div>
