@@ -69,13 +69,29 @@ export const TelegramChannelFeed = ({
 
   const fetchInitialPosts = async () => {
     try {
-      // Temporarily disabled - return empty data
-      const fetchedPosts: TelegramPost[] = [];
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${encodeURIComponent(channelUsername)}&limit=${maxPosts}`,
+        {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const fetchedPosts: TelegramPost[] = data.posts || [];
       
       setAllPosts(fetchedPosts);
-      setChannelInfo(undefined);
-      setNextCursor(null);
-      setHasMore(false);
+      setChannelInfo(data.channelInfo);
+      setNextCursor(data.nextCursor);
+      setHasMore(!!data.nextCursor);
       setError(null);
       setLoading(false);
       setPendingNewCount(0);
@@ -83,7 +99,7 @@ export const TelegramChannelFeed = ({
       setImageLoadStates({});
       topFingerprintRef.current = fingerprint(fetchedPosts);
 
-      console.log(`Fetched initial ${fetchedPosts.length} posts (disabled)`);
+      console.log(`Fetched initial ${fetchedPosts.length} posts`);
     } catch (err) {
       console.error("Error fetching Telegram posts:", err);
       setError("Unable to load channel posts");
@@ -92,13 +108,72 @@ export const TelegramChannelFeed = ({
   };
 
   const fetchNextPage = useCallback(async () => {
-    // Temporarily disabled - no pagination
-    return;
+    if (!hasMore || isLoadingMore || !nextCursor) return;
+
+    try {
+      setIsLoadingMore(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${encodeURIComponent(channelUsername)}&cursor=${nextCursor}&limit=${maxPosts}`,
+        {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const fetchedPosts: TelegramPost[] = data.posts || [];
+
+      setAllPosts((prev) => [...prev, ...fetchedPosts]);
+      setNextCursor(data.nextCursor);
+      setHasMore(!!data.nextCursor);
+      setIsLoadingMore(false);
+
+      console.log(`Fetched ${fetchedPosts.length} more posts`);
+    } catch (err) {
+      console.error("Error fetching next page:", err);
+      setIsLoadingMore(false);
+    }
   }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts]);
 
   const checkForNewPosts = useCallback(async () => {
-    // Temporarily disabled - no polling
-    return;
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${encodeURIComponent(channelUsername)}&limit=${maxPosts}`,
+        {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const freshPosts: TelegramPost[] = data.posts || [];
+
+      const currentTopFingerprint = topFingerprintRef.current;
+      const freshFingerprint = fingerprint(freshPosts);
+
+      if (freshFingerprint !== currentTopFingerprint) {
+        const newPostsCount = freshPosts.filter(
+          (freshPost) => !allPosts.some((existingPost) => existingPost.id === freshPost.id)
+        ).length;
+
+        if (newPostsCount > 0) {
+          setPendingNewCount(newPostsCount);
+          console.log(`Detected ${newPostsCount} new posts available`);
+        }
+      }
+    } catch (err) {
+      console.error("Error checking for new posts:", err);
+    }
   }, [channelUsername, fingerprint]);
 
   useEffect(() => {
