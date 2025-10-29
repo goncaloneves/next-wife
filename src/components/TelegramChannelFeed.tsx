@@ -341,12 +341,7 @@ export const TelegramChannelFeed = ({
   };
 
   if (loading) {
-    return (
-      <Card className="p-8 text-center bg-card/80 backdrop-blur border border-border">
-        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2 text-primary" />
-        <p className="text-muted-foreground">Loading channel posts...</p>
-      </Card>
-    );
+    return null;
   }
 
   if (error) {
