@@ -339,10 +339,10 @@ export const TelegramChannelFeed = ({
 
     return (
       <div className="relative">
-        {pendingNewCount > 0 && (
+        {pendingNewCount > 0 && !isNearTop && (
           <Button
             onClick={handleNewPostsClick}
-            className="absolute -top-12 left-1/2 -translate-x-1/2 z-10 shadow-lg"
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 shadow-lg"
             size="sm"
           >
             <ArrowUp className="w-4 h-4 mr-2" />
