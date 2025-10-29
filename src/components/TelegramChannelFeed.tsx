@@ -166,6 +166,13 @@ export const TelegramChannelFeed = ({
   useEffect(() => {
     fetchInitialPosts();
 
+    // Check for new posts every 1 minute
+    const pollInterval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        checkForNewPosts();
+      }
+    }, 60000); // 1 minute = 60,000 milliseconds
+
     // Only refetch when page becomes visible and user is near top
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible" && isNearTop) {
@@ -176,6 +183,7 @@ export const TelegramChannelFeed = ({
     window.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      clearInterval(pollInterval);
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [channelUsername]);
