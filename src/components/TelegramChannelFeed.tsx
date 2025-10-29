@@ -270,6 +270,13 @@ export const TelegramChannelFeed = ({
       const clientHeight = window.innerHeight;
 
       const nearTop = scrollTop < 100;
+      
+      // If user scrolls back to top AND there are pending new posts, auto-refresh
+      if (nearTop && pendingNewCount > 0) {
+        fetchInitialPosts();
+        setPendingNewCount(0);
+      }
+      
       setIsNearTop(nearTop);
 
       const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
@@ -282,6 +289,13 @@ export const TelegramChannelFeed = ({
 
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
       const nearTop = scrollTop < 100;
+      
+      // If user scrolls back to top AND there are pending new posts, auto-refresh
+      if (nearTop && pendingNewCount > 0) {
+        fetchInitialPosts();
+        setPendingNewCount(0);
+      }
+      
       setIsNearTop(nearTop);
 
       const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
@@ -289,7 +303,7 @@ export const TelegramChannelFeed = ({
         fetchNextPage();
       }
     }
-  }, [layout, hasMore, isLoadingMore, fetchNextPage]);
+  }, [layout, hasMore, isLoadingMore, fetchNextPage, pendingNewCount, fetchInitialPosts]);
 
   // Window scroll listener for grid layout
   useEffect(() => {
