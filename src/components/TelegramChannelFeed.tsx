@@ -396,7 +396,7 @@ export const TelegramChannelFeed = ({
                 className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in"
                 onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
                 style={{ 
-                  animationDelay: "0.05s",
+                  animationDelay: `${(index % 20) * 0.05}s`,
                   animationFillMode: "forwards"
                 }}
               >
