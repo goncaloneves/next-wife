@@ -48,6 +48,17 @@ export const TelegramChannelFeed = ({
   const listRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
   const topFingerprintRef = useRef<string>('');
+  const postsRef = useRef<TelegramPost[]>([]);
+  const nearTopRef = useRef(true);
+
+  // Sync refs with state for stable access in callbacks
+  useEffect(() => {
+    postsRef.current = allPosts;
+  }, [allPosts]);
+
+  useEffect(() => {
+    nearTopRef.current = isNearTop;
+  }, [isNearTop]);
 
   // Helper to create fingerprint of top posts
   const fingerprint = useCallback((posts: TelegramPost[]) =>
@@ -146,65 +157,98 @@ export const TelegramChannelFeed = ({
       const data = await response.json();
       const fetchedPosts = data.posts || [];
 
+      // Read current state from refs (stable access)
+      const currentPosts = postsRef.current;
+      const currentNearTop = nearTopRef.current;
+
       console.log('[checkForNewPosts]', {
         cached: data.cached,
         topIds: fetchedPosts.slice(0, 3).map((p: TelegramPost) => p.id),
-        currentTopIds: allPosts.slice(0, 3).map(p => p.id),
+        currentTopIds: currentPosts.slice(0, 3).map(p => p.id),
       });
 
       // Check for content changes using fingerprint
-      if (allPosts.length > 0 && fetchedPosts.length > 0) {
+      if (currentPosts.length > 0 && fetchedPosts.length > 0) {
         const newFp = fingerprint(fetchedPosts);
         const fpChanged = newFp !== topFingerprintRef.current;
 
-        // Check for new post IDs
-        const newPostIds = fetchedPosts.slice(0, 5).map((p: TelegramPost) => p.id);
-        const existingIds = allPosts.slice(0, 5).map((p) => p.id);
-        const hasNewPostIds = newPostIds.some((id: string) => !existingIds.includes(id));
+        // Check for new post IDs (NEW posts, not just content updates)
+        const newTopIds = fetchedPosts.slice(0, 5).map((p: TelegramPost) => p.id);
+        const currentTopIds = currentPosts.slice(0, 5).map((p) => p.id);
+        const hasNewPostIds = newTopIds.some((id: string) => !currentTopIds.includes(id));
 
-        console.log('[checkForNewPosts]', {
+        console.log('[checkForNewPosts] Decision:', {
           fpChanged,
           hasNewPostIds,
-          isNearTop,
+          currentNearTop,
+          willChangeRefreshKey: hasNewPostIds && currentNearTop,
         });
 
-        if ((hasNewPostIds || fpChanged) && !isNearTop) {
-          const newCount = fetchedPosts.findIndex((p: TelegramPost) =>
-            allPosts.some((existing) => existing.id === p.id),
-          );
-          setPendingNewCount(newCount > 0 ? newCount : 1);
+        // Branch 1: New post IDs detected (genuine new posts)
+        if (hasNewPostIds) {
+          console.log('[checkForNewPosts] Branch: NEW IDs detected');
+          if (currentNearTop) {
+            // User is near top: refresh everything including images
+            console.log('[checkForNewPosts] -> Refreshing with NEW IDs (changing refreshKey)');
+            setAllPosts(fetchedPosts);
+            setNextCursor(data.nextBefore);
+            setHasMore(data.hasMore);
+            setPendingNewCount(0);
+            setRefreshKey(Date.now()); // ONLY change refreshKey for NEW posts
+            setImageLoadStates({});
+            topFingerprintRef.current = newFp;
+          } else {
+            // User scrolled down: show "new posts" button
+            const newCount = fetchedPosts.findIndex((p: TelegramPost) =>
+              currentPosts.some((existing) => existing.id === p.id),
+            );
+            console.log('[checkForNewPosts] -> Showing new posts button');
+            setPendingNewCount(newCount > 0 ? newCount : 1);
+          }
           return;
         }
 
-        if ((hasNewPostIds || fpChanged) && isNearTop) {
-          console.log('[checkForNewPosts] Refreshing feed with new content');
-          setAllPosts(fetchedPosts);
-          setNextCursor(data.nextBefore);
-          setHasMore(data.hasMore);
-          setPendingNewCount(0);
-          setRefreshKey(Date.now());
-          setImageLoadStates({});
-          topFingerprintRef.current = newFp;
+        // Branch 2: Content changed but same IDs (edited posts)
+        if (fpChanged) {
+          console.log('[checkForNewPosts] Branch: Content CHANGED (same IDs)');
+          if (currentNearTop) {
+            // Update content but DON'T reload images
+            console.log('[checkForNewPosts] -> Updating content ONLY (NOT changing refreshKey)');
+            setAllPosts(fetchedPosts);
+            setNextCursor(data.nextBefore);
+            setHasMore(data.hasMore);
+            setPendingNewCount(0);
+            // DO NOT call setRefreshKey - prevents image blinking
+            // DO NOT reset imageLoadStates - keeps existing images
+            topFingerprintRef.current = newFp;
+          } else {
+            console.log('[checkForNewPosts] -> Showing update button');
+            setPendingNewCount(1);
+          }
+          return;
         }
+
+        // Branch 3: No changes
+        console.log('[checkForNewPosts] Branch: NO CHANGES');
       }
     } catch (err) {
       console.error("Error checking for new posts:", err);
     }
-  }, [allPosts, isNearTop, channelUsername, fingerprint]);
+  }, [channelUsername, fingerprint]);
 
   useEffect(() => {
     fetchInitialPosts();
 
-    // Check for new posts at specified interval
+    // Check for new posts at specified interval (stable - won't reset constantly)
     const pollInterval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         checkForNewPosts();
       }
     }, refreshInterval);
 
-    // Only refetch when page becomes visible and user is near top
+    // Refetch when page becomes visible
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && isNearTop) {
+      if (document.visibilityState === "visible") {
         checkForNewPosts();
       }
     };
@@ -215,7 +259,7 @@ export const TelegramChannelFeed = ({
       clearInterval(pollInterval);
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [channelUsername, refreshInterval, checkForNewPosts, isNearTop]);
+  }, [channelUsername, refreshInterval, checkForNewPosts]);
 
   const handleScroll = useCallback(() => {
     if (layout === "grid") {
