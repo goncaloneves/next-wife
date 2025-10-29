@@ -286,7 +286,7 @@ export const TelegramChannelFeed = ({
                 <img
                   src={post.media!}
                   alt="Post"
-                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
                 />
               </div>
             ))}
