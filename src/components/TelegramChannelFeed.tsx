@@ -404,7 +404,7 @@ export const TelegramChannelFeed = ({
                   <Skeleton className="absolute inset-0 w-full h-full" />
                 )}
                 <img
-                  src={`${post.media!}?t=${refreshKey}`}
+                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                   alt="Post"
                   className={`w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 ${
                     imageLoadStates[post.id] ? "" : "opacity-0"
