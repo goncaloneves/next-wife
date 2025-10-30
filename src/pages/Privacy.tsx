@@ -112,20 +112,7 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">7. Third-Party Services</h2>
-            <p>We use the following third-party services:</p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Telegram:</strong> For service delivery and payments</li>
-              <li><strong>Cloud Infrastructure:</strong> For data storage and backend services</li>
-              <li><strong>AI Providers:</strong> For generating companion responses and content</li>
-            </ul>
-            <p className="mt-4">
-              These services have their own privacy policies. We encourage you to review them.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">8. Your Privacy Rights</h2>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">7. Your Privacy Rights</h2>
             <p>Depending on your location, you may have the right to:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Access your personal data</li>
@@ -140,7 +127,7 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">9. Children's Privacy</h2>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">8. Children's Privacy</h2>
             <p>
               Our Service is not intended for users under 18 years of age. We do not knowingly collect personal information 
               from minors. If you believe a minor has provided us with personal information, please contact us immediately.
@@ -148,7 +135,7 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">10. International Data Transfers</h2>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">9. International Data Transfers</h2>
             <p>
               Your data may be transferred to and processed in countries other than your own. By using our Service, you 
               consent to such transfers. We ensure appropriate safeguards are in place for international data transfers.
@@ -156,7 +143,7 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">11. Cookies and Tracking</h2>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">10. Cookies and Tracking</h2>
             <p>
               Our website uses minimal cookies for essential functionality. We do not use extensive tracking or advertising cookies.
             </p>
