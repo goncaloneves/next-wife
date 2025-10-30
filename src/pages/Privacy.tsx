@@ -80,7 +80,7 @@ const Privacy = () => {
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Encrypted data transmission (HTTPS/TLS)</li>
-              <li>Secure cloud storage with Supabase</li>
+              <li>Secure cloud storage infrastructure</li>
               <li>Regular security audits and updates</li>
               <li>Limited employee access to user data</li>
             </ul>
@@ -103,7 +103,7 @@ const Privacy = () => {
             <p>We use the following third-party services:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li><strong>Telegram:</strong> For service delivery and payments</li>
-              <li><strong>Supabase:</strong> For data storage and backend services</li>
+              <li><strong>Cloud Infrastructure:</strong> For data storage and backend services</li>
               <li><strong>AI Providers:</strong> For generating companion responses and content</li>
             </ul>
             <p className="mt-4">
