@@ -249,7 +249,7 @@ const Index = () => {
       <footer className="bg-black py-8 text-center">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-4">
-            <div className="flex gap-4 text-white/70 font-body text-sm">
+            <div className="flex flex-wrap justify-center gap-4 text-white/70 font-body text-sm">
               <Link 
                 to="/terms" 
                 className="hover:text-white transition-colors"
@@ -265,6 +265,16 @@ const Index = () => {
               >
                 Privacy Policy
               </Link>
+              <span>•</span>
+              <a
+                href="https://t.me/nextwifesupport"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+                data-testid="link-support"
+              >
+                Support
+              </a>
             </div>
             <p className="text-white/70 font-body text-sm">
               <span
