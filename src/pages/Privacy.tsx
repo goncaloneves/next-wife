@@ -50,8 +50,8 @@ const Privacy = () => {
             <p>We use collected information to:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Provide and personalize AI companion experiences</li>
+              <li>Maintain conversation context for better responses</li>
               <li>Process payments and manage subscriptions</li>
-              <li>Improve our AI models and service quality</li>
               <li>Communicate service updates and features</li>
               <li>Ensure service security and prevent abuse</li>
               <li>Comply with legal obligations</li>
@@ -59,15 +59,18 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">4. AI Training and Content Generation</h2>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">4. Message Usage and Privacy</h2>
             <p>
-              Your conversations and interactions may be used to train and improve our AI models. We take privacy seriously:
+              <strong>We do NOT use your messages for AI training.</strong> Your conversations are used exclusively for:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Personal identifiers are removed before data is used for training</li>
-              <li>Content is anonymized and aggregated</li>
-              <li>We do not share individual conversations with third parties</li>
+              <li>Providing contextual responses during your conversations</li>
+              <li>Maintaining conversation history for continuity</li>
+              <li>Personalizing your AI companion experience</li>
             </ul>
+            <p className="mt-4">
+              Your private conversations remain private and are never used to train AI models or shared with third parties.
+            </p>
           </section>
 
           <section>
