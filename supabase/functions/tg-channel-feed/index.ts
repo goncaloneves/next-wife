@@ -3,10 +3,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Simple in-memory cache
-const cache = new Map<string, { data: any; timestamp: number }>();
-const CACHE_TTL = 3000; // 3 seconds
-
 // Parse HTML to extract channel info and posts
 function parseChannelHTML(html: string, channelName: string): { channelInfo: any; posts: any[] } {
   // Extract channel metadata
@@ -296,21 +292,6 @@ Deno.serve(async (req) => {
 
     console.log(`Fetching page from channel: ${channelName} (before: ${before || 'first'}, limit: ${limit})`);
 
-    // Check cache - per-page caching
-    const cacheKey = `${channelName}:page:${before || 'first'}:${limit}`;
-    const cached = cache.get(cacheKey);
-    const now = Date.now();
-
-    // Only use cache for pagination (when 'before' param exists)
-    // Always fetch fresh for first page to allow new post detection
-    if (before && cached && (now - cached.timestamp) < CACHE_TTL) {
-      console.log(`Returning cached page (${cached.data.posts.length} posts)`);
-      return new Response(
-        JSON.stringify({ ...cached.data, cached: true }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
     // Fetch single page with timestamp to bust Telegram's CDN cache
     const ts = Date.now();
     const pageUrl = before 
@@ -346,12 +327,8 @@ Deno.serve(async (req) => {
       channelInfo: before ? undefined : result.channelInfo, // Only include channel info on first page
       posts,
       nextBefore,
-      hasMore,
-      cached: false
+      hasMore
     };
-
-    // Update cache
-    cache.set(cacheKey, { data: responseData, timestamp: now });
 
     return new Response(
       JSON.stringify(responseData),

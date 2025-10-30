@@ -32,7 +32,7 @@ interface TelegramChannelFeedProps {
 
 export const TelegramChannelFeed = ({
   channelUsername,
-  refreshInterval = 3000,
+  refreshInterval = 30000,
   maxPosts = 20,
   layout = "list",
   feedSectionRef,
