@@ -127,14 +127,14 @@ const Terms = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">12. Contact</h2>
             <p>
-              For questions about these Terms, please contact us through our Telegram channel: 
+              For questions about these Terms, please contact us through our support channel: 
               <a 
-                href="https://t.me/nextwifebot" 
+                href="https://t.me/nextwifesupport" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-primary hover:underline ml-1"
               >
-                @nextwifebot
+                @nextwifesupport
               </a>
             </p>
           </section>

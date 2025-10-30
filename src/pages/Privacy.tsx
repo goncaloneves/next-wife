@@ -122,7 +122,15 @@ const Privacy = () => {
               <li>Data portability</li>
             </ul>
             <p className="mt-4">
-              To exercise these rights, contact us through our Telegram bot.
+              To exercise these rights, contact us through our support channel:{" "}
+              <a 
+                href="https://t.me/nextwifesupport" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                @nextwifesupport
+              </a>
             </p>
           </section>
 
@@ -164,14 +172,14 @@ const Privacy = () => {
             </p>
             <ul className="list-none space-y-2 mt-4">
               <li>
-                <strong>Telegram:</strong>{" "}
+                <strong>Support Channel:</strong>{" "}
                 <a 
-                  href="https://t.me/nextwifebot" 
+                  href="https://t.me/nextwifesupport" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
                 >
-                  @nextwifebot
+                  @nextwifesupport
                 </a>
               </li>
               <li><strong>Location:</strong> Made in Bali 🌺</li>
