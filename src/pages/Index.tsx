@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
@@ -247,15 +248,34 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-black py-8 text-center">
         <div className="container mx-auto px-4">
-          <p className="text-white/70 font-body text-sm">
-            <span
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
-            >
-              @nextwifebot
-            </span>
-            {" "}- Made in Bali with 💖
-          </p>
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex gap-4 text-white/70 font-body text-sm">
+              <Link 
+                to="/terms" 
+                className="hover:text-white transition-colors"
+                data-testid="link-terms"
+              >
+                Terms & Conditions
+              </Link>
+              <span>•</span>
+              <Link 
+                to="/privacy" 
+                className="hover:text-white transition-colors"
+                data-testid="link-privacy"
+              >
+                Privacy Policy
+              </Link>
+            </div>
+            <p className="text-white/70 font-body text-sm">
+              <span
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
+              >
+                @nextwifebot
+              </span>
+              {" "}- Made in Bali with 💖
+            </p>
+          </div>
         </div>
       </footer>
     </div>
