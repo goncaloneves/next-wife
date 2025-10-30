@@ -411,7 +411,7 @@ export const TelegramChannelFeed = ({
               return (
                 <div
                   key={`${post.id}-${refreshKey}`}
-                  className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in"
+                  className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in bg-muted"
                   onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
                   style={{ 
                     animationDelay: `${(index % 20) * 0.05}s`,
@@ -419,11 +419,11 @@ export const TelegramChannelFeed = ({
                   }}
                 >
                   {!imageLoadStates[post.id] && (
-                    <Skeleton className="absolute inset-0 w-full h-full" />
+                    <Skeleton className="absolute inset-0 w-full h-full z-10" />
                   )}
                   <img
                     src={buildSrc(post.media!, post.id)}
-                    alt="Post"
+                    alt=""
                     loading="lazy"
                     referrerPolicy="no-referrer"
                     className={`w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 ${
@@ -432,9 +432,12 @@ export const TelegramChannelFeed = ({
                     onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                     onError={() => {
                       const currentTries = imageErrors[post.id] || 0;
-                      const delay = currentTries === 0 ? 200 : 500;
+                      const delay = currentTries === 0 ? 100 : 300;
                       
                       console.log(`Image load failed for post ${post.id}, attempt ${currentTries + 1}`);
+                      
+                      // Reset load state to show skeleton during retry
+                      setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
                       
                       setTimeout(() => {
                         setImageErrors(prev => {
