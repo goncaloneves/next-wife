@@ -61,16 +61,22 @@ const Privacy = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">4. Message Usage and Privacy</h2>
             <p>
-              <strong>We do NOT use your messages for AI training.</strong> Your conversations are used exclusively for:
+              <strong>We do NOT log or permanently store your conversation messages.</strong> Your conversations are used exclusively in real-time for:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Providing contextual responses during your conversations</li>
-              <li>Maintaining conversation history for continuity</li>
+              <li>Providing contextual responses during active conversations</li>
+              <li>Maintaining conversation context within the current session</li>
               <li>Personalizing your AI companion experience</li>
             </ul>
-            <p className="mt-4">
-              Your private conversations remain private and are never used to train AI models or shared with third parties.
+            <p className="mt-4 font-semibold">
+              Your private conversations are NOT:
             </p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Logged or stored permanently</li>
+              <li>Used for AI training or model improvement</li>
+              <li>Shared with third parties</li>
+              <li>Accessible to employees or administrators</li>
+            </ul>
           </section>
 
           <section>
@@ -93,8 +99,15 @@ const Privacy = () => {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">6. Data Retention</h2>
             <p>
-              We retain your data for as long as necessary to provide the Service and comply with legal obligations. 
-              Conversation history may be stored for service continuity and personalization.
+              We retain minimal data necessary to provide the Service and comply with legal obligations:
+            </p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Account information (Telegram user ID, preferences)</li>
+              <li>Payment and subscription history</li>
+              <li>Usage statistics (anonymized)</li>
+            </ul>
+            <p className="mt-4">
+              <strong>Conversation messages are NOT stored or logged.</strong> They are only processed in real-time to generate responses.
             </p>
           </section>
 
