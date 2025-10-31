@@ -56,7 +56,7 @@ const Index = () => {
     {
       icon: "🌺",
       title: "Authentic Daily Life",
-      description: "Experience genuine moments in her daily life",
+      description: "Experience genuine moments and authentic interactions in her daily life",
     },
     {
       icon: "⭐",
