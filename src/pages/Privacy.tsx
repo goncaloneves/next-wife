@@ -182,7 +182,6 @@ const Privacy = () => {
                   @nextwifesupport
                 </a>
               </li>
-              <li><strong>Location:</strong> Made in Bali 🌺</li>
             </ul>
           </section>
 

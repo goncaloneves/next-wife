@@ -56,7 +56,7 @@ const Index = () => {
     {
       icon: "🌺",
       title: "Authentic Daily Life",
-      description: "Experience genuine moments in your Bali tropical paradise",
+      description: "Experience genuine moments in her world, wherever she's from",
     },
     {
       icon: "⭐",
@@ -179,8 +179,8 @@ const Index = () => {
           </p>
 
           <p className="text-base md:text-xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
-            Live in a luxurious ocean-front palace in Bali with the girlfriend you want, where unique stories meet
-            tropical elegance.
+            Live with the girlfriend you create in her world, where unique stories meet
+            authentic experiences from around the globe.
           </p>
 
           <Button
@@ -283,7 +283,7 @@ const Index = () => {
               >
                 @nextwifebot
               </span>
-              {" "}- Made in Bali with 💖
+              {" "}- Made with 💖
             </p>
           </div>
         </div>
