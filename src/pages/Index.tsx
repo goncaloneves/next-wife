@@ -178,7 +178,7 @@ const Index = () => {
             Create your girlfriend on Telegram
           </p>
 
-          <p className="text-base md:text-xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
+          <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
             Meet the girlfriend you create and embark on a romantic journey, sharing unique stories from around the globe.
           </p>
 
