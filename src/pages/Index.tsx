@@ -179,7 +179,7 @@ const Index = () => {
           </p>
 
           <p className="text-base md:text-xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
-            Meet the girlfriend you create and embark on a romantic journey, sharing unique stories and intimate moments from around the globe.
+            Meet the girlfriend you create and embark on a romantic journey, sharing unique stories from around the globe.
           </p>
 
           <Button
