@@ -43,6 +43,7 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 5. Changed feed section heading from "Live from Next Wife 🌻" to "Pick your Girlfriend 🌻"
 6. Removed all Bali-specific references
 7. Fixed image loading during scroll with improved skeleton loader visibility
+8. **Silent error handling** - Removed red error block, API failures now fail silently
 
 ## Data Model
 Posts from Telegram channel include:

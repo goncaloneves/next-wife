@@ -371,12 +371,7 @@ export const TelegramChannelFeed = ({
   }
 
   if (error) {
-    return (
-      <Card className="p-8 text-center bg-card/80 backdrop-blur border border-border">
-        <p className="text-destructive mb-2">{error}</p>
-        <p className="text-sm text-muted-foreground">Please check the channel name and try again</p>
-      </Card>
-    );
+    return null;
   }
 
   if (allPosts.length === 0 && !loading) {
