@@ -102,12 +102,6 @@ export const TelegramChannelFeed = ({
       const data = await response.json();
       const fetchedPosts = data.posts || [];
 
-      // Check for posts with "Meet me @nextwifebot" text
-      const postsWithBotLink = fetchedPosts.filter((p: TelegramPost) => 
-        p.text && p.text.includes('Meet me @nextwifebot')
-      );
-      console.log(`Posts with "Meet me @nextwifebot": ${postsWithBotLink.length}`, postsWithBotLink.map((p: TelegramPost) => ({ id: p.id, text: p.text })));
-
       setAllPosts(fetchedPosts);
       setChannelInfo(data.channelInfo);
       setNextCursor(data.nextBefore);
@@ -414,11 +408,14 @@ export const TelegramChannelFeed = ({
                 return null;
               }
               
+              const hasBotLink = post.text && post.text.includes('Meet me @nextwifebot');
+              const clickLink = hasBotLink ? 'https://t.me/nextwifebot' : post.link;
+              
               return (
                 <div
                   key={`${post.id}-${refreshKey}`}
                   className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in bg-muted"
-                  onClick={() => window.open(post.link, "_blank", "noopener,noreferrer")}
+                  onClick={() => window.open(clickLink, "_blank", "noopener,noreferrer")}
                   style={{ 
                     animationDelay: `${(index % 20) * 0.05}s`,
                     animationFillMode: "forwards"
