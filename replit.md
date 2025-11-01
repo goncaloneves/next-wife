@@ -44,6 +44,7 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 6. Removed all Bali-specific references
 7. Fixed image loading during scroll with improved skeleton loader visibility
 8. **Silent error handling** - Removed red error block, API failures now fail silently
+9. **Fixed deployment compatibility** - Updated wildcard route from `'*'` to `'/*'` for Express 4.x/path-to-regexp compatibility
 
 ## Data Model
 Posts from Telegram channel include:
