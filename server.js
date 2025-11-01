@@ -313,7 +313,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(distPath));
   
   // Handle client-side routing - send index.html for all non-API routes
-  app.get('/*', (req, res) => {
+  // Using regex pattern for maximum compatibility across Express versions
+  app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 }
