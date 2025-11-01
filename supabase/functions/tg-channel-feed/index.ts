@@ -116,8 +116,25 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
     const postId = match[1];
     const postContent = match[2];
 
-    // Extract text content first
+    // Extract text content and bot link
     const textMatch = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
+    let botLink = null;
+    
+    // Before stripping HTML, extract any link containing "@nextwifebot"
+    if (textMatch) {
+      const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/gi;
+      let linkMatch;
+      while ((linkMatch = linkRegex.exec(textMatch[1])) !== null) {
+        const href = linkMatch[1];
+        const linkText = linkMatch[2];
+        // Check if link href or text contains "nextwifebot"
+        if (href.toLowerCase().includes('nextwifebot') || linkText.toLowerCase().includes('nextwifebot')) {
+          botLink = href;
+          break;
+        }
+      }
+    }
+    
     const text = textMatch ? textMatch[1]
       .replace(/<br\s*\/?>/gi, '\n')
       .replace(/<[^>]*>/g, '')
@@ -269,7 +286,8 @@ function parseChannelHTML(html: string, channelName: string): { channelInfo: any
         date,
         link: `https://t.me/${channelName}/${postId.split('/').pop()}`,
         media,
-        avatar
+        avatar,
+        botLink
       });
     }
   }

@@ -13,6 +13,7 @@ interface TelegramPost {
   link: string;
   media?: string | null;
   avatar?: string | null;
+  botLink?: string | null;
 }
 
 interface ChannelInfo {
@@ -101,6 +102,7 @@ export const TelegramChannelFeed = ({
 
       const data = await response.json();
       const fetchedPosts = data.posts || [];
+
 
       setAllPosts(fetchedPosts);
       setChannelInfo(data.channelInfo);
@@ -408,8 +410,9 @@ export const TelegramChannelFeed = ({
                 return null;
               }
               
-              const hasBotLink = post.text && post.text.includes('Meet me @nextwifebot');
-              const clickLink = hasBotLink ? 'https://t.me/nextwifebot' : post.link;
+              // Use botLink from API if available, otherwise check text for bot mention as fallback
+              const hasBotMention = post.text && post.text.toLowerCase().includes('@nextwifebot');
+              const clickLink = post.botLink || (hasBotMention ? 'https://t.me/nextwifebot' : post.link);
               
               return (
                 <div
