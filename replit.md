@@ -17,11 +17,16 @@ A Vite + React + TypeScript web application that displays posts from the @nextwi
 - Special link handling for bot mentions
 - Responsive design with dark theme
 
-## Special Link Handling
-Posts containing "Meet me @nextwifebot 💖" automatically link to the bot instead of the post:
-- Detection: Frontend checks if post text contains "meet me @nextwifebot" (case-insensitive)
-- Link override: Uses `https://t.me/nextwifebot` instead of the standard post link
-- Location: `src/components/TelegramChannelFeed.tsx` lines 428-430
+## Bot Link Handling
+Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UKXHNCwZF7Rb`) have special behavior:
+- **Backend extraction**: Server.js extracts botLink from `<a>` tags before HTML is stripped (lines 85-109)
+  - Uses regex `/<a\s+([^>]*?)href="([^"]*?)"([^>]*?)>([\s\S]*?)<\/a>/gi` to match links with nested HTML
+  - Handles HTML entity decoding to preserve query parameters (`&amp;` → `&`)
+  - Searches for "nextwifebot" in href or link text
+- **Frontend behavior**: When post has botLink, clicking the image opens that URL instead of lightbox
+  - Detection: `TelegramPostCard.tsx` checks if `post.botLink` exists
+  - Action: Opens bot URL in new tab (e.g., `https://t.me/nextwifebot?start=gf_UKXHNCwZF7Rb`)
+  - Fallback: If no botLink, opens image in lightbox as normal
 
 ## Content Guidelines
 - Girlfriends are from their native locations globally (not specifically Bali)
@@ -31,11 +36,11 @@ Posts containing "Meet me @nextwifebot 💖" automatically link to the bot inste
 
 ## Recent Changes (November 1, 2025)
 1. **Migrated from Supabase to Express backend** - Replaced Supabase Edge Functions with standalone Express server
-2. Removed all Bali-specific references
-3. Updated hero subtitle to "Meet the girlfriend you create and embark on a romantic journey, sharing unique stories from around the globe"
-4. Fixed image loading during scroll with improved skeleton loader visibility
-5. Updated feature descriptions to avoid repetitive phrasing
-6. Added special link handling for bot mentions in posts
+2. **Implemented bot link extraction** - Backend now extracts parameterized bot URLs from post HTML
+3. **Image click behavior** - Posts with botLink redirect to bot URL, others open lightbox
+4. Removed all Bali-specific references
+5. Updated hero subtitle to "Meet the girlfriend you create and embark on a romantic journey, sharing unique stories from around the globe"
+6. Fixed image loading during scroll with improved skeleton loader visibility
 
 ## Data Model
 Posts from Telegram channel include:

@@ -79,24 +79,34 @@ function parseChannelHTML(html, channelName) {
     const postId = match[1];
     const postContent = match[2];
 
-    // Extract text content and bot link
-    const textMatch = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
+    // Extract bot link BEFORE text extraction (from raw postContent, not from entity-encoded text div)
     let botLink = null;
     
-    // Before stripping HTML, extract any link containing "@nextwifebot"
-    if (textMatch) {
-      const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/gi;
-      let linkMatch;
-      while ((linkMatch = linkRegex.exec(textMatch[1])) !== null) {
-        const href = linkMatch[1];
-        const linkText = linkMatch[2];
-        // Check if link href or text contains "nextwifebot"
-        if (href.toLowerCase().includes('nextwifebot') || linkText.toLowerCase().includes('nextwifebot')) {
-          botLink = href;
-          break;
-        }
+    // Look for links containing "nextwifebot" in the entire post content
+    // Note: Link text can contain nested HTML tags like <i class="emoji">
+    const linkRegex = /<a\s+([^>]*?)href="([^"]*?)"([^>]*?)>([\s\S]*?)<\/a>/gi;
+    let linkMatch;
+    while ((linkMatch = linkRegex.exec(postContent)) !== null) {
+      const href = linkMatch[2];
+      const linkText = linkMatch[4]; // Can contain HTML
+      
+      // Check if link href or text contains "nextwifebot"
+      if (href.toLowerCase().includes('nextwifebot') || linkText.toLowerCase().includes('nextwifebot')) {
+        // Decode HTML entities in the URL to preserve query parameters
+        botLink = href
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num)))
+          .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+        
+        break;
       }
     }
+
+    // Extract text content
+    const textMatch = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
     
     const text = textMatch ? textMatch[1]
       .replace(/<br\s*\/?>/gi, '\n')

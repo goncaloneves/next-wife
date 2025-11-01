@@ -15,6 +15,7 @@ interface TelegramPostCardProps {
     link: string;
     media?: string | null;
     avatar?: string | null;
+    botLink?: string | null;
   };
   channelInfo?: {
     name: string;
@@ -52,7 +53,13 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setLightboxOpen(true);
+    
+    // If post has a botLink, navigate to it instead of opening lightbox
+    if (post.botLink) {
+      window.open(post.botLink, '_blank', 'noopener,noreferrer');
+    } else {
+      setLightboxOpen(true);
+    }
   };
 
   return (
