@@ -81,14 +81,16 @@ export const TelegramChannelFeed = ({
       return normalized;
     }
     
-    // Third attempt: use proxy
-    return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-image-proxy?u=${encodeURIComponent(normalized)}`;
+    // Third attempt: use proxy - use relative path for Replit compatibility
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    return `${apiUrl}/api/tg-image-proxy?u=${encodeURIComponent(normalized)}`;
   }, [imageErrors]);
 
   const fetchInitialPosts = async () => {
     try {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20`,
+        `${apiUrl}/api/tg-channel-feed?channel=${channelUsername}&limit=20`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -130,8 +132,9 @@ export const TelegramChannelFeed = ({
     setIsLoadingMore(true);
 
     try {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20&before=${nextCursor}`,
+        `${apiUrl}/api/tg-channel-feed?channel=${channelUsername}&limit=20&before=${nextCursor}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -166,8 +169,9 @@ export const TelegramChannelFeed = ({
 
   const checkForNewPosts = useCallback(async () => {
     try {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tg-channel-feed?channel=${channelUsername}&limit=20`,
+        `${apiUrl}/api/tg-channel-feed?channel=${channelUsername}&limit=20`,
         {
           headers: {
             "Content-Type": "application/json",
