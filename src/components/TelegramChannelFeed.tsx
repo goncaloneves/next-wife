@@ -102,8 +102,7 @@ export const TelegramChannelFeed = ({
 
       const data = await response.json();
       const fetchedPosts = data.posts || [];
-
-
+      
       setAllPosts(fetchedPosts);
       setChannelInfo(data.channelInfo);
       setNextCursor(data.nextBefore);
