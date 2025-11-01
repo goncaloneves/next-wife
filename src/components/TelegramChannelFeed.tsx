@@ -102,6 +102,12 @@ export const TelegramChannelFeed = ({
       const data = await response.json();
       const fetchedPosts = data.posts || [];
 
+      // Check for posts with "Meet me @nextwifebot" text
+      const postsWithBotLink = fetchedPosts.filter((p: TelegramPost) => 
+        p.text && p.text.includes('Meet me @nextwifebot')
+      );
+      console.log(`Posts with "Meet me @nextwifebot": ${postsWithBotLink.length}`, postsWithBotLink.map((p: TelegramPost) => ({ id: p.id, text: p.text })));
+
       setAllPosts(fetchedPosts);
       setChannelInfo(data.channelInfo);
       setNextCursor(data.nextBefore);
