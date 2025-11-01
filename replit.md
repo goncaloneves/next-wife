@@ -7,7 +7,8 @@ A Vite + React + TypeScript web application that displays posts from the @nextwi
 - **Frontend**: React + TypeScript + Vite + shadcn/ui + Tailwind CSS (port 5000)
 - **Backend**: Express.js server for Telegram scraping and image proxying (port 3001)
 - **Deployment**: Replit with custom domain support
-- **Development**: Both servers run concurrently via `npm run dev`
+  - Development: Both servers run concurrently via `npm run dev`
+  - Production: Express server serves built static files from `dist/` and handles API routes
 
 ## Key Features
 - Real-time Telegram channel feed display
@@ -38,9 +39,10 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 1. **Migrated from Supabase to Express backend** - Replaced Supabase Edge Functions with standalone Express server
 2. **Implemented bot link extraction** - Backend now extracts parameterized bot URLs from post HTML
 3. **Image click behavior** - Posts with botLink redirect to bot URL, others open lightbox
-4. Removed all Bali-specific references
-5. Updated hero subtitle to "Meet the girlfriend you create and embark on a romantic journey, sharing unique stories from around the globe"
-6. Fixed image loading during scroll with improved skeleton loader visibility
+4. **Fixed production deployment** - Express server now serves built static files in production
+5. Changed feed section heading from "Live from Next Wife 🌻" to "Pick your Girlfriend 🌻"
+6. Removed all Bali-specific references
+7. Fixed image loading during scroll with improved skeleton loader visibility
 
 ## Data Model
 Posts from Telegram channel include:

@@ -1,9 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(cors());
 app.use(express.json());
@@ -300,9 +304,27 @@ app.get('/api/tg-image-proxy', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`\n🚀 Backend server running on http://localhost:${PORT}`);
+// Serve static files from dist directory in production
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, 'dist');
+  console.log(`📦 Serving static files from: ${distPath}`);
+  
+  // Serve static files
+  app.use(express.static(distPath));
+  
+  // Handle client-side routing - send index.html for all non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🚀 Backend server running on http://0.0.0.0:${PORT}`);
   console.log(`📡 API endpoints:`);
   console.log(`   - GET /api/tg-channel-feed?channel=nextwife_ai`);
-  console.log(`   - GET /api/tg-image-proxy?u=<image_url>\n`);
+  console.log(`   - GET /api/tg-image-proxy?u=<image_url>`);
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`🌐 Serving frontend from dist/`);
+  }
+  console.log('');
 });

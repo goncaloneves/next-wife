@@ -9,7 +9,7 @@ packages = ["supabase-cli"]
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["npx", "serve", "-s", "dist", "-l", "5000"]
+run = ["npm", "run", "start:prod"]
 build = ["npm", "run", "build"]
 
 [workflows]
@@ -49,9 +49,9 @@ localPort = 5001
 externalPort = 3001
 
 [[ports]]
-localPort = 35367
-externalPort = 3003
-
-[[ports]]
 localPort = 35739
 externalPort = 3000
+
+[[ports]]
+localPort = 38121
+externalPort = 3003
