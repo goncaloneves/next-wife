@@ -484,9 +484,9 @@ export const TelegramChannelFeed = ({
                             <span className="opacity-70">🌍</span>
                             <span>{post.profileData.nationality} • {post.profileData.hometown}</span>
                           </p>
-                          <p className="line-clamp-1 flex items-center gap-1.5">
-                            <span className="opacity-70">💼</span>
-                            <span>{post.profileData.work}</span>
+                          <p className="flex items-start gap-1.5">
+                            <span className="opacity-70 mt-0.5">💼</span>
+                            <span className="flex-1">{post.profileData.work}</span>
                           </p>
                         </div>
                       </div>
