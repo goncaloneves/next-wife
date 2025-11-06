@@ -410,7 +410,16 @@ export const TelegramChannelFeed = ({
 
         <div className="relative">
         <div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
+          {/* Mobile: Single card at a time (Tinder-style) | Desktop: Grid */}
+          <div className="
+            flex md:grid
+            overflow-x-auto md:overflow-x-visible
+            snap-x snap-mandatory md:snap-none
+            gap-0.5
+            md:grid-cols-4
+            scrollbar-hide
+            -mx-4 px-4 md:mx-0 md:px-0
+          ">
             {postsWithMedia.map((post, index) => {
               // Skip rendering if image failed too many times
               if (hiddenIds.has(post.id)) {
@@ -424,7 +433,11 @@ export const TelegramChannelFeed = ({
               return (
                 <div
                   key={`${post.id}-${refreshKey}`}
-                  className="aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in bg-muted"
+                  className="
+                    aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in bg-muted
+                    flex-shrink-0 w-[90vw] md:w-auto
+                    snap-center md:snap-align-none
+                  "
                   onClick={() => window.open(clickLink, "_blank", "noopener,noreferrer")}
                   style={{ 
                     animationDelay: `${(index % 20) * 0.05}s`,

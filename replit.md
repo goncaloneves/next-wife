@@ -37,12 +37,13 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (November 6, 2025)
-10. **Tinder-style profile badges** - Added overlay badges on grid images showing Name, Age, Nationality, Hometown, and Work (parsed from post text)
-    - **Mobile/Tablet**: All details always visible (Nationality, Hometown, Work)
-    - **Desktop**: Only Name + Age visible by default, details slide in on hover
-    - Responsive design ensures mobile users see all info without hover
+10. **Tinder-style profile badges and mobile carousel** - Added overlay badges on images showing Name, Age, Nationality, Hometown, and Work (parsed from post text)
+    - **Mobile/Tablet**: Horizontal scroll carousel showing one large card at a time (90vw width, snap-scroll like Tinder)
+    - **Desktop**: Grid view with 4 columns and hover interactions
+    - **Badge behavior**:
+      - Mobile: All details always visible (Nationality, Hometown, Work - 2 lines max)
+      - Desktop: Only Name + Age visible by default, details slide in on hover (Work - 3 lines max)
     - Fluid height - badges adapt to content (no fixed min-height)
-    - Work field displays up to 3 lines with line-clamp
     - Only displays when all profile fields are present
 
 ## Previous Changes (November 1, 2025)
