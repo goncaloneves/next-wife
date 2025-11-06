@@ -559,8 +559,8 @@ export const TelegramChannelFeed = ({
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="space-y-0.5 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
-                          <p className="flex items-start gap-1.5">
-                            <span className="opacity-70 leading-none">🌍</span>
+                          <p className="flex items-center gap-1.5">
+                            <span className="opacity-70">🌍</span>
                             <span className="flex-1">{post.profileData.nationality} • {post.profileData.hometown}</span>
                           </p>
                           <p className="flex items-start gap-1.5">
