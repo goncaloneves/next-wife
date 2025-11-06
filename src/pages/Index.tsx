@@ -206,8 +206,11 @@ const Index = () => {
         </header>
 
         {/* Features Section - Scrolls over the fixed background */}
-        <section className="relative w-full bg-black/90 backdrop-blur-sm py-14">
-        <div className="container mx-auto px-4">
+        <section className="relative w-full py-14">
+        {/* Gradient background overlay for smooth transition */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/90 to-black/90 backdrop-blur-sm"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-6xl mx-auto">
             {/* Section Title */}
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
