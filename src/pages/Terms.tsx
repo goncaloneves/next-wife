@@ -1,15 +1,20 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Terms = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <Link to="/">
-          <Button variant="ghost" className="mb-8" data-testid="button-back">
-            ← Back to Home
-          </Button>
-        </Link>
+        <Button 
+          variant="ghost" 
+          className="mb-8" 
+          data-testid="button-back"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </Button>
 
         <h1 className="text-4xl font-bold mb-8 text-foreground">Terms and Conditions</h1>
         
