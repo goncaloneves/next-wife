@@ -6,6 +6,14 @@ import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface ProfileData {
+  name: string;
+  age: number;
+  nationality: string;
+  hometown: string;
+  work: string;
+}
+
 interface TelegramPost {
   id: string;
   text: string;
@@ -14,6 +22,7 @@ interface TelegramPost {
   media?: string | null;
   avatar?: string | null;
   botLink?: string | null;
+  profileData?: ProfileData | null;
 }
 
 interface ChannelInfo {
@@ -457,6 +466,32 @@ export const TelegramChannelFeed = ({
                       }, delay);
                     }}
                   />
+                  
+                  {/* Tinder-style profile badge - only show if all profile data is present */}
+                  {post.profileData && (
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-all duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none">
+                      <div className="text-white">
+                        <div className="flex items-baseline gap-2 mb-1">
+                          <h3 className="text-xl md:text-2xl font-bold drop-shadow-lg">
+                            {post.profileData.name}
+                          </h3>
+                          <span className="text-lg md:text-xl font-semibold opacity-90">
+                            {post.profileData.age}
+                          </span>
+                        </div>
+                        <div className="space-y-0.5 text-xs md:text-sm opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+                          <p className="flex items-center gap-1.5">
+                            <span className="opacity-70">🌍</span>
+                            <span>{post.profileData.nationality} • {post.profileData.hometown}</span>
+                          </p>
+                          <p className="line-clamp-1 flex items-center gap-1.5">
+                            <span className="opacity-70">💼</span>
+                            <span>{post.profileData.work}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}

@@ -12,6 +12,7 @@ A Vite + React + TypeScript web application that displays posts from the @nextwi
 
 ## Key Features
 - Real-time Telegram channel feed display
+- Tinder-style profile badges on images (Name, Age, Nationality, Hometown, Work)
 - Image loading with retry mechanism (3 attempts with progressive timing)
 - Post filtering (hides service messages)
 - Automatic new post detection with refresh capability
@@ -35,7 +36,13 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - No Bali references in hero section or features
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
-## Recent Changes (November 1, 2025)
+## Recent Changes (November 6, 2025)
+10. **Tinder-style profile badges** - Added overlay badges on grid images showing Name, Age, Nationality, Hometown, and Work (parsed from post text)
+    - Always visible with gradient background
+    - More prominent on hover
+    - Only displays when all profile fields are present
+
+## Previous Changes (November 1, 2025)
 1. **Migrated from Supabase to Express backend** - Replaced Supabase Edge Functions with standalone Express server
 2. **Implemented bot link extraction** - Backend now extracts parameterized bot URLs from post HTML
 3. **Image click behavior** - Posts with botLink redirect to bot URL, others open lightbox

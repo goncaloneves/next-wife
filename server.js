@@ -124,6 +124,26 @@ function parseChannelHTML(html, channelName) {
       .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
       .trim() : '';
 
+    // Parse profile data from text (Tinder-style badge)
+    let profileData = null;
+    if (text) {
+      const nameMatch = text.match(/Name:\s*([^\n]+)/i);
+      const ageMatch = text.match(/Age:\s*(\d+)/i);
+      const nationalityMatch = text.match(/Nationality:\s*([^\n]+)/i);
+      const hometownMatch = text.match(/Hometown:\s*([^\n]+)/i);
+      const workMatch = text.match(/Work:\s*([^\n]+)/i);
+
+      if (nameMatch && ageMatch && nationalityMatch && hometownMatch && workMatch) {
+        profileData = {
+          name: nameMatch[1].trim(),
+          age: parseInt(ageMatch[1]),
+          nationality: nationalityMatch[1].trim(),
+          hometown: hometownMatch[1].trim(),
+          work: workMatch[1].trim()
+        };
+      }
+    }
+
     // Filter out service messages
     const serviceMessagePatterns = [
       /^(Channel|Chat|Group) (was )?created$/i,
@@ -181,7 +201,8 @@ function parseChannelHTML(html, channelName) {
         link: `https://t.me/${channelName}/${postId.split('/').pop()}`,
         media,
         avatar,
-        botLink
+        botLink,
+        profileData
       });
     }
   }
