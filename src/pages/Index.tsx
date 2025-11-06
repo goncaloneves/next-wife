@@ -199,37 +199,68 @@ const Index = () => {
         {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
       </header>
 
-      {/* Features and Logo Section */}
-      <section className="relative w-full bg-gradient-to-b from-black/70 via-black/30 to-transparent py-12">
+      {/* Features Section */}
+      <section className="relative w-full bg-black py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
+            {/* Section Title */}
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center text-white">
+              Your AI Girlfriend Experience ✨
+            </h2>
+            
             {/* Features Grid */}
-            <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {features.map((feature, index) => (
-                <Card
+                <div
                   key={index}
-                  className="feature-card p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 bg-card/80 backdrop-blur border border-border hover:border-primary/60 cursor-pointer opacity-0"
+                  className="feature-card group relative p-8 rounded-2xl cursor-pointer opacity-0 overflow-hidden transition-all duration-500 hover:scale-105"
                   style={{
-                    boxShadow: "var(--shadow-warm)",
                     animationDelay: `${index * 0.1}s`,
                   }}
                   onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
                 >
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-5xl"
-                    style={{ background: "var(--gradient-sunset)" }}
+                  {/* Gradient Border Effect */}
+                  <div className="absolute inset-0 rounded-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background: "var(--gradient-sunset)",
+                      padding: "2px",
+                    }}
                   >
-                    {feature.icon}
+                    <div className="absolute inset-[2px] rounded-2xl bg-black"></div>
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
-                  <p className="text-base text-muted-foreground leading-snug line-clamp-2">{feature.description}</p>
-                </Card>
+                  
+                  {/* Card Content */}
+                  <div className="relative z-10">
+                    {/* Icon with Glow */}
+                    <div className="relative mb-6">
+                      <div className="absolute inset-0 rounded-2xl opacity-50 group-hover:opacity-80 blur-xl transition-opacity duration-500"
+                        style={{ background: "var(--gradient-sunset)" }}
+                      ></div>
+                      <div
+                        className="relative w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shadow-lg transition-transform duration-500 group-hover:scale-110"
+                        style={{ background: "var(--gradient-sunset)" }}
+                      >
+                        {feature.icon}
+                      </div>
+                    </div>
+                    
+                    {/* Text Content */}
+                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-transparent group-hover:bg-clip-text transition-all duration-300"
+                      style={{
+                        backgroundImage: "var(--gradient-sunset)",
+                      }}
+                    >
+                      {feature.title}
+                    </h3>
+                    <p className="text-base text-white/70 leading-relaxed group-hover:text-white/90 transition-colors duration-300">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </div>
-        {/* Fade to full black at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black pointer-events-none" />
       </section>
 
       {/* Telegram Channel Feed Section */}
