@@ -539,8 +539,9 @@ export const TelegramChannelFeed = ({
             })}
           </div>
 
+          {/* Loading indicator - only show on desktop (vertical scroll), hide on mobile (horizontal carousel) */}
           {hasMore && isLoadingMore && (
-            <div className="py-8 text-center">
+            <div className="hidden md:block py-8 text-center">
               <div className="flex items-center justify-center gap-2 text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span className="text-sm">Loading more posts...</span>
