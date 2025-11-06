@@ -469,7 +469,7 @@ export const TelegramChannelFeed = ({
                   
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
-                    <div className="absolute bottom-0 left-0 right-0 min-h-[160px] p-4 pb-5 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-all duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none flex items-end">
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-all duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none">
                       <div className="text-white">
                         <div className="flex items-baseline gap-2 mb-1">
                           <h3 className="text-xl md:text-2xl font-bold drop-shadow-lg">
@@ -479,14 +479,14 @@ export const TelegramChannelFeed = ({
                             {post.profileData.age}
                           </span>
                         </div>
-                        <div className="space-y-0.5 text-xs md:text-sm opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="space-y-0.5 text-xs md:text-sm max-h-0 opacity-0 overflow-hidden group-hover:max-h-40 group-hover:opacity-100 transition-all duration-300">
                           <p className="flex items-center gap-1.5">
                             <span className="opacity-70">🌍</span>
                             <span>{post.profileData.nationality} • {post.profileData.hometown}</span>
                           </p>
-                          <p className="flex items-start gap-1.5 min-h-[3.75rem]">
+                          <p className="flex items-start gap-1.5">
                             <span className="opacity-70 mt-0.5">💼</span>
-                            <span className="flex-1 line-clamp-3 leading-tight pb-1">{post.profileData.work}</span>
+                            <span className="flex-1 line-clamp-3 leading-tight">{post.profileData.work}</span>
                           </p>
                         </div>
                       </div>
