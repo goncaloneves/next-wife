@@ -213,14 +213,13 @@ const Index = () => {
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className="feature-card group relative p-8 rounded-2xl cursor-pointer opacity-0 overflow-hidden transition-all duration-500 hover:scale-105"
+                  className="feature-card relative p-8 rounded-2xl opacity-0 overflow-hidden"
                   style={{
                     animationDelay: `${index * 0.1}s`,
                   }}
-                  onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
                 >
                   {/* Gradient Border Effect */}
-                  <div className="absolute inset-0 rounded-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                  <div className="absolute inset-0 rounded-2xl opacity-60"
                     style={{
                       background: "var(--gradient-sunset)",
                       padding: "2px",
@@ -231,24 +230,20 @@ const Index = () => {
                   
                   {/* Card Content */}
                   <div className="relative z-10">
-                    {/* Icon with Glow */}
-                    <div className="relative mb-6">
-                      <div className="absolute inset-0 rounded-2xl opacity-50 group-hover:opacity-80 blur-xl transition-opacity duration-500"
-                        style={{ background: "var(--gradient-sunset)" }}
-                      ></div>
+                    {/* Icon */}
+                    <div className="mb-6">
                       <div
-                        className="relative w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shadow-lg transition-transform duration-500 group-hover:scale-110"
-                        style={{ background: "var(--gradient-sunset)" }}
+                        className="w-28 h-28 flex items-center justify-center text-6xl"
                       >
                         {feature.icon}
                       </div>
                     </div>
                     
                     {/* Text Content */}
-                    <h3 className="text-xl font-bold mb-3 text-white transition-all duration-300">
+                    <h3 className="text-xl font-bold mb-3 text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-base text-white/70 leading-relaxed group-hover:text-white/90 transition-colors duration-300">
+                    <p className="text-base text-white/70 leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
