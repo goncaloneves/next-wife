@@ -206,26 +206,26 @@ const Index = () => {
         </header>
 
         {/* Features Section - Scrolls over the fixed background */}
-        <section className="relative w-full bg-black/90 backdrop-blur-sm py-20">
+        <section className="relative w-full bg-black/90 backdrop-blur-sm py-14">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             {/* Section Title */}
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-12 text-center text-white">
+            <h2 className="text-3xl md:text-4xl font-heading mb-8 text-center text-white">
               Your AI Girlfriend Experience ✨
             </h2>
             
             {/* Features Grid */}
-            <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className="feature-card relative p-8 rounded-2xl opacity-0 overflow-hidden"
+                  className="feature-card relative p-6 rounded-2xl opacity-0 overflow-hidden"
                   style={{
                     animationDelay: `${index * 0.1}s`,
                   }}
                 >
                   {/* Gradient Border Effect */}
-                  <div className="absolute inset-0 rounded-2xl opacity-60"
+                  <div className="absolute inset-0 rounded-2xl opacity-50"
                     style={{
                       background: "var(--gradient-sunset)",
                       padding: "2px",
@@ -237,19 +237,19 @@ const Index = () => {
                   {/* Card Content */}
                   <div className="relative z-10">
                     {/* Icon */}
-                    <div className="mb-6">
+                    <div className="mb-4">
                       <div
-                        className="w-28 h-28 flex items-center justify-center text-6xl"
+                        className="w-24 h-24 flex items-center justify-center text-5xl"
                       >
                         {feature.icon}
                       </div>
                     </div>
                     
                     {/* Text Content */}
-                    <h3 className="text-xl font-bold mb-3 text-white">
+                    <h3 className="text-lg font-bold mb-2 text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-base text-white/70 leading-relaxed">
+                    <p className="text-sm text-white/70 leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
