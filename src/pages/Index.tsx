@@ -288,6 +288,9 @@ const Index = () => {
           </div>
         </div>
         </footer>
+        
+        {/* Black blocker to prevent videos from showing when scrolling past footer */}
+        <div className="bg-black h-screen"></div>
       </div>
     </div>
   );
