@@ -39,10 +39,11 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 ## Recent Changes (November 6, 2025)
 10. **Tinder-style profile badges and mobile carousel** - Added overlay badges on images showing Name, Age, Nationality, Hometown, and Work (parsed from post text)
     - **Mobile/Tablet**: Horizontal scroll carousel showing one large card at a time (90vw width, snap-scroll like Tinder)
+      - Horizontal infinite scroll - loads more posts when swiping near the end
+      - All details always visible (Nationality, Hometown, Work - 2 lines max)
     - **Desktop**: Grid view with 4 columns and hover interactions
-    - **Badge behavior**:
-      - Mobile: All details always visible (Nationality, Hometown, Work - 2 lines max)
-      - Desktop: Only Name + Age visible by default, details slide in on hover (Work - 3 lines max)
+      - Vertical infinite scroll - loads more when scrolling down
+      - Only Name + Age visible by default, details slide in on hover (Work - 3 lines max)
     - Fluid height - badges adapt to content (no fixed min-height)
     - Only displays when all profile fields are present
 

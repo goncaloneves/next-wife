@@ -61,6 +61,7 @@ export const TelegramChannelFeed = ({
   const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const listRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
   const topFingerprintRef = useRef<string>('');
   const postsRef = useRef<TelegramPost[]>([]);
@@ -299,9 +300,22 @@ export const TelegramChannelFeed = ({
     };
   }, [channelUsername, refreshInterval, checkForNewPosts]);
 
+  // Horizontal scroll handler for mobile carousel
+  const handleHorizontalScroll = useCallback((e: Event) => {
+    const container = e.target as HTMLDivElement;
+    if (!container) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+    const nearEnd = scrollWidth - scrollLeft - clientWidth < 300;
+    
+    if (nearEnd && hasMore && !isLoadingMore) {
+      fetchNextPage();
+    }
+  }, [hasMore, isLoadingMore, fetchNextPage]);
+
   const handleScroll = useCallback(() => {
     if (layout === "grid") {
-      // For grid, use window scroll
+      // For grid, use window scroll (desktop only - mobile uses horizontal scroll)
       const scrollTop = window.scrollY;
       const scrollHeight = document.documentElement.scrollHeight;
       const clientHeight = window.innerHeight;
@@ -351,13 +365,25 @@ export const TelegramChannelFeed = ({
     }
   }, [layout, hasMore, isLoadingMore, fetchNextPage, pendingNewCount, fetchInitialPosts]);
 
-  // Window scroll listener for grid layout
+  // Scroll listeners for grid layout
   useEffect(() => {
     if (layout !== "grid") return;
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [layout, handleScroll]);
+    // Desktop: vertical window scroll
+    const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+    
+    if (isDesktop) {
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    } else {
+      // Mobile/Tablet: horizontal carousel scroll
+      const gridElement = gridRef.current;
+      if (gridElement) {
+        gridElement.addEventListener("scroll", handleHorizontalScroll);
+        return () => gridElement.removeEventListener("scroll", handleHorizontalScroll);
+      }
+    }
+  }, [layout, handleScroll, handleHorizontalScroll]);
 
   const handleNewPostsClick = () => {
     if (layout === "grid") {
@@ -411,15 +437,17 @@ export const TelegramChannelFeed = ({
         <div className="relative">
         <div>
           {/* Mobile: Single card at a time (Tinder-style) | Desktop: Grid */}
-          <div className="
-            flex md:grid
-            overflow-x-auto md:overflow-x-visible
-            snap-x snap-mandatory md:snap-none
-            gap-0.5
-            md:grid-cols-4
-            scrollbar-hide
-            -mx-4 px-4 md:mx-0 md:px-0
-          ">
+          <div 
+            ref={gridRef}
+            className="
+              flex md:grid
+              overflow-x-auto md:overflow-x-visible
+              snap-x snap-mandatory md:snap-none
+              gap-0.5
+              md:grid-cols-4
+              scrollbar-hide
+              -mx-4 px-4 md:mx-0 md:px-0
+            ">
             {postsWithMedia.map((post, index) => {
               // Skip rendering if image failed too many times
               if (hiddenIds.has(post.id)) {
