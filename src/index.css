@@ -159,6 +159,21 @@ All colors MUST be HSL.
     animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-in-left {
+    animation: slide-in-left 0.5s ease-out forwards;
+  }
+
   /* Softly fade right, top and bottom edges to transparent so underlying romantic gradient shows through */
   .mask-soft-edges {
     -webkit-mask-image: radial-gradient(120% 160% at 42% 50%, #000 65%, transparent 100%);

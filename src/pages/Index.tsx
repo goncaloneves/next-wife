@@ -81,8 +81,8 @@ const Index = () => {
               loop
               playsInline
               preload="metadata"
-              className="w-full h-full object-cover opacity-0 animate-fade-in"
-              style={{ animationDelay: "0s", animationFillMode: "forwards" }}
+              className="w-full h-full object-cover opacity-0 animate-slide-in-left"
+              style={{ animationDelay: "0s" }}
             >
               <source src="/videos/video-2-loop.mp4" type="video/mp4" />
             </video>
@@ -93,8 +93,8 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className="w-full h-full object-cover opacity-0 animate-fade-in"
-            style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}
+            className="w-full h-full object-cover opacity-0 animate-slide-in-left"
+            style={{ animationDelay: "0.15s" }}
           >
             <source src="/videos/video-3-loop.mp4" type="video/mp4" />
           </video>
@@ -104,8 +104,8 @@ const Index = () => {
             loop
             playsInline
             preload="metadata"
-            className="w-full h-full object-cover opacity-0 animate-fade-in"
-            style={{ animationDelay: "0.2s", animationFillMode: "forwards" }}
+            className="w-full h-full object-cover opacity-0 animate-slide-in-left"
+            style={{ animationDelay: "0.3s" }}
           >
             <source src="/videos/video-4-loop.mp4" type="video/mp4" />
           </video>
@@ -116,8 +116,8 @@ const Index = () => {
               loop
               playsInline
               preload="metadata"
-              className="w-full h-full object-cover opacity-0 animate-fade-in"
-              style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
+              className="w-full h-full object-cover opacity-0 animate-slide-in-left"
+              style={{ animationDelay: "0.45s" }}
             >
               <source src="/videos/video-5-loop.mp4" type="video/mp4" />
             </video>
