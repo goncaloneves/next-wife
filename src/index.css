@@ -23,6 +23,11 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  /* Prevent overscroll bounce that reveals fixed background */
+  html, body {
+    overscroll-behavior: none;
+  }
+  
   :root {
     --background: 20 30% 12%;
     --foreground: 30 20% 92%;
