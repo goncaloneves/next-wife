@@ -176,7 +176,7 @@ const Index = () => {
           </div>
 
           {/* Gradient Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
 
           {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4 text-center">
@@ -206,11 +206,8 @@ const Index = () => {
         </header>
 
         {/* Features Section - Scrolls over the fixed background */}
-        <section className="relative w-full py-14">
-        {/* Gradient background overlay for smooth transition */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/90 to-black/90 backdrop-blur-sm"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
+        <section className="relative w-full bg-black py-14">
+        <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             {/* Section Title */}
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
