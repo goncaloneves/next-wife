@@ -35,22 +35,6 @@ const Index = () => {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-fade-in");
-          }
-        });
-      },
-      { threshold: 0.1 },
-    );
-
-    if (feedContentRef.current) observer.observe(feedContentRef.current);
-
-    return () => observer.disconnect();
-  }, []);
 
   const features = [
     {
@@ -252,7 +236,7 @@ const Index = () => {
       </section>
 
         {/* Telegram Channel Feed Section - Scrolls over the fixed background */}
-        <section ref={feedContentRef} className="relative py-12 bg-black/90 backdrop-blur-sm opacity-0">
+        <section ref={feedContentRef} className="relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
