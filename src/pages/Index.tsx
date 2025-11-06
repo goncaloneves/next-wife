@@ -86,38 +86,9 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--gradient-romantic)" }}>
-      {/* Hero Section with Video Background */}
-      <header
-        ref={heroRef}
-        className="relative h-screen min-h-[600px] flex flex-col justify-end overflow-hidden pb-12 opacity-0"
-      >
-        {/* Top Navigation Bar */}
-        <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
-          {/* Logo Profile Button - Left */}
-          <button
-            onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
-            className="hover:scale-110 transition-transform duration-300"
-          >
-            <img
-              src={logo}
-              alt="Next Wife Profile"
-              className="w-12 h-12 rounded-full object-cover shadow-lg cursor-pointer"
-              style={{ boxShadow: "var(--shadow-glow)" }}
-            />
-          </button>
-
-          {/* Next Wife Title */}
-          <h1
-            className="text-white text-4xl font-bold cursor-pointer hover:opacity-80 transition-opacity duration-300"
-            style={{ fontFamily: "var(--font-heading)" }}
-            onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
-          >
-            Next Wife
-          </h1>
-        </div>
-
-        {/* Video Background */}
+    <div className="min-h-screen">
+      {/* Fixed Video Background */}
+      <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-30">
           {!isMobile && (
             <video
@@ -168,39 +139,74 @@ const Index = () => {
             </video>
           )}
         </div>
+        {/* Dark overlay for the fixed background */}
+        <div className="absolute inset-0 bg-black/20"></div>
+      </div>
 
-        {/* Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70"></div>
+      {/* Scrollable Content */}
+      <div className="relative z-10">
+        {/* Hero Section */}
+        <header
+          ref={heroRef}
+          className="relative h-screen min-h-[600px] flex flex-col justify-end overflow-hidden pb-12 opacity-0"
+        >
+          {/* Top Navigation Bar */}
+          <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
+            {/* Logo Profile Button - Left */}
+            <button
+              onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
+              className="hover:scale-110 transition-transform duration-300"
+            >
+              <img
+                src={logo}
+                alt="Next Wife Profile"
+                className="w-12 h-12 rounded-full object-cover shadow-lg cursor-pointer"
+                style={{ boxShadow: "var(--shadow-glow)" }}
+              />
+            </button>
 
-        {/* Content Overlaying Bottom of Videos */}
-        <div className="relative z-10 container mx-auto px-4 text-center">
-          <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Create your girlfriend on Telegram
-          </p>
+            {/* Next Wife Title */}
+            <h1
+              className="text-white text-4xl font-bold cursor-pointer hover:opacity-80 transition-opacity duration-300"
+              style={{ fontFamily: "var(--font-heading)" }}
+              onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
+            >
+              Next Wife
+            </h1>
+          </div>
 
-          <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
-            Meet the girlfriend you create and embark on a romantic journey, sharing unique stories from around the globe.
-          </p>
+          {/* Gradient Overlay for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70"></div>
 
-          <Button
-            size="lg"
-            className="text-lg px-8 py-6 font-bold transition-all duration-300"
-            style={{
-              background: "var(--gradient-sunset)",
-              boxShadow: "var(--shadow-warm)",
-            }}
-            onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
-          >
-            Open Next Wife 🌻
-          </Button>
-        </div>
+          {/* Hero Content */}
+          <div className="relative z-10 container mx-auto px-4 text-center">
+            <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+              Create your girlfriend on Telegram
+            </p>
 
-        {/* QR Code positioned in bottom right of video section */}
-        {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
-      </header>
+            <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
+              Meet the girlfriend you create and embark on a romantic journey, sharing unique stories from around the globe.
+            </p>
 
-      {/* Features Section */}
-      <section className="relative w-full bg-black py-20">
+            <Button
+              size="lg"
+              className="text-lg px-8 py-6 font-bold transition-all duration-300"
+              style={{
+                background: "var(--gradient-sunset)",
+                boxShadow: "var(--shadow-warm)",
+              }}
+              onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
+            >
+              Open Next Wife 🌻
+            </Button>
+          </div>
+
+          {/* QR Code positioned in bottom right of video section */}
+          {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
+        </header>
+
+        {/* Features Section - Scrolls over the fixed background */}
+        <section className="relative w-full bg-black/90 backdrop-blur-sm py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             {/* Section Title */}
@@ -254,20 +260,20 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Telegram Channel Feed Section */}
-      <section ref={feedContentRef} className="relative py-12 bg-black opacity-0">
-        <div className="container mx-auto px-4">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
-              Pick your Girlfriend 🌻
-            </h2>
-            <TelegramChannelFeed channelUsername="nextwifeai" layout="grid" feedSectionRef={feedContentRef} />
+        {/* Telegram Channel Feed Section - Scrolls over the fixed background */}
+        <section ref={feedContentRef} className="relative py-12 bg-black/90 backdrop-blur-sm opacity-0">
+          <div className="container mx-auto px-4">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
+                Pick your Girlfriend 🌻
+              </h2>
+              <TelegramChannelFeed channelUsername="nextwifeai" layout="grid" feedSectionRef={feedContentRef} />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Footer */}
-      <footer className="bg-black py-8 text-center">
+        {/* Footer - Scrolls over the fixed background */}
+        <footer className="bg-black/90 backdrop-blur-sm py-8 text-center">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-wrap justify-center gap-4 text-white/70 font-body text-sm">
@@ -308,7 +314,8 @@ const Index = () => {
             </p>
           </div>
         </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 };
