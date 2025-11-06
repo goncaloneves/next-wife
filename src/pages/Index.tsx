@@ -246,7 +246,7 @@ const Index = () => {
         </section>
 
         {/* Footer - Scrolls over the fixed background */}
-        <footer className="bg-black/90 backdrop-blur-sm py-8 text-center">
+        <footer className="bg-black py-8 text-center">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-wrap justify-center gap-4 text-white/70 font-body text-sm">
