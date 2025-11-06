@@ -222,7 +222,7 @@ const Index = () => {
                   className="feature-card relative p-6 rounded-2xl opacity-0 bg-black/40 backdrop-blur-md"
                   style={{
                     animationDelay: `${index * 0.1}s`,
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(198, 58, 75, 0.15)",
+                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)",
                   }}
                 >
                   {/* Card Content */}
