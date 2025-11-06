@@ -73,7 +73,7 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Fixed Video Background */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4">
+        <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-30">
           {!isMobile && (
             <video
               autoPlay
