@@ -245,11 +245,7 @@ const Index = () => {
                     </div>
                     
                     {/* Text Content */}
-                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-transparent group-hover:bg-clip-text transition-all duration-300"
-                      style={{
-                        backgroundImage: "var(--gradient-sunset)",
-                      }}
-                    >
+                    <h3 className="text-xl font-bold mb-3 text-white transition-all duration-300">
                       {feature.title}
                     </h3>
                     <p className="text-base text-white/70 leading-relaxed group-hover:text-white/90 transition-colors duration-300">
