@@ -60,6 +60,7 @@ export const TelegramChannelFeed = ({
   const [imageLoadStates, setImageLoadStates] = useState<Record<string, boolean>>({});
   const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
+  const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -385,6 +386,37 @@ export const TelegramChannelFeed = ({
     }
   }, [layout, handleScroll, handleHorizontalScroll]);
 
+  // IntersectionObserver to highlight centered card on mobile/tablet
+  useEffect(() => {
+    if (layout !== "grid") return;
+    
+    const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+    if (isDesktop) return; // Only for mobile/tablet
+    
+    const options = {
+      root: gridRef.current,
+      threshold: 0.5, // Card is considered "centered" when 50% visible
+      rootMargin: '0px',
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          const postId = entry.target.getAttribute('data-post-id');
+          if (postId) {
+            setCenteredPostId(postId);
+          }
+        }
+      });
+    }, options);
+    
+    // Observe all post cards
+    const cards = gridRef.current?.querySelectorAll('[data-post-id]');
+    cards?.forEach((card) => observer.observe(card));
+    
+    return () => observer.disconnect();
+  }, [layout, allPosts.length]);
+
   const handleNewPostsClick = () => {
     if (layout === "grid") {
       const feedElement = feedSectionRef?.current ?? document.querySelector('section.relative.py-12.bg-black');
@@ -458,9 +490,12 @@ export const TelegramChannelFeed = ({
               const hasBotMention = post.text && post.text.toLowerCase().includes('@nextwifebot');
               const clickLink = post.botLink || (hasBotMention ? 'https://t.me/nextwifebot' : post.link);
               
+              const isCentered = centeredPostId === post.id;
+              
               return (
                 <div
                   key={`${post.id}-${refreshKey}`}
+                  data-post-id={post.id}
                   className="
                     aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in bg-muted
                     flex-shrink-0 w-[90vw] md:w-auto
@@ -480,9 +515,11 @@ export const TelegramChannelFeed = ({
                     alt=""
                     loading="lazy"
                     referrerPolicy="no-referrer"
-                    className={`w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 ${
+                    className={`w-full h-full object-cover transition-all duration-300 ${
                       imageLoadStates[post.id] ? "" : "opacity-0"
-                    }`}
+                    } ${
+                      isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
+                    } md:group-hover:opacity-100 md:group-hover:scale-105`}
                     onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                     onError={() => {
                       const currentTries = imageErrors[post.id] || 0;
