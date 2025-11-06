@@ -219,21 +219,12 @@ const Index = () => {
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className="feature-card relative p-6 rounded-2xl opacity-0 overflow-hidden"
+                  className="feature-card relative p-6 rounded-2xl opacity-0 bg-black/40 backdrop-blur-md"
                   style={{
                     animationDelay: `${index * 0.1}s`,
+                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(198, 58, 75, 0.15)",
                   }}
                 >
-                  {/* Gradient Border Effect */}
-                  <div className="absolute inset-0 rounded-2xl opacity-50"
-                    style={{
-                      background: "var(--gradient-sunset)",
-                      padding: "2px",
-                    }}
-                  >
-                    <div className="absolute inset-[2px] rounded-2xl bg-black"></div>
-                  </div>
-                  
                   {/* Card Content */}
                   <div className="relative z-10">
                     {/* Icon */}
