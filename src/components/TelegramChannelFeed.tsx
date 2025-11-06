@@ -492,22 +492,19 @@ export const TelegramChannelFeed = ({
               
               const isCentered = centeredPostId === post.id;
               
-              // Calculate row-based animation delay (left to right within each row)
-              const col = index % 4;
-              const animDelay = col * 0.1;
-              
               return (
                 <div
                   key={`${post.id}-${refreshKey}`}
                   data-post-id={post.id}
                   className="
-                    aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-slide-in-left bg-muted
+                    aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in bg-muted
                     flex-shrink-0 w-[90vw] md:w-auto
                     snap-center md:snap-align-none
                   "
                   onClick={() => window.open(clickLink, "_blank", "noopener,noreferrer")}
                   style={{ 
-                    animationDelay: `${animDelay}s`
+                    animationDelay: `${(index % 20) * 0.05}s`,
+                    animationFillMode: "forwards"
                   }}
                 >
                   {!imageLoadStates[post.id] && (
@@ -550,9 +547,10 @@ export const TelegramChannelFeed = ({
                   
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-all duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-0 animate-slide-in-left"
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-all duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-0 animate-fade-in"
                       style={{ 
-                        animationDelay: `${animDelay + 0.2}s`
+                        animationDelay: `${(index % 20) * 0.05 + 0.15}s`,
+                        animationFillMode: "forwards"
                       }}>
                       <div className="text-white">
                         <div className="flex items-baseline gap-2 mb-1">
