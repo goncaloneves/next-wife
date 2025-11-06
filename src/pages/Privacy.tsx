@@ -1,7 +1,17 @@
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+
 const Privacy = () => {
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 text-foreground">Privacy Policy</h1>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <Link to="/">
+          <Button variant="ghost" className="mb-8" data-testid="button-back">
+            ← Back to Home
+          </Button>
+        </Link>
+
+        <h1 className="text-4xl font-bold mb-8 text-foreground">Privacy Policy</h1>
         
         <div className="prose prose-lg dark:prose-invert max-w-none space-y-6 text-muted-foreground">
           <p className="text-sm text-muted-foreground">Last updated: {new Date().toLocaleDateString()}</p>
@@ -182,6 +192,7 @@ const Privacy = () => {
             </p>
           </section>
         </div>
+      </div>
     </div>
   );
 };

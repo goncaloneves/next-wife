@@ -2,23 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Terms from "./Terms";
-import Privacy from "./Privacy";
 
 const Index = () => {
   const [isQRVisible, setIsQRVisible] = useState(true);
-  const [showTerms, setShowTerms] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
@@ -260,21 +250,21 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-wrap justify-center gap-4 text-white/70 font-body text-sm">
-              <button 
-                onClick={() => setShowTerms(true)}
-                className="hover:text-white transition-colors cursor-pointer"
+              <Link 
+                to="/terms" 
+                className="hover:text-white transition-colors"
                 data-testid="link-terms"
               >
                 Terms & Conditions
-              </button>
+              </Link>
               <span>•</span>
-              <button 
-                onClick={() => setShowPrivacy(true)}
-                className="hover:text-white transition-colors cursor-pointer"
+              <Link 
+                to="/privacy" 
+                className="hover:text-white transition-colors"
                 data-testid="link-privacy"
               >
                 Privacy Policy
-              </button>
+              </Link>
               <span>•</span>
               <a
                 href="https://t.me/nextwifesupport"
@@ -299,20 +289,6 @@ const Index = () => {
         </div>
         </footer>
       </div>
-
-      {/* Terms Dialog */}
-      <Dialog open={showTerms} onOpenChange={setShowTerms}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <Terms />
-        </DialogContent>
-      </Dialog>
-
-      {/* Privacy Dialog */}
-      <Dialog open={showPrivacy} onOpenChange={setShowPrivacy}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <Privacy />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
