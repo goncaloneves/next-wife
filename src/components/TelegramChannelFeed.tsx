@@ -488,7 +488,7 @@ export const TelegramChannelFeed = ({
               
               // Use botLink from API if available, otherwise check text for bot mention as fallback
               const hasBotMention = post.text && post.text.toLowerCase().includes('@nextwifebot');
-              const clickLink = post.botLink || (hasBotMention ? 'https://t.me/nextwifebot' : post.link);
+              const clickLink = post.botLink || (hasBotMention ? 'https://t.me/nextwifebot?start=now' : post.link);
               
               const isCentered = centeredPostId === post.id;
               

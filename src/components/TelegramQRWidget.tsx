@@ -5,7 +5,7 @@ interface TelegramQRWidgetProps {
 }
 
 export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
-  const botLink = "https://t.me/nextwifebot";
+  const botLink = "https://t.me/nextwifebot?start=now";
 
   return (
     <a

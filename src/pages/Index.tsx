@@ -136,7 +136,7 @@ const Index = () => {
           <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
             {/* Logo Profile Button - Left */}
             <button
-              onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
+              onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
               className="hover:scale-110 transition-transform duration-300"
             >
               <img
@@ -151,7 +151,7 @@ const Index = () => {
             <h1
               className="text-white text-4xl font-bold cursor-pointer hover:opacity-80 transition-opacity duration-300"
               style={{ fontFamily: "var(--font-heading)" }}
-              onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
+              onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
             >
               Next Wife
             </h1>
@@ -177,7 +177,7 @@ const Index = () => {
                 background: "var(--gradient-sunset)",
                 boxShadow: "var(--shadow-warm)",
               }}
-              onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
+              onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
             >
               Open Next Wife 🌻
             </Button>
@@ -279,7 +279,7 @@ const Index = () => {
             <p className="text-white/70 font-body text-sm">
               <span
                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => window.open("https://t.me/nextwifebot", "_blank")}
+                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
               >
                 @nextwifebot
               </span>
