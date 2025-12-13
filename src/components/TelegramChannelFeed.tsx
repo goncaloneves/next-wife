@@ -585,7 +585,7 @@ export const TelegramChannelFeed = ({
             <div className="hidden md:block py-8 text-center">
               <div className="flex items-center justify-center gap-2 text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">Loading more posts...</span>
+                <span className="text-sm">Loading more...</span>
               </div>
             </div>
           )}
@@ -619,7 +619,7 @@ export const TelegramChannelFeed = ({
             <div className="py-8 text-center">
               <div className="flex items-center justify-center gap-2 text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">Loading more posts...</span>
+                <span className="text-sm">Loading more...</span>
               </div>
             </div>
           )}
