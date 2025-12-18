@@ -43,7 +43,7 @@ const Index = () => {
       description: "Experience genuine moments and authentic interactions in her daily life",
     },
     {
-      icon: "⭐",
+      icon: "🥂",
       title: "Discover New Relationships",
       description: "Create multiple unique girlfriends and explore different connections",
     },
@@ -54,18 +54,18 @@ const Index = () => {
     },
     {
       icon: "📸",
-      title: "Photo Interactions",
-      description: "Share and receive beautiful photos in your journey together",
-    },
-    {
-      icon: "🎬",
-      title: "Voice & Video",
-      description: "Engage with voice messages and video content for deeper connection",
+      title: "Photo, Voice & Video",
+      description: "Engage with photos, voice messages and videos content for deeper connections",
     },
     {
       icon: "🌟",
       title: "Secret Stories",
       description: "Uncover hidden desires and exclusive intimate moments",
+    },
+    {
+      icon: "🤩",
+      title: "Earn Telegram Stars",
+      description: "Earn Passive Income with Next Wife",
     },
   ];
 
