@@ -58,7 +58,7 @@ const Index = () => {
       description: "Engage with photos, voice messages and videos for deeper connections",
     },
     {
-      icon: "💞",
+      icon: "🔥",
       title: "Secret Stories",
       description: "Uncover hidden desires and exclusive intimate moments",
     },
