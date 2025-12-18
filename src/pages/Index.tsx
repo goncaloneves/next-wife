@@ -65,7 +65,7 @@ const Index = () => {
     {
       icon: "🤩",
       title: "Earn Telegram Stars",
-      description: "Earn Passive Income with Next Wife",
+      description: "Earn 20% lifetime commission from all your referrals",
     },
   ];
 
