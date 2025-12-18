@@ -55,7 +55,7 @@ const Index = () => {
     {
       icon: "📸",
       title: "Photo, Voice & Video",
-      description: "Engage with photos, voice messages and videos content for deeper connections",
+      description: "Engage with photos, voice messages and videos for deeper connections",
     },
     {
       icon: "🌟",
