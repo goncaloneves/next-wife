@@ -532,6 +532,9 @@ export const TelegramChannelFeed = ({
         <div className="relative">
         <FeedFilters channel={channelUsername} onFiltersChange={handleFiltersChange} />
         
+        {/* Container with min-height to prevent layout collapse during filter changes */}
+        <div className="min-h-[50vh]">
+        
         {/* Loading state - only show when no posts exist yet */}
         {loading && allPosts.length === 0 && (
           <div className="flex items-center justify-center py-12">
@@ -541,15 +544,17 @@ export const TelegramChannelFeed = ({
         
         {/* Empty state for filtered results - only after loading completes */}
         {!loading && postsWithMedia.length === 0 && hasActiveFilters && (
-          <div className="text-center py-12 text-muted-foreground">
-            <p className="text-lg">No girlfriends match your filters</p>
-            <p className="text-sm mt-2">Try adjusting your search criteria</p>
+          <div className="flex items-center justify-center py-12 text-muted-foreground">
+            <div className="text-center">
+              <p className="text-lg">No girlfriends match your filters</p>
+              <p className="text-sm mt-2">Try adjusting your search criteria</p>
+            </div>
           </div>
         )}
         
         {/* Empty state for no posts at all */}
         {!loading && allPosts.length === 0 && !hasActiveFilters && (
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="flex items-center justify-center py-12 text-muted-foreground">
             <p>Loading girlfriends...</p>
           </div>
         )}
@@ -680,6 +685,7 @@ export const TelegramChannelFeed = ({
           )}
         </div>
         )}
+        </div>
         </div>
       </>
     );
