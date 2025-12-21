@@ -3,29 +3,8 @@ import { Button } from "@/components/ui/button";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Hook to get responsive maxVisible based on screen width
-// Ensures exactly 3 rows of chips at each breakpoint
-// Grid column widths: mobile=full, md=50%, lg=33%
-// ~2 chips fit per row in each column
-function useResponsiveMaxVisible() {
-  const [maxVisible, setMaxVisible] = useState(4); // mobile default
-  
-  useEffect(() => {
-    const updateMaxVisible = () => {
-      const width = window.innerWidth;
-      // All breakpoints: ~2 chips per row in grid column
-      // 3 rows = All + 4 chips + button = 6 items
-      // So maxVisible = 4 for all sizes
-      setMaxVisible(4);
-    };
-    
-    updateMaxVisible();
-    window.addEventListener('resize', updateMaxVisible);
-    return () => window.removeEventListener('resize', updateMaxVisible);
-  }, []);
-  
-  return maxVisible;
-}
+// Fixed number of rows for all filter sections
+const ROWS_PER_SECTION = 2;
 
 interface FilterOptions {
   regions: string[];
@@ -83,10 +62,14 @@ function FilterSection({
   emptyMessage?: string;
 }) {
   const [expanded, setExpanded] = useState(showAll);
-  const responsiveMaxVisible = useResponsiveMaxVisible();
-  const maxVisible = showAll ? options.length : responsiveMaxVisible;
-  const visibleOptions = expanded ? options : options.slice(0, maxVisible);
-  const hasMore = options.length > maxVisible;
+  
+  // Calculate how many chips can fit in ROWS_PER_SECTION rows
+  // We show: All chip + N option chips
+  // When collapsed, limit to ROWS_PER_SECTION rows worth
+  // Estimate ~3 chips per row when collapsed (conservative for varied label lengths)
+  const collapsedMaxChips = ROWS_PER_SECTION * 3; // 6 chips in 2 rows
+  const hasMore = options.length > collapsedMaxChips - 1; // -1 for "All" chip
+  const visibleOptions = expanded ? options : options.slice(0, collapsedMaxChips - 1);
 
   return (
     <div className="space-y-3">
@@ -94,31 +77,41 @@ function FilterSection({
       {options.length === 0 && emptyMessage ? (
         <p className="text-sm text-white/40 px-1">{emptyMessage}</p>
       ) : (
-        <div className="flex flex-wrap gap-2">
-          <Chip
-            label="All"
-            selected={selected === "all"}
-            onClick={() => onSelect("all")}
-          />
-          {visibleOptions.map((option) => (
+        <div className="overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div 
+            className="grid gap-2"
+            style={{
+              gridTemplateRows: expanded ? 'auto' : `repeat(${ROWS_PER_SECTION}, auto)`,
+              gridAutoFlow: expanded ? 'row' : 'column',
+              gridAutoColumns: 'max-content',
+              width: expanded ? '100%' : 'max-content',
+            }}
+          >
             <Chip
-              key={option}
-              label={option}
-              selected={selected === option}
-              onClick={() => onSelect(option)}
-              variant="accent"
+              label="All"
+              selected={selected === "all"}
+              onClick={() => onSelect("all")}
             />
-          ))}
+            {visibleOptions.map((option) => (
+              <Chip
+                key={option}
+                label={option}
+                selected={selected === option}
+                onClick={() => onSelect(option)}
+                variant="accent"
+              />
+            ))}
+          </div>
           {hasMore && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 px-3 py-2.5 rounded-full text-sm text-white/60 hover:text-white/90 transition-colors"
+              className="flex items-center gap-1 px-3 py-2.5 rounded-full text-sm text-white/60 hover:text-white/90 transition-colors mt-2"
               data-testid={`expand-${title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
             >
               {expanded ? (
                 <>Show less <ChevronUp className="w-4 h-4" /></>
               ) : (
-                <>{options.length - maxVisible} more <ChevronDown className="w-4 h-4" /></>
+                <>{options.length - visibleOptions.length} more <ChevronDown className="w-4 h-4" /></>
               )}
             </button>
           )}
