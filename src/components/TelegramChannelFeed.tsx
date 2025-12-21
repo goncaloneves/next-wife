@@ -62,7 +62,7 @@ export const TelegramChannelFeed = ({
   const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
-  const [filters, setFilters] = useState<{ region?: string; ageBracket?: string; occupationCategory?: string }>({});
+  const [filters, setFilters] = useState<{ region?: string; ageBracket?: string; occupationCategory?: string; language?: string; hometown?: string }>({});
   const listRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -114,6 +114,8 @@ export const TelegramChannelFeed = ({
       if (filters.region && filters.region !== 'all') filterParams.set('region', filters.region);
       if (filters.ageBracket && filters.ageBracket !== 'all') filterParams.set('ageBracket', filters.ageBracket);
       if (filters.occupationCategory && filters.occupationCategory !== 'all') filterParams.set('occupationCategory', filters.occupationCategory);
+      if (filters.language && filters.language !== 'all') filterParams.set('language', filters.language);
+      if (filters.hometown && filters.hometown !== 'all') filterParams.set('hometown', filters.hometown);
       
       const response = await fetch(
         `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
@@ -158,7 +160,7 @@ export const TelegramChannelFeed = ({
     } finally {
       fetchInFlightRef.current = false;
     }
-  }, [channelUsername, filters.region, filters.ageBracket, filters.occupationCategory, fingerprint]);
+  }, [channelUsername, filters.region, filters.ageBracket, filters.occupationCategory, filters.language, filters.hometown, fingerprint]);
 
   const fetchNextPage = useCallback(async () => {
     if (!hasMore || isLoadingMore || !nextCursor) return;
@@ -174,6 +176,8 @@ export const TelegramChannelFeed = ({
       if (filters.region && filters.region !== 'all') filterParams.set('region', filters.region);
       if (filters.ageBracket && filters.ageBracket !== 'all') filterParams.set('ageBracket', filters.ageBracket);
       if (filters.occupationCategory && filters.occupationCategory !== 'all') filterParams.set('occupationCategory', filters.occupationCategory);
+      if (filters.language && filters.language !== 'all') filterParams.set('language', filters.language);
+      if (filters.hometown && filters.hometown !== 'all') filterParams.set('hometown', filters.hometown);
       
       const response = await fetch(
         `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
@@ -214,7 +218,9 @@ export const TelegramChannelFeed = ({
     // (filtered views don't need auto-refresh since user is browsing a subset)
     const hasFilters = (filters.region && filters.region !== 'all') ||
                        (filters.ageBracket && filters.ageBracket !== 'all') ||
-                       (filters.occupationCategory && filters.occupationCategory !== 'all');
+                       (filters.occupationCategory && filters.occupationCategory !== 'all') ||
+                       (filters.language && filters.language !== 'all') ||
+                       (filters.hometown && filters.hometown !== 'all');
     if (hasFilters) return;
     
     try {
@@ -312,7 +318,7 @@ export const TelegramChannelFeed = ({
     } catch (err) {
       console.error("Error checking for new posts:", err);
     }
-  }, [channelUsername, fingerprint, filters.region, filters.ageBracket, filters.occupationCategory]);
+  }, [channelUsername, fingerprint, filters.region, filters.ageBracket, filters.occupationCategory, filters.language, filters.hometown]);
 
   useEffect(() => {
     fetchInitialPosts();
@@ -366,10 +372,10 @@ export const TelegramChannelFeed = ({
     
     // Fetch with new filters - fetchInitialPosts will replace posts atomically
     fetchInitialPosts();
-  }, [filters.region, filters.ageBracket, filters.occupationCategory, fetchInitialPosts]);
+  }, [filters.region, filters.ageBracket, filters.occupationCategory, filters.language, filters.hometown, fetchInitialPosts]);
 
   // Handler for filter changes
-  const handleFiltersChange = useCallback((newFilters: { region?: string; ageBracket?: string; occupationCategory?: string }) => {
+  const handleFiltersChange = useCallback((newFilters: { region?: string; ageBracket?: string; occupationCategory?: string; language?: string; hometown?: string }) => {
     setFilters(newFilters);
   }, []);
 
@@ -508,7 +514,9 @@ export const TelegramChannelFeed = ({
   const postsWithMedia = allPosts.filter((post) => post.media);
   const hasActiveFilters = (filters.region && filters.region !== 'all') ||
                            (filters.ageBracket && filters.ageBracket !== 'all') ||
-                           (filters.occupationCategory && filters.occupationCategory !== 'all');
+                           (filters.occupationCategory && filters.occupationCategory !== 'all') ||
+                           (filters.language && filters.language !== 'all') ||
+                           (filters.hometown && filters.hometown !== 'all');
 
   if (layout === "grid") {
     return (

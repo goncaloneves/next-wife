@@ -1,17 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { X, MapPin, Calendar, Briefcase } from "lucide-react";
+import { X, MapPin, Calendar, Briefcase, Globe, Home } from "lucide-react";
 
 interface FilterOptions {
   regions: string[];
   ageBrackets: string[];
   occupationCategories: string[];
+  languages: string[];
+  hometowns: Record<string, string[]>;
 }
 
 interface FeedFiltersProps {
   channel: string;
-  onFiltersChange: (filters: { region?: string; ageBracket?: string; occupationCategory?: string }) => void;
+  onFiltersChange: (filters: { region?: string; ageBracket?: string; occupationCategory?: string; language?: string; hometown?: string }) => void;
 }
 
 export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
@@ -19,10 +21,14 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
     regions: [],
     ageBrackets: [],
     occupationCategories: [],
+    languages: [],
+    hometowns: {},
   });
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [selectedAgeBracket, setSelectedAgeBracket] = useState<string>("all");
   const [selectedOccupation, setSelectedOccupation] = useState<string>("all");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("all");
+  const [selectedHometown, setSelectedHometown] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,26 +49,43 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
     fetchFilters();
   }, [channel]);
 
+  const availableHometowns = useMemo(() => {
+    if (selectedRegion === "all") {
+      return Object.values(filterOptions.hometowns).flat().sort();
+    }
+    return filterOptions.hometowns[selectedRegion] || [];
+  }, [selectedRegion, filterOptions.hometowns]);
+
+  useEffect(() => {
+    if (selectedHometown !== "all" && !availableHometowns.includes(selectedHometown)) {
+      setSelectedHometown("all");
+    }
+  }, [selectedRegion, availableHometowns, selectedHometown]);
+
   const notifyFiltersChange = useCallback(() => {
     onFiltersChange({
       region: selectedRegion === "all" ? undefined : selectedRegion,
       ageBracket: selectedAgeBracket === "all" ? undefined : selectedAgeBracket,
       occupationCategory: selectedOccupation === "all" ? undefined : selectedOccupation,
+      language: selectedLanguage === "all" ? undefined : selectedLanguage,
+      hometown: selectedHometown === "all" ? undefined : selectedHometown,
     });
-  }, [selectedRegion, selectedAgeBracket, selectedOccupation, onFiltersChange]);
+  }, [selectedRegion, selectedAgeBracket, selectedOccupation, selectedLanguage, selectedHometown, onFiltersChange]);
 
   useEffect(() => {
     if (!loading) {
       notifyFiltersChange();
     }
-  }, [selectedRegion, selectedAgeBracket, selectedOccupation, loading, notifyFiltersChange]);
+  }, [selectedRegion, selectedAgeBracket, selectedOccupation, selectedLanguage, selectedHometown, loading, notifyFiltersChange]);
 
-  const hasActiveFilters = selectedRegion !== "all" || selectedAgeBracket !== "all" || selectedOccupation !== "all";
+  const hasActiveFilters = selectedRegion !== "all" || selectedAgeBracket !== "all" || selectedOccupation !== "all" || selectedLanguage !== "all" || selectedHometown !== "all";
 
   const clearFilters = () => {
     setSelectedRegion("all");
     setSelectedAgeBracket("all");
     setSelectedOccupation("all");
+    setSelectedLanguage("all");
+    setSelectedHometown("all");
   };
 
   if (loading) {
@@ -71,6 +94,8 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
         <div className="h-11 w-36 bg-white/10 rounded-full animate-pulse" />
         <div className="h-11 w-28 bg-white/10 rounded-full animate-pulse" />
         <div className="h-11 w-44 bg-white/10 rounded-full animate-pulse" />
+        <div className="h-11 w-32 bg-white/10 rounded-full animate-pulse" />
+        <div className="h-11 w-36 bg-white/10 rounded-full animate-pulse" />
       </div>
     );
   }
@@ -92,6 +117,40 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
           ))}
         </SelectContent>
       </Select>
+
+      <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+        <SelectTrigger 
+          className="w-auto min-w-[130px] h-11 rounded-full bg-white/10 hover:bg-white/20 border-0 text-white/90 px-4 transition-colors"
+          data-testid="filter-language"
+        >
+          <Globe className="w-4 h-4 mr-2 opacity-70" />
+          <SelectValue placeholder="Language" />
+        </SelectTrigger>
+        <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 rounded-xl max-h-80">
+          <SelectItem value="all" className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">All Languages</SelectItem>
+          {filterOptions.languages.map((lang) => (
+            <SelectItem key={lang} value={lang} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">{lang}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {availableHometowns.length > 0 && (
+        <Select value={selectedHometown} onValueChange={setSelectedHometown}>
+          <SelectTrigger 
+            className="w-auto min-w-[140px] h-11 rounded-full bg-white/10 hover:bg-white/20 border-0 text-white/90 px-4 transition-colors"
+            data-testid="filter-hometown"
+          >
+            <Home className="w-4 h-4 mr-2 opacity-70" />
+            <SelectValue placeholder="City" />
+          </SelectTrigger>
+          <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 rounded-xl max-h-80">
+            <SelectItem value="all" className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">All Cities</SelectItem>
+            {availableHometowns.map((hometown) => (
+              <SelectItem key={hometown} value={hometown} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">{hometown}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
 
       <Select value={selectedAgeBracket} onValueChange={setSelectedAgeBracket}>
         <SelectTrigger 

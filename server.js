@@ -101,6 +101,51 @@ function getOccupationCategory(work) {
   return "Other";
 }
 
+// Nationality to Language mapping
+const nationalityToLanguage = {
+  "Japanese": "Japanese", "Korean": "Korean", "Chinese": "Mandarin", "Taiwanese": "Mandarin",
+  "Hong Konger": "Cantonese", "Thai": "Thai", "Vietnamese": "Vietnamese", "Filipino": "Filipino",
+  "Filipina": "Filipino", "Indonesian": "Indonesian", "Malaysian": "Malay", "Singaporean": "English",
+  "Indian": "Hindi", "Pakistani": "Urdu", "Bangladeshi": "Bengali", "Sri Lankan": "Sinhala",
+  "Nepali": "Nepali", "Mongolian": "Mongolian", "Cambodian": "Khmer", "Laotian": "Lao",
+  "Myanmar": "Burmese", "Burmese": "Burmese",
+  "British": "English", "English": "English", "Scottish": "English", "Welsh": "English",
+  "Irish": "English", "French": "French", "German": "German", "Italian": "Italian",
+  "Spanish": "Spanish", "Portuguese": "Portuguese", "Dutch": "Dutch", "Belgian": "Dutch",
+  "Swiss": "German", "Austrian": "German", "Swedish": "Swedish", "Norwegian": "Norwegian",
+  "Danish": "Danish", "Finnish": "Finnish", "Polish": "Polish", "Czech": "Czech",
+  "Hungarian": "Hungarian", "Romanian": "Romanian", "Bulgarian": "Bulgarian", "Greek": "Greek",
+  "Croatian": "Croatian", "Serbian": "Serbian", "Slovenian": "Slovenian", "Slovak": "Slovak",
+  "Ukrainian": "Ukrainian", "Russian": "Russian", "Belarusian": "Belarusian",
+  "Lithuanian": "Lithuanian", "Latvian": "Latvian", "Estonian": "Estonian", "Icelandic": "Icelandic",
+  "Albanian": "Albanian", "Macedonian": "Macedonian", "Montenegrin": "Serbian", "Bosnian": "Bosnian",
+  "Brazilian": "Portuguese", "Mexican": "Spanish", "Argentine": "Spanish", "Argentinian": "Spanish",
+  "Colombian": "Spanish", "Peruvian": "Spanish", "Venezuelan": "Spanish", "Chilean": "Spanish",
+  "Ecuadorian": "Spanish", "Bolivian": "Spanish", "Paraguayan": "Spanish", "Uruguayan": "Spanish",
+  "Cuban": "Spanish", "Dominican": "Spanish", "Puerto Rican": "Spanish", "Costa Rican": "Spanish",
+  "Panamanian": "Spanish", "Guatemalan": "Spanish", "Honduran": "Spanish", "Salvadoran": "Spanish",
+  "Nicaraguan": "Spanish", "Jamaican": "English", "Haitian": "French", "Trinidadian": "English",
+  "American": "English", "Canadian": "English",
+  "Nigerian": "English", "South African": "English", "Egyptian": "Arabic", "Kenyan": "Swahili",
+  "Ethiopian": "Amharic", "Ghanaian": "English", "Moroccan": "Arabic", "Algerian": "Arabic",
+  "Tunisian": "Arabic", "Senegalese": "French", "Cameroonian": "French", "Tanzanian": "Swahili",
+  "Turkish": "Turkish", "Iranian": "Persian", "Iraqi": "Arabic", "Saudi": "Arabic",
+  "Saudi Arabian": "Arabic", "Emirati": "Arabic", "Qatari": "Arabic", "Kuwaiti": "Arabic",
+  "Lebanese": "Arabic", "Syrian": "Arabic", "Israeli": "Hebrew", "Palestinian": "Arabic",
+  "Afghan": "Dari", "Jordanian": "Arabic",
+  "Australian": "English", "New Zealander": "English", "Kiwi": "English", "Fijian": "English",
+};
+
+function getLanguage(nationality) {
+  if (!nationality) return null;
+  if (nationalityToLanguage[nationality]) return nationalityToLanguage[nationality];
+  const normalized = nationality.trim();
+  for (const [key, language] of Object.entries(nationalityToLanguage)) {
+    if (key.toLowerCase() === normalized.toLowerCase()) return language;
+  }
+  return null;
+}
+
 // Initialize database connection
 async function initDatabase() {
   if (!process.env.DATABASE_URL) {
@@ -276,10 +321,11 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       const region = post.profileData ? getRegion(post.profileData.nationality) : null;
       const ageBracket = post.profileData ? getAgeBracket(post.profileData.age) : null;
       const occupationCategory = post.profileData ? getOccupationCategory(post.profileData.work) : null;
+      const language = post.profileData ? getLanguage(post.profileData.nationality) : null;
       
       await pool.query(`
-        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, NOW())
+        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW())
         ON CONFLICT (id) DO UPDATE SET
           text = EXCLUDED.text,
           date = EXCLUDED.date,
@@ -295,6 +341,7 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
           region = EXCLUDED.region,
           age_bracket = EXCLUDED.age_bracket,
           occupation_category = EXCLUDED.occupation_category,
+          language = EXCLUDED.language,
           updated_at = NOW()
       `, [
         post.id,
@@ -312,7 +359,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
         post.profileData?.work || null,
         region,
         ageBracket,
-        occupationCategory
+        occupationCategory,
+        language
       ]);
       synced++;
     } catch (error) {
@@ -414,26 +462,44 @@ app.get('/api/tg-channel-filters', async (req, res) => {
       return res.json({
         regions: ["Asian", "European", "Latin American", "North American", "African", "Middle Eastern", "Oceanian", "Other"],
         ageBrackets: ["21-25", "26-30", "30+"],
-        occupationCategories: ALL_OCCUPATION_CATEGORIES
+        occupationCategories: ALL_OCCUPATION_CATEGORIES,
+        languages: [],
+        hometowns: {}
       });
     }
     
     const channel = req.query.channel || 'nextwife_ai';
     const channelName = channel.replace('@', '').replace(/_/g, '');
     
-    // Get distinct regions and occupation categories from database
-    const [regionsResult, occupationResult] = await Promise.all([
+    // Get distinct regions, occupation categories, languages, and hometowns from database
+    const [regionsResult, occupationResult, languagesResult, hometownsResult] = await Promise.all([
       pool.query(`SELECT DISTINCT region FROM telegram_posts WHERE channel = $1 AND region IS NOT NULL ORDER BY region`, [channelName]),
-      pool.query(`SELECT DISTINCT occupation_category FROM telegram_posts WHERE channel = $1 AND occupation_category IS NOT NULL ORDER BY occupation_category`, [channelName])
+      pool.query(`SELECT DISTINCT occupation_category FROM telegram_posts WHERE channel = $1 AND occupation_category IS NOT NULL ORDER BY occupation_category`, [channelName]),
+      pool.query(`SELECT DISTINCT language FROM telegram_posts WHERE channel = $1 AND language IS NOT NULL ORDER BY language`, [channelName]),
+      pool.query(`SELECT DISTINCT region, hometown FROM telegram_posts WHERE channel = $1 AND hometown IS NOT NULL AND region IS NOT NULL ORDER BY region, hometown`, [channelName])
     ]);
     
     const regions = regionsResult.rows.map(r => r.region);
     const occupationCategories = occupationResult.rows.map(r => r.occupation_category);
+    const languages = languagesResult.rows.map(r => r.language);
+    
+    // Group hometowns by region
+    const hometowns = {};
+    for (const row of hometownsResult.rows) {
+      if (!hometowns[row.region]) {
+        hometowns[row.region] = [];
+      }
+      if (!hometowns[row.region].includes(row.hometown)) {
+        hometowns[row.region].push(row.hometown);
+      }
+    }
     
     res.json({
       regions: regions.length > 0 ? regions : ["Asian", "European", "Latin American", "North American", "African", "Middle Eastern", "Oceanian", "Other"],
       ageBrackets: ["21-25", "26-30", "30+"],
-      occupationCategories: occupationCategories.length > 0 ? occupationCategories : ALL_OCCUPATION_CATEGORIES
+      occupationCategories: occupationCategories.length > 0 ? occupationCategories : ALL_OCCUPATION_CATEGORIES,
+      languages,
+      hometowns
     });
   } catch (error) {
     console.error('Error fetching filters:', error);
@@ -454,14 +520,16 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     const regions = req.query.region ? (Array.isArray(req.query.region) ? req.query.region : [req.query.region]) : null;
     const ageBrackets = req.query.ageBracket ? (Array.isArray(req.query.ageBracket) ? req.query.ageBracket : [req.query.ageBracket]) : null;
     const occupationCategories = req.query.occupationCategory ? (Array.isArray(req.query.occupationCategory) ? req.query.occupationCategory : [req.query.occupationCategory]) : null;
+    const languages = req.query.language ? (Array.isArray(req.query.language) ? req.query.language : [req.query.language]) : null;
+    const hometowns = req.query.hometown ? (Array.isArray(req.query.hometown) ? req.query.hometown : [req.query.hometown]) : null;
     
-    const hasFilters = regions || ageBrackets || occupationCategories;
+    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns;
     
     // If database is available and we have posts, use it
     if (db && hasFilters) {
       let query = `
         SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
-               name, age, nationality, hometown, work, region, age_bracket, occupation_category
+               name, age, nationality, hometown, work, region, age_bracket, occupation_category, language
         FROM telegram_posts 
         WHERE channel = $1 AND media IS NOT NULL
       `;
@@ -483,6 +551,18 @@ app.get('/api/tg-channel-feed', async (req, res) => {
       if (occupationCategories && occupationCategories.length > 0) {
         query += ` AND occupation_category = ANY($${paramIndex})`;
         params.push(occupationCategories);
+        paramIndex++;
+      }
+      
+      if (languages && languages.length > 0) {
+        query += ` AND language = ANY($${paramIndex})`;
+        params.push(languages);
+        paramIndex++;
+      }
+      
+      if (hometowns && hometowns.length > 0) {
+        query += ` AND hometown = ANY($${paramIndex})`;
+        params.push(hometowns);
         paramIndex++;
       }
       

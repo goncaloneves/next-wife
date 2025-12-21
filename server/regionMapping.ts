@@ -201,6 +201,217 @@ export const ALL_REGIONS = [
 // All age brackets for filtering
 export const ALL_AGE_BRACKETS = ["21-25", "26-30", "30+"];
 
+// Nationality to Language mapping
+export const nationalityToLanguage: Record<string, string> = {
+  // Asian languages
+  "Japanese": "Japanese",
+  "Korean": "Korean",
+  "Chinese": "Mandarin",
+  "Taiwanese": "Mandarin",
+  "Hong Konger": "Cantonese",
+  "Thai": "Thai",
+  "Vietnamese": "Vietnamese",
+  "Filipino": "Filipino",
+  "Filipina": "Filipino",
+  "Indonesian": "Indonesian",
+  "Malaysian": "Malay",
+  "Singaporean": "English",
+  "Indian": "Hindi",
+  "Pakistani": "Urdu",
+  "Bangladeshi": "Bengali",
+  "Sri Lankan": "Sinhala",
+  "Nepali": "Nepali",
+  "Mongolian": "Mongolian",
+  "Cambodian": "Khmer",
+  "Laotian": "Lao",
+  "Myanmar": "Burmese",
+  "Burmese": "Burmese",
+  
+  // European languages
+  "British": "English",
+  "English": "English",
+  "Scottish": "English",
+  "Welsh": "English",
+  "Irish": "English",
+  "French": "French",
+  "German": "German",
+  "Italian": "Italian",
+  "Spanish": "Spanish",
+  "Portuguese": "Portuguese",
+  "Dutch": "Dutch",
+  "Belgian": "Dutch",
+  "Swiss": "German",
+  "Austrian": "German",
+  "Swedish": "Swedish",
+  "Norwegian": "Norwegian",
+  "Danish": "Danish",
+  "Finnish": "Finnish",
+  "Polish": "Polish",
+  "Czech": "Czech",
+  "Hungarian": "Hungarian",
+  "Romanian": "Romanian",
+  "Bulgarian": "Bulgarian",
+  "Greek": "Greek",
+  "Croatian": "Croatian",
+  "Serbian": "Serbian",
+  "Slovenian": "Slovenian",
+  "Slovak": "Slovak",
+  "Ukrainian": "Ukrainian",
+  "Russian": "Russian",
+  "Belarusian": "Belarusian",
+  "Lithuanian": "Lithuanian",
+  "Latvian": "Latvian",
+  "Estonian": "Estonian",
+  "Icelandic": "Icelandic",
+  "Luxembourgish": "Luxembourgish",
+  "Maltese": "Maltese",
+  "Cypriot": "Greek",
+  "Albanian": "Albanian",
+  "Macedonian": "Macedonian",
+  "Montenegrin": "Serbian",
+  "Bosnian": "Bosnian",
+  "Moldovan": "Romanian",
+  
+  // Latin American - mostly Spanish/Portuguese
+  "Brazilian": "Portuguese",
+  "Mexican": "Spanish",
+  "Argentine": "Spanish",
+  "Argentinian": "Spanish",
+  "Colombian": "Spanish",
+  "Peruvian": "Spanish",
+  "Venezuelan": "Spanish",
+  "Chilean": "Spanish",
+  "Ecuadorian": "Spanish",
+  "Bolivian": "Spanish",
+  "Paraguayan": "Spanish",
+  "Uruguayan": "Spanish",
+  "Cuban": "Spanish",
+  "Dominican": "Spanish",
+  "Puerto Rican": "Spanish",
+  "Costa Rican": "Spanish",
+  "Panamanian": "Spanish",
+  "Guatemalan": "Spanish",
+  "Honduran": "Spanish",
+  "Salvadoran": "Spanish",
+  "Nicaraguan": "Spanish",
+  "Jamaican": "English",
+  "Haitian": "French",
+  "Trinidadian": "English",
+  
+  // North American
+  "American": "English",
+  "Canadian": "English",
+  
+  // African
+  "Nigerian": "English",
+  "South African": "English",
+  "Egyptian": "Arabic",
+  "Kenyan": "Swahili",
+  "Ethiopian": "Amharic",
+  "Ghanaian": "English",
+  "Moroccan": "Arabic",
+  "Algerian": "Arabic",
+  "Tunisian": "Arabic",
+  "Senegalese": "French",
+  "Cameroonian": "French",
+  "Tanzanian": "Swahili",
+  "Ugandan": "English",
+  "Zimbabwean": "English",
+  "Congolese": "French",
+  "Ivorian": "French",
+  "Sudanese": "Arabic",
+  "Angolan": "Portuguese",
+  "Mozambican": "Portuguese",
+  "Rwandan": "French",
+  
+  // Middle Eastern
+  "Turkish": "Turkish",
+  "Iranian": "Persian",
+  "Iraqi": "Arabic",
+  "Saudi": "Arabic",
+  "Saudi Arabian": "Arabic",
+  "Emirati": "Arabic",
+  "Qatari": "Arabic",
+  "Kuwaiti": "Arabic",
+  "Bahraini": "Arabic",
+  "Omani": "Arabic",
+  "Yemeni": "Arabic",
+  "Jordanian": "Arabic",
+  "Lebanese": "Arabic",
+  "Syrian": "Arabic",
+  "Israeli": "Hebrew",
+  "Palestinian": "Arabic",
+  "Afghan": "Dari",
+  "Uzbek": "Uzbek",
+  "Kazakh": "Kazakh",
+  "Azerbaijani": "Azerbaijani",
+  "Georgian": "Georgian",
+  "Armenian": "Armenian",
+  
+  // Oceanian
+  "Australian": "English",
+  "New Zealander": "English",
+  "Kiwi": "English",
+  "Fijian": "English",
+  "Samoan": "Samoan",
+  "Tongan": "Tongan",
+  "Papua New Guinean": "English",
+};
+
+// Get language from nationality
+export function getLanguage(nationality: string | null | undefined): string | null {
+  if (!nationality) return null;
+  
+  // Try exact match first
+  if (nationalityToLanguage[nationality]) {
+    return nationalityToLanguage[nationality];
+  }
+  
+  // Try case-insensitive match
+  const normalizedNationality = nationality.trim();
+  for (const [key, language] of Object.entries(nationalityToLanguage)) {
+    if (key.toLowerCase() === normalizedNationality.toLowerCase()) {
+      return language;
+    }
+  }
+  
+  return null;
+}
+
+// All languages for filtering (sorted by popularity)
+export const ALL_LANGUAGES = [
+  "English",
+  "Spanish",
+  "French",
+  "Portuguese",
+  "German",
+  "Italian",
+  "Japanese",
+  "Korean",
+  "Mandarin",
+  "Arabic",
+  "Russian",
+  "Dutch",
+  "Polish",
+  "Turkish",
+  "Thai",
+  "Vietnamese",
+  "Indonesian",
+  "Greek",
+  "Swedish",
+  "Czech",
+  "Hungarian",
+  "Romanian",
+  "Ukrainian",
+  "Hindi",
+  "Filipino",
+  "Persian",
+  "Hebrew",
+  "Danish",
+  "Finnish",
+  "Norwegian"
+];
+
 // Occupation categories - keywords that map to broader categories
 // Order matters: more specific categories should come first
 const occupationKeywords: Record<string, string[]> = {
