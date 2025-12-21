@@ -307,8 +307,25 @@ export function FeedFilters({
             </div>
           </div>
 
-          {/* Close button */}
-          <div className="flex justify-center py-3 border-t border-white/10">
+          {/* Footer with Clear all and Close buttons */}
+          <div className="flex justify-center gap-3 py-3 border-t border-white/10">
+            {activeFilters.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedRegion("all");
+                  setSelectedAgeBracket("all");
+                  setSelectedOccupation("all");
+                  setSelectedLanguage("all");
+                  setSelectedHometown("all");
+                }}
+                className="text-orange-400 hover:text-orange-300 hover:bg-orange-400/10 rounded-full px-6"
+                data-testid="clear-all-filters"
+              >
+                Clear all ({activeFilters.length})
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -317,7 +334,7 @@ export function FeedFilters({
               data-testid="close-filters"
             >
               <ChevronUp className="w-4 h-4 mr-2" />
-              Hide filters
+              Done
             </Button>
           </div>
         </div>
