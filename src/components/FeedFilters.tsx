@@ -265,39 +265,6 @@ export function FeedFilters({
         </div>
       )}
 
-      {/* Active filter tags container - fixed height to prevent layout shift */}
-      {!showFilters && (
-        <div className="h-10 mb-2">
-          {activeFilters.length > 0 ? (
-            <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-xs text-white/50 font-medium">Active:</span>
-              {activeFilters.map((filter) => (
-                <button
-                  key={`${filter.type}-${filter.value}`}
-                  onClick={filter.clear}
-                  className="group flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium 
-                             bg-gradient-to-r from-orange-500/20 to-rose-500/20 text-orange-300
-                             hover:from-orange-500/30 hover:to-rose-500/30 transition-all"
-                  data-testid={`active-filter-${filter.type.toLowerCase()}`}
-                >
-                  <span className="text-white/50">{filter.type}:</span>
-                  {filter.value}
-                  <X className="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity" />
-                </button>
-              ))}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearAllFilters}
-                className="h-7 px-3 text-xs text-white/50 hover:text-white hover:bg-white/10 rounded-full"
-                data-testid="clear-all-filters"
-              >
-                Clear all
-              </Button>
-            </div>
-          ) : null}
-        </div>
-      )}
 
       {/* Expanded filter sections - absolute overlay to avoid layout shift */}
       {showFilters && (
