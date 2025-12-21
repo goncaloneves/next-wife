@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Hook to get responsive maxVisible based on screen width
@@ -215,14 +215,6 @@ export function FeedFilters({
     if (selectedHometown !== "all") filters.push({ type: "City", value: selectedHometown, clear: () => setSelectedHometown("all") });
     return filters;
   }, [selectedRegion, selectedAgeBracket, selectedOccupation, selectedLanguage, selectedHometown]);
-
-  const clearAllFilters = () => {
-    setSelectedRegion("all");
-    setSelectedAgeBracket("all");
-    setSelectedOccupation("all");
-    setSelectedLanguage("all");
-    setSelectedHometown("all");
-  };
 
   if (loading) {
     return (
