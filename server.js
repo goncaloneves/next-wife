@@ -228,7 +228,14 @@ function parseChannelHTML(html, channelName) {
     }
   }
 
-  return { channelInfo, posts };
+  // Extract next cursor from load-more button (Telegram's pagination metadata)
+  let nextCursor = null;
+  const loadMoreMatch = html.match(/data-before="(\d+)"/);
+  if (loadMoreMatch) {
+    nextCursor = loadMoreMatch[1];
+  }
+
+  return { channelInfo, posts, nextCursor };
 }
 
 // ============== DATABASE SYNC ==============
@@ -301,6 +308,7 @@ async function backgroundSync(channel = 'nextwife_ai', maxPages = 10) {
   console.log(`🔄 Starting background sync for @${channel} (fetching from ${telegramChannel})...`);
   let totalSynced = 0;
   let cursor = null;
+  let lastCursor = null;
   
   for (let page = 0; page < maxPages; page++) {
     try {
@@ -320,10 +328,25 @@ async function backgroundSync(channel = 'nextwife_ai', maxPages = 10) {
       const { synced } = await syncPostsToDatabase(result.posts, channel);
       totalSynced += synced;
       
-      const oldestId = Math.min(...result.posts.map(p => parseInt(p.id)).filter(id => !isNaN(id)));
-      cursor = String(oldestId);
+      // Use Telegram's pagination cursor from load-more button
+      // This properly handles pinned messages that would otherwise cause infinite loops
+      if (result.nextCursor) {
+        cursor = result.nextCursor;
+      } else {
+        // Fallback: use oldest non-pinned post ID minus 1
+        const postIds = result.posts.map(p => parseInt(p.id)).filter(id => !isNaN(id));
+        const oldestId = Math.min(...postIds);
+        cursor = String(oldestId - 1);
+      }
       
-      console.log(`  Page ${page + 1}: synced ${synced} posts`);
+      // Prevent infinite loop if cursor doesn't advance
+      if (cursor === lastCursor) {
+        console.log(`  Pagination stalled at cursor ${cursor}, stopping sync`);
+        break;
+      }
+      lastCursor = cursor;
+      
+      console.log(`  Page ${page + 1}: synced ${synced} posts (next cursor: ${cursor})`);
       
       // Small delay between pages
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -591,9 +614,10 @@ async function start() {
     console.log(`💾 Database: ${dbConnected ? 'Connected' : 'Not available'}`);
     
     // Run initial sync on startup if database is available - fetch ALL posts
+    // Use 'nextwifeai' (without underscore) as the canonical channel name
     if (dbConnected) {
       console.log('');
-      setTimeout(() => backgroundSync('nextwife_ai', 200), 2000); // Fetch up to 4000 posts
+      setTimeout(() => backgroundSync('nextwifeai', 200), 2000); // Fetch up to 4000 posts
     }
     console.log('');
   });
