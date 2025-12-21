@@ -240,15 +240,24 @@ const Index = () => {
         <section ref={feedContentRef} className="relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center sm:text-left text-white">
+              <div className="relative mb-8">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white">
                   Pick your Girlfriend 🌻
                 </h2>
-                <FilterButton 
-                  isOpen={showFilters} 
-                  onClick={() => setShowFilters(!showFilters)} 
-                  activeCount={activeFilterCount}
-                />
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden sm:block">
+                  <FilterButton 
+                    isOpen={showFilters} 
+                    onClick={() => setShowFilters(!showFilters)} 
+                    activeCount={activeFilterCount}
+                  />
+                </div>
+                <div className="flex justify-center mt-4 sm:hidden">
+                  <FilterButton 
+                    isOpen={showFilters} 
+                    onClick={() => setShowFilters(!showFilters)} 
+                    activeCount={activeFilterCount}
+                  />
+                </div>
               </div>
               <TelegramChannelFeed 
                 channelUsername="nextwifeai" 
