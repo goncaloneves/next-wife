@@ -71,7 +71,6 @@ export const TelegramChannelFeed = ({
   const nearTopRef = useRef(true);
   const fetchInFlightRef = useRef(false);
   const isFilterChangeRef = useRef(false);
-  const savedScrollRef = useRef<number | null>(null);
 
   // Sync refs with state for stable access in callbacks
   useEffect(() => {
@@ -140,21 +139,12 @@ export const TelegramChannelFeed = ({
       setLoading(false);
       setPendingNewCount(0);
       
-      // Only reset refreshKey on initial load, not filter changes (to preserve scroll position)
+      // Only reset refreshKey on initial load, not filter changes
       if (!isFilterChangeRef.current) {
         setRefreshKey(Date.now());
         setImageLoadStates({});
         setImageErrors({});
         setHiddenIds(new Set());
-      } else {
-        // Restore scroll position after filter change completes
-        if (savedScrollRef.current !== null) {
-          // Use requestAnimationFrame to ensure DOM has updated
-          requestAnimationFrame(() => {
-            window.scrollTo(0, savedScrollRef.current!);
-            savedScrollRef.current = null;
-          });
-        }
       }
       isFilterChangeRef.current = false;
       
@@ -364,10 +354,7 @@ export const TelegramChannelFeed = ({
       abortControllerRef.current.abort();
     }
     
-    // Save current scroll position before filter change
-    savedScrollRef.current = window.scrollY;
-    
-    // Mark this as a filter change to preserve scroll position
+    // Mark this as a filter change to preserve existing posts visible
     isFilterChangeRef.current = true;
     
     // Show loading state but keep existing posts visible
@@ -545,14 +532,14 @@ export const TelegramChannelFeed = ({
         <div className="relative">
         <FeedFilters channel={channelUsername} onFiltersChange={handleFiltersChange} />
         
-        {/* Loading state */}
-        {loading && (
+        {/* Loading state - only show when no posts exist yet */}
+        {loading && allPosts.length === 0 && (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         )}
         
-        {/* Empty state for filtered results */}
+        {/* Empty state for filtered results - only after loading completes */}
         {!loading && postsWithMedia.length === 0 && hasActiveFilters && (
           <div className="text-center py-12 text-muted-foreground">
             <p className="text-lg">No girlfriends match your filters</p>
@@ -567,8 +554,8 @@ export const TelegramChannelFeed = ({
           </div>
         )}
         
-        {/* Posts grid - only show when we have posts */}
-        {!loading && postsWithMedia.length > 0 && (
+        {/* Posts grid - show whenever we have posts, even while loading new ones */}
+        {postsWithMedia.length > 0 && (
         <div>
           {/* Mobile: Single card at a time (Tinder-style) | Desktop: Grid */}
           <div 
