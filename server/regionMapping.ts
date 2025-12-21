@@ -202,14 +202,24 @@ export const ALL_REGIONS = [
 export const ALL_AGE_BRACKETS = ["21-25", "26-30", "30+"];
 
 // Occupation categories - keywords that map to broader categories
+// Order matters: more specific categories should come first
 const occupationKeywords: Record<string, string[]> = {
+  "Food & Hospitality": [
+    "chocolatier", "chef", "baker", "pastry", "barista", "sommelier", "restaurant",
+    "hotel", "hospitality", "café", "cafe", "tea house", "wine",
+    "culinary", "food", "cook", "kitchen", "confection"
+  ],
+  "Healthcare & Wellness": [
+    "pharmacy", "pharmacist", "technician", "therapist", "nurse", "doctor", 
+    "medical", "health", "wellness", "yoga", "fitness", "counselor", "chemist"
+  ],
   "Arts & Gallery": [
     "curator", "gallery", "artist", "painter", "sculptor", "art conservator",
     "art restorer", "museum", "exhibition", "fine art"
   ],
   "Design & Creative": [
     "graphic design", "illustrator", "designer", "visual", "digital artist",
-    "creative", "branding", "ui", "ux", "pattern", "textile"
+    "creative", "branding", "ui design", "ux design", "pattern", "textile"
   ],
   "Photography & Film": [
     "photographer", "photography", "cinematographer", "videographer", "film"
@@ -217,32 +227,25 @@ const occupationKeywords: Record<string, string[]> = {
   "Architecture": [
     "architect", "architecture", "urban planning", "interior design"
   ],
-  "Food & Hospitality": [
-    "chef", "baker", "pastry", "barista", "sommelier", "restaurant",
-    "hotel", "hospitality", "café", "cafe", "tea house", "wine",
-    "culinary", "food", "cook", "kitchen"
-  ],
   "Education & Academia": [
     "teacher", "instructor", "professor", "tutor", "student", "university",
-    "school", "education", "lecturer"
+    "school", "education", "lecturer", "researcher"
   ],
   "Business & Marketing": [
     "marketing", "manager", "business", "executive", "consultant",
     "entrepreneur", "startup", "agency", "director"
   ],
-  "Healthcare & Wellness": [
-    "therapist", "nurse", "doctor", "medical", "health", "wellness",
-    "yoga", "fitness", "counselor"
-  ],
   "Fashion & Beauty": [
     "fashion", "model", "stylist", "makeup", "beauty", "boutique",
-    "jewelry", "jeweler", "leather"
+    "jewelry", "jeweler", "leather", "watchmaker", "timepiece"
   ],
   "Travel & Tourism": [
     "tour guide", "travel", "tourism", "adventure"
   ],
   "Tech & Engineering": [
-    "engineer", "developer", "programmer", "tech", "software", "data"
+    "software engineer", "software developer", "programmer", "software",
+    "data scientist", "data analyst", "web developer", "mechanical engineer",
+    "electrical engineer", "computer", "coding", "automotive engineer"
   ]
 };
 
