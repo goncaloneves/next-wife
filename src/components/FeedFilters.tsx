@@ -65,7 +65,7 @@ function FilterSection({
   const hasMore = options.length > maxVisible;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 min-h-[140px]">
       {title && <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">{title}</h3>}
       {options.length === 0 && emptyMessage ? (
         <p className="text-sm text-white/40 px-1">{emptyMessage}</p>
