@@ -50,8 +50,8 @@ function FilterSection({
   onSelect,
   showAll = false,
   maxVisible = 6,
-  scrollable = false,
-  emptyMessage
+  emptyMessage,
+  fixedHeight = false
 }: { 
   title: string;
   options: string[];
@@ -59,23 +59,24 @@ function FilterSection({
   onSelect: (value: string) => void;
   showAll?: boolean;
   maxVisible?: number;
-  scrollable?: boolean;
   emptyMessage?: string;
+  fixedHeight?: boolean;
 }) {
   const [expanded, setExpanded] = useState(showAll);
   const visibleOptions = expanded ? options : options.slice(0, maxVisible);
   const hasMore = options.length > maxVisible;
 
   return (
-    <div className="space-y-3 min-h-[120px]">
+    <div className={cn(
+      "space-y-3",
+      fixedHeight && !expanded && "min-h-[160px]",
+      !fixedHeight && "min-h-[120px]"
+    )}>
       {title && <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">{title}</h3>}
       {options.length === 0 && emptyMessage ? (
         <p className="text-sm text-white/40 px-1">{emptyMessage}</p>
       ) : (
-        <div className={cn(
-          "flex flex-wrap gap-2",
-          scrollable && "max-h-[140px] overflow-y-auto pr-1"
-        )}>
+        <div className="flex flex-wrap gap-2">
           <Chip
             label="All"
             selected={selected === "all"}
@@ -90,7 +91,7 @@ function FilterSection({
               variant="accent"
             />
           ))}
-          {hasMore && !scrollable && (
+          {hasMore && (
             <button
               onClick={() => setExpanded(!expanded)}
               className="flex items-center gap-1 px-3 py-2.5 rounded-full text-sm text-white/60 hover:text-white/90 transition-colors"
@@ -324,32 +325,16 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               onSelect={setSelectedOccupation}
             />
 
-            {/* City - fixed height with scroll to prevent layout shift */}
-            <div className="space-y-3 min-h-[180px]">
-              <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">
-                {selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
-              </h3>
-              {availableHometowns.length === 0 ? (
-                <p className="text-sm text-white/40 px-1">Select a region to see cities</p>
-              ) : (
-                <div className="flex flex-wrap gap-2 max-h-[140px] overflow-y-auto pr-1">
-                  <Chip
-                    label="All"
-                    selected={selectedHometown === "all"}
-                    onClick={() => setSelectedHometown("all")}
-                  />
-                  {availableHometowns.map((city) => (
-                    <Chip
-                      key={city}
-                      label={city}
-                      selected={selectedHometown === city}
-                      onClick={() => setSelectedHometown(city)}
-                      variant="accent"
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* City - with expand button, fixed height when collapsed */}
+            <FilterSection
+              title={selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
+              options={availableHometowns}
+              selected={selectedHometown}
+              onSelect={setSelectedHometown}
+              maxVisible={8}
+              emptyMessage="Select a region to see cities"
+              fixedHeight
+            />
             </div>
           </div>
 
