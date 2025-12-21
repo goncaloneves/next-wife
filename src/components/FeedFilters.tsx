@@ -265,8 +265,8 @@ export function FeedFilters({
         </div>
       )}
 
-      {/* Active filter tags */}
-      {activeFilters.length > 0 && (
+      {/* Active filter tags - only show when filter panel is closed */}
+      {activeFilters.length > 0 && !showFilters && (
         <div className="flex flex-wrap gap-2 items-center mb-4">
           <span className="text-xs text-white/50 font-medium">Active:</span>
           {activeFilters.map((filter) => (
