@@ -232,7 +232,7 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
           className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide scroll-smooth"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {/* Filter toggle button */}
+          {/* Filter toggle button - only shows "Filters" */}
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={cn(
@@ -247,31 +247,7 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
             {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             Filters {activeFilters.length > 0 && `(${activeFilters.length})`}
           </button>
-
-          {/* Popular region chips - always visible */}
-          {filterOptions.regions.slice(0, 4).map((region) => (
-            <Chip
-              key={region}
-              label={region}
-              selected={selectedRegion === region}
-              onClick={() => setSelectedRegion(selectedRegion === region ? "all" : region)}
-              variant="accent"
-            />
-          ))}
-
-          {/* Popular age chips */}
-          {filterOptions.ageBrackets.map((age) => (
-            <Chip
-              key={age}
-              label={age}
-              selected={selectedAgeBracket === age}
-              onClick={() => setSelectedAgeBracket(selectedAgeBracket === age ? "all" : age)}
-            />
-          ))}
         </div>
-
-        {/* Fade edges for scroll indication */}
-        <div className="absolute right-0 top-0 bottom-2 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
       </div>
 
       {/* Active filter tags */}
