@@ -4,23 +4,19 @@ import { X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Hook to get responsive maxVisible based on screen width
-// Ensures 3 rows of chips at each breakpoint
+// Ensures exactly 3 rows of chips at each breakpoint
+// Grid column widths: mobile=full, md=50%, lg=33%
+// ~2 chips fit per row in each column
 function useResponsiveMaxVisible() {
   const [maxVisible, setMaxVisible] = useState(4); // mobile default
   
   useEffect(() => {
     const updateMaxVisible = () => {
       const width = window.innerWidth;
-      if (width >= 1024) {
-        // lg: ~4 chips per row in grid column, 3 rows = 11 chips (All + 10 + button)
-        setMaxVisible(10);
-      } else if (width >= 768) {
-        // md: ~3 chips per row, 3 rows = 8 chips (All + 7 + button)
-        setMaxVisible(7);
-      } else {
-        // mobile: ~2 chips per row, 3 rows = 5 chips (All + 4 + button)
-        setMaxVisible(4);
-      }
+      // All breakpoints: ~2 chips per row in grid column
+      // 3 rows = All + 4 chips + button = 6 items
+      // So maxVisible = 4 for all sizes
+      setMaxVisible(4);
     };
     
     updateMaxVisible();
