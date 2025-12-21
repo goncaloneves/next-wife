@@ -71,6 +71,7 @@ export const TelegramChannelFeed = ({
   const nearTopRef = useRef(true);
   const fetchInFlightRef = useRef(false);
   const isFilterChangeRef = useRef(false);
+  const savedScrollRef = useRef<number | null>(null);
 
   // Sync refs with state for stable access in callbacks
   useEffect(() => {
@@ -145,6 +146,15 @@ export const TelegramChannelFeed = ({
         setImageLoadStates({});
         setImageErrors({});
         setHiddenIds(new Set());
+      } else {
+        // Restore scroll position after filter change completes
+        if (savedScrollRef.current !== null) {
+          // Use requestAnimationFrame to ensure DOM has updated
+          requestAnimationFrame(() => {
+            window.scrollTo(0, savedScrollRef.current!);
+            savedScrollRef.current = null;
+          });
+        }
       }
       isFilterChangeRef.current = false;
       
@@ -353,6 +363,9 @@ export const TelegramChannelFeed = ({
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+    
+    // Save current scroll position before filter change
+    savedScrollRef.current = window.scrollY;
     
     // Mark this as a filter change to preserve scroll position
     isFilterChangeRef.current = true;
