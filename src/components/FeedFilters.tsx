@@ -64,7 +64,7 @@ function FilterSection({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">{title}</h3>
+      {title && <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">{title}</h3>}
       <div className="flex flex-wrap gap-2">
         <Chip
           label="All"
@@ -312,16 +312,23 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               onSelect={setSelectedOccupation}
             />
 
-            {/* City - only show if region selected or has hometowns */}
-            {availableHometowns.length > 0 && (
-              <FilterSection
-                title={selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
-                options={availableHometowns}
-                selected={selectedHometown}
-                onSelect={setSelectedHometown}
-                maxVisible={8}
-              />
-            )}
+            {/* City - always show to prevent layout shift */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">
+                {selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
+              </h3>
+              {availableHometowns.length > 0 ? (
+                <FilterSection
+                  title=""
+                  options={availableHometowns}
+                  selected={selectedHometown}
+                  onSelect={setSelectedHometown}
+                  maxVisible={8}
+                />
+              ) : (
+                <p className="text-sm text-white/40 px-1">Select a region to see cities</p>
+              )}
+            </div>
           </div>
 
           {/* Close button */}
