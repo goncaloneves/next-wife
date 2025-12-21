@@ -1,28 +1,25 @@
 import { useState, useEffect, useCallback } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { X, MapPin, Calendar, Briefcase } from "lucide-react";
+import { X, MapPin, Calendar } from "lucide-react";
 
 interface FilterOptions {
   regions: string[];
   ageBrackets: string[];
-  workOptions: string[];
 }
 
 interface FeedFiltersProps {
   channel: string;
-  onFiltersChange: (filters: { region?: string; ageBracket?: string; work?: string }) => void;
+  onFiltersChange: (filters: { region?: string; ageBracket?: string }) => void;
 }
 
 export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     regions: [],
     ageBrackets: [],
-    workOptions: [],
   });
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [selectedAgeBracket, setSelectedAgeBracket] = useState<string>("all");
-  const [selectedWork, setSelectedWork] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,22 +44,20 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
     onFiltersChange({
       region: selectedRegion === "all" ? undefined : selectedRegion,
       ageBracket: selectedAgeBracket === "all" ? undefined : selectedAgeBracket,
-      work: selectedWork === "all" ? undefined : selectedWork,
     });
-  }, [selectedRegion, selectedAgeBracket, selectedWork, onFiltersChange]);
+  }, [selectedRegion, selectedAgeBracket, onFiltersChange]);
 
   useEffect(() => {
     if (!loading) {
       notifyFiltersChange();
     }
-  }, [selectedRegion, selectedAgeBracket, selectedWork, loading, notifyFiltersChange]);
+  }, [selectedRegion, selectedAgeBracket, loading, notifyFiltersChange]);
 
-  const hasActiveFilters = selectedRegion !== "all" || selectedAgeBracket !== "all" || selectedWork !== "all";
+  const hasActiveFilters = selectedRegion !== "all" || selectedAgeBracket !== "all";
 
   const clearFilters = () => {
     setSelectedRegion("all");
     setSelectedAgeBracket("all");
-    setSelectedWork("all");
   };
 
   if (loading) {
@@ -70,7 +65,6 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
       <div className="flex gap-3 mb-6 opacity-50">
         <div className="h-11 w-36 bg-white/10 rounded-full animate-pulse" />
         <div className="h-11 w-28 bg-white/10 rounded-full animate-pulse" />
-        <div className="h-11 w-44 bg-white/10 rounded-full animate-pulse" />
       </div>
     );
   }
@@ -105,24 +99,6 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
           <SelectItem value="all" className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">All Ages</SelectItem>
           {filterOptions.ageBrackets.map((bracket) => (
             <SelectItem key={bracket} value={bracket} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">{bracket}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select value={selectedWork} onValueChange={setSelectedWork}>
-        <SelectTrigger 
-          className="w-auto min-w-[160px] max-w-[220px] h-11 rounded-full bg-white/10 hover:bg-white/20 border-0 text-white/90 px-4 transition-colors"
-          data-testid="filter-work"
-        >
-          <Briefcase className="w-4 h-4 mr-2 opacity-70 flex-shrink-0" />
-          <SelectValue placeholder="Occupation" />
-        </SelectTrigger>
-        <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 rounded-xl max-h-[300px]">
-          <SelectItem value="all" className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">All Occupations</SelectItem>
-          {filterOptions.workOptions.map((work) => (
-            <SelectItem key={work} value={work} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg truncate">
-              {work.length > 35 ? work.substring(0, 35) + "..." : work}
-            </SelectItem>
           ))}
         </SelectContent>
       </Select>
