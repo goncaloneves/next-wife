@@ -70,6 +70,7 @@ export const TelegramChannelFeed = ({
   const postsRef = useRef<TelegramPost[]>([]);
   const nearTopRef = useRef(true);
   const fetchInFlightRef = useRef(false);
+  const isFilterChangeRef = useRef(false);
 
   // Sync refs with state for stable access in callbacks
   useEffect(() => {
@@ -137,10 +138,16 @@ export const TelegramChannelFeed = ({
       setError(null);
       setLoading(false);
       setPendingNewCount(0);
-      setRefreshKey(Date.now());
-      setImageLoadStates({});
-      setImageErrors({});
-      setHiddenIds(new Set());
+      
+      // Only reset refreshKey on initial load, not filter changes (to preserve scroll position)
+      if (!isFilterChangeRef.current) {
+        setRefreshKey(Date.now());
+        setImageLoadStates({});
+        setImageErrors({});
+        setHiddenIds(new Set());
+      }
+      isFilterChangeRef.current = false;
+      
       topFingerprintRef.current = fingerprint(fetchedPosts);
 
       console.log(`Fetched initial ${fetchedPosts.length} posts, nextCursor: ${data.nextBefore}`);
@@ -346,6 +353,9 @@ export const TelegramChannelFeed = ({
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+    
+    // Mark this as a filter change to preserve scroll position
+    isFilterChangeRef.current = true;
     
     // Show loading state but keep existing posts visible
     setLoading(true);
