@@ -6,23 +6,23 @@ import { X, MapPin, Calendar, Briefcase } from "lucide-react";
 interface FilterOptions {
   regions: string[];
   ageBrackets: string[];
-  workOptions: string[];
+  occupationCategories: string[];
 }
 
 interface FeedFiltersProps {
   channel: string;
-  onFiltersChange: (filters: { region?: string; ageBracket?: string; work?: string }) => void;
+  onFiltersChange: (filters: { region?: string; ageBracket?: string; occupationCategory?: string }) => void;
 }
 
 export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     regions: [],
     ageBrackets: [],
-    workOptions: [],
+    occupationCategories: [],
   });
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [selectedAgeBracket, setSelectedAgeBracket] = useState<string>("all");
-  const [selectedWork, setSelectedWork] = useState<string>("all");
+  const [selectedOccupation, setSelectedOccupation] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,22 +47,22 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
     onFiltersChange({
       region: selectedRegion === "all" ? undefined : selectedRegion,
       ageBracket: selectedAgeBracket === "all" ? undefined : selectedAgeBracket,
-      work: selectedWork === "all" ? undefined : selectedWork,
+      occupationCategory: selectedOccupation === "all" ? undefined : selectedOccupation,
     });
-  }, [selectedRegion, selectedAgeBracket, selectedWork, onFiltersChange]);
+  }, [selectedRegion, selectedAgeBracket, selectedOccupation, onFiltersChange]);
 
   useEffect(() => {
     if (!loading) {
       notifyFiltersChange();
     }
-  }, [selectedRegion, selectedAgeBracket, selectedWork, loading, notifyFiltersChange]);
+  }, [selectedRegion, selectedAgeBracket, selectedOccupation, loading, notifyFiltersChange]);
 
-  const hasActiveFilters = selectedRegion !== "all" || selectedAgeBracket !== "all" || selectedWork !== "all";
+  const hasActiveFilters = selectedRegion !== "all" || selectedAgeBracket !== "all" || selectedOccupation !== "all";
 
   const clearFilters = () => {
     setSelectedRegion("all");
     setSelectedAgeBracket("all");
-    setSelectedWork("all");
+    setSelectedOccupation("all");
   };
 
   if (loading) {
@@ -109,19 +109,19 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
         </SelectContent>
       </Select>
 
-      <Select value={selectedWork} onValueChange={setSelectedWork}>
+      <Select value={selectedOccupation} onValueChange={setSelectedOccupation}>
         <SelectTrigger 
-          className="w-auto min-w-[160px] max-w-[220px] h-11 rounded-full bg-white/10 hover:bg-white/20 border-0 text-white/90 px-4 transition-colors"
-          data-testid="filter-work"
+          className="w-auto min-w-[160px] h-11 rounded-full bg-white/10 hover:bg-white/20 border-0 text-white/90 px-4 transition-colors"
+          data-testid="filter-occupation"
         >
           <Briefcase className="w-4 h-4 mr-2 opacity-70 flex-shrink-0" />
           <SelectValue placeholder="Occupation" />
         </SelectTrigger>
-        <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 rounded-xl max-h-[300px]">
+        <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 rounded-xl">
           <SelectItem value="all" className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">All Occupations</SelectItem>
-          {filterOptions.workOptions.map((work) => (
-            <SelectItem key={work} value={work} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg truncate">
-              {work.length > 35 ? work.substring(0, 35) + "..." : work}
+          {filterOptions.occupationCategories.map((category) => (
+            <SelectItem key={category} value={category} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">
+              {category}
             </SelectItem>
           ))}
         </SelectContent>

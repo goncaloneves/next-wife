@@ -13,7 +13,7 @@ A Vite + React + TypeScript web application that displays posts from the @nextwi
 ## Key Features
 - Real-time Telegram channel feed display
 - Tinder-style profile badges on images (Name, Age, Nationality, Hometown, Work)
-- **Feed filtering by Region, Age bracket, and Work/Occupation**
+- **Feed filtering by Region, Age bracket, and Occupation Category**
 - PostgreSQL database for persistent storage and fast filtered queries
 - Image loading with retry mechanism (3 attempts with progressive timing)
 - Post filtering (hides service messages)
@@ -39,12 +39,19 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (December 21, 2025)
-11. **Feed filtering system** - Added dropdown filters for Region, Age bracket, and Work above the feed
+12. **Occupation categories** - Grouped 283 individual job titles into 12 categories for cleaner filtering:
+    - Arts & Gallery (726), Design & Creative (541), Food & Hospitality (345)
+    - Business & Marketing (205), Photography & Film (102), Other (91)
+    - Education & Academia (84), Architecture (51), Healthcare & Wellness (34)
+    - Fashion & Beauty (10), Tech & Engineering (8), Travel & Tourism (3)
+    - Categories derived from keyword matching in job descriptions
+
+11. **Feed filtering system** - Added dropdown filters for Region, Age bracket, and Occupation above the feed
     - PostgreSQL database for persistent storage of girlfriend profiles
     - Background sync service fetches posts from Telegram and stores with derived fields
     - Nationality-to-region mapping (Asian, European, Latin American, North American, African, Middle Eastern, Oceanian)
     - Age brackets: 21-25, 26-30, 30+
-    - Work options populated from actual post data
+    - Occupation categories replace individual work options for cleaner UX
     - Filters apply to both mobile carousel and desktop grid views
 
 ## Changes (November 6, 2025)

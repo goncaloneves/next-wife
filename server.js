@@ -75,6 +75,32 @@ function getAgeBracket(age) {
   return "30+";
 }
 
+// Occupation categories - keywords that map to broader categories
+const occupationKeywords = {
+  "Arts & Gallery": ["curator", "gallery", "artist", "painter", "sculptor", "art conservator", "art restorer", "museum", "exhibition", "fine art"],
+  "Design & Creative": ["graphic design", "illustrator", "designer", "visual", "digital artist", "creative", "branding", "ui", "ux", "pattern", "textile"],
+  "Photography & Film": ["photographer", "photography", "cinematographer", "videographer", "film"],
+  "Architecture": ["architect", "architecture", "urban planning", "interior design"],
+  "Food & Hospitality": ["chef", "baker", "pastry", "barista", "sommelier", "restaurant", "hotel", "hospitality", "café", "cafe", "tea house", "wine", "culinary", "food", "cook", "kitchen"],
+  "Education & Academia": ["teacher", "instructor", "professor", "tutor", "student", "university", "school", "education", "lecturer"],
+  "Business & Marketing": ["marketing", "manager", "business", "executive", "consultant", "entrepreneur", "startup", "agency", "director"],
+  "Healthcare & Wellness": ["therapist", "nurse", "doctor", "medical", "health", "wellness", "yoga", "fitness", "counselor"],
+  "Fashion & Beauty": ["fashion", "model", "stylist", "makeup", "beauty", "boutique", "jewelry", "jeweler", "leather"],
+  "Travel & Tourism": ["tour guide", "travel", "tourism", "adventure"],
+  "Tech & Engineering": ["engineer", "developer", "programmer", "tech", "software", "data"]
+};
+
+function getOccupationCategory(work) {
+  if (!work) return null;
+  const workLower = work.toLowerCase();
+  for (const [category, keywords] of Object.entries(occupationKeywords)) {
+    for (const keyword of keywords) {
+      if (workLower.includes(keyword)) return category;
+    }
+  }
+  return "Other";
+}
+
 // Initialize database connection
 async function initDatabase() {
   if (!process.env.DATABASE_URL) {
@@ -249,10 +275,11 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
     try {
       const region = post.profileData ? getRegion(post.profileData.nationality) : null;
       const ageBracket = post.profileData ? getAgeBracket(post.profileData.age) : null;
+      const occupationCategory = post.profileData ? getOccupationCategory(post.profileData.work) : null;
       
       await pool.query(`
-        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW())
+        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, NOW())
         ON CONFLICT (id) DO UPDATE SET
           text = EXCLUDED.text,
           date = EXCLUDED.date,
@@ -267,6 +294,7 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
           work = EXCLUDED.work,
           region = EXCLUDED.region,
           age_bracket = EXCLUDED.age_bracket,
+          occupation_category = EXCLUDED.occupation_category,
           updated_at = NOW()
       `, [
         post.id,
@@ -283,7 +311,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
         post.profileData?.hometown || null,
         post.profileData?.work || null,
         region,
-        ageBracket
+        ageBracket,
+        occupationCategory
       ]);
       synced++;
     } catch (error) {
@@ -362,6 +391,22 @@ async function backgroundSync(channel = 'nextwife_ai', maxPages = 10) {
 
 // ============== API ENDPOINTS ==============
 
+// All occupation categories in display order
+const ALL_OCCUPATION_CATEGORIES = [
+  "Arts & Gallery",
+  "Design & Creative",
+  "Photography & Film",
+  "Architecture",
+  "Food & Hospitality",
+  "Education & Academia",
+  "Business & Marketing",
+  "Healthcare & Wellness",
+  "Fashion & Beauty",
+  "Travel & Tourism",
+  "Tech & Engineering",
+  "Other"
+];
+
 // Get filter options from database
 app.get('/api/tg-channel-filters', async (req, res) => {
   try {
@@ -369,26 +414,26 @@ app.get('/api/tg-channel-filters', async (req, res) => {
       return res.json({
         regions: ["Asian", "European", "Latin American", "North American", "African", "Middle Eastern", "Oceanian", "Other"],
         ageBrackets: ["21-25", "26-30", "30+"],
-        workOptions: []
+        occupationCategories: ALL_OCCUPATION_CATEGORIES
       });
     }
     
     const channel = req.query.channel || 'nextwife_ai';
     const channelName = channel.replace('@', '').replace(/_/g, '');
     
-    // Get distinct regions, age brackets, and work options from database
-    const [regionsResult, workResult] = await Promise.all([
+    // Get distinct regions and occupation categories from database
+    const [regionsResult, occupationResult] = await Promise.all([
       pool.query(`SELECT DISTINCT region FROM telegram_posts WHERE channel = $1 AND region IS NOT NULL ORDER BY region`, [channelName]),
-      pool.query(`SELECT DISTINCT work FROM telegram_posts WHERE channel = $1 AND work IS NOT NULL ORDER BY work`, [channelName])
+      pool.query(`SELECT DISTINCT occupation_category FROM telegram_posts WHERE channel = $1 AND occupation_category IS NOT NULL ORDER BY occupation_category`, [channelName])
     ]);
     
     const regions = regionsResult.rows.map(r => r.region);
-    const workOptions = workResult.rows.map(r => r.work);
+    const occupationCategories = occupationResult.rows.map(r => r.occupation_category);
     
     res.json({
       regions: regions.length > 0 ? regions : ["Asian", "European", "Latin American", "North American", "African", "Middle Eastern", "Oceanian", "Other"],
       ageBrackets: ["21-25", "26-30", "30+"],
-      workOptions
+      occupationCategories: occupationCategories.length > 0 ? occupationCategories : ALL_OCCUPATION_CATEGORIES
     });
   } catch (error) {
     console.error('Error fetching filters:', error);
@@ -408,15 +453,15 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     // Filter parameters
     const regions = req.query.region ? (Array.isArray(req.query.region) ? req.query.region : [req.query.region]) : null;
     const ageBrackets = req.query.ageBracket ? (Array.isArray(req.query.ageBracket) ? req.query.ageBracket : [req.query.ageBracket]) : null;
-    const works = req.query.work ? (Array.isArray(req.query.work) ? req.query.work : [req.query.work]) : null;
+    const occupationCategories = req.query.occupationCategory ? (Array.isArray(req.query.occupationCategory) ? req.query.occupationCategory : [req.query.occupationCategory]) : null;
     
-    const hasFilters = regions || ageBrackets || works;
+    const hasFilters = regions || ageBrackets || occupationCategories;
     
     // If database is available and we have posts, use it
     if (db && hasFilters) {
       let query = `
         SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
-               name, age, nationality, hometown, work, region, age_bracket
+               name, age, nationality, hometown, work, region, age_bracket, occupation_category
         FROM telegram_posts 
         WHERE channel = $1 AND media IS NOT NULL
       `;
@@ -435,9 +480,9 @@ app.get('/api/tg-channel-feed', async (req, res) => {
         paramIndex++;
       }
       
-      if (works && works.length > 0) {
-        query += ` AND work = ANY($${paramIndex})`;
-        params.push(works);
+      if (occupationCategories && occupationCategories.length > 0) {
+        query += ` AND occupation_category = ANY($${paramIndex})`;
+        params.push(occupationCategories);
         paramIndex++;
       }
       

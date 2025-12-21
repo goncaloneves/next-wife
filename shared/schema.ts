@@ -23,6 +23,7 @@ export const telegramPosts = pgTable("telegram_posts", {
   // Derived fields for filtering
   region: text("region"),
   ageBracket: text("age_bracket"),
+  occupationCategory: text("occupation_category"),
   
   // Timestamps
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

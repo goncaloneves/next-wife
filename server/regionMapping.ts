@@ -200,3 +200,81 @@ export const ALL_REGIONS = [
 
 // All age brackets for filtering
 export const ALL_AGE_BRACKETS = ["21-25", "26-30", "30+"];
+
+// Occupation categories - keywords that map to broader categories
+const occupationKeywords: Record<string, string[]> = {
+  "Arts & Gallery": [
+    "curator", "gallery", "artist", "painter", "sculptor", "art conservator",
+    "art restorer", "museum", "exhibition", "fine art"
+  ],
+  "Design & Creative": [
+    "graphic design", "illustrator", "designer", "visual", "digital artist",
+    "creative", "branding", "ui", "ux", "pattern", "textile"
+  ],
+  "Photography & Film": [
+    "photographer", "photography", "cinematographer", "videographer", "film"
+  ],
+  "Architecture": [
+    "architect", "architecture", "urban planning", "interior design"
+  ],
+  "Food & Hospitality": [
+    "chef", "baker", "pastry", "barista", "sommelier", "restaurant",
+    "hotel", "hospitality", "café", "cafe", "tea house", "wine",
+    "culinary", "food", "cook", "kitchen"
+  ],
+  "Education & Academia": [
+    "teacher", "instructor", "professor", "tutor", "student", "university",
+    "school", "education", "lecturer"
+  ],
+  "Business & Marketing": [
+    "marketing", "manager", "business", "executive", "consultant",
+    "entrepreneur", "startup", "agency", "director"
+  ],
+  "Healthcare & Wellness": [
+    "therapist", "nurse", "doctor", "medical", "health", "wellness",
+    "yoga", "fitness", "counselor"
+  ],
+  "Fashion & Beauty": [
+    "fashion", "model", "stylist", "makeup", "beauty", "boutique",
+    "jewelry", "jeweler", "leather"
+  ],
+  "Travel & Tourism": [
+    "tour guide", "travel", "tourism", "adventure"
+  ],
+  "Tech & Engineering": [
+    "engineer", "developer", "programmer", "tech", "software", "data"
+  ]
+};
+
+// Get occupation category from work description
+export function getOccupationCategory(work: string | null | undefined): string | null {
+  if (!work) return null;
+  
+  const workLower = work.toLowerCase();
+  
+  for (const [category, keywords] of Object.entries(occupationKeywords)) {
+    for (const keyword of keywords) {
+      if (workLower.includes(keyword)) {
+        return category;
+      }
+    }
+  }
+  
+  return "Other";
+}
+
+// All occupation categories for filtering
+export const ALL_OCCUPATION_CATEGORIES = [
+  "Arts & Gallery",
+  "Design & Creative",
+  "Photography & Film",
+  "Architecture",
+  "Food & Hospitality",
+  "Education & Academia",
+  "Business & Marketing",
+  "Healthcare & Wellness",
+  "Fashion & Beauty",
+  "Travel & Tourism",
+  "Tech & Engineering",
+  "Other"
+];
