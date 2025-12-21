@@ -285,10 +285,11 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
         </div>
       )}
 
-      {/* Expanded filter sections */}
+      {/* Expanded filter sections - fixed height container */}
       {showFilters && (
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 space-y-6 border border-white/10 animate-in slide-in-from-top-2 duration-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 animate-in slide-in-from-top-2 duration-200 flex flex-col h-[420px] md:h-[320px]">
+          <div className="flex-1 overflow-y-auto p-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {/* Region */}
             <FilterSection
               title="Region"
@@ -332,10 +333,11 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               maxVisible={8}
               emptyMessage="Select a region to see cities"
             />
+            </div>
           </div>
 
-          {/* Close button */}
-          <div className="flex justify-center pt-2">
+          {/* Close button - fixed at bottom */}
+          <div className="flex justify-center py-3 border-t border-white/10">
             <Button
               variant="ghost"
               size="sm"
