@@ -323,13 +323,13 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               onSelect={setSelectedOccupation}
             />
 
-            {/* City - scrollable with fixed height to prevent layout shift */}
+            {/* City - with expand button to show more cities */}
             <FilterSection
               title={selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
               options={availableHometowns}
               selected={selectedHometown}
               onSelect={setSelectedHometown}
-              scrollable
+              maxVisible={8}
               emptyMessage="Select a region to see cities"
             />
           </div>
