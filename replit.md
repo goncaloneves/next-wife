@@ -39,6 +39,11 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (December 21, 2025)
+17. **Fixed nationality mappings** - Added missing nationalities to region and language mappings:
+    - Cape Verdean: now mapped to African region and Portuguese language
+    - Balinese: now mapped to Asian region and Indonesian language
+    - Updated 128 posts in database with corrected values
+
 16. **Multi-select filters** - Filters now support selecting multiple values per category:
     - Select multiple regions (e.g., Asian AND European)
     - Select multiple age brackets (e.g., 21-25 AND 26-30)

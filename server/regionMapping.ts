@@ -25,6 +25,7 @@ export const nationalityToRegion: Record<string, string> = {
   "Laotian": "Asian",
   "Myanmar": "Asian",
   "Burmese": "Asian",
+  "Balinese": "Asian",
   
   // European
   "British": "European",
@@ -122,6 +123,7 @@ export const nationalityToRegion: Record<string, string> = {
   "Angolan": "African",
   "Mozambican": "African",
   "Rwandan": "African",
+  "Cape Verdean": "African",
   
   // Middle Eastern
   "Turkish": "Middle Eastern",
@@ -226,6 +228,7 @@ export const nationalityToLanguage: Record<string, string> = {
   "Laotian": "Lao",
   "Myanmar": "Burmese",
   "Burmese": "Burmese",
+  "Balinese": "Indonesian",
   
   // European languages
   "British": "English",
@@ -323,6 +326,7 @@ export const nationalityToLanguage: Record<string, string> = {
   "Angolan": "Portuguese",
   "Mozambican": "Portuguese",
   "Rwandan": "French",
+  "Cape Verdean": "Portuguese",
   
   // Middle Eastern
   "Turkish": "Turkish",
