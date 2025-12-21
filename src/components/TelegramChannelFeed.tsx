@@ -605,6 +605,7 @@ export const TelegramChannelFeed = ({
                     <Skeleton className="absolute inset-0 w-full h-full z-10" />
                   )}
                   <img
+                    key={`img-${post.id}-${imageErrors[post.id] || 0}`}
                     src={buildSrc(post.media!, post.id)}
                     alt=""
                     loading="lazy"
@@ -617,24 +618,21 @@ export const TelegramChannelFeed = ({
                     onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                     onError={() => {
                       const currentTries = imageErrors[post.id] || 0;
-                      const delay = currentTries === 0 ? 100 : 300;
                       
-                      console.log(`Image load failed for post ${post.id}, attempt ${currentTries + 1}`);
+                      if (currentTries >= 2) {
+                        console.log(`Hiding post ${post.id} after 3 failed attempts`);
+                        setHiddenIds(s => new Set(s).add(post.id));
+                        return;
+                      }
+                      
+                      const delay = currentTries === 0 ? 100 : 300;
+                      console.log(`Image load failed for post ${post.id}, attempt ${currentTries + 1}, retrying...`);
                       
                       // Reset load state to show skeleton during retry
                       setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
                       
                       setTimeout(() => {
-                        setImageErrors(prev => {
-                          const tries = (prev[post.id] || 0) + 1;
-                          
-                          if (tries >= 3) {
-                            console.log(`Hiding post ${post.id} after 3 failed attempts`);
-                            setHiddenIds(s => new Set(s).add(post.id));
-                          }
-                          
-                          return { ...prev, [post.id]: tries };
-                        });
+                        setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
                       }, delay);
                     }}
                   />
