@@ -37,7 +37,7 @@ interface FilterOptions {
 
 interface FeedFiltersProps {
   channel: string;
-  onFiltersChange: (filters: { region?: string; ageBracket?: string; occupationCategory?: string; language?: string; hometown?: string }) => void;
+  onFiltersChange: (filters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[] }) => void;
   showFilters?: boolean;
   onShowFiltersChange?: (show: boolean) => void;
   hideButton?: boolean;
@@ -74,14 +74,16 @@ function FilterSection({
   title, 
   options, 
   selected, 
-  onSelect,
+  onToggle,
+  onClearAll,
   showAll = false,
   emptyMessage
 }: { 
   title: string;
   options: string[];
-  selected: string;
-  onSelect: (value: string) => void;
+  selected: string[];
+  onToggle: (value: string) => void;
+  onClearAll: () => void;
   showAll?: boolean;
   emptyMessage?: string;
 }) {
@@ -90,6 +92,7 @@ function FilterSection({
   const maxVisible = showAll ? options.length : responsiveMaxVisible;
   const visibleOptions = expanded ? options : options.slice(0, maxVisible);
   const hasMore = options.length > maxVisible;
+  const isAllSelected = selected.length === 0;
 
   return (
     <div className="space-y-3">
@@ -100,15 +103,15 @@ function FilterSection({
         <div className="flex flex-wrap gap-2">
           <Chip
             label="All"
-            selected={selected === "all"}
-            onClick={() => onSelect("all")}
+            selected={isAllSelected}
+            onClick={onClearAll}
           />
           {visibleOptions.map((option) => (
             <Chip
               key={option}
               label={option}
-              selected={selected === option}
-              onClick={() => onSelect(option)}
+              selected={selected.includes(option)}
+              onClick={() => onToggle(option)}
               variant="accent"
             />
           ))}
@@ -145,11 +148,17 @@ export function FeedFilters({
     languages: [],
     hometowns: {},
   });
-  const [selectedRegion, setSelectedRegion] = useState<string>("all");
-  const [selectedAgeBracket, setSelectedAgeBracket] = useState<string>("all");
-  const [selectedOccupation, setSelectedOccupation] = useState<string>("all");
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("all");
-  const [selectedHometown, setSelectedHometown] = useState<string>("all");
+  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
+  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>([]);
+  const [selectedOccupations, setSelectedOccupations] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [selectedHometowns, setSelectedHometowns] = useState<string[]>([]);
+  
+  const toggleSelection = (current: string[], value: string): string[] => {
+    return current.includes(value) 
+      ? current.filter(v => v !== value)
+      : [...current, value];
+  };
   const [loading, setLoading] = useState(true);
   const [internalShowFilters, setInternalShowFilters] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -178,43 +187,41 @@ export function FeedFilters({
 
   const availableHometowns = useMemo(() => {
     const hometowns = filterOptions.hometowns || {};
-    if (selectedRegion === "all") {
+    if (selectedRegions.length === 0) {
       return Object.values(hometowns).flat().sort();
     }
-    return hometowns[selectedRegion] || [];
-  }, [selectedRegion, filterOptions.hometowns]);
+    return selectedRegions.flatMap(region => hometowns[region] || []).sort();
+  }, [selectedRegions, filterOptions.hometowns]);
 
   useEffect(() => {
-    if (selectedHometown !== "all" && !availableHometowns.includes(selectedHometown)) {
-      setSelectedHometown("all");
+    if (selectedHometowns.length > 0) {
+      const validHometowns = selectedHometowns.filter(h => availableHometowns.includes(h));
+      if (validHometowns.length !== selectedHometowns.length) {
+        setSelectedHometowns(validHometowns);
+      }
     }
-  }, [selectedRegion, availableHometowns, selectedHometown]);
+  }, [selectedRegions, availableHometowns, selectedHometowns]);
 
   const notifyFiltersChange = useCallback(() => {
+    // Always send explicit arrays (empty or with values) to ensure state resets properly
     onFiltersChange({
-      region: selectedRegion === "all" ? undefined : selectedRegion,
-      ageBracket: selectedAgeBracket === "all" ? undefined : selectedAgeBracket,
-      occupationCategory: selectedOccupation === "all" ? undefined : selectedOccupation,
-      language: selectedLanguage === "all" ? undefined : selectedLanguage,
-      hometown: selectedHometown === "all" ? undefined : selectedHometown,
+      regions: selectedRegions,
+      ageBrackets: selectedAgeBrackets,
+      occupationCategories: selectedOccupations,
+      languages: selectedLanguages,
+      hometowns: selectedHometowns,
     });
-  }, [selectedRegion, selectedAgeBracket, selectedOccupation, selectedLanguage, selectedHometown, onFiltersChange]);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, onFiltersChange]);
 
   useEffect(() => {
     if (!loading) {
       notifyFiltersChange();
     }
-  }, [selectedRegion, selectedAgeBracket, selectedOccupation, selectedLanguage, selectedHometown, loading, notifyFiltersChange]);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, loading, notifyFiltersChange]);
 
-  const activeFilters = useMemo(() => {
-    const filters: { type: string; value: string; clear: () => void }[] = [];
-    if (selectedRegion !== "all") filters.push({ type: "Region", value: selectedRegion, clear: () => setSelectedRegion("all") });
-    if (selectedAgeBracket !== "all") filters.push({ type: "Age", value: selectedAgeBracket, clear: () => setSelectedAgeBracket("all") });
-    if (selectedOccupation !== "all") filters.push({ type: "Work", value: selectedOccupation, clear: () => setSelectedOccupation("all") });
-    if (selectedLanguage !== "all") filters.push({ type: "Language", value: selectedLanguage, clear: () => setSelectedLanguage("all") });
-    if (selectedHometown !== "all") filters.push({ type: "City", value: selectedHometown, clear: () => setSelectedHometown("all") });
-    return filters;
-  }, [selectedRegion, selectedAgeBracket, selectedOccupation, selectedLanguage, selectedHometown]);
+  const activeFilterCount = useMemo(() => {
+    return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length;
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns]);
 
   if (loading) {
     return (
@@ -251,7 +258,7 @@ export function FeedFilters({
               data-testid="toggle-filters"
             >
               {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              Filters {activeFilters.length > 0 && `(${activeFilters.length})`}
+              Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
             </button>
           </div>
         </div>
@@ -267,16 +274,18 @@ export function FeedFilters({
             <FilterSection
               title="Region"
               options={filterOptions.regions}
-              selected={selectedRegion}
-              onSelect={setSelectedRegion}
+              selected={selectedRegions}
+              onToggle={(value) => setSelectedRegions(toggleSelection(selectedRegions, value))}
+              onClearAll={() => setSelectedRegions([])}
             />
 
             {/* Age */}
             <FilterSection
               title="Age"
               options={filterOptions.ageBrackets}
-              selected={selectedAgeBracket}
-              onSelect={setSelectedAgeBracket}
+              selected={selectedAgeBrackets}
+              onToggle={(value) => setSelectedAgeBrackets(toggleSelection(selectedAgeBrackets, value))}
+              onClearAll={() => setSelectedAgeBrackets([])}
               showAll
             />
 
@@ -284,24 +293,27 @@ export function FeedFilters({
             <FilterSection
               title="Language"
               options={filterOptions.languages}
-              selected={selectedLanguage}
-              onSelect={setSelectedLanguage}
+              selected={selectedLanguages}
+              onToggle={(value) => setSelectedLanguages(toggleSelection(selectedLanguages, value))}
+              onClearAll={() => setSelectedLanguages([])}
             />
 
             {/* Occupation */}
             <FilterSection
               title="Occupation"
               options={filterOptions.occupationCategories}
-              selected={selectedOccupation}
-              onSelect={setSelectedOccupation}
+              selected={selectedOccupations}
+              onToggle={(value) => setSelectedOccupations(toggleSelection(selectedOccupations, value))}
+              onClearAll={() => setSelectedOccupations([])}
             />
 
             {/* City - max 4 visible for consistent 3 rows */}
             <FilterSection
-              title={selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
+              title={selectedRegions.length > 0 ? `Cities in ${selectedRegions.join(', ')}` : "City"}
               options={availableHometowns}
-              selected={selectedHometown}
-              onSelect={setSelectedHometown}
+              selected={selectedHometowns}
+              onToggle={(value) => setSelectedHometowns(toggleSelection(selectedHometowns, value))}
+              onClearAll={() => setSelectedHometowns([])}
               emptyMessage="Select a region to see cities"
             />
             </div>
@@ -309,21 +321,21 @@ export function FeedFilters({
 
           {/* Footer with Clear all and Close buttons */}
           <div className="flex justify-center gap-3 py-3 border-t border-white/10">
-            {activeFilters.length > 0 && (
+            {activeFilterCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  setSelectedRegion("all");
-                  setSelectedAgeBracket("all");
-                  setSelectedOccupation("all");
-                  setSelectedLanguage("all");
-                  setSelectedHometown("all");
+                  setSelectedRegions([]);
+                  setSelectedAgeBrackets([]);
+                  setSelectedOccupations([]);
+                  setSelectedLanguages([]);
+                  setSelectedHometowns([]);
                 }}
                 className="text-orange-400 hover:text-orange-300 hover:bg-orange-400/10 rounded-full px-6"
                 data-testid="clear-all-filters"
               >
-                Clear all ({activeFilters.length})
+                Clear all ({activeFilterCount})
               </Button>
             )}
             <Button

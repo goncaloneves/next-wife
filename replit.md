@@ -39,6 +39,16 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (December 21, 2025)
+16. **Multi-select filters** - Filters now support selecting multiple values per category:
+    - Select multiple regions (e.g., Asian AND European)
+    - Select multiple age brackets (e.g., 21-25 AND 26-30)
+    - Select multiple languages, occupations, or cities simultaneously
+    - Chips toggle on/off instead of single-select
+    - "All" chip clears selections for that category
+    - "Clear all" button in footer resets all filters
+    - Backend uses PostgreSQL `ANY()` operator for array filtering
+    - Filter count badge shows total number of selected values
+
 15. **Tinder-style filter button placement** - Moved Filters button next to "Pick your Girlfriend" title:
     - Filter button now appears on the right side of the title row (Tinder/Bumble pattern)
     - Uses controlled state passed from Index.tsx to FeedFilters component
