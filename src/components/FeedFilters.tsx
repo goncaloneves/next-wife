@@ -49,7 +49,7 @@ function FilterSection({
   selected, 
   onSelect,
   showAll = false,
-  maxVisible = 6,
+  maxVisible = 4,
   emptyMessage
 }: { 
   title: string;
@@ -308,7 +308,6 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               options={filterOptions.languages}
               selected={selectedLanguage}
               onSelect={setSelectedLanguage}
-              maxVisible={6}
             />
 
             {/* Occupation */}
@@ -319,13 +318,12 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               onSelect={setSelectedOccupation}
             />
 
-            {/* City - max 6 visible like other sections */}
+            {/* City - max 4 visible for consistent 3 rows */}
             <FilterSection
               title={selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
               options={availableHometowns}
               selected={selectedHometown}
               onSelect={setSelectedHometown}
-              maxVisible={6}
               emptyMessage="Select a region to see cities"
             />
             </div>
