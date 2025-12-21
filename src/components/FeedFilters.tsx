@@ -3,6 +3,34 @@ import { Button } from "@/components/ui/button";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Hook to get responsive maxVisible based on screen width
+// Ensures 3 rows of chips at each breakpoint
+function useResponsiveMaxVisible() {
+  const [maxVisible, setMaxVisible] = useState(4); // mobile default
+  
+  useEffect(() => {
+    const updateMaxVisible = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        // lg: ~4 chips per row in grid column, 3 rows = 11 chips (All + 10 + button)
+        setMaxVisible(10);
+      } else if (width >= 768) {
+        // md: ~3 chips per row, 3 rows = 8 chips (All + 7 + button)
+        setMaxVisible(7);
+      } else {
+        // mobile: ~2 chips per row, 3 rows = 5 chips (All + 4 + button)
+        setMaxVisible(4);
+      }
+    };
+    
+    updateMaxVisible();
+    window.addEventListener('resize', updateMaxVisible);
+    return () => window.removeEventListener('resize', updateMaxVisible);
+  }, []);
+  
+  return maxVisible;
+}
+
 interface FilterOptions {
   regions: string[];
   ageBrackets: string[];
@@ -49,7 +77,6 @@ function FilterSection({
   selected, 
   onSelect,
   showAll = false,
-  maxVisible = 4,
   emptyMessage
 }: { 
   title: string;
@@ -57,15 +84,16 @@ function FilterSection({
   selected: string;
   onSelect: (value: string) => void;
   showAll?: boolean;
-  maxVisible?: number;
   emptyMessage?: string;
 }) {
   const [expanded, setExpanded] = useState(showAll);
+  const responsiveMaxVisible = useResponsiveMaxVisible();
+  const maxVisible = showAll ? options.length : responsiveMaxVisible;
   const visibleOptions = expanded ? options : options.slice(0, maxVisible);
   const hasMore = options.length > maxVisible;
 
   return (
-    <div className="space-y-3 min-h-[140px]">
+    <div className="space-y-3">
       {title && <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">{title}</h3>}
       {options.length === 0 && emptyMessage ? (
         <p className="text-sm text-white/40 px-1">{emptyMessage}</p>
