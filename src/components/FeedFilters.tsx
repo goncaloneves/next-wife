@@ -38,6 +38,9 @@ interface FilterOptions {
 interface FeedFiltersProps {
   channel: string;
   onFiltersChange: (filters: { region?: string; ageBracket?: string; occupationCategory?: string; language?: string; hometown?: string }) => void;
+  showFilters?: boolean;
+  onShowFiltersChange?: (show: boolean) => void;
+  hideButton?: boolean;
 }
 
 interface ChipProps {
@@ -128,7 +131,13 @@ function FilterSection({
   );
 }
 
-export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
+export function FeedFilters({ 
+  channel, 
+  onFiltersChange,
+  showFilters: controlledShowFilters,
+  onShowFiltersChange,
+  hideButton = false
+}: FeedFiltersProps) {
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     regions: [],
     ageBrackets: [],
@@ -142,8 +151,12 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("all");
   const [selectedHometown, setSelectedHometown] = useState<string>("all");
   const [loading, setLoading] = useState(true);
-  const [showFilters, setShowFilters] = useState(false);
+  const [internalShowFilters, setInternalShowFilters] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  // Support both controlled and uncontrolled modes
+  const showFilters = controlledShowFilters !== undefined ? controlledShowFilters : internalShowFilters;
+  const setShowFilters = onShowFiltersChange || setInternalShowFilters;
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -224,31 +237,33 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
   }
 
   return (
-    <div className="mb-3 space-y-3 relative" data-testid="feed-filters">
-      {/* Quick filter chips - horizontal scroll */}
-      <div className="relative">
-        <div 
-          ref={scrollRef}
-          className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {/* Filter toggle button - only shows "Filters" */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={cn(
-              "flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
-              "border-2 border-dashed",
-              showFilters 
-                ? "border-orange-400 text-orange-400 bg-orange-400/10" 
-                : "border-white/30 text-white/70 hover:border-white/50 hover:text-white"
-            )}
-            data-testid="toggle-filters"
+    <div className="space-y-3 relative" data-testid="feed-filters">
+      {/* Quick filter chips - only show if hideButton is false */}
+      {!hideButton && (
+        <div className="relative">
+          <div 
+            ref={scrollRef}
+            className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            Filters {activeFilters.length > 0 && `(${activeFilters.length})`}
-          </button>
+            {/* Filter toggle button - only shows "Filters" */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={cn(
+                "flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
+                "border-2 border-dashed",
+                showFilters 
+                  ? "border-orange-400 text-orange-400 bg-orange-400/10" 
+                  : "border-white/30 text-white/70 hover:border-white/50 hover:text-white"
+              )}
+              data-testid="toggle-filters"
+            >
+              {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              Filters {activeFilters.length > 0 && `(${activeFilters.length})`}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Active filter tags */}
       {activeFilters.length > 0 && (
@@ -353,5 +368,36 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
         />
       )}
     </div>
+  );
+}
+
+// Standalone filter button component for use in title row
+interface FilterButtonProps {
+  isOpen: boolean;
+  onClick: () => void;
+  activeCount: number;
+}
+
+export function FilterButton({ isOpen, onClick, activeCount }: FilterButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
+        "border-2 border-dashed",
+        isOpen 
+          ? "border-orange-400 text-orange-400 bg-orange-400/10" 
+          : "border-white/30 text-white/70 hover:border-white/50 hover:text-white"
+      )}
+      data-testid="toggle-filters"
+    >
+      {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+      Filters
+      {activeCount > 0 && (
+        <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white">
+          {activeCount}
+        </span>
+      )}
+    </button>
   );
 }

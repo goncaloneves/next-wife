@@ -5,10 +5,13 @@ import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
+import { FilterButton } from "@/components/FeedFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [isQRVisible, setIsQRVisible] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeFilterCount, setActiveFilterCount] = useState(0);
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
@@ -237,10 +240,24 @@ const Index = () => {
         <section ref={feedContentRef} className="relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
-                Pick your Girlfriend 🌻
-              </h2>
-              <TelegramChannelFeed channelUsername="nextwifeai" layout="grid" feedSectionRef={feedContentRef} />
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center sm:text-left text-white">
+                  Pick your Girlfriend 🌻
+                </h2>
+                <FilterButton 
+                  isOpen={showFilters} 
+                  onClick={() => setShowFilters(!showFilters)} 
+                  activeCount={activeFilterCount}
+                />
+              </div>
+              <TelegramChannelFeed 
+                channelUsername="nextwifeai" 
+                layout="grid" 
+                feedSectionRef={feedContentRef}
+                showFilters={showFilters}
+                onShowFiltersChange={setShowFilters}
+                onActiveFilterCountChange={setActiveFilterCount}
+              />
             </div>
           </div>
         </section>

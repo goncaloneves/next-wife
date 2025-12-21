@@ -39,6 +39,9 @@ interface TelegramChannelFeedProps {
   maxPosts?: number;
   layout?: "list" | "grid";
   feedSectionRef?: React.RefObject<HTMLElement | HTMLDivElement>;
+  showFilters?: boolean;
+  onShowFiltersChange?: (show: boolean) => void;
+  onActiveFilterCountChange?: (count: number) => void;
 }
 
 export const TelegramChannelFeed = ({
@@ -47,6 +50,9 @@ export const TelegramChannelFeed = ({
   maxPosts = 20,
   layout = "list",
   feedSectionRef,
+  showFilters,
+  onShowFiltersChange,
+  onActiveFilterCountChange,
 }: TelegramChannelFeedProps) => {
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
@@ -377,7 +383,12 @@ export const TelegramChannelFeed = ({
   // Handler for filter changes
   const handleFiltersChange = useCallback((newFilters: { region?: string; ageBracket?: string; occupationCategory?: string; language?: string; hometown?: string }) => {
     setFilters(newFilters);
-  }, []);
+    // Report active filter count to parent
+    if (onActiveFilterCountChange) {
+      const count = Object.values(newFilters).filter(v => v !== undefined).length;
+      onActiveFilterCountChange(count);
+    }
+  }, [onActiveFilterCountChange]);
 
   // Horizontal scroll handler for mobile carousel
   const handleHorizontalScroll = useCallback((e: Event) => {
@@ -538,7 +549,13 @@ export const TelegramChannelFeed = ({
         )}
 
         <div className="relative">
-        <FeedFilters channel={channelUsername} onFiltersChange={handleFiltersChange} />
+        <FeedFilters 
+          channel={channelUsername} 
+          onFiltersChange={handleFiltersChange}
+          showFilters={showFilters}
+          onShowFiltersChange={onShowFiltersChange}
+          hideButton={showFilters !== undefined}
+        />
         
         {/* Container with min-height to prevent layout collapse during filter changes */}
         <div className="min-h-[50vh]">
@@ -708,7 +725,13 @@ export const TelegramChannelFeed = ({
         document.body
       )}
 
-      <FeedFilters channel={channelUsername} onFiltersChange={handleFiltersChange} />
+      <FeedFilters 
+        channel={channelUsername} 
+        onFiltersChange={handleFiltersChange}
+        showFilters={showFilters}
+        onShowFiltersChange={onShowFiltersChange}
+        hideButton={showFilters !== undefined}
+      />
       <div ref={listRef} onScroll={handleScroll} className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg">
         <div className="space-y-4">
           {allPosts.map((post) => (
