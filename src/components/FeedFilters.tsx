@@ -285,10 +285,10 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
         </div>
       )}
 
-      {/* Expanded filter sections - fixed height container */}
+      {/* Expanded filter sections - fixed height to prevent layout shift */}
       {showFilters && (
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 animate-in slide-in-from-top-2 duration-200 flex flex-col h-[420px] md:h-[320px]">
-          <div className="flex-1 overflow-y-auto p-5">
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 animate-in slide-in-from-top-2 duration-200">
+          <div className="p-5 min-h-[500px] md:min-h-[280px]">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {/* Region */}
             <FilterSection
@@ -336,8 +336,8 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
             </div>
           </div>
 
-          {/* Close button - fixed at bottom */}
-          <div className="flex justify-center py-3 border-t border-white/10">
+          {/* Close button */}
+          <div className="flex justify-center py-4">
             <Button
               variant="ghost"
               size="sm"
