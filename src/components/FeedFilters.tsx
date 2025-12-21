@@ -324,15 +324,32 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               onSelect={setSelectedOccupation}
             />
 
-            {/* City - with expand button to show more cities */}
-            <FilterSection
-              title={selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
-              options={availableHometowns}
-              selected={selectedHometown}
-              onSelect={setSelectedHometown}
-              maxVisible={8}
-              emptyMessage="Select a region to see cities"
-            />
+            {/* City - fixed height with scroll to prevent layout shift */}
+            <div className="space-y-3 min-h-[180px]">
+              <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">
+                {selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
+              </h3>
+              {availableHometowns.length === 0 ? (
+                <p className="text-sm text-white/40 px-1">Select a region to see cities</p>
+              ) : (
+                <div className="flex flex-wrap gap-2 max-h-[140px] overflow-y-auto pr-1">
+                  <Chip
+                    label="All"
+                    selected={selectedHometown === "all"}
+                    onClick={() => setSelectedHometown("all")}
+                  />
+                  {availableHometowns.map((city) => (
+                    <Chip
+                      key={city}
+                      label={city}
+                      selected={selectedHometown === city}
+                      onClick={() => setSelectedHometown(city)}
+                      variant="accent"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
             </div>
           </div>
 
