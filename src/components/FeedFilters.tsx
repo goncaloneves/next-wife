@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -161,7 +161,6 @@ export function FeedFilters({
   };
   const [loading, setLoading] = useState(true);
   const [internalShowFilters, setInternalShowFilters] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
   
   // Support both controlled and uncontrolled modes
   const showFilters = controlledShowFilters !== undefined ? controlledShowFilters : internalShowFilters;
@@ -227,35 +226,14 @@ export function FeedFilters({
   if (loading) {
     return null;
   }
+  
+  // If using external button and filters are closed, return nothing
+  if (hideButton && !showFilters) {
+    return null;
+  }
 
   return (
     <div className="space-y-3 relative" data-testid="feed-filters">
-      {/* Quick filter chips - only show if hideButton is false */}
-      {!hideButton && (
-        <div className="relative">
-          <div 
-            ref={scrollRef}
-            className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {/* Filter toggle button - only shows "Filters" */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={cn(
-                "flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
-                "border-2 border-dashed",
-                showFilters 
-                  ? "border-orange-400 text-orange-400 bg-orange-400/10" 
-                  : "border-white/30 text-white/70 hover:border-white/50 hover:text-white"
-              )}
-              data-testid="toggle-filters"
-            >
-              {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
-            </button>
-          </div>
-        </div>
-      )}
 
 
       {/* Expanded filter sections - absolute overlay to avoid layout shift */}
