@@ -324,8 +324,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       const language = post.profileData ? getLanguage(post.profileData.nationality) : null;
       
       await pool.query(`
-        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW())
+        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, updated_at, deleted_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW(), NULL)
         ON CONFLICT (id) DO UPDATE SET
           text = EXCLUDED.text,
           date = EXCLUDED.date,
@@ -342,7 +342,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
           age_bracket = EXCLUDED.age_bracket,
           occupation_category = EXCLUDED.occupation_category,
           language = EXCLUDED.language,
-          updated_at = NOW()
+          updated_at = NOW(),
+          deleted_at = NULL
       `, [
         post.id,
         channel,
@@ -437,6 +438,142 @@ async function backgroundSync(channel = 'nextwife_ai', maxPages = 10) {
   return totalSynced;
 }
 
+// ============== DELETED POST DETECTION ==============
+// Throttled service to detect and soft-delete posts that were removed from Telegram
+const syncState = {
+  lastRun: 0,
+  inFlight: false
+};
+const SYNC_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes between syncs
+const SYNC_WINDOW = 200; // Check the most recent 200 posts
+
+async function detectDeletedPosts(channel = 'nextwife_ai') {
+  if (!db) return { deleted: 0, resurrected: 0 };
+  
+  // Throttle: don't run more than once per SYNC_INTERVAL_MS
+  const now = Date.now();
+  if (syncState.inFlight || now - syncState.lastRun < SYNC_INTERVAL_MS) {
+    return { deleted: 0, resurrected: 0, throttled: true };
+  }
+  
+  syncState.inFlight = true;
+  syncState.lastRun = now;
+  
+  try {
+    const channelName = channel.replace('@', '').replace(/_/g, '');
+    const telegramChannel = channel.replace(/_/g, '');
+    
+    // Get the most recent SYNC_WINDOW posts from database (including deleted ones to check for resurrection)
+    const dbResult = await pool.query(
+      `SELECT id, deleted_at FROM telegram_posts 
+       WHERE channel = $1 
+       ORDER BY id::bigint DESC 
+       LIMIT $2`,
+      [channelName, SYNC_WINDOW]
+    );
+    
+    const dbPosts = dbResult.rows;
+    const dbIds = new Set(dbPosts.map(p => p.id));
+    const deletedDbIds = new Set(dbPosts.filter(p => p.deleted_at).map(p => p.id));
+    
+    if (dbIds.size === 0) {
+      syncState.inFlight = false;
+      return { deleted: 0, resurrected: 0 };
+    }
+    
+    // Get the ID range we need to check
+    const dbIdNumbers = [...dbIds].map(id => parseInt(id)).filter(id => !isNaN(id));
+    const maxDbId = Math.max(...dbIdNumbers);
+    const minDbId = Math.min(...dbIdNumbers);
+    
+    console.log(`🔍 Detecting deleted posts for @${channel} (checking IDs ${minDbId}-${maxDbId})...`);
+    
+    // Fetch recent pages from Telegram to get live post IDs
+    const liveIds = new Set();
+    let cursor = null;
+    const maxPages = 15; // Enough to cover SYNC_WINDOW posts
+    
+    for (let page = 0; page < maxPages; page++) {
+      const ts = Date.now();
+      const pageUrl = cursor
+        ? `https://t.me/s/${telegramChannel}?before=${cursor}&_=${ts}`
+        : `https://t.me/s/${telegramChannel}?_=${ts}`;
+      
+      try {
+        const response = await fetch(pageUrl);
+        if (!response.ok) break;
+        
+        const html = await response.text();
+        const result = parseChannelHTML(html, telegramChannel);
+        
+        if (result.posts.length === 0) break;
+        
+        // Sync posts to database (also resurrects deleted posts by setting deleted_at to NULL via UPSERT)
+        await syncPostsToDatabase(result.posts, channel);
+        
+        for (const post of result.posts) {
+          liveIds.add(post.id);
+        }
+        
+        // Check if we've covered the range we care about
+        const postIdNumbers = result.posts.map(p => parseInt(p.id)).filter(id => !isNaN(id));
+        const oldestFetched = Math.min(...postIdNumbers);
+        
+        if (oldestFetched <= minDbId) {
+          // We've covered the range
+          break;
+        }
+        
+        // Get next cursor
+        if (result.nextCursor) {
+          cursor = result.nextCursor;
+        } else {
+          cursor = String(oldestFetched - 1);
+        }
+        
+        // Delay between fetches to respect rate limits
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error(`  Page ${page + 1} failed:`, error.message);
+        break;
+      }
+    }
+    
+    // Find posts that are in DB but not in Telegram (deleted)
+    const toDelete = [...dbIds].filter(id => !liveIds.has(id) && !deletedDbIds.has(id));
+    
+    // Find posts that were previously deleted but now exist (resurrected)
+    const toResurrect = [...deletedDbIds].filter(id => liveIds.has(id));
+    
+    // Soft-delete missing posts
+    if (toDelete.length > 0) {
+      await pool.query(
+        `UPDATE telegram_posts SET deleted_at = NOW() WHERE id = ANY($1) AND channel = $2`,
+        [toDelete, channelName]
+      );
+      console.log(`  🗑️  Soft-deleted ${toDelete.length} posts: ${toDelete.join(', ')}`);
+    }
+    
+    // Resurrect posts that reappeared
+    if (toResurrect.length > 0) {
+      await pool.query(
+        `UPDATE telegram_posts SET deleted_at = NULL WHERE id = ANY($1) AND channel = $2`,
+        [toResurrect, channelName]
+      );
+      console.log(`  ♻️  Resurrected ${toResurrect.length} posts: ${toResurrect.join(', ')}`);
+    }
+    
+    console.log(`✅ Delete detection complete: ${toDelete.length} deleted, ${toResurrect.length} resurrected`);
+    
+    syncState.inFlight = false;
+    return { deleted: toDelete.length, resurrected: toResurrect.length };
+  } catch (error) {
+    console.error('❌ Delete detection failed:', error.message);
+    syncState.inFlight = false;
+    return { deleted: 0, resurrected: 0, error: error.message };
+  }
+}
+
 // ============== API ENDPOINTS ==============
 
 // All occupation categories in display order
@@ -473,10 +610,10 @@ app.get('/api/tg-channel-filters', async (req, res) => {
     
     // Get distinct regions, occupation categories, languages, and hometowns from database
     const [regionsResult, occupationResult, languagesResult, hometownsResult] = await Promise.all([
-      pool.query(`SELECT DISTINCT region FROM telegram_posts WHERE channel = $1 AND region IS NOT NULL ORDER BY region`, [channelName]),
-      pool.query(`SELECT DISTINCT occupation_category FROM telegram_posts WHERE channel = $1 AND occupation_category IS NOT NULL ORDER BY occupation_category`, [channelName]),
-      pool.query(`SELECT DISTINCT language FROM telegram_posts WHERE channel = $1 AND language IS NOT NULL ORDER BY language`, [channelName]),
-      pool.query(`SELECT DISTINCT region, hometown FROM telegram_posts WHERE channel = $1 AND hometown IS NOT NULL AND region IS NOT NULL ORDER BY region, hometown`, [channelName])
+      pool.query(`SELECT DISTINCT region FROM telegram_posts WHERE channel = $1 AND region IS NOT NULL AND deleted_at IS NULL ORDER BY region`, [channelName]),
+      pool.query(`SELECT DISTINCT occupation_category FROM telegram_posts WHERE channel = $1 AND occupation_category IS NOT NULL AND deleted_at IS NULL ORDER BY occupation_category`, [channelName]),
+      pool.query(`SELECT DISTINCT language FROM telegram_posts WHERE channel = $1 AND language IS NOT NULL AND deleted_at IS NULL ORDER BY language`, [channelName]),
+      pool.query(`SELECT DISTINCT region, hometown FROM telegram_posts WHERE channel = $1 AND hometown IS NOT NULL AND region IS NOT NULL AND deleted_at IS NULL ORDER BY region, hometown`, [channelName])
     ]);
     
     const regions = regionsResult.rows.map(r => r.region);
@@ -516,6 +653,11 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     // Normalize channel name: remove @ and underscores for Telegram URL compatibility
     const channelName = channel.replace('@', '').replace(/_/g, '');
     
+    // Trigger background deleted post detection (fire and forget, throttled)
+    if (db && !before) {
+      detectDeletedPosts(channel).catch(err => console.error('Delete detection error:', err));
+    }
+    
     // Filter parameters
     const regions = req.query.region ? (Array.isArray(req.query.region) ? req.query.region : [req.query.region]) : null;
     const ageBrackets = req.query.ageBracket ? (Array.isArray(req.query.ageBracket) ? req.query.ageBracket : [req.query.ageBracket]) : null;
@@ -531,7 +673,7 @@ app.get('/api/tg-channel-feed', async (req, res) => {
         SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
                name, age, nationality, hometown, work, region, age_bracket, occupation_category, language
         FROM telegram_posts 
-        WHERE channel = $1 AND media IS NOT NULL
+        WHERE channel = $1 AND media IS NOT NULL AND deleted_at IS NULL
       `;
       const params = [channelName];
       let paramIndex = 2;
