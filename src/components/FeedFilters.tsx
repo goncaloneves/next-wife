@@ -267,7 +267,7 @@ export function FeedFilters({
 
       {/* Active filter tags */}
       {activeFilters.length > 0 && (
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="flex flex-wrap gap-2 items-center mb-4">
           <span className="text-xs text-white/50 font-medium">Active:</span>
           {activeFilters.map((filter) => (
             <button
