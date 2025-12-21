@@ -223,20 +223,7 @@ export function FeedFilters({
     return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length;
   }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns]);
 
-  // Don't show loading skeleton if using external button (hideButton=true)
-  if (loading && !hideButton) {
-    return (
-      <div className="mb-6">
-        <div className="flex gap-2 overflow-hidden">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-10 w-24 bg-white/10 rounded-full animate-pulse flex-shrink-0" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-  
-  // If still loading but hideButton is true, just return nothing visible
+  // Return nothing while loading - no skeleton placeholders needed
   if (loading) {
     return null;
   }
