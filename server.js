@@ -590,10 +590,10 @@ async function start() {
     }
     console.log(`💾 Database: ${dbConnected ? 'Connected' : 'Not available'}`);
     
-    // Run initial sync on startup if database is available
+    // Run initial sync on startup if database is available - fetch ALL posts
     if (dbConnected) {
       console.log('');
-      setTimeout(() => backgroundSync('nextwife_ai', 15), 2000);
+      setTimeout(() => backgroundSync('nextwife_ai', 200), 2000); // Fetch up to 4000 posts
     }
     console.log('');
   });

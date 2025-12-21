@@ -495,21 +495,12 @@ export const TelegramChannelFeed = ({
     // Do not fetch here; nearTop logic will refresh and clear the badge.
   };
 
-  if (loading) {
-    return null;
-  }
-
-  if (error) {
-    return null;
-  }
-
-  if (allPosts.length === 0 && !loading) {
-    return null;
-  }
+  const postsWithMedia = allPosts.filter((post) => post.media);
+  const hasActiveFilters = (filters.region && filters.region !== 'all') ||
+                           (filters.ageBracket && filters.ageBracket !== 'all') ||
+                           (filters.work && filters.work !== 'all');
 
   if (layout === "grid") {
-    const postsWithMedia = allPosts.filter((post) => post.media);
-
     return (
       <>
         {pendingNewCount > 0 && !isNearTop && createPortal(
@@ -530,6 +521,31 @@ export const TelegramChannelFeed = ({
 
         <div className="relative">
         <FeedFilters channel={channelUsername} onFiltersChange={handleFiltersChange} />
+        
+        {/* Loading state */}
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        )}
+        
+        {/* Empty state for filtered results */}
+        {!loading && postsWithMedia.length === 0 && hasActiveFilters && (
+          <div className="text-center py-12 text-muted-foreground">
+            <p className="text-lg">No girlfriends match your filters</p>
+            <p className="text-sm mt-2">Try adjusting your search criteria</p>
+          </div>
+        )}
+        
+        {/* Empty state for no posts at all */}
+        {!loading && allPosts.length === 0 && !hasActiveFilters && (
+          <div className="text-center py-12 text-muted-foreground">
+            <p>Loading girlfriends...</p>
+          </div>
+        )}
+        
+        {/* Posts grid - only show when we have posts */}
+        {!loading && postsWithMedia.length > 0 && (
         <div>
           {/* Mobile: Single card at a time (Tinder-style) | Desktop: Grid */}
           <div 
@@ -653,6 +669,7 @@ export const TelegramChannelFeed = ({
             </div>
           )}
         </div>
+        )}
         </div>
       </>
     );

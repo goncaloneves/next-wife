@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, MapPin, Calendar, Briefcase } from "lucide-react";
 
 interface FilterOptions {
   regions: string[];
@@ -20,9 +20,9 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
     ageBrackets: [],
     workOptions: [],
   });
-  const [selectedRegion, setSelectedRegion] = useState<string>("");
-  const [selectedAgeBracket, setSelectedAgeBracket] = useState<string>("");
-  const [selectedWork, setSelectedWork] = useState<string>("");
+  const [selectedRegion, setSelectedRegion] = useState<string>("all");
+  const [selectedAgeBracket, setSelectedAgeBracket] = useState<string>("all");
+  const [selectedWork, setSelectedWork] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,67 +43,85 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
     fetchFilters();
   }, [channel]);
 
-  useEffect(() => {
+  const notifyFiltersChange = useCallback(() => {
     onFiltersChange({
-      region: selectedRegion || undefined,
-      ageBracket: selectedAgeBracket || undefined,
-      work: selectedWork || undefined,
+      region: selectedRegion === "all" ? undefined : selectedRegion,
+      ageBracket: selectedAgeBracket === "all" ? undefined : selectedAgeBracket,
+      work: selectedWork === "all" ? undefined : selectedWork,
     });
   }, [selectedRegion, selectedAgeBracket, selectedWork, onFiltersChange]);
 
-  const hasActiveFilters = selectedRegion || selectedAgeBracket || selectedWork;
+  useEffect(() => {
+    if (!loading) {
+      notifyFiltersChange();
+    }
+  }, [selectedRegion, selectedAgeBracket, selectedWork, loading, notifyFiltersChange]);
+
+  const hasActiveFilters = selectedRegion !== "all" || selectedAgeBracket !== "all" || selectedWork !== "all";
 
   const clearFilters = () => {
-    setSelectedRegion("");
-    setSelectedAgeBracket("");
-    setSelectedWork("");
+    setSelectedRegion("all");
+    setSelectedAgeBracket("all");
+    setSelectedWork("all");
   };
 
   if (loading) {
     return (
-      <div className="flex gap-2 mb-4 opacity-50">
-        <div className="h-10 w-32 bg-muted rounded animate-pulse" />
-        <div className="h-10 w-28 bg-muted rounded animate-pulse" />
-        <div className="h-10 w-40 bg-muted rounded animate-pulse" />
+      <div className="flex gap-3 mb-6 opacity-50">
+        <div className="h-11 w-36 bg-white/10 rounded-full animate-pulse" />
+        <div className="h-11 w-28 bg-white/10 rounded-full animate-pulse" />
+        <div className="h-11 w-44 bg-white/10 rounded-full animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-wrap gap-2 mb-4 items-center" data-testid="feed-filters">
+    <div className="flex flex-wrap gap-3 mb-6 items-center" data-testid="feed-filters">
       <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-        <SelectTrigger className="w-[140px] bg-background/80 backdrop-blur-sm border-border/50" data-testid="filter-region">
+        <SelectTrigger 
+          className="w-auto min-w-[140px] h-11 rounded-full bg-white/10 hover:bg-white/20 border-0 text-white/90 px-4 transition-colors"
+          data-testid="filter-region"
+        >
+          <MapPin className="w-4 h-4 mr-2 opacity-70" />
           <SelectValue placeholder="Region" />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Regions</SelectItem>
+        <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 rounded-xl">
+          <SelectItem value="all" className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">All Regions</SelectItem>
           {filterOptions.regions.map((region) => (
-            <SelectItem key={region} value={region}>{region}</SelectItem>
+            <SelectItem key={region} value={region} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">{region}</SelectItem>
           ))}
         </SelectContent>
       </Select>
 
       <Select value={selectedAgeBracket} onValueChange={setSelectedAgeBracket}>
-        <SelectTrigger className="w-[120px] bg-background/80 backdrop-blur-sm border-border/50" data-testid="filter-age">
+        <SelectTrigger 
+          className="w-auto min-w-[120px] h-11 rounded-full bg-white/10 hover:bg-white/20 border-0 text-white/90 px-4 transition-colors"
+          data-testid="filter-age"
+        >
+          <Calendar className="w-4 h-4 mr-2 opacity-70" />
           <SelectValue placeholder="Age" />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Ages</SelectItem>
+        <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 rounded-xl">
+          <SelectItem value="all" className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">All Ages</SelectItem>
           {filterOptions.ageBrackets.map((bracket) => (
-            <SelectItem key={bracket} value={bracket}>{bracket}</SelectItem>
+            <SelectItem key={bracket} value={bracket} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">{bracket}</SelectItem>
           ))}
         </SelectContent>
       </Select>
 
       <Select value={selectedWork} onValueChange={setSelectedWork}>
-        <SelectTrigger className="w-[180px] bg-background/80 backdrop-blur-sm border-border/50" data-testid="filter-work">
-          <SelectValue placeholder="Work" />
+        <SelectTrigger 
+          className="w-auto min-w-[160px] max-w-[220px] h-11 rounded-full bg-white/10 hover:bg-white/20 border-0 text-white/90 px-4 transition-colors"
+          data-testid="filter-work"
+        >
+          <Briefcase className="w-4 h-4 mr-2 opacity-70 flex-shrink-0" />
+          <SelectValue placeholder="Occupation" />
         </SelectTrigger>
-        <SelectContent className="max-h-[300px]">
-          <SelectItem value="all">All Work</SelectItem>
+        <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border-white/10 rounded-xl max-h-[300px]">
+          <SelectItem value="all" className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg">All Occupations</SelectItem>
           {filterOptions.workOptions.map((work) => (
-            <SelectItem key={work} value={work} className="truncate">
-              {work.length > 40 ? work.substring(0, 40) + "..." : work}
+            <SelectItem key={work} value={work} className="text-white/90 focus:bg-white/10 focus:text-white rounded-lg truncate">
+              {work.length > 35 ? work.substring(0, 35) + "..." : work}
             </SelectItem>
           ))}
         </SelectContent>
@@ -114,7 +132,7 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
           variant="ghost"
           size="sm"
           onClick={clearFilters}
-          className="text-muted-foreground hover:text-foreground"
+          className="h-11 rounded-full px-4 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
           data-testid="button-clear-filters"
         >
           <X className="w-4 h-4 mr-1" />
