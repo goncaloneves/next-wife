@@ -334,7 +334,7 @@ export function FeedFilters({
               data-testid="close-filters"
             >
               <ChevronUp className="w-4 h-4 mr-2" />
-              Done
+              Close
             </Button>
           </div>
         </div>
