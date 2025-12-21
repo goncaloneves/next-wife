@@ -39,6 +39,13 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (December 21, 2025)
+14. **Instagram-style chip filters** - Redesigned filter UI from dropdowns to horizontal scrollable chips:
+    - Chip components with gradient styling for selected state (orange-to-rose)
+    - Expandable filter sections with "Show more/less" for categories with many options
+    - Active filter tags displayed as dismissible chips with "Clear all" button
+    - Horizontal scroll with hidden scrollbar for mobile-friendly UX
+    - Proper data-testid normalization for stable test selectors
+
 13. **Automatic deleted post detection** - Background scheduler detects and soft-deletes posts removed from Telegram:
     - Added `deleted_at` column to database for soft-delete functionality
     - All queries filter out deleted posts with `deleted_at IS NULL`
