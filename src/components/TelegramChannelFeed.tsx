@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Card } from "@/components/ui/card";
-import { Loader2, ArrowUp, RefreshCw } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -676,11 +676,8 @@ export const TelegramChannelFeed = ({
 
           {/* Loading indicator - only show on desktop (vertical scroll), hide on mobile (horizontal carousel) */}
           {hasMore && isLoadingMore && (
-            <div className="hidden md:block py-8 text-center">
-              <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">Loading more...</span>
-              </div>
+            <div className="hidden md:flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           )}
         </div>
@@ -713,11 +710,8 @@ export const TelegramChannelFeed = ({
           ))}
 
           {hasMore && isLoadingMore && (
-            <div className="py-8 text-center">
-              <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">Loading more...</span>
-              </div>
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           )}
         </div>

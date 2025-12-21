@@ -589,6 +589,84 @@ app.post('/api/tg-sync', async (req, res) => {
   }
 });
 
+// Cleanup deleted posts from database
+app.post('/api/tg-cleanup', async (req, res) => {
+  if (!db) {
+    return res.status(503).json({ error: 'Database not available' });
+  }
+  
+  try {
+    const channel = req.query.channel || 'nextwife_ai';
+    const channelName = channel.replace('@', '').replace(/_/g, '');
+    
+    // Get all post IDs from database for this channel
+    const result = await pool.query(
+      `SELECT id FROM telegram_posts WHERE channel = $1 ORDER BY id::bigint DESC`,
+      [channelName]
+    );
+    
+    const dbIds = result.rows.map(r => r.id);
+    console.log(`🧹 Checking ${dbIds.length} posts for deletion...`);
+    
+    const deletedIds = [];
+    const batchSize = 20;
+    
+    // Check posts in batches by fetching the channel page
+    for (let i = 0; i < dbIds.length; i += batchSize) {
+      const batch = dbIds.slice(i, i + batchSize);
+      
+      for (const postId of batch) {
+        try {
+          // Check if post exists by fetching its direct URL
+          const postUrl = `https://t.me/${channelName}/${postId}?embed=1`;
+          const response = await fetch(postUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TelegramFeed/1.0)' }
+          });
+          
+          if (!response.ok) {
+            deletedIds.push(postId);
+            continue;
+          }
+          
+          const html = await response.text();
+          // Check for "Post not found" or similar indicators
+          if (html.includes('tgme_widget_message_error') || 
+              html.includes('Post not found') ||
+              html.includes('This message') && html.includes('deleted')) {
+            deletedIds.push(postId);
+          }
+        } catch (err) {
+          console.error(`Error checking post ${postId}:`, err.message);
+        }
+      }
+      
+      // Small delay between batches to avoid rate limiting
+      if (i + batchSize < dbIds.length) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+    
+    // Delete the posts that were found to be deleted
+    if (deletedIds.length > 0) {
+      await pool.query(
+        `DELETE FROM telegram_posts WHERE id = ANY($1)`,
+        [deletedIds]
+      );
+      console.log(`🗑️ Deleted ${deletedIds.length} posts: ${deletedIds.join(', ')}`);
+    }
+    
+    res.json({ 
+      success: true, 
+      checked: dbIds.length, 
+      deleted: deletedIds.length,
+      deletedIds 
+    });
+  } catch (error) {
+    console.error('Cleanup error:', error);
+    res.status(500).json({ error: 'Cleanup failed', message: error.message });
+  }
+});
+
 // Image proxy endpoint
 app.get('/api/tg-image-proxy', async (req, res) => {
   try {
