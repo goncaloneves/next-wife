@@ -50,10 +50,11 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
   }, [channel]);
 
   const availableHometowns = useMemo(() => {
+    const hometowns = filterOptions.hometowns || {};
     if (selectedRegion === "all") {
-      return Object.values(filterOptions.hometowns).flat().sort();
+      return Object.values(hometowns).flat().sort();
     }
-    return filterOptions.hometowns[selectedRegion] || [];
+    return hometowns[selectedRegion] || [];
   }, [selectedRegion, filterOptions.hometowns]);
 
   useEffect(() => {

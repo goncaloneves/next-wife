@@ -310,9 +310,15 @@ function parseChannelHTML(html, channelName) {
 }
 
 // ============== DATABASE SYNC ==============
+// Normalize channel name to consistent format (no @, no underscores)
+function normalizeChannel(channel) {
+  return channel.replace('@', '').replace(/_/g, '');
+}
+
 async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
   if (!db) return { synced: 0, skipped: 0 };
   
+  const channelName = normalizeChannel(channel);
   let synced = 0;
   let skipped = 0;
   
@@ -346,7 +352,7 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
           deleted_at = NULL
       `, [
         post.id,
-        channel,
+        channelName,
         post.text,
         post.date,
         post.link,
@@ -460,8 +466,9 @@ async function detectDeletedPosts(channel = 'nextwife_ai') {
   syncState.lastRun = now;
   
   try {
-    const channelName = channel.replace('@', '').replace(/_/g, '');
-    const telegramChannel = channel.replace(/_/g, '');
+    // Normalize channel name for both DB and Telegram (no @, no underscores)
+    const channelName = normalizeChannel(channel);
+    const telegramChannel = channelName;
     
     // Get the most recent SYNC_WINDOW posts from database (including deleted ones to check for resurrection)
     const dbResult = await pool.query(
