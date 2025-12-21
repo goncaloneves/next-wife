@@ -224,12 +224,12 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
   }
 
   return (
-    <div className="mb-6 space-y-4 relative" data-testid="feed-filters">
+    <div className="mb-3 space-y-3 relative" data-testid="feed-filters">
       {/* Quick filter chips - horizontal scroll */}
       <div className="relative">
         <div 
           ref={scrollRef}
-          className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide scroll-smooth"
+          className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {/* Filter toggle button - only shows "Filters" */}

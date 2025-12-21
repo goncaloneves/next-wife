@@ -237,7 +237,7 @@ const Index = () => {
         <section ref={feedContentRef} className="relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-4 text-center text-white">
                 Pick your Girlfriend 🌻
               </h2>
               <TelegramChannelFeed channelUsername="nextwifeai" layout="grid" feedSectionRef={feedContentRef} />
