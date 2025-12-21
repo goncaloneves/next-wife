@@ -50,8 +50,7 @@ function FilterSection({
   onSelect,
   showAll = false,
   maxVisible = 6,
-  emptyMessage,
-  fixedHeight = false
+  emptyMessage
 }: { 
   title: string;
   options: string[];
@@ -60,18 +59,13 @@ function FilterSection({
   showAll?: boolean;
   maxVisible?: number;
   emptyMessage?: string;
-  fixedHeight?: boolean;
 }) {
   const [expanded, setExpanded] = useState(showAll);
   const visibleOptions = expanded ? options : options.slice(0, maxVisible);
   const hasMore = options.length > maxVisible;
 
   return (
-    <div className={cn(
-      "space-y-3",
-      fixedHeight && !expanded && "min-h-[160px]",
-      !fixedHeight && "min-h-[120px]"
-    )}>
+    <div className="space-y-3">
       {title && <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">{title}</h3>}
       {options.length === 0 && emptyMessage ? (
         <p className="text-sm text-white/40 px-1">{emptyMessage}</p>
@@ -286,10 +280,10 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
         </div>
       )}
 
-      {/* Expanded filter sections - fixed height to prevent layout shift */}
+      {/* Expanded filter sections */}
       {showFilters && (
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 animate-in slide-in-from-top-2 duration-200">
-          <div className="p-5 min-h-[500px] md:min-h-[280px]">
+          <div className="p-5">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {/* Region */}
             <FilterSection
@@ -314,7 +308,7 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               options={filterOptions.languages}
               selected={selectedLanguage}
               onSelect={setSelectedLanguage}
-              maxVisible={8}
+              maxVisible={6}
             />
 
             {/* Occupation */}
@@ -325,15 +319,14 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
               onSelect={setSelectedOccupation}
             />
 
-            {/* City - with expand button, fixed height when collapsed */}
+            {/* City - max 6 visible like other sections */}
             <FilterSection
               title={selectedRegion !== "all" ? `Cities in ${selectedRegion}` : "City"}
               options={availableHometowns}
               selected={selectedHometown}
               onSelect={setSelectedHometown}
-              maxVisible={8}
+              maxVisible={6}
               emptyMessage="Select a region to see cities"
-              fixedHeight
             />
             </div>
           </div>
