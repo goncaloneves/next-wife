@@ -224,7 +224,7 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
   }
 
   return (
-    <div className="mb-6 space-y-4" data-testid="feed-filters">
+    <div className="mb-6 space-y-4 relative" data-testid="feed-filters">
       {/* Quick filter chips - horizontal scroll */}
       <div className="relative">
         <div 
@@ -280,11 +280,11 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
         </div>
       )}
 
-      {/* Expanded filter sections */}
+      {/* Expanded filter sections - absolute overlay to avoid layout shift */}
       {showFilters && (
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 animate-in slide-in-from-top-2 duration-200">
-          <div className="p-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+        <div className="absolute left-0 right-0 z-50 mx-4 bg-black/95 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200">
+          <div className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
             {/* Region */}
             <FilterSection
               title="Region"
@@ -330,7 +330,7 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
           </div>
 
           {/* Close button */}
-          <div className="flex justify-center py-4">
+          <div className="flex justify-center py-3 border-t border-white/10">
             <Button
               variant="ghost"
               size="sm"
@@ -343,6 +343,14 @@ export function FeedFilters({ channel, onFiltersChange }: FeedFiltersProps) {
             </Button>
           </div>
         </div>
+      )}
+
+      {/* Backdrop when filters are open */}
+      {showFilters && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40" 
+          onClick={() => setShowFilters(false)}
+        />
       )}
     </div>
   );
