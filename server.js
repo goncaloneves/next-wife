@@ -581,6 +581,48 @@ async function detectDeletedPosts(channel = 'nextwife_ai') {
   }
 }
 
+// ============== BACKGROUND SCHEDULER ==============
+// Runs deleted post detection automatically, independent of page visits
+const SCHEDULER_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+let schedulerRunning = false;
+
+async function runScheduledSync() {
+  if (!db || schedulerRunning) return;
+  
+  schedulerRunning = true;
+  console.log('⏰ Scheduled sync starting...');
+  
+  try {
+    // Reset throttle to allow sync regardless of last run
+    syncState.lastRun = 0;
+    
+    const result = await detectDeletedPosts('nextwifeai');
+    console.log(`⏰ Scheduled sync complete:`, result);
+  } catch (error) {
+    console.error('⏰ Scheduled sync error:', error.message);
+  } finally {
+    schedulerRunning = false;
+  }
+}
+
+// Start the background scheduler when server starts
+function startScheduler() {
+  if (!process.env.DATABASE_URL) {
+    console.log('⏰ Scheduler disabled (no database)');
+    return;
+  }
+  
+  console.log('⏰ Background sync scheduler started (every 30 minutes)');
+  
+  // Run immediately on startup (after a short delay for DB init)
+  setTimeout(() => {
+    runScheduledSync();
+  }, 10000);
+  
+  // Then run every 30 minutes
+  setInterval(runScheduledSync, SCHEDULER_INTERVAL_MS);
+}
+
 // ============== API ENDPOINTS ==============
 
 // All occupation categories in display order
@@ -970,6 +1012,9 @@ async function start() {
     if (dbConnected) {
       console.log('');
       setTimeout(() => backgroundSync('nextwifeai', 200), 2000); // Fetch up to 4000 posts
+      
+      // Start the background scheduler for deleted post detection
+      startScheduler();
     }
     console.log('');
   });

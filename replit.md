@@ -39,13 +39,14 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (December 21, 2025)
-13. **Automatic deleted post detection** - Background sync now detects and soft-deletes posts removed from Telegram:
+13. **Automatic deleted post detection** - Background scheduler detects and soft-deletes posts removed from Telegram:
     - Added `deleted_at` column to database for soft-delete functionality
     - All queries filter out deleted posts with `deleted_at IS NULL`
-    - Sync triggered on page load (throttled to 10 min intervals)
+    - **Background scheduler runs every 30 minutes** (independent of page visits)
     - Compares recent 200 posts in DB against live Telegram data
     - Posts that reappear are automatically "resurrected" (deleted_at cleared)
     - Normalized channel names (no @, no underscores) for consistent queries
+    - Note: The 200 post limit covers typical deletion patterns; older deleted posts will persist but are rare edge cases
 
 12. **Occupation categories** - Grouped 283 individual job titles into 12 categories for cleaner filtering:
     - Arts & Gallery (726), Design & Creative (541), Food & Hospitality (345)
