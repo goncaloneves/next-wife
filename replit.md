@@ -39,6 +39,13 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (December 21, 2025)
+15. **Tinder-style filter button placement** - Moved Filters button next to "Pick your Girlfriend" title:
+    - Filter button now appears on the right side of the title row (Tinder/Bumble pattern)
+    - Uses controlled state passed from Index.tsx to FeedFilters component
+    - Active filter count displayed as gradient badge on the button
+    - Filter panel overlays content as a modal with backdrop (no layout shift)
+    - Reduces vertical space between title and feed images
+
 14. **Instagram-style chip filters** - Redesigned filter UI from dropdowns to horizontal scrollable chips:
     - Chip components with gradient styling for selected state (orange-to-rose)
     - Expandable filter sections with "Show more/less" for categories with many options
