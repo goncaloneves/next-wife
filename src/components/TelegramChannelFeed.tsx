@@ -5,6 +5,7 @@ import { Loader2, ArrowUp, RefreshCw } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FeedFilters } from "./FeedFilters";
 
 interface ProfileData {
   name: string;
@@ -61,12 +62,14 @@ export const TelegramChannelFeed = ({
   const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
+  const [filters, setFilters] = useState<{ region?: string; ageBracket?: string; work?: string }>({});
   const listRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
   const topFingerprintRef = useRef<string>('');
   const postsRef = useRef<TelegramPost[]>([]);
   const nearTopRef = useRef(true);
+  const fetchInFlightRef = useRef(false);
 
   // Sync refs with state for stable access in callbacks
   useEffect(() => {
@@ -97,11 +100,22 @@ export const TelegramChannelFeed = ({
     return `${apiUrl}/api/tg-image-proxy?u=${encodeURIComponent(normalized)}`;
   }, [imageErrors]);
 
-  const fetchInitialPosts = async () => {
+  const fetchInitialPosts = useCallback(async () => {
+    // Prevent duplicate concurrent fetches
+    if (fetchInFlightRef.current) return;
+    fetchInFlightRef.current = true;
+    
     try {
       const apiUrl = import.meta.env.VITE_API_URL || '';
+      const filterParams = new URLSearchParams();
+      filterParams.set('channel', channelUsername);
+      filterParams.set('limit', '20');
+      if (filters.region && filters.region !== 'all') filterParams.set('region', filters.region);
+      if (filters.ageBracket && filters.ageBracket !== 'all') filterParams.set('ageBracket', filters.ageBracket);
+      if (filters.work && filters.work !== 'all') filterParams.set('work', filters.work);
+      
       const response = await fetch(
-        `${apiUrl}/api/tg-channel-feed?channel=${channelUsername}&limit=20`,
+        `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -134,8 +148,10 @@ export const TelegramChannelFeed = ({
       console.error("Error fetching Telegram posts:", err);
       setError("Unable to load channel posts");
       setLoading(false);
+    } finally {
+      fetchInFlightRef.current = false;
     }
-  };
+  }, [channelUsername, filters.region, filters.ageBracket, filters.work, fingerprint]);
 
   const fetchNextPage = useCallback(async () => {
     if (!hasMore || isLoadingMore || !nextCursor) return;
@@ -144,8 +160,16 @@ export const TelegramChannelFeed = ({
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || '';
+      const filterParams = new URLSearchParams();
+      filterParams.set('channel', channelUsername);
+      filterParams.set('limit', '20');
+      filterParams.set('before', nextCursor);
+      if (filters.region && filters.region !== 'all') filterParams.set('region', filters.region);
+      if (filters.ageBracket && filters.ageBracket !== 'all') filterParams.set('ageBracket', filters.ageBracket);
+      if (filters.work && filters.work !== 'all') filterParams.set('work', filters.work);
+      
       const response = await fetch(
-        `${apiUrl}/api/tg-channel-feed?channel=${channelUsername}&limit=20&before=${nextCursor}`,
+        `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -176,9 +200,16 @@ export const TelegramChannelFeed = ({
     } finally {
       setIsLoadingMore(false);
     }
-  }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts]);
+  }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts, filters]);
 
   const checkForNewPosts = useCallback(async () => {
+    // Skip checking for new posts when filters are active
+    // (filtered views don't need auto-refresh since user is browsing a subset)
+    const hasFilters = (filters.region && filters.region !== 'all') ||
+                       (filters.ageBracket && filters.ageBracket !== 'all') ||
+                       (filters.work && filters.work !== 'all');
+    if (hasFilters) return;
+    
     try {
       const apiUrl = import.meta.env.VITE_API_URL || '';
       const response = await fetch(
@@ -274,7 +305,7 @@ export const TelegramChannelFeed = ({
     } catch (err) {
       console.error("Error checking for new posts:", err);
     }
-  }, [channelUsername, fingerprint]);
+  }, [channelUsername, fingerprint, filters.region, filters.ageBracket, filters.work]);
 
   useEffect(() => {
     fetchInitialPosts();
@@ -300,6 +331,37 @@ export const TelegramChannelFeed = ({
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [channelUsername, refreshInterval, checkForNewPosts]);
+
+  // Refetch when filters change (skip initial mount)
+  const filtersInitialized = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  
+  useEffect(() => {
+    if (!filtersInitialized.current) {
+      filtersInitialized.current = true;
+      return;
+    }
+    
+    // Cancel any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Show loading state but keep existing posts visible
+    setLoading(true);
+    
+    // Reset cursor for new filter query
+    setNextCursor(null);
+    setHasMore(true);
+    
+    // Fetch with new filters - fetchInitialPosts will replace posts atomically
+    fetchInitialPosts();
+  }, [filters.region, filters.ageBracket, filters.work, fetchInitialPosts]);
+
+  // Handler for filter changes
+  const handleFiltersChange = useCallback((newFilters: { region?: string; ageBracket?: string; work?: string }) => {
+    setFilters(newFilters);
+  }, []);
 
   // Horizontal scroll handler for mobile carousel
   const handleHorizontalScroll = useCallback((e: Event) => {
@@ -467,6 +529,7 @@ export const TelegramChannelFeed = ({
         )}
 
         <div className="relative">
+        <FeedFilters channel={channelUsername} onFiltersChange={handleFiltersChange} />
         <div>
           {/* Mobile: Single card at a time (Tinder-style) | Desktop: Grid */}
           <div 
@@ -609,6 +672,7 @@ export const TelegramChannelFeed = ({
         document.body
       )}
 
+      <FeedFilters channel={channelUsername} onFiltersChange={handleFiltersChange} />
       <div ref={listRef} onScroll={handleScroll} className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg">
         <div className="space-y-4">
           {allPosts.map((post) => (

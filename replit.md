@@ -13,6 +13,8 @@ A Vite + React + TypeScript web application that displays posts from the @nextwi
 ## Key Features
 - Real-time Telegram channel feed display
 - Tinder-style profile badges on images (Name, Age, Nationality, Hometown, Work)
+- **Feed filtering by Region, Age bracket, and Work/Occupation**
+- PostgreSQL database for persistent storage and fast filtered queries
 - Image loading with retry mechanism (3 attempts with progressive timing)
 - Post filtering (hides service messages)
 - Automatic new post detection with refresh capability
@@ -36,7 +38,16 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - No Bali references in hero section or features
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
-## Recent Changes (November 6, 2025)
+## Recent Changes (December 21, 2025)
+11. **Feed filtering system** - Added dropdown filters for Region, Age bracket, and Work above the feed
+    - PostgreSQL database for persistent storage of girlfriend profiles
+    - Background sync service fetches posts from Telegram and stores with derived fields
+    - Nationality-to-region mapping (Asian, European, Latin American, North American, African, Middle Eastern, Oceanian)
+    - Age brackets: 21-25, 26-30, 30+
+    - Work options populated from actual post data
+    - Filters apply to both mobile carousel and desktop grid views
+
+## Changes (November 6, 2025)
 10. **Tinder-style profile badges and mobile carousel** - Added overlay badges on images showing Name, Age, Nationality, Hometown, and Work (parsed from post text)
     - **Mobile/Tablet**: Horizontal scroll carousel showing one large card at a time (90vw width, snap-scroll like Tinder)
       - Horizontal infinite scroll - loads more posts when swiping near the end
@@ -69,20 +80,37 @@ Posts from Telegram channel include:
 - `botLink`: Extracted URL from posts containing @nextwifebot mentions
 
 ## Backend API
-Express server (`server.js`) provides two endpoints:
+Express server (`server.js`) provides the following endpoints:
 
 ### GET /api/tg-channel-feed
-- Scrapes Telegram public channel page (https://t.me/s/nextwife_ai)
-- Filters out service messages (joins, leaves, etc.)
-- Extracts bot links from HTML before stripping tags
-- Returns JSON with channel info and posts array
+- Queries PostgreSQL database when filters are applied, falls back to live Telegram scraping
+- Supports filtering via `?region=`, `?ageBracket=`, `?work=` parameters
 - Supports pagination via `?before=` and `?limit=` parameters
+- Returns JSON with channel info and posts array
+
+### GET /api/tg-channel-filters
+- Returns available filter options from the database
+- Response: `{ regions: [...], ageBrackets: [...], workOptions: [...] }`
+
+### POST /api/tg-sync
+- Triggers manual background sync of Telegram posts to database
+- Parameters: `?channel=`, `?pages=` (number of pages to sync)
 
 ### GET /api/tg-image-proxy
 - Proxies Telegram CDN images to avoid CORS issues
 - Validates allowed hosts (telesco.pe, telegram-cdn.org)
 - Returns image with proper caching headers
 - Parameter: `?u=<encoded_image_url>`
+
+## Database Schema
+PostgreSQL table `telegram_posts` stores girlfriend profiles:
+- `id`: Telegram post ID (primary key)
+- `channel`: Channel name
+- `text`, `date`, `link`, `media`, `avatar`, `bot_link`: Post content
+- `name`, `age`, `nationality`, `hometown`, `work`: Profile fields
+- `region`: Derived from nationality (Asian, European, Latin American, etc.)
+- `age_bracket`: Derived from age (21-25, 26-30, 30+)
+- Indexes on channel+date, region, age_bracket, work for fast filtering
 
 ## User Preferences
 - Keep all 43 unused shadcn/ui components for future use

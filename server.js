@@ -3,6 +3,9 @@ import cors from 'cors';
 import fetch from 'node-fetch';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import pg from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { eq, desc, and, inArray, sql } from 'drizzle-orm';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -12,7 +15,85 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 app.use(express.json());
 
-// Parse HTML to extract channel info and posts
+// ============== DATABASE SETUP ==============
+const { Pool } = pg;
+let db = null;
+let pool = null;
+
+// Nationality to Region mapping
+const nationalityToRegion = {
+  "Japanese": "Asian", "Korean": "Asian", "Chinese": "Asian", "Thai": "Asian",
+  "Vietnamese": "Asian", "Filipino": "Asian", "Filipina": "Asian", "Indonesian": "Asian",
+  "Malaysian": "Asian", "Singaporean": "Asian", "Indian": "Asian", "Pakistani": "Asian",
+  "Bangladeshi": "Asian", "Sri Lankan": "Asian", "Nepali": "Asian", "Taiwanese": "Asian",
+  "Hong Konger": "Asian", "Mongolian": "Asian", "Cambodian": "Asian", "Laotian": "Asian",
+  "Myanmar": "Asian", "Burmese": "Asian",
+  "British": "European", "English": "European", "Scottish": "European", "Welsh": "European",
+  "Irish": "European", "French": "European", "German": "European", "Italian": "European",
+  "Spanish": "European", "Portuguese": "European", "Dutch": "European", "Belgian": "European",
+  "Swiss": "European", "Austrian": "European", "Swedish": "European", "Norwegian": "European",
+  "Danish": "European", "Finnish": "European", "Polish": "European", "Czech": "European",
+  "Hungarian": "European", "Romanian": "European", "Bulgarian": "European", "Greek": "European",
+  "Croatian": "European", "Serbian": "European", "Slovenian": "European", "Slovak": "European",
+  "Ukrainian": "European", "Russian": "European", "Belarusian": "European",
+  "Lithuanian": "European", "Latvian": "European", "Estonian": "European", "Icelandic": "European",
+  "Albanian": "European", "Macedonian": "European", "Montenegrin": "European", "Bosnian": "European",
+  "Brazilian": "Latin American", "Mexican": "Latin American", "Argentine": "Latin American",
+  "Argentinian": "Latin American", "Colombian": "Latin American", "Peruvian": "Latin American",
+  "Venezuelan": "Latin American", "Chilean": "Latin American", "Ecuadorian": "Latin American",
+  "Bolivian": "Latin American", "Paraguayan": "Latin American", "Uruguayan": "Latin American",
+  "Cuban": "Latin American", "Dominican": "Latin American", "Puerto Rican": "Latin American",
+  "Costa Rican": "Latin American", "Panamanian": "Latin American", "Guatemalan": "Latin American",
+  "Honduran": "Latin American", "Salvadoran": "Latin American", "Nicaraguan": "Latin American",
+  "Jamaican": "Latin American", "Haitian": "Latin American", "Trinidadian": "Latin American",
+  "American": "North American", "Canadian": "North American",
+  "Nigerian": "African", "South African": "African", "Egyptian": "African", "Kenyan": "African",
+  "Ethiopian": "African", "Ghanaian": "African", "Moroccan": "African", "Algerian": "African",
+  "Tunisian": "African", "Senegalese": "African", "Cameroonian": "African", "Tanzanian": "African",
+  "Turkish": "Middle Eastern", "Iranian": "Middle Eastern", "Iraqi": "Middle Eastern",
+  "Saudi": "Middle Eastern", "Saudi Arabian": "Middle Eastern", "Emirati": "Middle Eastern",
+  "Qatari": "Middle Eastern", "Kuwaiti": "Middle Eastern", "Lebanese": "Middle Eastern",
+  "Syrian": "Middle Eastern", "Israeli": "Middle Eastern", "Palestinian": "Middle Eastern",
+  "Afghan": "Middle Eastern", "Jordanian": "Middle Eastern",
+  "Australian": "Oceanian", "New Zealander": "Oceanian", "Kiwi": "Oceanian", "Fijian": "Oceanian",
+};
+
+function getRegion(nationality) {
+  if (!nationality) return null;
+  if (nationalityToRegion[nationality]) return nationalityToRegion[nationality];
+  const normalized = nationality.trim();
+  for (const [key, region] of Object.entries(nationalityToRegion)) {
+    if (key.toLowerCase() === normalized.toLowerCase()) return region;
+  }
+  return "Other";
+}
+
+function getAgeBracket(age) {
+  if (!age || age < 21) return null;
+  if (age >= 21 && age <= 25) return "21-25";
+  if (age >= 26 && age <= 30) return "26-30";
+  return "30+";
+}
+
+// Initialize database connection
+async function initDatabase() {
+  if (!process.env.DATABASE_URL) {
+    console.log('⚠️  DATABASE_URL not set - running without database');
+    return false;
+  }
+  
+  try {
+    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    db = drizzle(pool);
+    console.log('✅ Database connected');
+    return true;
+  } catch (error) {
+    console.error('❌ Database connection failed:', error.message);
+    return false;
+  }
+}
+
+// ============== TELEGRAM SCRAPING ==============
 function parseChannelHTML(html, channelName) {
   const channelInfo = {
     name: channelName,
@@ -21,61 +102,38 @@ function parseChannelHTML(html, channelName) {
     subscribers: null,
   };
 
-  // Extract channel avatar - try multiple patterns
   let avatarUrl = null;
-  
   const avatarMatch1 = html.match(/<img\s+class="tgme_page_photo_image"\s+src="([^"]+)"/);
   if (avatarMatch1) avatarUrl = avatarMatch1[1];
-  
   if (!avatarUrl) {
     const avatarMatch2 = html.match(/<img[^>]*src="([^"]+)"[^>]*class="tgme_page_photo_image"/);
     if (avatarMatch2) avatarUrl = avatarMatch2[1];
   }
-  
-  if (!avatarUrl) {
-    const avatarMatch3 = html.match(/<div class="tgme_page_photo"[^>]*>[\s\S]*?<img[^>]+src="([^"]+)"/);
-    if (avatarMatch3) avatarUrl = avatarMatch3[1];
-  }
-  
   if (!avatarUrl) {
     const ogImageMatch = html.match(/<meta\s*property="og:image"\s+content="([^"]+)"/i);
     if (ogImageMatch) avatarUrl = ogImageMatch[1];
   }
-  
-  if (avatarUrl) {
-    channelInfo.avatar = avatarUrl;
-  }
+  if (avatarUrl) channelInfo.avatar = avatarUrl;
 
-  // Extract channel title
   const titleMatch = html.match(/<div class="tgme_page_title"[^>]*><span[^>]*>([^<]+)<\/span>/);
-  if (titleMatch) {
-    channelInfo.name = titleMatch[1].trim();
-  }
+  if (titleMatch) channelInfo.name = titleMatch[1].trim();
 
-  // Extract channel description
   const descMatch = html.match(/<div class="tgme_page_description[^"]*"[^>]*>([\s\S]*?)<\/div>/);
   if (descMatch) {
     channelInfo.description = descMatch[1]
       .replace(/<[^>]+>/g, '')
-      .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
       .replace(/&nbsp;/g, ' ')
       .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num)))
       .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
       .trim();
   }
 
-  // Extract subscriber count
   const subsMatch = html.match(/<div class="tgme_page_extra">([^<]+subscribers?)<\/div>/i);
-  if (subsMatch) {
-    channelInfo.subscribers = subsMatch[1].trim();
-  }
+  if (subsMatch) channelInfo.subscribers = subsMatch[1].trim();
   
   const posts = [];
-  
-  // Extract post blocks
   const postRegex = /<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/g;
   let match;
 
@@ -83,48 +141,31 @@ function parseChannelHTML(html, channelName) {
     const postId = match[1];
     const postContent = match[2];
 
-    // Extract bot link BEFORE text extraction (from raw postContent, not from entity-encoded text div)
     let botLink = null;
-    
-    // Look for links containing "nextwifebot" in the entire post content
-    // Note: Link text can contain nested HTML tags like <i class="emoji">
     const linkRegex = /<a\s+([^>]*?)href="([^"]*?)"([^>]*?)>([\s\S]*?)<\/a>/gi;
     let linkMatch;
     while ((linkMatch = linkRegex.exec(postContent)) !== null) {
       const href = linkMatch[2];
-      const linkText = linkMatch[4]; // Can contain HTML
-      
-      // Check if link href or text contains "nextwifebot"
+      const linkText = linkMatch[4];
       if (href.toLowerCase().includes('nextwifebot') || linkText.toLowerCase().includes('nextwifebot')) {
-        // Decode HTML entities in the URL to preserve query parameters
-        botLink = href
-          .replace(/&amp;/g, '&')
-          .replace(/&quot;/g, '"')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
+        botLink = href.replace(/&amp;/g, '&').replace(/&quot;/g, '"')
+          .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
           .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num)))
           .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
-        
         break;
       }
     }
 
-    // Extract text content
     const textMatch = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(postContent);
-    
     const text = textMatch ? textMatch[1]
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<[^>]*>/g, '')
-      .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
+      .replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '')
+      .replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
       .replace(/&nbsp;/g, ' ')
       .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num)))
       .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
       .trim() : '';
 
-    // Parse profile data from text (Tinder-style badge)
     let profileData = null;
     if (text) {
       const nameMatch = text.match(/Name:\s*([^\n]+)/i);
@@ -144,7 +185,6 @@ function parseChannelHTML(html, channelName) {
       }
     }
 
-    // Filter out service messages
     const serviceMessagePatterns = [
       /^(Channel|Chat|Group) (was )?created$/i,
       /^(Channel|Chat|Group) (name|title) was changed to/i,
@@ -158,40 +198,21 @@ function parseChannelHTML(html, channelName) {
       /(Channel|Group) was boosted/i,
     ];
 
-    const isServiceMessage = serviceMessagePatterns.some(pattern => pattern.test(text));
-    
-    if (isServiceMessage) {
-      continue;
-    }
+    if (serviceMessagePatterns.some(pattern => pattern.test(text))) continue;
 
-    // Extract date
     const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(postContent);
     const date = dateMatch ? dateMatch[1] : new Date().toISOString();
 
-    // Extract media/image
     const imageMatch = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
     let media = imageMatch ? imageMatch[1] : null;
-    
-    if (media && media.startsWith('//')) {
-      media = 'https:' + media;
-    }
+    if (media && media.startsWith('//')) media = 'https:' + media;
 
-    // Extract per-message avatar
     let avatar = null;
-    const avatarMatch1 = /<[^>]*class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*style="[^"]*background-image:\s*url\((?:'|")?([^'")]+)(?:'|")?\)[^"]*"[^>]*>/i.exec(postContent);
-    if (avatarMatch1) {
-      avatar = avatarMatch1[1];
-    }
-
-    if (avatar && avatar.startsWith('//')) {
-      avatar = 'https:' + avatar;
-    }
-    if (avatar && /telegram\.org\/img\/emoji/.test(avatar)) {
-      avatar = null;
-    }
-    if (!avatar) {
-      avatar = channelInfo.avatar || null;
-    }
+    const avatarMatch = /<[^>]*class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*style="[^"]*background-image:\s*url\((?:'|")?([^'")]+)(?:'|")?\)[^"]*"[^>]*>/i.exec(postContent);
+    if (avatarMatch) avatar = avatarMatch[1];
+    if (avatar && avatar.startsWith('//')) avatar = 'https:' + avatar;
+    if (avatar && /telegram\.org\/img\/emoji/.test(avatar)) avatar = null;
+    if (!avatar) avatar = channelInfo.avatar || null;
 
     if (text || media) {
       posts.push({
@@ -210,17 +231,233 @@ function parseChannelHTML(html, channelName) {
   return { channelInfo, posts };
 }
 
-// API endpoint for Telegram channel feed
+// ============== DATABASE SYNC ==============
+async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
+  if (!db) return { synced: 0, skipped: 0 };
+  
+  let synced = 0;
+  let skipped = 0;
+  
+  for (const post of posts) {
+    try {
+      const region = post.profileData ? getRegion(post.profileData.nationality) : null;
+      const ageBracket = post.profileData ? getAgeBracket(post.profileData.age) : null;
+      
+      await pool.query(`
+        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW())
+        ON CONFLICT (id) DO UPDATE SET
+          text = EXCLUDED.text,
+          date = EXCLUDED.date,
+          link = EXCLUDED.link,
+          media = EXCLUDED.media,
+          avatar = EXCLUDED.avatar,
+          bot_link = EXCLUDED.bot_link,
+          name = EXCLUDED.name,
+          age = EXCLUDED.age,
+          nationality = EXCLUDED.nationality,
+          hometown = EXCLUDED.hometown,
+          work = EXCLUDED.work,
+          region = EXCLUDED.region,
+          age_bracket = EXCLUDED.age_bracket,
+          updated_at = NOW()
+      `, [
+        post.id,
+        channel,
+        post.text,
+        post.date,
+        post.link,
+        post.media,
+        post.avatar,
+        post.botLink,
+        post.profileData?.name || null,
+        post.profileData?.age || null,
+        post.profileData?.nationality || null,
+        post.profileData?.hometown || null,
+        post.profileData?.work || null,
+        region,
+        ageBracket
+      ]);
+      synced++;
+    } catch (error) {
+      console.error(`Failed to sync post ${post.id}:`, error.message);
+      skipped++;
+    }
+  }
+  
+  return { synced, skipped };
+}
+
+// Background sync - fetch multiple pages and store in DB
+async function backgroundSync(channel = 'nextwife_ai', maxPages = 10) {
+  if (!db) {
+    console.log('⚠️  Database not available for sync');
+    return;
+  }
+  
+  // Normalize channel name for Telegram URL (remove underscores)
+  const telegramChannel = channel.replace(/_/g, '');
+  
+  console.log(`🔄 Starting background sync for @${channel} (fetching from ${telegramChannel})...`);
+  let totalSynced = 0;
+  let cursor = null;
+  
+  for (let page = 0; page < maxPages; page++) {
+    try {
+      const ts = Date.now();
+      const pageUrl = cursor 
+        ? `https://t.me/s/${telegramChannel}?before=${cursor}&_=${ts}`
+        : `https://t.me/s/${telegramChannel}?_=${ts}`;
+      
+      const response = await fetch(pageUrl);
+      if (!response.ok) break;
+      
+      const html = await response.text();
+      const result = parseChannelHTML(html, telegramChannel);
+      
+      if (result.posts.length === 0) break;
+      
+      const { synced } = await syncPostsToDatabase(result.posts, channel);
+      totalSynced += synced;
+      
+      const oldestId = Math.min(...result.posts.map(p => parseInt(p.id)).filter(id => !isNaN(id)));
+      cursor = String(oldestId);
+      
+      console.log(`  Page ${page + 1}: synced ${synced} posts`);
+      
+      // Small delay between pages
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error(`  Page ${page + 1} failed:`, error.message);
+      break;
+    }
+  }
+  
+  console.log(`✅ Background sync complete: ${totalSynced} posts synced`);
+  return totalSynced;
+}
+
+// ============== API ENDPOINTS ==============
+
+// Get filter options from database
+app.get('/api/tg-channel-filters', async (req, res) => {
+  try {
+    if (!db) {
+      return res.json({
+        regions: ["Asian", "European", "Latin American", "North American", "African", "Middle Eastern", "Oceanian", "Other"],
+        ageBrackets: ["21-25", "26-30", "30+"],
+        workOptions: []
+      });
+    }
+    
+    const channel = req.query.channel || 'nextwife_ai';
+    const channelName = channel.replace('@', '').replace(/_/g, '');
+    
+    // Get distinct regions, age brackets, and work options from database
+    const [regionsResult, workResult] = await Promise.all([
+      pool.query(`SELECT DISTINCT region FROM telegram_posts WHERE channel = $1 AND region IS NOT NULL ORDER BY region`, [channelName]),
+      pool.query(`SELECT DISTINCT work FROM telegram_posts WHERE channel = $1 AND work IS NOT NULL ORDER BY work`, [channelName])
+    ]);
+    
+    const regions = regionsResult.rows.map(r => r.region);
+    const workOptions = workResult.rows.map(r => r.work);
+    
+    res.json({
+      regions: regions.length > 0 ? regions : ["Asian", "European", "Latin American", "North American", "African", "Middle Eastern", "Oceanian", "Other"],
+      ageBrackets: ["21-25", "26-30", "30+"],
+      workOptions
+    });
+  } catch (error) {
+    console.error('Error fetching filters:', error);
+    res.status(500).json({ error: 'Failed to fetch filters' });
+  }
+});
+
+// Get feed from database with filters
 app.get('/api/tg-channel-feed', async (req, res) => {
   try {
     const channel = req.query.channel || 'nextwife_ai';
     const before = req.query.before;
     const limit = parseInt(req.query.limit || '20');
-    const channelName = channel.replace('@', '');
-
+    // Normalize channel name: remove @ and underscores for Telegram URL compatibility
+    const channelName = channel.replace('@', '').replace(/_/g, '');
+    
+    // Filter parameters
+    const regions = req.query.region ? (Array.isArray(req.query.region) ? req.query.region : [req.query.region]) : null;
+    const ageBrackets = req.query.ageBracket ? (Array.isArray(req.query.ageBracket) ? req.query.ageBracket : [req.query.ageBracket]) : null;
+    const works = req.query.work ? (Array.isArray(req.query.work) ? req.query.work : [req.query.work]) : null;
+    
+    const hasFilters = regions || ageBrackets || works;
+    
+    // If database is available and we have posts, use it
+    if (db && hasFilters) {
+      let query = `
+        SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
+               name, age, nationality, hometown, work, region, age_bracket
+        FROM telegram_posts 
+        WHERE channel = $1 AND media IS NOT NULL
+      `;
+      const params = [channelName];
+      let paramIndex = 2;
+      
+      if (regions && regions.length > 0) {
+        query += ` AND region = ANY($${paramIndex})`;
+        params.push(regions);
+        paramIndex++;
+      }
+      
+      if (ageBrackets && ageBrackets.length > 0) {
+        query += ` AND age_bracket = ANY($${paramIndex})`;
+        params.push(ageBrackets);
+        paramIndex++;
+      }
+      
+      if (works && works.length > 0) {
+        query += ` AND work = ANY($${paramIndex})`;
+        params.push(works);
+        paramIndex++;
+      }
+      
+      if (before) {
+        query += ` AND id::bigint < $${paramIndex}::bigint`;
+        params.push(before);
+        paramIndex++;
+      }
+      
+      query += ` ORDER BY id::bigint DESC LIMIT $${paramIndex}`;
+      params.push(limit);
+      
+      const result = await pool.query(query, params);
+      const posts = result.rows.map(row => ({
+        id: row.id,
+        text: row.text,
+        date: row.date,
+        link: row.link,
+        media: row.media,
+        avatar: row.avatar,
+        botLink: row.botLink,
+        profileData: row.name ? {
+          name: row.name,
+          age: row.age,
+          nationality: row.nationality,
+          hometown: row.hometown,
+          work: row.work
+        } : null
+      }));
+      
+      const lastPost = posts[posts.length - 1];
+      const nextCursor = lastPost ? lastPost.id : null;
+      
+      return res.json({
+        posts,
+        nextBefore: nextCursor,
+        hasMore: posts.length === limit
+      });
+    }
+    
+    // Fallback to live Telegram scraping (no filters)
     console.log(`Fetching page from channel: ${channelName} (before: ${before || 'first'}, limit: ${limit})`);
 
-    // Fetch page with cache-busting
     const ts = Date.now();
     const pageUrl = before 
       ? `https://t.me/s/${channelName}?before=${before}&_=${ts}`
@@ -234,14 +471,17 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     const html = await response.text();
     const result = parseChannelHTML(html, channelName);
     
-    // Sort by date descending
     const posts = result.posts.sort((a, b) => {
       const dateA = new Date(a.date).getTime();
       const dateB = new Date(b.date).getTime();
       return dateB - dateA;
     });
 
-    // Extract oldest ID as next cursor
+    // Sync to database in background
+    if (db) {
+      syncPostsToDatabase(posts, channelName).catch(err => console.error('Background sync error:', err));
+    }
+
     const oldestId = posts.length > 0 
       ? Math.min(...posts.map(p => parseInt(p.id)).filter(id => !isNaN(id)))
       : null;
@@ -268,16 +508,27 @@ app.get('/api/tg-channel-feed', async (req, res) => {
   }
 });
 
+// Trigger manual sync
+app.post('/api/tg-sync', async (req, res) => {
+  try {
+    const channel = req.query.channel || 'nextwife_ai';
+    const pages = parseInt(req.query.pages || '10');
+    const synced = await backgroundSync(channel, pages);
+    res.json({ success: true, synced });
+  } catch (error) {
+    console.error('Sync error:', error);
+    res.status(500).json({ error: 'Sync failed', message: error.message });
+  }
+});
+
 // Image proxy endpoint
 app.get('/api/tg-image-proxy', async (req, res) => {
   try {
     const imageUrl = req.query.u;
-
     if (!imageUrl) {
       return res.status(400).json({ error: 'Missing image URL parameter "u"' });
     }
 
-    // Validate URL is from allowed hosts
     const allowedHosts = ['telesco.pe', 'telegram-cdn.org'];
     const url = new URL(imageUrl);
     const hostname = url.hostname.toLowerCase();
@@ -290,21 +541,12 @@ app.get('/api/tg-image-proxy', async (req, res) => {
       return res.status(403).json({ error: 'Host not allowed' });
     }
 
-    console.log(`Proxying image: ${imageUrl}`);
-
-    // Fetch the image
     const imageResponse = await fetch(imageUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; TelegramImageProxy/1.0)',
-      },
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TelegramImageProxy/1.0)' },
     });
 
     if (!imageResponse.ok) {
-      console.error(`Failed to fetch image: ${imageResponse.status}`);
-      return res.status(502).json({ 
-        error: 'Failed to fetch image',
-        status: imageResponse.status 
-      });
+      return res.status(502).json({ error: 'Failed to fetch image', status: imageResponse.status });
     }
 
     const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
@@ -318,35 +560,43 @@ app.get('/api/tg-image-proxy', async (req, res) => {
 
   } catch (error) {
     console.error('Error proxying image:', error);
-    res.status(500).json({ 
-      error: 'Failed to proxy image',
-      message: error.message 
-    });
+    res.status(500).json({ error: 'Failed to proxy image', message: error.message });
   }
 });
 
-// Serve static files from dist directory in production
+// Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, 'dist');
   console.log(`📦 Serving static files from: ${distPath}`);
-  
-  // Serve static files
   app.use(express.static(distPath));
-  
-  // Handle client-side routing - send index.html for all non-API routes
-  // Using regex pattern for maximum compatibility across Express versions
   app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 }
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n🚀 Backend server running on http://0.0.0.0:${PORT}`);
-  console.log(`📡 API endpoints:`);
-  console.log(`   - GET /api/tg-channel-feed?channel=nextwife_ai`);
-  console.log(`   - GET /api/tg-image-proxy?u=<image_url>`);
-  if (process.env.NODE_ENV === 'production') {
-    console.log(`🌐 Serving frontend from dist/`);
-  }
-  console.log('');
-});
+// Start server
+async function start() {
+  const dbConnected = await initDatabase();
+  
+  app.listen(PORT, '0.0.0.0', async () => {
+    console.log(`\n🚀 Backend server running on http://0.0.0.0:${PORT}`);
+    console.log(`📡 API endpoints:`);
+    console.log(`   - GET /api/tg-channel-feed?channel=nextwife_ai`);
+    console.log(`   - GET /api/tg-channel-filters`);
+    console.log(`   - POST /api/tg-sync`);
+    console.log(`   - GET /api/tg-image-proxy?u=<image_url>`);
+    if (process.env.NODE_ENV === 'production') {
+      console.log(`🌐 Serving frontend from dist/`);
+    }
+    console.log(`💾 Database: ${dbConnected ? 'Connected' : 'Not available'}`);
+    
+    // Run initial sync on startup if database is available
+    if (dbConnected) {
+      console.log('');
+      setTimeout(() => backgroundSync('nextwife_ai', 15), 2000);
+    }
+    console.log('');
+  });
+}
+
+start();
