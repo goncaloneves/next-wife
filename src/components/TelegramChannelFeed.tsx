@@ -693,7 +693,7 @@ export const TelegramChannelFeed = ({
                   />
                   
                   {/* Hot badge - shows 🔥 emoji for popular posts */}
-                  {post.isHot && sortBy === 'hot' && (
+                  {post.isHot && (
                     <div 
                       className="absolute top-3 right-3 z-20 pointer-events-none"
                       data-testid={`badge-hot-${post.id}`}
