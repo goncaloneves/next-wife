@@ -777,18 +777,34 @@ app.get('/api/tg-channel-feed', async (req, res) => {
       
       const result = await pool.query(query, params);
       
-      // Determine which posts are "hot" (have clicks, or fallback to first 8 newest if none have clicks)
-      // This is calculated regardless of sort mode so badges show in both Recent and Hot views
-      const postsWithClicks = result.rows.filter(row => (row.click_count || 0) > 0);
-      let hotPostIds;
-      if (postsWithClicks.length > 0) {
-        // Mark all posts with clicks as hot
-        hotPostIds = new Set(postsWithClicks.map(row => row.id));
-      } else {
-        // Fallback: if no posts have clicks, mark the first 8 (newest by date) as hot
-        const sortedByDate = [...result.rows].sort((a, b) => new Date(b.date) - new Date(a.date));
-        hotPostIds = new Set(sortedByDate.slice(0, 8).map(row => row.id));
+      // Determine which posts are "hot" - exactly 8 posts max
+      // Priority: posts with clicks (sorted by click_count DESC), then fill remaining slots with most recent
+      const postsWithClicks = result.rows
+        .filter(row => (row.click_count || 0) > 0)
+        .sort((a, b) => (b.click_count || 0) - (a.click_count || 0));
+      
+      const hotIds = [];
+      
+      // First, add posts with clicks (up to 8)
+      for (const row of postsWithClicks) {
+        if (hotIds.length >= 8) break;
+        hotIds.push(row.id);
       }
+      
+      // If we have fewer than 8 clicked posts, fill with most recent posts
+      if (hotIds.length < 8) {
+        const clickedIdSet = new Set(hotIds);
+        const recentPosts = [...result.rows]
+          .filter(row => !clickedIdSet.has(row.id))
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        for (const row of recentPosts) {
+          if (hotIds.length >= 8) break;
+          hotIds.push(row.id);
+        }
+      }
+      
+      const hotPostIds = new Set(hotIds);
       
       const posts = result.rows.map(row => ({
         id: row.id,
