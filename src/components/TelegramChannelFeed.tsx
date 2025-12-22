@@ -703,18 +703,16 @@ export const TelegramChannelFeed = ({
                     </div>
                   </div>
                   
-                  {/* Hot badge - shows 🔥 emoji for popular posts */}
-                  {post.isHot && (
-                    <div 
-                      className="absolute top-3 right-3 z-20 pointer-events-none"
-                      data-testid={`badge-hot-${post.id}`}
-                    >
-                      <div className="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
-                        <span>🔥</span>
-                        <span className="text-xs">Hot</span>
-                      </div>
+                  {/* Hot badge - always visible */}
+                  <div 
+                    className="absolute top-3 right-3 z-20 pointer-events-none"
+                    data-testid={`badge-hot-${post.id}`}
+                  >
+                    <div className="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
+                      <span>🔥</span>
+                      <span className="text-xs">Hot</span>
                     </div>
-                  )}
+                  </div>
                   
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
