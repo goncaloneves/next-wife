@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
-import { FilterButton, HotButton } from "@/components/FeedFilters";
+import { FilterButton, SortButtons } from "@/components/FeedFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
@@ -246,9 +246,9 @@ const Index = () => {
                   Pick your Girlfriend 🌻
                 </h2>
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden sm:flex gap-2">
-                  <HotButton 
-                    isActive={sortBy === 'hot'} 
-                    onClick={() => setSortBy(sortBy === 'hot' ? 'recent' : 'hot')} 
+                  <SortButtons 
+                    sortBy={sortBy} 
+                    onSortChange={setSortBy} 
                   />
                   <FilterButton 
                     isOpen={showFilters} 
@@ -257,9 +257,9 @@ const Index = () => {
                   />
                 </div>
                 <div className="flex justify-center gap-2 mt-4 sm:hidden">
-                  <HotButton 
-                    isActive={sortBy === 'hot'} 
-                    onClick={() => setSortBy(sortBy === 'hot' ? 'recent' : 'hot')} 
+                  <SortButtons 
+                    sortBy={sortBy} 
+                    onSortChange={setSortBy} 
                   />
                   <FilterButton 
                     isOpen={showFilters} 

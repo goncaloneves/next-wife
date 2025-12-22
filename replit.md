@@ -47,7 +47,8 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
     - `isHot` flag marks posts with clicks as hot; fallback marks first 8 newest if no clicks exist
     - 🔥 Hot badge overlay in top-right corner of hot girlfriend images (gradient orange-rose pill)
     - Hot badge shows by default in both Recent and Hot sorting modes
-    - Hot button appears next to Filters button with gradient styling when active
+    - Sort toggle with "✨ Recent" and "🔥 Hot" buttons (Recent is default selected)
+    - Segmented control style with subtle background, Hot gets gradient when active
     - Auto-refresh disabled in Hot mode (popularity sorting doesn't benefit from new post detection)
     - Click tracking fires asynchronously without blocking user interaction
 

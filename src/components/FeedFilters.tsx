@@ -365,27 +365,39 @@ export function FilterButton({ isOpen, onClick, activeCount }: FilterButtonProps
   );
 }
 
-// Hot button component for sorting by popularity
-interface HotButtonProps {
-  isActive: boolean;
-  onClick: () => void;
+// Sort buttons component for Recent/Hot toggle
+interface SortButtonsProps {
+  sortBy: 'recent' | 'hot';
+  onSortChange: (sort: 'recent' | 'hot') => void;
 }
 
-export function HotButton({ isActive, onClick }: HotButtonProps) {
+export function SortButtons({ sortBy, onSortChange }: SortButtonsProps) {
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
-        "border-2",
-        isActive 
-          ? "border-orange-500 bg-gradient-to-r from-orange-500 to-rose-500 text-white" 
-          : "border-dashed border-white/30 text-white/70 hover:border-white/50 hover:text-white"
-      )}
-      data-testid="toggle-hot"
-    >
-      🔥
-      Hot
-    </button>
+    <div className="flex items-center gap-1 p-1 rounded-full bg-white/5 border border-white/10">
+      <button
+        onClick={() => onSortChange('recent')}
+        className={cn(
+          "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200",
+          sortBy === 'recent'
+            ? "bg-white/20 text-white"
+            : "text-white/50 hover:text-white/80"
+        )}
+        data-testid="toggle-recent"
+      >
+        ✨ Recent
+      </button>
+      <button
+        onClick={() => onSortChange('hot')}
+        className={cn(
+          "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200",
+          sortBy === 'hot'
+            ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white"
+            : "text-white/50 hover:text-white/80"
+        )}
+        data-testid="toggle-hot"
+      >
+        🔥 Hot
+      </button>
+    </div>
   );
 }
