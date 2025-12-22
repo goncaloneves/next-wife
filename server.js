@@ -715,8 +715,9 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     const occupationCategories = req.query.occupationCategory ? (Array.isArray(req.query.occupationCategory) ? req.query.occupationCategory : [req.query.occupationCategory]) : null;
     const languages = req.query.language ? (Array.isArray(req.query.language) ? req.query.language : [req.query.language]) : null;
     const hometowns = req.query.hometown ? (Array.isArray(req.query.hometown) ? req.query.hometown : [req.query.hometown]) : null;
+    const sortBy = req.query.sort || 'recent'; // 'recent' or 'hot'
     
-    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns;
+    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns || sortBy === 'hot';
     
     // If database is available and we have posts, use it
     if (db && hasFilters) {
@@ -765,7 +766,12 @@ app.get('/api/tg-channel-feed', async (req, res) => {
         paramIndex++;
       }
       
-      query += ` ORDER BY id::bigint DESC LIMIT $${paramIndex}`;
+      // Sort by popularity (click_count) or by recency (id)
+      if (sortBy === 'hot') {
+        query += ` ORDER BY COALESCE(click_count, 0) DESC, id::bigint DESC LIMIT $${paramIndex}`;
+      } else {
+        query += ` ORDER BY id::bigint DESC LIMIT $${paramIndex}`;
+      }
       params.push(limit);
       
       const result = await pool.query(query, params);
@@ -846,6 +852,30 @@ app.get('/api/tg-channel-feed', async (req, res) => {
       message: error.message,
       posts: []
     });
+  }
+});
+
+// Track click on a post
+app.post('/api/tg-post-click', async (req, res) => {
+  if (!db) {
+    return res.status(503).json({ error: 'Database not available' });
+  }
+  
+  try {
+    const { postId } = req.body;
+    if (!postId) {
+      return res.status(400).json({ error: 'postId is required' });
+    }
+    
+    await pool.query(
+      `UPDATE telegram_posts SET click_count = COALESCE(click_count, 0) + 1 WHERE id = $1`,
+      [postId]
+    );
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error tracking click:', error);
+    res.status(500).json({ error: 'Failed to track click' });
   }
 });
 
