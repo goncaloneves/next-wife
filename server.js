@@ -717,10 +717,10 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     const hometowns = req.query.hometown ? (Array.isArray(req.query.hometown) ? req.query.hometown : [req.query.hometown]) : null;
     const sortBy = req.query.sort || 'recent'; // 'recent' or 'hot'
     
-    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns || sortBy === 'hot';
+    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns;
     
-    // If database is available and we have posts, use it
-    if (db && hasFilters) {
+    // Always use database when available (for isHot calculation and better performance)
+    if (db) {
       let query = `
         SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
                name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count
