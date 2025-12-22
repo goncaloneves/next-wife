@@ -585,7 +585,7 @@ async function detectDeletedPosts(channel = 'nextwife_ai') {
 
 // ============== BACKGROUND SCHEDULER ==============
 // Runs deleted post detection automatically, independent of page visits
-const SCHEDULER_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+const SCHEDULER_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 let schedulerRunning = false;
 
 async function runScheduledSync() {
@@ -614,7 +614,7 @@ function startScheduler() {
     return;
   }
   
-  console.log('⏰ Background sync scheduler started (every 30 minutes)');
+  console.log('⏰ Background sync scheduler started (every 10 minutes)');
   
   // Run immediately on startup (after a short delay for DB init)
   setTimeout(() => {

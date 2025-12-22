@@ -85,7 +85,7 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 13. **Automatic deleted post detection** - Background scheduler detects and soft-deletes posts removed from Telegram:
     - Added `deleted_at` column to database for soft-delete functionality
     - All queries filter out deleted posts with `deleted_at IS NULL`
-    - **Background scheduler runs every 30 minutes** (independent of page visits)
+    - **Background scheduler runs every 10 minutes** (independent of page visits)
     - Compares recent 200 posts in DB against live Telegram data
     - Posts that reappear are automatically "resurrected" (deleted_at cleared)
     - Normalized channel names (no @, no underscores) for consistent queries
