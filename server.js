@@ -775,36 +775,33 @@ app.get('/api/tg-channel-feed', async (req, res) => {
       }
       params.push(limit);
       
+      // First, get the GLOBAL top 8 hot IDs from entire dataset (ignoring filters)
+      // This ensures Hot badge is consistent regardless of which filters are applied
+      const globalHotQuery = `
+        WITH clicked_posts AS (
+          SELECT id FROM telegram_posts 
+          WHERE channel = $1 AND deleted_at IS NULL AND COALESCE(click_count, 0) > 0
+          ORDER BY click_count DESC
+          LIMIT 8
+        ),
+        recent_posts AS (
+          SELECT id FROM telegram_posts
+          WHERE channel = $1 AND deleted_at IS NULL 
+            AND id NOT IN (SELECT id FROM clicked_posts)
+          ORDER BY date DESC
+          LIMIT 8
+        ),
+        combined AS (
+          SELECT id, 0 as priority FROM clicked_posts
+          UNION ALL
+          SELECT id, 1 as priority FROM recent_posts
+        )
+        SELECT id FROM combined ORDER BY priority, id LIMIT 8
+      `;
+      const globalHotResult = await pool.query(globalHotQuery, [channelName]);
+      const hotPostIds = new Set(globalHotResult.rows.map(r => r.id));
+      
       const result = await pool.query(query, params);
-      
-      // Determine which posts are "hot" - exactly 8 posts max
-      // Priority: posts with clicks (sorted by click_count DESC), then fill remaining slots with most recent
-      const postsWithClicks = result.rows
-        .filter(row => (row.click_count || 0) > 0)
-        .sort((a, b) => (b.click_count || 0) - (a.click_count || 0));
-      
-      const hotIds = [];
-      
-      // First, add posts with clicks (up to 8)
-      for (const row of postsWithClicks) {
-        if (hotIds.length >= 8) break;
-        hotIds.push(row.id);
-      }
-      
-      // If we have fewer than 8 clicked posts, fill with most recent posts
-      if (hotIds.length < 8) {
-        const clickedIdSet = new Set(hotIds);
-        const recentPosts = [...result.rows]
-          .filter(row => !clickedIdSet.has(row.id))
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        for (const row of recentPosts) {
-          if (hotIds.length >= 8) break;
-          hotIds.push(row.id);
-        }
-      }
-      
-      const hotPostIds = new Set(hotIds);
       
       const posts = result.rows.map(row => ({
         id: row.id,
