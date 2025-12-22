@@ -620,7 +620,7 @@ export const TelegramChannelFeed = ({
                   key={`${post.id}-${refreshKey}`}
                   data-post-id={post.id}
                   className="
-                    aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in bg-muted
+                    aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in
                     flex-shrink-0 w-[90vw] md:w-auto
                     snap-center md:snap-align-none
                   "
