@@ -42,7 +42,10 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 18. **Hot sorting by popularity** - Added "Hot" button with 🔥 emoji to sort girlfriends by popularity:
     - Click tracking: Each profile click increments `click_count` in database
     - POST `/api/tg-post-click?id=<postId>` endpoint for async click tracking
-    - GET `/api/tg-channel-feed?sort=hot` returns profiles sorted by clicks (descending)
+    - GET `/api/tg-channel-feed?sort=hot` returns profiles sorted by clicks first, then zero-click by newest
+    - SQL ORDER BY: `CASE WHEN click_count > 0 THEN 0 ELSE 1 END, click_count DESC, date DESC`
+    - `isHot` flag marks posts with clicks as hot; fallback marks first 8 newest if no clicks exist
+    - 🔥 Hot badge overlay in top-right corner of hot girlfriend images (gradient orange-rose pill)
     - Hot button appears next to Filters button with gradient styling when active
     - Auto-refresh disabled in Hot mode (popularity sorting doesn't benefit from new post detection)
     - Click tracking fires asynchronously without blocking user interaction

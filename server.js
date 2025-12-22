@@ -723,7 +723,7 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     if (db && hasFilters) {
       let query = `
         SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
-               name, age, nationality, hometown, work, region, age_bracket, occupation_category, language
+               name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count
         FROM telegram_posts 
         WHERE channel = $1 AND media IS NOT NULL AND deleted_at IS NULL
       `;
@@ -768,13 +768,28 @@ app.get('/api/tg-channel-feed', async (req, res) => {
       
       // Sort by popularity (click_count) or by recency (id)
       if (sortBy === 'hot') {
-        query += ` ORDER BY COALESCE(click_count, 0) DESC, id::bigint DESC LIMIT $${paramIndex}`;
+        // Hot sorting: posts with clicks first (sorted by click_count DESC), then zero-click posts by newest
+        query += ` ORDER BY CASE WHEN COALESCE(click_count, 0) > 0 THEN 0 ELSE 1 END, COALESCE(click_count, 0) DESC, date DESC LIMIT $${paramIndex}`;
       } else {
         query += ` ORDER BY id::bigint DESC LIMIT $${paramIndex}`;
       }
       params.push(limit);
       
       const result = await pool.query(query, params);
+      
+      // For hot sorting, determine which posts are "hot" (have clicks, or fallback to first 8 if none have clicks)
+      let hotPostIds = new Set();
+      if (sortBy === 'hot') {
+        const postsWithClicks = result.rows.filter(row => (row.click_count || 0) > 0);
+        if (postsWithClicks.length > 0) {
+          // Mark all posts with clicks as hot
+          hotPostIds = new Set(postsWithClicks.map(row => row.id));
+        } else {
+          // Fallback: if no posts have clicks, mark the first 8 (newest) as hot
+          hotPostIds = new Set(result.rows.slice(0, 8).map(row => row.id));
+        }
+      }
+      
       const posts = result.rows.map(row => ({
         id: row.id,
         text: row.text,
@@ -789,7 +804,8 @@ app.get('/api/tg-channel-feed', async (req, res) => {
           nationality: row.nationality,
           hometown: row.hometown,
           work: row.work
-        } : null
+        } : null,
+        isHot: hotPostIds.has(row.id)
       }));
       
       const lastPost = posts[posts.length - 1];
