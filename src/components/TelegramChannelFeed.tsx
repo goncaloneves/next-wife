@@ -42,6 +42,7 @@ interface TelegramChannelFeedProps {
   showFilters?: boolean;
   onShowFiltersChange?: (show: boolean) => void;
   onActiveFilterCountChange?: (count: number) => void;
+  sortBy?: 'recent' | 'hot';
 }
 
 export const TelegramChannelFeed = ({
@@ -53,6 +54,7 @@ export const TelegramChannelFeed = ({
   showFilters,
   onShowFiltersChange,
   onActiveFilterCountChange,
+  sortBy = 'recent',
 }: TelegramChannelFeedProps) => {
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
@@ -91,6 +93,20 @@ export const TelegramChannelFeed = ({
   const fingerprint = useCallback((posts: TelegramPost[]) =>
     JSON.stringify(posts.slice(0, 5).map(p => [p.id, p.media, p.text, p.date])), []);
 
+  // Track click on a post
+  const trackClick = useCallback(async (postId: string) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      await fetch(`${apiUrl}/api/tg-post-click`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId }),
+      });
+    } catch (err) {
+      console.error('Failed to track click:', err);
+    }
+  }, []);
+
   // Helper to build image src with retry logic
   const buildSrc = useCallback((url: string, postId: string) => {
     // Normalize protocol-relative URLs
@@ -117,6 +133,7 @@ export const TelegramChannelFeed = ({
       const filterParams = new URLSearchParams();
       filterParams.set('channel', channelUsername);
       filterParams.set('limit', '20');
+      if (sortBy) filterParams.set('sort', sortBy);
       if (filters.regions?.length) filters.regions.forEach(r => filterParams.append('region', r));
       if (filters.ageBrackets?.length) filters.ageBrackets.forEach(a => filterParams.append('ageBracket', a));
       if (filters.occupationCategories?.length) filters.occupationCategories.forEach(o => filterParams.append('occupationCategory', o));
@@ -166,7 +183,7 @@ export const TelegramChannelFeed = ({
     } finally {
       fetchInFlightRef.current = false;
     }
-  }, [channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, fingerprint]);
+  }, [channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, sortBy, fingerprint]);
 
   const fetchNextPage = useCallback(async () => {
     if (!hasMore || isLoadingMore || !nextCursor) return;
@@ -179,6 +196,7 @@ export const TelegramChannelFeed = ({
       filterParams.set('channel', channelUsername);
       filterParams.set('limit', '20');
       filterParams.set('before', nextCursor);
+      if (sortBy) filterParams.set('sort', sortBy);
       if (filters.regions?.length) filters.regions.forEach(r => filterParams.append('region', r));
       if (filters.ageBrackets?.length) filters.ageBrackets.forEach(a => filterParams.append('ageBracket', a));
       if (filters.occupationCategories?.length) filters.occupationCategories.forEach(o => filterParams.append('occupationCategory', o));
@@ -217,9 +235,13 @@ export const TelegramChannelFeed = ({
     } finally {
       setIsLoadingMore(false);
     }
-  }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts, filters]);
+  }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts, filters, sortBy]);
 
   const checkForNewPosts = useCallback(async () => {
+    // Skip checking for new posts when Hot mode is active
+    // (popularity-based sorting doesn't benefit from new post detection)
+    if (sortBy === 'hot') return;
+    
     // Skip checking for new posts when filters are active
     // (filtered views don't need auto-refresh since user is browsing a subset)
     const hasFilters = (filters.regions?.length) ||
@@ -324,7 +346,7 @@ export const TelegramChannelFeed = ({
     } catch (err) {
       console.error("Error checking for new posts:", err);
     }
-  }, [channelUsername, fingerprint, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns]);
+  }, [channelUsername, fingerprint, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, sortBy]);
 
   useEffect(() => {
     fetchInitialPosts();
@@ -378,7 +400,7 @@ export const TelegramChannelFeed = ({
     
     // Fetch with new filters - fetchInitialPosts will replace posts atomically
     fetchInitialPosts();
-  }, [filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, fetchInitialPosts]);
+  }, [filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, sortBy, fetchInitialPosts]);
 
   // Handler for filter changes
   const handleFiltersChange = useCallback((newFilters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[] }) => {
@@ -624,7 +646,10 @@ export const TelegramChannelFeed = ({
                     flex-shrink-0 w-[90vw] md:w-auto
                     snap-center md:snap-align-none
                   "
-                  onClick={() => window.open(clickLink, "_blank", "noopener,noreferrer")}
+                  onClick={() => {
+                    trackClick(post.id);
+                    window.open(clickLink, "_blank", "noopener,noreferrer");
+                  }}
                   style={{ 
                     animationDelay: `${(index % 20) * 0.05}s`,
                     animationFillMode: "forwards"

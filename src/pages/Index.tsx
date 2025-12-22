@@ -5,13 +5,14 @@ import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
-import { FilterButton } from "@/components/FeedFilters";
+import { FilterButton, HotButton } from "@/components/FeedFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilterCount, setActiveFilterCount] = useState(0);
+  const [sortBy, setSortBy] = useState<'recent' | 'hot'>('recent');
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
@@ -244,14 +245,22 @@ const Index = () => {
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white">
                   Pick your Girlfriend 🌻
                 </h2>
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden sm:block">
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden sm:flex gap-2">
+                  <HotButton 
+                    isActive={sortBy === 'hot'} 
+                    onClick={() => setSortBy(sortBy === 'hot' ? 'recent' : 'hot')} 
+                  />
                   <FilterButton 
                     isOpen={showFilters} 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
                   />
                 </div>
-                <div className="flex justify-center mt-4 sm:hidden">
+                <div className="flex justify-center gap-2 mt-4 sm:hidden">
+                  <HotButton 
+                    isActive={sortBy === 'hot'} 
+                    onClick={() => setSortBy(sortBy === 'hot' ? 'recent' : 'hot')} 
+                  />
                   <FilterButton 
                     isOpen={showFilters} 
                     onClick={() => setShowFilters(!showFilters)} 
@@ -266,6 +275,7 @@ const Index = () => {
                 showFilters={showFilters}
                 onShowFiltersChange={setShowFilters}
                 onActiveFilterCountChange={setActiveFilterCount}
+                sortBy={sortBy}
               />
             </div>
           </div>

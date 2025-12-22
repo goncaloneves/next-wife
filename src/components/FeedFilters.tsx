@@ -364,3 +364,28 @@ export function FilterButton({ isOpen, onClick, activeCount }: FilterButtonProps
     </button>
   );
 }
+
+// Hot button component for sorting by popularity
+interface HotButtonProps {
+  isActive: boolean;
+  onClick: () => void;
+}
+
+export function HotButton({ isActive, onClick }: HotButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
+        "border-2",
+        isActive 
+          ? "border-orange-500 bg-gradient-to-r from-orange-500 to-rose-500 text-white" 
+          : "border-dashed border-white/30 text-white/70 hover:border-white/50 hover:text-white"
+      )}
+      data-testid="toggle-hot"
+    >
+      🔥
+      Hot
+    </button>
+  );
+}
