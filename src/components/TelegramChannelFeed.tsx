@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Card } from "@/components/ui/card";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, BadgeCheck } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters } from "./FeedFilters";
+import { formatDistanceToNow } from "date-fns";
 
 interface ProfileData {
   name: string;
@@ -692,6 +693,16 @@ export const TelegramChannelFeed = ({
                     }}
                   />
                   
+                  {/* Date badge - shows relative time in top-left */}
+                  <div 
+                    className="absolute top-3 left-3 z-20 pointer-events-none"
+                    data-testid={`badge-date-${post.id}`}
+                  >
+                    <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg">
+                      {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
+                    </div>
+                  </div>
+                  
                   {/* Hot badge - shows 🔥 emoji for popular posts */}
                   {post.isHot && (
                     <div 
@@ -713,13 +724,15 @@ export const TelegramChannelFeed = ({
                         animationFillMode: "forwards"
                       }}>
                       <div className="text-white">
-                        <div className="flex items-baseline gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-xl md:text-2xl font-bold drop-shadow-lg">
                             {post.profileData.name}
                           </h3>
                           <span className="text-lg md:text-xl font-semibold opacity-90">
                             {post.profileData.age}
                           </span>
+                          {/* Verified badge like Tinder */}
+                          <BadgeCheck className="w-5 h-5 md:w-6 md:h-6 text-blue-400 fill-blue-400 drop-shadow-lg" />
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="space-y-0.5 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
