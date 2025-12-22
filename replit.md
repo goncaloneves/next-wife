@@ -38,7 +38,16 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - No Bali references in hero section or features
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
-## Recent Changes (December 21, 2025)
+## Recent Changes (December 22, 2025)
+18. **Hot sorting by popularity** - Added "Hot" button with 🔥 emoji to sort girlfriends by popularity:
+    - Click tracking: Each profile click increments `click_count` in database
+    - POST `/api/tg-post-click?id=<postId>` endpoint for async click tracking
+    - GET `/api/tg-channel-feed?sort=hot` returns profiles sorted by clicks (descending)
+    - Hot button appears next to Filters button with gradient styling when active
+    - Auto-refresh disabled in Hot mode (popularity sorting doesn't benefit from new post detection)
+    - Click tracking fires asynchronously without blocking user interaction
+
+## Changes (December 21, 2025)
 17. **Fixed nationality mappings** - Added missing nationalities to region and language mappings:
     - Cape Verdean: now mapped to African region and Portuguese language
     - Balinese: now mapped to Asian region and Indonesian language
