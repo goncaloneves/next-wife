@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Card } from "@/components/ui/card";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, BadgeCheck } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -731,12 +731,8 @@ export const TelegramChannelFeed = ({
                           <span className="text-lg md:text-xl font-semibold opacity-90">
                             {post.profileData.age}
                           </span>
-                          {/* Verified badge like Tinder - solid blue circle with white checkmark */}
-                          <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#0099FF] flex items-center justify-center shadow-lg flex-shrink-0">
-                            <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                          </div>
+                          {/* Verified badge like Tinder */}
+                          <BadgeCheck className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="space-y-0.5 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
