@@ -777,26 +777,27 @@ app.get('/api/tg-channel-feed', async (req, res) => {
       
       // First, get the GLOBAL top 8 hot IDs from entire dataset (ignoring filters)
       // This ensures Hot badge is consistent regardless of which filters are applied
+      // Uses row_number to preserve ordering from each CTE
       const globalHotQuery = `
         WITH clicked_posts AS (
-          SELECT id FROM telegram_posts 
+          SELECT id, ROW_NUMBER() OVER (ORDER BY click_count DESC) as rn
+          FROM telegram_posts 
           WHERE channel = $1 AND deleted_at IS NULL AND COALESCE(click_count, 0) > 0
-          ORDER BY click_count DESC
           LIMIT 8
         ),
         recent_posts AS (
-          SELECT id FROM telegram_posts
+          SELECT id, ROW_NUMBER() OVER (ORDER BY date DESC) as rn
+          FROM telegram_posts
           WHERE channel = $1 AND deleted_at IS NULL 
             AND id NOT IN (SELECT id FROM clicked_posts)
-          ORDER BY date DESC
           LIMIT 8
         ),
         combined AS (
-          SELECT id, 0 as priority FROM clicked_posts
+          SELECT id, 0 as priority, rn FROM clicked_posts
           UNION ALL
-          SELECT id, 1 as priority FROM recent_posts
+          SELECT id, 1 as priority, rn FROM recent_posts
         )
-        SELECT id FROM combined ORDER BY priority, id LIMIT 8
+        SELECT id FROM combined ORDER BY priority, rn LIMIT 8
       `;
       const globalHotResult = await pool.query(globalHotQuery, [channelName]);
       const hotPostIds = new Set(globalHotResult.rows.map(r => r.id));
