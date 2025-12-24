@@ -446,6 +446,76 @@ async function backgroundSync(channel = 'nextwife_ai', maxPages = 10) {
   return totalSynced;
 }
 
+// ============== QUICK SYNC (NEW POSTS ONLY) ==============
+// Fetches only new posts from Telegram until it finds one already in DB
+// Called on every page load for instant updates
+async function syncNewPosts(channel = 'nextwife_ai') {
+  if (!db) return { synced: 0 };
+  
+  const channelName = normalizeChannel(channel);
+  const telegramChannel = channelName;
+  
+  let totalSynced = 0;
+  let cursor = null;
+  const maxPages = 5; // Safety limit
+  
+  for (let page = 0; page < maxPages; page++) {
+    try {
+      const ts = Date.now();
+      const pageUrl = cursor 
+        ? `https://t.me/s/${telegramChannel}?before=${cursor}&_=${ts}`
+        : `https://t.me/s/${telegramChannel}?_=${ts}`;
+      
+      const response = await fetch(pageUrl);
+      if (!response.ok) break;
+      
+      const html = await response.text();
+      const result = parseChannelHTML(html, telegramChannel);
+      
+      if (result.posts.length === 0) break;
+      
+      // Check which posts already exist in DB
+      const postIds = result.posts.map(p => p.id);
+      const existingResult = await pool.query(
+        `SELECT id FROM telegram_posts WHERE id = ANY($1) AND channel = $2`,
+        [postIds, channelName]
+      );
+      const existingIds = new Set(existingResult.rows.map(r => r.id));
+      
+      // Filter to only new posts
+      const newPosts = result.posts.filter(p => !existingIds.has(p.id));
+      
+      if (newPosts.length > 0) {
+        const { synced } = await syncPostsToDatabase(newPosts, channel);
+        totalSynced += synced;
+        if (synced > 0) {
+          console.log(`⚡ Quick sync: ${synced} new posts from page ${page + 1}`);
+        }
+      }
+      
+      // If we found any existing posts, we've caught up - stop syncing
+      if (existingIds.size > 0) {
+        break;
+      }
+      
+      // Continue to next page if all posts were new
+      if (result.nextCursor) {
+        cursor = result.nextCursor;
+      } else {
+        break;
+      }
+      
+      // Small delay between pages
+      await new Promise(resolve => setTimeout(resolve, 300));
+    } catch (error) {
+      console.error(`Quick sync page ${page + 1} failed:`, error.message);
+      break;
+    }
+  }
+  
+  return { synced: totalSynced };
+}
+
 // ============== DELETED POST DETECTION ==============
 // Throttled service to detect and soft-delete posts that were removed from Telegram
 const syncState = {
@@ -704,9 +774,10 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     // Normalize channel name: remove @ and underscores for Telegram URL compatibility
     const channelName = channel.replace('@', '').replace(/_/g, '');
     
-    // Trigger background deleted post detection (fire and forget, throttled)
+    // Trigger quick sync for new posts on every page load (fire and forget)
+    // This fetches only new posts from Telegram until it finds one already in DB
     if (db && !before) {
-      detectDeletedPosts(channel).catch(err => console.error('Delete detection error:', err));
+      syncNewPosts(channel).catch(err => console.error('Quick sync error:', err));
     }
     
     // Filter parameters
