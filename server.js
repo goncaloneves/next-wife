@@ -248,8 +248,10 @@ function parseChannelHTML(html, channelName) {
       const workMatch = text.match(/Work:\s*([^\n]+)/i);
 
       if (nameMatch && ageMatch && nationalityMatch && hometownMatch && workMatch) {
+        // Strip trailing numbers in parentheses like "(1)", "(2)", "(3)" from names
+        const cleanName = nameMatch[1].trim().replace(/\s*\(\d+\)\s*$/, '');
         profileData = {
-          name: nameMatch[1].trim(),
+          name: cleanName,
           age: parseInt(ageMatch[1]),
           nationality: nationalityMatch[1].trim(),
           hometown: hometownMatch[1].trim(),
