@@ -182,11 +182,11 @@ const Index = () => {
           {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4 text-center">
             <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-              Create your girlfriend on Telegram
+              Create your wife on Telegram
             </p>
 
             <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
-              Meet the girlfriend you create and embark on a romantic journey, sharing unique stories from around the globe.
+              Meet the wife you create and embark on a romantic journey, sharing unique stories from around the globe.
             </p>
 
             <Button
