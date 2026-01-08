@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+function parseUrlArrayParam(value: string | null): string[] {
+  if (!value) return [];
+  return value.split(',').map(v => decodeURIComponent(v.trim())).filter(Boolean);
+}
 
 // Hook to get responsive maxVisible based on screen width
 // Ensures exactly 3 rows of chips at each breakpoint
@@ -141,6 +147,8 @@ export function FeedFilters({
   onShowFiltersChange,
   hideButton = false
 }: FeedFiltersProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     regions: [],
     ageBrackets: [],
@@ -148,11 +156,22 @@ export function FeedFilters({
     languages: [],
     hometowns: {},
   });
-  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
-  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>([]);
-  const [selectedOccupations, setSelectedOccupations] = useState<string[]>([]);
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-  const [selectedHometowns, setSelectedHometowns] = useState<string[]>([]);
+  
+  const [selectedRegions, setSelectedRegions] = useState<string[]>(() => 
+    parseUrlArrayParam(searchParams.get('regions'))
+  );
+  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>(() => 
+    parseUrlArrayParam(searchParams.get('ages'))
+  );
+  const [selectedOccupations, setSelectedOccupations] = useState<string[]>(() => 
+    parseUrlArrayParam(searchParams.get('jobs'))
+  );
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(() => 
+    parseUrlArrayParam(searchParams.get('langs'))
+  );
+  const [selectedHometowns, setSelectedHometowns] = useState<string[]>(() => 
+    parseUrlArrayParam(searchParams.get('cities'))
+  );
   
   const toggleSelection = (current: string[], value: string): string[] => {
     return current.includes(value) 
@@ -217,6 +236,28 @@ export function FeedFilters({
       notifyFiltersChange();
     }
   }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, loading, notifyFiltersChange]);
+
+  useEffect(() => {
+    if (loading) return;
+    
+    const newParams = new URLSearchParams(searchParams);
+    
+    const updateParam = (key: string, values: string[]) => {
+      if (values.length > 0) {
+        newParams.set(key, values.map(v => encodeURIComponent(v)).join(','));
+      } else {
+        newParams.delete(key);
+      }
+    };
+    
+    updateParam('regions', selectedRegions);
+    updateParam('ages', selectedAgeBrackets);
+    updateParam('jobs', selectedOccupations);
+    updateParam('langs', selectedLanguages);
+    updateParam('cities', selectedHometowns);
+    
+    setSearchParams(newParams, { replace: true });
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, loading, searchParams, setSearchParams]);
 
   const activeFilterCount = useMemo(() => {
     return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length;

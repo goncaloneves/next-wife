@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
@@ -9,10 +9,25 @@ import { FilterButton, SortButtons } from "@/components/FeedFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilterCount, setActiveFilterCount] = useState(0);
-  const [sortBy, setSortBy] = useState<'recent' | 'hot'>('recent');
+  const [sortBy, setSortByState] = useState<'recent' | 'hot'>(() => {
+    const sort = searchParams.get('sort');
+    return sort === 'hot' ? 'hot' : 'recent';
+  });
+  
+  const setSortBy = (sort: 'recent' | 'hot') => {
+    setSortByState(sort);
+    const newParams = new URLSearchParams(searchParams);
+    if (sort === 'hot') {
+      newParams.set('sort', 'hot');
+    } else {
+      newParams.delete('sort');
+    }
+    setSearchParams(newParams, { replace: true });
+  };
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
