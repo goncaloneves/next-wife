@@ -259,7 +259,7 @@ function parseChannelHTML(html, channelName) {
           hometown: hometownMatch[1].trim(),
           work: workMatch[1].trim(),
           personality: personalityMatch ? personalityMatch[1].trim() : null,
-          relationship: relationshipMatch ? relationshipMatch[1].trim() : null
+          relationship: relationshipMatch ? relationshipMatch[1].trim() : 'Girlfriend'
         };
       }
     }
