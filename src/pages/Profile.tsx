@@ -232,7 +232,7 @@ const Profile = () => {
 
   if (loading && isFirstLoad.current) {
     return (
-      <div className="bg-black flex items-center justify-center" style={{ height: '100svh' }}>
+      <div className="bg-black flex items-center justify-center" style={{ minHeight: '100svh' }}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500" />
       </div>
     );
@@ -240,7 +240,7 @@ const Profile = () => {
 
   if (!post?.profileData) {
     return (
-      <div className="bg-black flex flex-col items-center justify-center" style={{ height: '100svh' }}>
+      <div className="bg-black flex flex-col items-center justify-center" style={{ minHeight: '100svh' }}>
         <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
         <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
           Back to Home
@@ -254,7 +254,7 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="flex flex-col bg-black overflow-y-auto overflow-x-hidden" style={{ height: '100svh' }} onClick={goBack}>
+    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }} onClick={goBack}>
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
