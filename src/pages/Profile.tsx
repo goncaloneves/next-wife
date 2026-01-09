@@ -219,9 +219,28 @@ const Profile = () => {
 
   const handleShare = async () => {
     const url = window.location.href;
+    const title = `Meet ${post?.profileData?.name} on Next Wife`;
+    const text = `Check out ${post?.profileData?.name}, ${post?.profileData?.age} from ${post?.profileData?.hometown}`;
+    
     try {
       if (navigator.share) {
-        await navigator.share({ title: `Meet ${post?.profileData?.name} on Next Wife`, url });
+        const shareData: ShareData = { title, text, url };
+        
+        if (navigator.canShare && post?.media) {
+          try {
+            const response = await fetch('/favicon-192x192.png');
+            const blob = await response.blob();
+            const file = new File([blob], 'nextwife.png', { type: 'image/png' });
+            const dataWithFile = { ...shareData, files: [file] };
+            
+            if (navigator.canShare(dataWithFile)) {
+              await navigator.share(dataWithFile);
+              return;
+            }
+          } catch {}
+        }
+        
+        await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(url);
       }
