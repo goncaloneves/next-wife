@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, index, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, index, jsonb, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -27,6 +27,10 @@ export const telegramPosts = pgTable("telegram_posts", {
   occupationCategory: text("occupation_category"),
   language: text("language"),
   about: text("about"), // Brief explanation of interests
+  
+  // Media flags for filtering
+  hasVideo: boolean("has_video").default(false),
+  hasMultipleMedia: boolean("has_multiple_media").default(false),
   
   // Timestamps
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
