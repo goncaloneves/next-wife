@@ -89,6 +89,14 @@ export const TelegramChannelFeed = ({
   const fetchInFlightRef = useRef(false);
   const isFilterChangeRef = useRef(false);
   const hasInitializedRef = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Sync refs with state for stable access in callbacks
   useEffect(() => {
@@ -705,18 +713,88 @@ export const TelegramChannelFeed = ({
         {/* Posts grid - show whenever we have posts, even while loading new ones */}
         {postsWithMedia.length > 0 && (
         <div>
-          {/* Mobile: Single card at a time (Tinder-style) | Desktop: Grid */}
+          {/* Mobile: Start Swiping CTA with first profile preview */}
+          {isMobile && postsWithMedia[0] && (
+            <div className="flex flex-col items-center gap-6 py-4">
+              <div 
+                className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer"
+                style={{
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3)',
+                }}
+                onClick={() => {
+                  const firstPost = postsWithMedia[0];
+                  trackClick(firstPost.id);
+                  sessionStorage.setItem('feedCache', JSON.stringify({
+                    posts: allPosts,
+                    channelInfo,
+                    nextCursor,
+                    hasMore,
+                    filters,
+                    sortBy,
+                    refreshKey,
+                    imageLoadStates
+                  }));
+                  navigate(`/profile/${firstPost.id}`);
+                }}
+              >
+                <img
+                  src={buildSrc(postsWithMedia[0].media!, postsWithMedia[0].id)}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+                {postsWithMedia[0].profileData && (
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-2xl font-bold text-white drop-shadow-lg">
+                        {postsWithMedia[0].profileData.name}
+                      </h3>
+                      <span className="text-xl font-semibold text-white/90">
+                        {postsWithMedia[0].profileData.age}
+                      </span>
+                      <BadgeCheck className="w-5 h-5 text-[#0099FF]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                    </div>
+                    <p className="text-sm text-white/80">
+                      {postsWithMedia[0].profileData.nationality} • {postsWithMedia[0].profileData.hometown}
+                    </p>
+                  </div>
+                )}
+              </div>
+              <Button
+                size="lg"
+                className="text-lg px-10 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95"
+                style={{
+                  background: "var(--gradient-sunset)",
+                  boxShadow: "var(--shadow-warm)",
+                }}
+                onClick={() => {
+                  const firstPost = postsWithMedia[0];
+                  trackClick(firstPost.id);
+                  sessionStorage.setItem('feedCache', JSON.stringify({
+                    posts: allPosts,
+                    channelInfo,
+                    nextCursor,
+                    hasMore,
+                    filters,
+                    sortBy,
+                    refreshKey,
+                    imageLoadStates
+                  }));
+                  navigate(`/profile/${firstPost.id}`);
+                }}
+                data-testid="button-start-swiping"
+              >
+                Start Swiping 💕
+              </Button>
+              <p className="text-white/50 text-sm">{postsWithMedia.length} profiles to explore</p>
+            </div>
+          )}
+
+          {/* Desktop: Grid */}
+          {!isMobile && (
           <div 
             ref={gridRef}
-            className="
-              flex md:grid
-              overflow-x-auto md:overflow-x-visible
-              snap-x snap-mandatory md:snap-none
-              gap-0.5
-              md:grid-cols-4
-              scrollbar-hide
-              -mx-4 px-4 md:mx-0 md:px-0
-            ">
+            className="grid grid-cols-4 gap-0.5"
+          >
             {postsWithMedia.map((post, index) => {
               // Skip rendering if image failed too many times
               if (hiddenIds.has(post.id)) {
@@ -875,10 +953,11 @@ export const TelegramChannelFeed = ({
               );
             })}
           </div>
+          )}
 
-          {/* Loading indicator - only show on desktop (vertical scroll), hide on mobile (horizontal carousel) */}
-          {hasMore && isLoadingMore && (
-            <div className="hidden md:flex items-center justify-center py-8">
+          {/* Loading indicator - only show on desktop */}
+          {!isMobile && hasMore && isLoadingMore && (
+            <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           )}
