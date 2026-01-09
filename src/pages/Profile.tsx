@@ -252,23 +252,7 @@ const Profile = () => {
     
     try {
       if (navigator.share) {
-        const shareData: ShareData = { title, text, url };
-        
-        if (navigator.canShare && post?.media) {
-          try {
-            const response = await fetch('/favicon-192x192.png');
-            const blob = await response.blob();
-            const file = new File([blob], 'nextwife.png', { type: 'image/png' });
-            const dataWithFile = { ...shareData, files: [file] };
-            
-            if (navigator.canShare(dataWithFile)) {
-              await navigator.share(dataWithFile);
-              return;
-            }
-          } catch {}
-        }
-        
-        await navigator.share(shareData);
+        await navigator.share({ title, text, url });
       } else {
         await navigator.clipboard.writeText(url);
       }
