@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters } from "./FeedFilters";
 import { formatDistanceToNow } from "date-fns";
-import { getPersonalityLabel, getRelationshipLabel } from "@/lib/girlfriends/profile-formatter";
+import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 
 interface ProfileData {
   name: string;
@@ -16,6 +16,7 @@ interface ProfileData {
   nationality: string;
   hometown: string;
   work: string;
+  language?: string | null;
   personality?: string | null;
   relationship?: string | null;
 }

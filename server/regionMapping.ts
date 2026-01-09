@@ -1,3 +1,6 @@
+// Import countries-list for language data
+import { countries, languages, type TCountryCode, type TLanguageCode } from 'countries-list';
+
 // Nationality to Region mapping for filtering
 // Regions: Asian, European, Latin American, North American, African, Middle Eastern, Oceanian
 
@@ -203,183 +206,317 @@ export const ALL_REGIONS = [
 // All age brackets for filtering
 export const ALL_AGE_BRACKETS = ["21-25", "26-30", "30+"];
 
-// Nationality to Language mapping
-export const nationalityToLanguage: Record<string, string> = {
-  // Asian languages
-  "Japanese": "Japanese",
-  "Korean": "Korean",
-  "Chinese": "Mandarin",
-  "Taiwanese": "Mandarin",
-  "Hong Konger": "Cantonese",
-  "Thai": "Thai",
-  "Vietnamese": "Vietnamese",
-  "Filipino": "Filipino",
-  "Filipina": "Filipino",
-  "Indonesian": "Indonesian",
-  "Malaysian": "Malay",
-  "Singaporean": "English",
-  "Indian": "Hindi",
-  "Pakistani": "Urdu",
-  "Bangladeshi": "Bengali",
-  "Sri Lankan": "Sinhala",
-  "Nepali": "Nepali",
-  "Mongolian": "Mongolian",
-  "Cambodian": "Khmer",
-  "Laotian": "Lao",
-  "Myanmar": "Burmese",
-  "Burmese": "Burmese",
-  "Balinese": "Indonesian",
+// Demonym (nationality) to ISO country code mapping
+// This maps nationality adjectives to their ISO 3166-1 alpha-2 country codes
+const demonymToCountryCode: Record<string, TCountryCode> = {
+  // Asian
+  "Japanese": "JP",
+  "Korean": "KR",
+  "Chinese": "CN",
+  "Taiwanese": "TW",
+  "Hong Konger": "HK",
+  "Thai": "TH",
+  "Vietnamese": "VN",
+  "Filipino": "PH",
+  "Filipina": "PH",
+  "Indonesian": "ID",
+  "Balinese": "ID",
+  "Malaysian": "MY",
+  "Singaporean": "SG",
+  "Indian": "IN",
+  "Pakistani": "PK",
+  "Bangladeshi": "BD",
+  "Sri Lankan": "LK",
+  "Nepali": "NP",
+  "Mongolian": "MN",
+  "Cambodian": "KH",
+  "Laotian": "LA",
+  "Myanmar": "MM",
+  "Burmese": "MM",
   
-  // European languages
-  "British": "English",
-  "English": "English",
-  "Scottish": "English",
-  "Welsh": "English",
-  "Irish": "English",
-  "French": "French",
-  "German": "German",
-  "Italian": "Italian",
-  "Spanish": "Spanish",
-  "Portuguese": "Portuguese",
-  "Dutch": "Dutch",
-  "Belgian": "Dutch",
-  "Swiss": "German",
-  "Austrian": "German",
-  "Swedish": "Swedish",
-  "Norwegian": "Norwegian",
-  "Danish": "Danish",
-  "Finnish": "Finnish",
-  "Polish": "Polish",
-  "Czech": "Czech",
-  "Hungarian": "Hungarian",
-  "Romanian": "Romanian",
-  "Bulgarian": "Bulgarian",
-  "Greek": "Greek",
-  "Croatian": "Croatian",
-  "Serbian": "Serbian",
-  "Slovenian": "Slovenian",
-  "Slovak": "Slovak",
-  "Ukrainian": "Ukrainian",
-  "Russian": "Russian",
-  "Belarusian": "Belarusian",
-  "Lithuanian": "Lithuanian",
-  "Latvian": "Latvian",
-  "Estonian": "Estonian",
-  "Icelandic": "Icelandic",
-  "Luxembourgish": "Luxembourgish",
-  "Maltese": "Maltese",
-  "Cypriot": "Greek",
-  "Albanian": "Albanian",
-  "Macedonian": "Macedonian",
-  "Montenegrin": "Serbian",
-  "Bosnian": "Bosnian",
-  "Moldovan": "Romanian",
+  // European
+  "British": "GB",
+  "English": "GB",
+  "Scottish": "GB",
+  "Welsh": "GB",
+  "Irish": "IE",
+  "French": "FR",
+  "German": "DE",
+  "Italian": "IT",
+  "Spanish": "ES",
+  "Portuguese": "PT",
+  "Dutch": "NL",
+  "Belgian": "BE",
+  "Swiss": "CH",
+  "Austrian": "AT",
+  "Swedish": "SE",
+  "Norwegian": "NO",
+  "Danish": "DK",
+  "Finnish": "FI",
+  "Polish": "PL",
+  "Czech": "CZ",
+  "Hungarian": "HU",
+  "Romanian": "RO",
+  "Bulgarian": "BG",
+  "Greek": "GR",
+  "Croatian": "HR",
+  "Serbian": "RS",
+  "Slovenian": "SI",
+  "Slovak": "SK",
+  "Ukrainian": "UA",
+  "Russian": "RU",
+  "Belarusian": "BY",
+  "Lithuanian": "LT",
+  "Latvian": "LV",
+  "Estonian": "EE",
+  "Icelandic": "IS",
+  "Luxembourgish": "LU",
+  "Maltese": "MT",
+  "Cypriot": "CY",
+  "Albanian": "AL",
+  "Macedonian": "MK",
+  "Montenegrin": "ME",
+  "Bosnian": "BA",
+  "Moldovan": "MD",
   
-  // Latin American - mostly Spanish/Portuguese
-  "Brazilian": "Portuguese",
-  "Mexican": "Spanish",
-  "Argentine": "Spanish",
-  "Argentinian": "Spanish",
-  "Colombian": "Spanish",
-  "Peruvian": "Spanish",
-  "Venezuelan": "Spanish",
-  "Chilean": "Spanish",
-  "Ecuadorian": "Spanish",
-  "Bolivian": "Spanish",
-  "Paraguayan": "Spanish",
-  "Uruguayan": "Spanish",
-  "Cuban": "Spanish",
-  "Dominican": "Spanish",
-  "Puerto Rican": "Spanish",
-  "Costa Rican": "Spanish",
-  "Panamanian": "Spanish",
-  "Guatemalan": "Spanish",
-  "Honduran": "Spanish",
-  "Salvadoran": "Spanish",
-  "Nicaraguan": "Spanish",
-  "Jamaican": "English",
-  "Haitian": "French",
-  "Trinidadian": "English",
+  // Latin American
+  "Brazilian": "BR",
+  "Mexican": "MX",
+  "Argentine": "AR",
+  "Argentinian": "AR",
+  "Colombian": "CO",
+  "Peruvian": "PE",
+  "Venezuelan": "VE",
+  "Chilean": "CL",
+  "Ecuadorian": "EC",
+  "Bolivian": "BO",
+  "Paraguayan": "PY",
+  "Uruguayan": "UY",
+  "Cuban": "CU",
+  "Dominican": "DO",
+  "Puerto Rican": "PR",
+  "Costa Rican": "CR",
+  "Panamanian": "PA",
+  "Guatemalan": "GT",
+  "Honduran": "HN",
+  "Salvadoran": "SV",
+  "Nicaraguan": "NI",
+  "Jamaican": "JM",
+  "Haitian": "HT",
+  "Trinidadian": "TT",
   
   // North American
-  "American": "English",
-  "Canadian": "English",
+  "American": "US",
+  "Canadian": "CA",
   
   // African
-  "Nigerian": "English",
-  "South African": "English",
-  "Egyptian": "Arabic",
-  "Kenyan": "Swahili",
-  "Ethiopian": "Amharic",
-  "Ghanaian": "English",
-  "Moroccan": "Arabic",
-  "Algerian": "Arabic",
-  "Tunisian": "Arabic",
-  "Senegalese": "French",
-  "Cameroonian": "French",
-  "Tanzanian": "Swahili",
-  "Ugandan": "English",
-  "Zimbabwean": "English",
-  "Congolese": "French",
-  "Ivorian": "French",
-  "Sudanese": "Arabic",
-  "Angolan": "Portuguese",
-  "Mozambican": "Portuguese",
-  "Rwandan": "French",
-  "Cape Verdean": "Portuguese",
+  "Nigerian": "NG",
+  "South African": "ZA",
+  "Egyptian": "EG",
+  "Kenyan": "KE",
+  "Ethiopian": "ET",
+  "Ghanaian": "GH",
+  "Moroccan": "MA",
+  "Algerian": "DZ",
+  "Tunisian": "TN",
+  "Senegalese": "SN",
+  "Cameroonian": "CM",
+  "Tanzanian": "TZ",
+  "Ugandan": "UG",
+  "Zimbabwean": "ZW",
+  "Congolese": "CD",
+  "Ivorian": "CI",
+  "Sudanese": "SD",
+  "Angolan": "AO",
+  "Mozambican": "MZ",
+  "Rwandan": "RW",
+  "Cape Verdean": "CV",
   
   // Middle Eastern
-  "Turkish": "Turkish",
-  "Iranian": "Persian",
-  "Iraqi": "Arabic",
-  "Saudi": "Arabic",
-  "Saudi Arabian": "Arabic",
-  "Emirati": "Arabic",
-  "Qatari": "Arabic",
-  "Kuwaiti": "Arabic",
-  "Bahraini": "Arabic",
-  "Omani": "Arabic",
-  "Yemeni": "Arabic",
-  "Jordanian": "Arabic",
-  "Lebanese": "Arabic",
-  "Syrian": "Arabic",
-  "Israeli": "Hebrew",
-  "Palestinian": "Arabic",
-  "Afghan": "Dari",
-  "Uzbek": "Uzbek",
-  "Kazakh": "Kazakh",
-  "Azerbaijani": "Azerbaijani",
-  "Georgian": "Georgian",
-  "Armenian": "Armenian",
+  "Turkish": "TR",
+  "Iranian": "IR",
+  "Iraqi": "IQ",
+  "Saudi": "SA",
+  "Saudi Arabian": "SA",
+  "Emirati": "AE",
+  "Qatari": "QA",
+  "Kuwaiti": "KW",
+  "Bahraini": "BH",
+  "Omani": "OM",
+  "Yemeni": "YE",
+  "Jordanian": "JO",
+  "Lebanese": "LB",
+  "Syrian": "SY",
+  "Israeli": "IL",
+  "Palestinian": "PS",
+  "Afghan": "AF",
+  "Uzbek": "UZ",
+  "Kazakh": "KZ",
+  "Azerbaijani": "AZ",
+  "Georgian": "GE",
+  "Armenian": "AM",
   
   // Oceanian
-  "Australian": "English",
-  "New Zealander": "English",
-  "Kiwi": "English",
-  "Fijian": "English",
-  "Samoan": "Samoan",
-  "Tongan": "Tongan",
-  "Papua New Guinean": "English",
+  "Australian": "AU",
+  "New Zealander": "NZ",
+  "Kiwi": "NZ",
+  "Fijian": "FJ",
+  "Samoan": "WS",
+  "Tongan": "TO",
+  "Papua New Guinean": "PG",
 };
 
-// Get language from nationality
+// ISO language code to display name mapping (for nicer display)
+const languageCodeToDisplayName: Record<string, string> = {
+  "en": "English",
+  "es": "Spanish",
+  "fr": "French",
+  "pt": "Portuguese",
+  "de": "German",
+  "it": "Italian",
+  "ja": "Japanese",
+  "ko": "Korean",
+  "zh": "Mandarin",
+  "ar": "Arabic",
+  "ru": "Russian",
+  "nl": "Dutch",
+  "pl": "Polish",
+  "tr": "Turkish",
+  "th": "Thai",
+  "vi": "Vietnamese",
+  "id": "Indonesian",
+  "ms": "Malay",
+  "el": "Greek",
+  "sv": "Swedish",
+  "cs": "Czech",
+  "hu": "Hungarian",
+  "ro": "Romanian",
+  "uk": "Ukrainian",
+  "hi": "Hindi",
+  "tl": "Filipino",
+  "fa": "Persian",
+  "he": "Hebrew",
+  "da": "Danish",
+  "fi": "Finnish",
+  "no": "Norwegian",
+  "nb": "Norwegian",
+  "nn": "Norwegian",
+  "ur": "Urdu",
+  "bn": "Bengali",
+  "si": "Sinhala",
+  "ne": "Nepali",
+  "mn": "Mongolian",
+  "km": "Khmer",
+  "lo": "Lao",
+  "my": "Burmese",
+  "bg": "Bulgarian",
+  "hr": "Croatian",
+  "sr": "Serbian",
+  "sl": "Slovenian",
+  "sk": "Slovak",
+  "be": "Belarusian",
+  "lt": "Lithuanian",
+  "lv": "Latvian",
+  "et": "Estonian",
+  "is": "Icelandic",
+  "lb": "Luxembourgish",
+  "mt": "Maltese",
+  "sq": "Albanian",
+  "mk": "Macedonian",
+  "bs": "Bosnian",
+  "sw": "Swahili",
+  "am": "Amharic",
+  "az": "Azerbaijani",
+  "ka": "Georgian",
+  "hy": "Armenian",
+  "uz": "Uzbek",
+  "kk": "Kazakh",
+  "ps": "Pashto",
+  "sm": "Samoan",
+  "to": "Tongan",
+};
+
+// Get language display name from ISO code
+function getLanguageDisplayName(code: string): string {
+  return languageCodeToDisplayName[code] || languages[code as TLanguageCode]?.name || code.toUpperCase();
+}
+
+// Get language from nationality using countries-list
+// Returns "English, [Native Language]" for non-English speakers, just "English" for English speakers
 export function getLanguage(nationality: string | null | undefined): string | null {
   if (!nationality) return null;
   
-  // Try exact match first
-  if (nationalityToLanguage[nationality]) {
-    return nationalityToLanguage[nationality];
-  }
-  
-  // Try case-insensitive match
+  // Find country code from demonym
   const normalizedNationality = nationality.trim();
-  for (const [key, language] of Object.entries(nationalityToLanguage)) {
-    if (key.toLowerCase() === normalizedNationality.toLowerCase()) {
-      return language;
+  let countryCode: TCountryCode | null = null;
+  
+  // Try exact match first
+  if (demonymToCountryCode[normalizedNationality]) {
+    countryCode = demonymToCountryCode[normalizedNationality];
+  } else {
+    // Try case-insensitive match
+    for (const [demonym, code] of Object.entries(demonymToCountryCode)) {
+      if (demonym.toLowerCase() === normalizedNationality.toLowerCase()) {
+        countryCode = code;
+        break;
+      }
     }
   }
   
-  return null;
+  if (!countryCode) return "English"; // Default to English for unknown nationalities
+  
+  // Get country data from countries-list
+  const country = countries[countryCode];
+  if (!country || !country.languages || country.languages.length === 0) {
+    return "English";
+  }
+  
+  // Prefer first non-English language (for multilingual countries)
+  const nonEnglishLang = country.languages.find(code => code !== 'en');
+  if (!nonEnglishLang) {
+    return "English"; // Only English available
+  }
+  
+  const nativeLanguage = getLanguageDisplayName(nonEnglishLang);
+  
+  // All AI girlfriends speak English + their native language
+  return `English, ${nativeLanguage}`;
+}
+
+// Get just the native language (for filter purposes - store this in DB for filtering)
+// Prefers the first non-English language if available, falls back to English
+export function getNativeLanguage(nationality: string | null | undefined): string | null {
+  if (!nationality) return null;
+  
+  const normalizedNationality = nationality.trim();
+  let countryCode: TCountryCode | null = null;
+  
+  if (demonymToCountryCode[normalizedNationality]) {
+    countryCode = demonymToCountryCode[normalizedNationality];
+  } else {
+    for (const [demonym, code] of Object.entries(demonymToCountryCode)) {
+      if (demonym.toLowerCase() === normalizedNationality.toLowerCase()) {
+        countryCode = code;
+        break;
+      }
+    }
+  }
+  
+  if (!countryCode) return "English";
+  
+  const country = countries[countryCode];
+  if (!country || !country.languages || country.languages.length === 0) {
+    return "English";
+  }
+  
+  // Prefer first non-English language (for multilingual countries like Nigeria, Singapore)
+  const nonEnglishLang = country.languages.find(code => code !== 'en');
+  if (nonEnglishLang) {
+    return getLanguageDisplayName(nonEnglishLang);
+  }
+  
+  // If only English is available, return English
+  return "English";
 }
 
 // All languages for filtering (sorted by popularity)

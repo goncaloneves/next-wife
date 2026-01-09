@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import pg from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { eq, desc, and, inArray, sql } from 'drizzle-orm';
+import { countries } from 'countries-list';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -102,50 +103,93 @@ function getOccupationCategory(work) {
   return "Other";
 }
 
-// Nationality to Language mapping
-const nationalityToLanguage = {
-  "Japanese": "Japanese", "Korean": "Korean", "Chinese": "Mandarin", "Taiwanese": "Mandarin",
-  "Hong Konger": "Cantonese", "Thai": "Thai", "Vietnamese": "Vietnamese", "Filipino": "Filipino",
-  "Filipina": "Filipino", "Indonesian": "Indonesian", "Malaysian": "Malay", "Singaporean": "English",
-  "Indian": "Hindi", "Pakistani": "Urdu", "Bangladeshi": "Bengali", "Sri Lankan": "Sinhala",
-  "Nepali": "Nepali", "Mongolian": "Mongolian", "Cambodian": "Khmer", "Laotian": "Lao",
-  "Myanmar": "Burmese", "Burmese": "Burmese", "Balinese": "Indonesian",
-  "British": "English", "English": "English", "Scottish": "English", "Welsh": "English",
-  "Irish": "English", "French": "French", "German": "German", "Italian": "Italian",
-  "Spanish": "Spanish", "Portuguese": "Portuguese", "Dutch": "Dutch", "Belgian": "Dutch",
-  "Swiss": "German", "Austrian": "German", "Swedish": "Swedish", "Norwegian": "Norwegian",
-  "Danish": "Danish", "Finnish": "Finnish", "Polish": "Polish", "Czech": "Czech",
-  "Hungarian": "Hungarian", "Romanian": "Romanian", "Bulgarian": "Bulgarian", "Greek": "Greek",
-  "Croatian": "Croatian", "Serbian": "Serbian", "Slovenian": "Slovenian", "Slovak": "Slovak",
-  "Ukrainian": "Ukrainian", "Russian": "Russian", "Belarusian": "Belarusian",
-  "Lithuanian": "Lithuanian", "Latvian": "Latvian", "Estonian": "Estonian", "Icelandic": "Icelandic",
-  "Albanian": "Albanian", "Macedonian": "Macedonian", "Montenegrin": "Serbian", "Bosnian": "Bosnian",
-  "Brazilian": "Portuguese", "Mexican": "Spanish", "Argentine": "Spanish", "Argentinian": "Spanish",
-  "Colombian": "Spanish", "Peruvian": "Spanish", "Venezuelan": "Spanish", "Chilean": "Spanish",
-  "Ecuadorian": "Spanish", "Bolivian": "Spanish", "Paraguayan": "Spanish", "Uruguayan": "Spanish",
-  "Cuban": "Spanish", "Dominican": "Spanish", "Puerto Rican": "Spanish", "Costa Rican": "Spanish",
-  "Panamanian": "Spanish", "Guatemalan": "Spanish", "Honduran": "Spanish", "Salvadoran": "Spanish",
-  "Nicaraguan": "Spanish", "Jamaican": "English", "Haitian": "French", "Trinidadian": "English",
-  "American": "English", "Canadian": "English",
-  "Nigerian": "English", "South African": "English", "Egyptian": "Arabic", "Kenyan": "Swahili",
-  "Ethiopian": "Amharic", "Ghanaian": "English", "Moroccan": "Arabic", "Algerian": "Arabic",
-  "Tunisian": "Arabic", "Senegalese": "French", "Cameroonian": "French", "Tanzanian": "Swahili",
-  "Cape Verdean": "Portuguese",
-  "Turkish": "Turkish", "Iranian": "Persian", "Iraqi": "Arabic", "Saudi": "Arabic",
-  "Saudi Arabian": "Arabic", "Emirati": "Arabic", "Qatari": "Arabic", "Kuwaiti": "Arabic",
-  "Lebanese": "Arabic", "Syrian": "Arabic", "Israeli": "Hebrew", "Palestinian": "Arabic",
-  "Afghan": "Dari", "Jordanian": "Arabic",
-  "Australian": "English", "New Zealander": "English", "Kiwi": "English", "Fijian": "English",
+// Demonym to ISO country code mapping for language lookup
+const demonymToCountryCode = {
+  "Japanese": "JP", "Korean": "KR", "Chinese": "CN", "Taiwanese": "TW", "Hong Konger": "HK",
+  "Thai": "TH", "Vietnamese": "VN", "Filipino": "PH", "Filipina": "PH", "Indonesian": "ID",
+  "Balinese": "ID", "Malaysian": "MY", "Singaporean": "SG", "Indian": "IN", "Pakistani": "PK",
+  "Bangladeshi": "BD", "Sri Lankan": "LK", "Nepali": "NP", "Mongolian": "MN", "Cambodian": "KH",
+  "Laotian": "LA", "Myanmar": "MM", "Burmese": "MM",
+  "British": "GB", "English": "GB", "Scottish": "GB", "Welsh": "GB", "Irish": "IE",
+  "French": "FR", "German": "DE", "Italian": "IT", "Spanish": "ES", "Portuguese": "PT",
+  "Dutch": "NL", "Belgian": "BE", "Swiss": "CH", "Austrian": "AT", "Swedish": "SE",
+  "Norwegian": "NO", "Danish": "DK", "Finnish": "FI", "Polish": "PL", "Czech": "CZ",
+  "Hungarian": "HU", "Romanian": "RO", "Bulgarian": "BG", "Greek": "GR", "Croatian": "HR",
+  "Serbian": "RS", "Slovenian": "SI", "Slovak": "SK", "Ukrainian": "UA", "Russian": "RU",
+  "Belarusian": "BY", "Lithuanian": "LT", "Latvian": "LV", "Estonian": "EE", "Icelandic": "IS",
+  "Luxembourgish": "LU", "Maltese": "MT", "Cypriot": "CY", "Albanian": "AL", "Macedonian": "MK",
+  "Montenegrin": "ME", "Bosnian": "BA", "Moldovan": "MD",
+  "Brazilian": "BR", "Mexican": "MX", "Argentine": "AR", "Argentinian": "AR", "Colombian": "CO",
+  "Peruvian": "PE", "Venezuelan": "VE", "Chilean": "CL", "Ecuadorian": "EC", "Bolivian": "BO",
+  "Paraguayan": "PY", "Uruguayan": "UY", "Cuban": "CU", "Dominican": "DO", "Puerto Rican": "PR",
+  "Costa Rican": "CR", "Panamanian": "PA", "Guatemalan": "GT", "Honduran": "HN", "Salvadoran": "SV",
+  "Nicaraguan": "NI", "Jamaican": "JM", "Haitian": "HT", "Trinidadian": "TT",
+  "American": "US", "Canadian": "CA",
+  "Nigerian": "NG", "South African": "ZA", "Egyptian": "EG", "Kenyan": "KE", "Ethiopian": "ET",
+  "Ghanaian": "GH", "Moroccan": "MA", "Algerian": "DZ", "Tunisian": "TN", "Senegalese": "SN",
+  "Cameroonian": "CM", "Tanzanian": "TZ", "Ugandan": "UG", "Zimbabwean": "ZW", "Congolese": "CD",
+  "Ivorian": "CI", "Sudanese": "SD", "Angolan": "AO", "Mozambican": "MZ", "Rwandan": "RW",
+  "Cape Verdean": "CV",
+  "Turkish": "TR", "Iranian": "IR", "Iraqi": "IQ", "Saudi": "SA", "Saudi Arabian": "SA",
+  "Emirati": "AE", "Qatari": "QA", "Kuwaiti": "KW", "Bahraini": "BH", "Omani": "OM",
+  "Yemeni": "YE", "Jordanian": "JO", "Lebanese": "LB", "Syrian": "SY", "Israeli": "IL",
+  "Palestinian": "PS", "Afghan": "AF", "Uzbek": "UZ", "Kazakh": "KZ", "Azerbaijani": "AZ",
+  "Georgian": "GE", "Armenian": "AM",
+  "Australian": "AU", "New Zealander": "NZ", "Kiwi": "NZ", "Fijian": "FJ", "Samoan": "WS",
+  "Tongan": "TO", "Papua New Guinean": "PG"
 };
 
-function getLanguage(nationality) {
-  if (!nationality) return null;
-  if (nationalityToLanguage[nationality]) return nationalityToLanguage[nationality];
+// ISO language code to display name
+const langCodeToName = {
+  "en": "English", "es": "Spanish", "fr": "French", "pt": "Portuguese", "de": "German",
+  "it": "Italian", "ja": "Japanese", "ko": "Korean", "zh": "Mandarin", "ar": "Arabic",
+  "ru": "Russian", "nl": "Dutch", "pl": "Polish", "tr": "Turkish", "th": "Thai",
+  "vi": "Vietnamese", "id": "Indonesian", "ms": "Malay", "el": "Greek", "sv": "Swedish",
+  "cs": "Czech", "hu": "Hungarian", "ro": "Romanian", "uk": "Ukrainian", "hi": "Hindi",
+  "tl": "Filipino", "fa": "Persian", "he": "Hebrew", "da": "Danish", "fi": "Finnish",
+  "no": "Norwegian", "nb": "Norwegian", "nn": "Norwegian", "ur": "Urdu", "bn": "Bengali",
+  "si": "Sinhala", "ne": "Nepali", "mn": "Mongolian", "km": "Khmer", "lo": "Lao",
+  "my": "Burmese", "bg": "Bulgarian", "hr": "Croatian", "sr": "Serbian", "sl": "Slovenian",
+  "sk": "Slovak", "be": "Belarusian", "lt": "Lithuanian", "lv": "Latvian", "et": "Estonian",
+  "is": "Icelandic", "lb": "Luxembourgish", "mt": "Maltese", "sq": "Albanian", "mk": "Macedonian",
+  "bs": "Bosnian", "sw": "Swahili", "am": "Amharic", "az": "Azerbaijani", "ka": "Georgian",
+  "hy": "Armenian", "uz": "Uzbek", "kk": "Kazakh", "ps": "Pashto", "sm": "Samoan", "to": "Tongan"
+};
+
+// Get native language from nationality using countries-list
+// Prefers the first non-English language if available, falls back to English
+function getNativeLanguage(nationality) {
+  if (!nationality) return "English";
+  
   const normalized = nationality.trim();
-  for (const [key, language] of Object.entries(nationalityToLanguage)) {
-    if (key.toLowerCase() === normalized.toLowerCase()) return language;
+  let countryCode = demonymToCountryCode[normalized];
+  
+  if (!countryCode) {
+    // Case-insensitive fallback
+    for (const [demonym, code] of Object.entries(demonymToCountryCode)) {
+      if (demonym.toLowerCase() === normalized.toLowerCase()) {
+        countryCode = code;
+        break;
+      }
+    }
   }
-  return null;
+  
+  if (!countryCode) return "English";
+  
+  const country = countries[countryCode];
+  if (!country || !country.languages || country.languages.length === 0) {
+    return "English";
+  }
+  
+  // Prefer first non-English language (for multilingual countries like Nigeria, Singapore)
+  // This ensures we display "English, [Native]" instead of just "English"
+  const nonEnglishLang = country.languages.find(code => code !== 'en');
+  if (nonEnglishLang) {
+    return langCodeToName[nonEnglishLang] || nonEnglishLang.toUpperCase();
+  }
+  
+  // If only English is available, return English
+  return "English";
 }
 
 // Initialize database connection
@@ -335,7 +379,7 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       const region = post.profileData ? getRegion(post.profileData.nationality) : null;
       const ageBracket = post.profileData ? getAgeBracket(post.profileData.age) : null;
       const occupationCategory = post.profileData ? getOccupationCategory(post.profileData.work) : null;
-      const language = post.profileData ? getLanguage(post.profileData.nationality) : null;
+      const language = post.profileData ? getNativeLanguage(post.profileData.nationality) : null;
       
       await pool.query(`
         INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, updated_at, deleted_at)
@@ -820,6 +864,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
         nationality: row.nationality,
         hometown: row.hometown,
         work: row.work,
+        language: row.language,
         personality: row.personality,
         relationship: row.relationship
       } : null,
@@ -972,6 +1017,7 @@ app.get('/api/tg-channel-feed', async (req, res) => {
           nationality: row.nationality,
           hometown: row.hometown,
           work: row.work,
+          language: row.language,
           personality: row.personality,
           relationship: row.relationship
         } : null,

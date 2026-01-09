@@ -26,3 +26,10 @@ export function getRelationshipLabel(relationship: string | null): string | null
   if (!relationship) return null;
   return RELATIONSHIP_TYPE_LABELS[relationship.toLowerCase()] || relationship;
 }
+
+// Format language display: "English" for English speakers, "English, [Native]" for others
+export function getLanguageDisplay(nativeLanguage: string | null): string {
+  if (!nativeLanguage) return 'English';
+  if (nativeLanguage.toLowerCase() === 'english') return 'English';
+  return `English, ${nativeLanguage}`;
+}

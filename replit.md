@@ -39,6 +39,16 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (January 9, 2026)
+22. **Language display with countries-list library** - Added proper language display showing "English, [Native Language]":
+    - Installed `countries-list` npm package for accurate nationality-to-language mapping
+    - Created demonym-to-ISO-country-code mapping for all nationalities in the app
+    - Backend derives native language from countries-list data, preferring non-English language for multilingual countries
+    - Database stores native language (e.g., "Mandarin", "Spanish", "Portuguese") for filtering
+    - Frontend displays "English, [Native Language]" via `getLanguageDisplay()` in profile-formatter.ts
+    - Profile page shows language badge with 🗣️ emoji next to nationality
+    - Both API endpoints return `language` field in `profileData` for display
+    - For English-only countries (US, UK, Australia), displays just "English"
+
 21. **Scroll position restoration** - Feed now restores scroll position when returning from profile pages:
     - Feed state (posts, filters, cursor, etc.) cached to sessionStorage on profile click
     - On return, cached data restored instantly without re-fetching

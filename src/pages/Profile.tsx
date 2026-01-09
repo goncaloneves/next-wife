@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Clock, Share2 } from "lucide-react";
-import { getPersonalityLabel, getRelationshipLabel } from "@/lib/girlfriends/profile-formatter";
+import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { formatDistanceToNow } from "date-fns";
 
 interface ProfileData {
@@ -11,6 +11,7 @@ interface ProfileData {
   nationality: string;
   hometown: string;
   work: string;
+  language?: string;
   personality?: string;
   relationship?: string;
 }
@@ -188,6 +189,9 @@ const Profile = () => {
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-sm text-white">
                 🌍 {profileData.nationality}
+              </span>
+              <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-sm text-white">
+                🗣️ {getLanguageDisplay(profileData.language)}
               </span>
               {profileData.relationship && (
                 <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-full px-3 py-1.5 text-sm text-pink-200">
