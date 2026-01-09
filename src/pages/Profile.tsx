@@ -325,6 +325,7 @@ const Profile = () => {
               rotate: isDragging ? dragRotate : 0,
               opacity: isDragging ? dragOpacity : 1,
               maxWidth: mediaDimensions ? `${mediaDimensions.width}px` : undefined,
+              maxHeight: mediaDimensions ? `${mediaDimensions.height}px` : undefined,
             }}
           >
             {!imageLoaded && (
