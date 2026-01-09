@@ -785,7 +785,6 @@ export const TelegramChannelFeed = ({
               >
                 Start Swiping 💕
               </Button>
-              <p className="text-white/50 text-sm">{postsWithMedia.length} profiles to explore</p>
             </div>
           )}
 
