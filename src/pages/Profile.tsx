@@ -148,9 +148,9 @@ const Profile = () => {
 
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/60 to-transparent pt-16 pb-4 px-4">
             {post.isHot && (
-              <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 rounded-full px-2.5 py-0.5 mb-2 shadow-lg">
-                <span className="text-xs">🔥</span>
-                <span className="text-[10px] font-bold text-white uppercase tracking-wide">Hot</span>
+              <div className="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1 mb-2">
+                <span>🔥</span>
+                <span className="text-xs">Hot</span>
               </div>
             )}
             
