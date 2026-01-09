@@ -453,7 +453,7 @@ const Profile = () => {
               </button>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent max-h-[65%] flex flex-col pointer-events-none">
+            <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-[85%]' : 'max-h-[65%]'}`}>
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pt-16 pb-2">
                   {post.isHot && (
