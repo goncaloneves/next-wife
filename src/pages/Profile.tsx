@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Clock, Undo2, Heart, Flame } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Clock, Undo2, X } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { formatDistanceToNow } from "date-fns";
 
@@ -29,63 +29,100 @@ interface Post {
   click_count?: number;
 }
 
+interface SkipHistoryEntry {
+  profileId: string;
+  timestamp: number;
+}
+
+const SKIP_HISTORY_KEY = 'nextwife_skip_history';
+
+const getSkipHistory = (): SkipHistoryEntry[] => {
+  try {
+    const stored = sessionStorage.getItem(SKIP_HISTORY_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveSkipHistory = (history: SkipHistoryEntry[]) => {
+  try {
+    sessionStorage.setItem(SKIP_HISTORY_KEY, JSON.stringify(history));
+  } catch {}
+};
+
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
-  const [prevId, setPrevId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [skipHistory, setSkipHistory] = useState<SkipHistoryEntry[]>([]);
   
   const dragStartX = useRef<number>(0);
   const imageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setSkipHistory(getSkipHistory());
+  }, []);
 
   const goBack = useCallback(() => {
     navigate("/", { state: { restoreScroll: true } });
   }, [navigate]);
 
-  const goToPrev = useCallback(() => {
-    if (prevId) {
+  const undoSkip = useCallback(() => {
+    if (skipHistory.length === 0) return;
+    
+    const newHistory = [...skipHistory];
+    const lastSkipped = newHistory.pop();
+    
+    if (lastSkipped) {
+      setSkipHistory(newHistory);
+      saveSkipHistory(newHistory);
       setSwipeDirection('right');
       setImageLoaded(false);
       setTimeout(() => {
-        navigate(`/profile/${prevId}`, { replace: true });
+        navigate(`/profile/${lastSkipped.profileId}`, { replace: true });
         setSwipeDirection(null);
         setDragOffset(0);
       }, 200);
     }
-  }, [prevId, navigate]);
+  }, [skipHistory, navigate]);
 
-  const goToNext = useCallback(() => {
-    if (nextId) {
-      setSwipeDirection('left');
-      setImageLoaded(false);
-      setTimeout(() => {
-        navigate(`/profile/${nextId}`, { replace: true });
-        setSwipeDirection(null);
-        setDragOffset(0);
-      }, 200);
-    }
-  }, [nextId, navigate]);
+  const skipProfile = useCallback(() => {
+    if (!id || !nextId) return;
+    
+    const newHistory = [...skipHistory, { profileId: id, timestamp: Date.now() }];
+    setSkipHistory(newHistory);
+    saveSkipHistory(newHistory);
+    
+    setSwipeDirection('left');
+    setImageLoaded(false);
+    setTimeout(() => {
+      navigate(`/profile/${nextId}`, { replace: true });
+      setSwipeDirection(null);
+      setDragOffset(0);
+    }, 200);
+  }, [id, nextId, skipHistory, navigate]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         goBack();
       } else if (e.key === "ArrowLeft") {
-        goToPrev();
+        undoSkip();
       } else if (e.key === "ArrowRight") {
-        goToNext();
+        skipProfile();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goBack, goToPrev, goToNext]);
+  }, [goBack, undoSkip, skipProfile]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -98,7 +135,6 @@ const Profile = () => {
         const data = await response.json();
         if (data.post) {
           setPost(data.post);
-          setPrevId(data.prevId);
           setNextId(data.nextId);
         }
       } catch (error) {
@@ -138,9 +174,9 @@ const Profile = () => {
 
     if (Math.abs(diff) > threshold) {
       if (diff < 0 && nextId) {
-        goToNext();
-      } else if (diff > 0 && prevId) {
-        goToPrev();
+        skipProfile();
+      } else if (diff > 0 && skipHistory.length > 0) {
+        undoSkip();
       } else {
         setDragOffset(0);
       }
@@ -224,6 +260,9 @@ const Profile = () => {
     return {};
   };
 
+  const canUndo = skipHistory.length > 0;
+  const canSkip = !!nextId;
+
   return (
     <div 
       className="h-screen flex flex-col bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] overflow-hidden"
@@ -292,14 +331,14 @@ const Profile = () => {
             </div>
           </div>
 
-          {dragOffset > 20 && prevId && (
-            <div className="absolute top-1/2 left-4 -translate-y-1/2 bg-green-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[-15deg] border-2 border-white shadow-lg">
-              LIKE
+          {dragOffset > 20 && canUndo && (
+            <div className="absolute top-1/2 left-4 -translate-y-1/2 bg-amber-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[-15deg] border-2 border-white shadow-lg">
+              UNDO
             </div>
           )}
-          {dragOffset < -20 && nextId && (
+          {dragOffset < -20 && canSkip && (
             <div className="absolute top-1/2 right-4 -translate-y-1/2 bg-rose-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[15deg] border-2 border-white shadow-lg">
-              NOPE
+              SKIP
             </div>
           )}
         </div>
@@ -351,61 +390,40 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="flex-shrink-0 bg-black/60 backdrop-blur-lg border-t border-white/10 px-4 py-4 pb-6">
-          <div className="flex items-center justify-center gap-5">
+        <div className="flex-shrink-0 bg-black/60 backdrop-blur-lg border-t border-white/10 px-6 py-5 pb-7">
+          <div className="flex items-center justify-center gap-6">
             <button
-              onClick={goBack}
-              className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm border-2 border-amber-400/50 flex items-center justify-center text-amber-400 hover:bg-amber-400/20 hover:border-amber-400 hover:scale-110 transition-all shadow-lg shadow-amber-400/10"
-              data-testid="button-action-back"
+              onClick={undoSkip}
+              disabled={!canUndo}
+              className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl ${
+                canUndo 
+                  ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
+                  : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+              }`}
+              data-testid="button-action-undo"
             >
-              <Undo2 className="w-7 h-7" />
+              <Undo2 className="w-8 h-8" />
             </button>
             
             <button
-              onClick={goToPrev}
-              disabled={!prevId}
-              className={`w-12 h-12 rounded-full backdrop-blur-sm border-2 flex items-center justify-center transition-all shadow-lg ${
-                prevId 
-                  ? 'bg-white/10 border-rose-400/50 text-rose-400 hover:bg-rose-400/20 hover:border-rose-400 hover:scale-110 shadow-rose-400/10' 
-                  : 'bg-white/5 border-white/10 text-white/20 cursor-not-allowed'
+              onClick={skipProfile}
+              disabled={!canSkip}
+              className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl ${
+                canSkip 
+                  ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
+                  : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
               }`}
-              data-testid="button-action-prev"
+              data-testid="button-action-skip"
             >
-              <span className="text-2xl font-bold">✕</span>
+              <X className="w-9 h-9 stroke-[3]" />
             </button>
 
             <button
               onClick={handleMessageClick}
-              className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 flex items-center justify-center text-white hover:scale-110 hover:shadow-xl hover:shadow-rose-500/40 transition-all shadow-lg shadow-rose-500/30 border-2 border-white/20"
+              className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 flex items-center justify-center text-white hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 transition-all shadow-xl shadow-rose-500/30 border-[3px] border-white/30"
               data-testid="button-message-telegram"
             >
-              <MessageCircle className="w-8 h-8" />
-            </button>
-
-            <button
-              onClick={goToNext}
-              disabled={!nextId}
-              className={`w-12 h-12 rounded-full backdrop-blur-sm border-2 flex items-center justify-center transition-all shadow-lg ${
-                nextId 
-                  ? 'bg-white/10 border-emerald-400/50 text-emerald-400 hover:bg-emerald-400/20 hover:border-emerald-400 hover:scale-110 shadow-emerald-400/10' 
-                  : 'bg-white/5 border-white/10 text-white/20 cursor-not-allowed'
-              }`}
-              data-testid="button-action-next"
-            >
-              <Heart className="w-6 h-6" />
-            </button>
-
-            <button
-              onClick={goToNext}
-              disabled={!nextId}
-              className={`w-14 h-14 rounded-full backdrop-blur-sm border-2 flex items-center justify-center transition-all shadow-lg ${
-                nextId 
-                  ? 'bg-gradient-to-br from-cyan-400/20 to-blue-500/20 border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/30 hover:border-cyan-400 hover:scale-110 shadow-cyan-400/10' 
-                  : 'bg-white/5 border-white/10 text-white/20 cursor-not-allowed'
-              }`}
-              data-testid="button-action-superlike"
-            >
-              <Flame className="w-7 h-7" />
+              <MessageCircle className="w-10 h-10" />
             </button>
           </div>
         </div>
