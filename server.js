@@ -292,6 +292,7 @@ function parseChannelHTML(html, channelName) {
       const workMatch = text.match(/Work:\s*([^\n]+)/i);
       const personalityMatch = text.match(/Personality:\s*([^\n]+)/i);
       const relationshipMatch = text.match(/Relationship:\s*([^\n]+)/i);
+      const aboutMatch = text.match(/About:\s*([^\n]+(?:\n(?!Meet me|Name:|Age:|Nationality:|Hometown:|Work:|Personality:|Relationship:)[^\n]+)*)/i);
 
       if (nameMatch && ageMatch && nationalityMatch && hometownMatch && workMatch) {
         // Strip trailing numbers in parentheses like "(1)", "(2)", "(3)" from names
@@ -303,7 +304,8 @@ function parseChannelHTML(html, channelName) {
           hometown: hometownMatch[1].trim(),
           work: workMatch[1].trim(),
           personality: personalityMatch ? personalityMatch[1].trim().toLowerCase() : null,
-          relationship: relationshipMatch ? relationshipMatch[1].trim().toLowerCase() : 'girlfriend'
+          relationship: relationshipMatch ? relationshipMatch[1].trim().toLowerCase() : 'girlfriend',
+          about: aboutMatch ? aboutMatch[1].trim() : null
         };
       }
     }
@@ -382,8 +384,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       const language = post.profileData ? getNativeLanguage(post.profileData.nationality) : null;
       
       await pool.query(`
-        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, updated_at, deleted_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, NOW(), NULL)
+        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, about, updated_at, deleted_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW(), NULL)
         ON CONFLICT (id) DO UPDATE SET
           text = EXCLUDED.text,
           date = EXCLUDED.date,
@@ -402,6 +404,7 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
           language = EXCLUDED.language,
           personality = EXCLUDED.personality,
           relationship = EXCLUDED.relationship,
+          about = EXCLUDED.about,
           updated_at = NOW(),
           deleted_at = NULL
       `, [
@@ -423,7 +426,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
         occupationCategory,
         language,
         post.profileData?.personality || null,
-        post.profileData?.relationship || null
+        post.profileData?.relationship || null,
+        post.profileData?.about || null
       ]);
       synced++;
     } catch (error) {
@@ -840,7 +844,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
     
     const result = await pool.query(`
       SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
-             name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship
+             name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
       FROM telegram_posts 
       WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
     `, [channelName, id]);
