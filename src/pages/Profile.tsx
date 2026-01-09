@@ -178,9 +178,11 @@ const Profile = () => {
   }, [goBack, undoSkip, skipProfile, openTelegram]);
 
   useEffect(() => {
-    x.set(0);
     setDragOffset(0);
     setIsDragging(false);
+    setIsAnimating(false);
+    setExitX(null);
+    x.set(0);
     
     const fetchProfile = async () => {
       setLoading(true);
@@ -206,14 +208,6 @@ const Profile = () => {
     if (id) {
       fetchProfile();
     }
-    
-    const safetyTimeout = setTimeout(() => {
-      setIsAnimating(false);
-      setExitX(null);
-      x.set(0);
-    }, 600);
-    
-    return () => clearTimeout(safetyTimeout);
   }, [id]);
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
