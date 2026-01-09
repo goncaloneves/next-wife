@@ -252,7 +252,7 @@ const Profile = () => {
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
         onClick={(e) => e.stopPropagation()}
       >
-        <AnimatePresence mode="wait" custom={direction} onExitComplete={() => { setIsAnimating(false); setExitX(null); }}>
+        <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => { setIsAnimating(false); setExitX(null); }}>
           <motion.article
             key={post.id}
             custom={direction}
