@@ -240,8 +240,11 @@ const Profile = () => {
 
   return (
     <div 
-      className="h-screen flex flex-col bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] overflow-hidden"
+      className="h-screen flex flex-col bg-black overflow-hidden"
       onClick={goBack}
+      style={{
+        boxShadow: 'inset 0 0 150px 60px rgba(139, 69, 69, 0.3), inset 0 0 80px 30px rgba(100, 40, 40, 0.2)'
+      }}
     >
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
