@@ -318,15 +318,13 @@ const Profile = () => {
             onDragStart={() => setIsDragging(true)}
             onDrag={(_, info) => { setDragOffset(info.offset.x); x.set(info.offset.x); }}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
-            className="relative overflow-hidden rounded-2xl border border-white/10 select-none w-full"
+            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 select-none w-full"
             style={{ 
               transformOrigin: 'center center',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)',
               rotate: isDragging ? dragRotate : 0,
               opacity: isDragging ? dragOpacity : 1,
-              aspectRatio: mediaDimensions ? `${mediaDimensions.width} / ${mediaDimensions.height}` : '3 / 4',
               maxWidth: mediaDimensions ? `${mediaDimensions.width}px` : undefined,
-              maxHeight: 'calc(100svh - 2rem)',
             }}
           >
             {!imageLoaded && (
