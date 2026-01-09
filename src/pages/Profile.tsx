@@ -284,11 +284,10 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }} onClick={goBack}>
+    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }}>
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
-        onClick={(e) => e.stopPropagation()}
       >
         <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => x.set(0)}>
           <motion.article
@@ -480,16 +479,7 @@ const Profile = () => {
       </div>
 
       <Dialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
-        <DialogContent 
-          className="bg-black/95 border-white/10 text-white max-w-sm"
-          onPointerDownOutside={(e) => {
-            e.preventDefault();
-            requestAnimationFrame(() => setShowTelegramConfirm(false));
-          }}
-          onInteractOutside={(e) => {
-            e.preventDefault();
-          }}
-        >
+        <DialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
               Meet {post?.profileData?.name}?
