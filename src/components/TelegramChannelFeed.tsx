@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, BadgeCheck } from "lucide-react";
+import { ArrowUp, BadgeCheck, Globe, Briefcase } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -949,11 +949,11 @@ export const TelegramChannelFeed = ({
                         <div className="flex flex-col gap-3 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
                           <div className="space-y-0.5">
                             <p className="flex items-center gap-1.5">
-                              <span className="opacity-70">🌍</span>
+                              <Globe className="w-3.5 h-3.5 text-pink-400 flex-shrink-0" />
                               <span className="flex-1">{post.profileData.nationality} • {post.profileData.hometown}</span>
                             </p>
                             <p className="flex items-start gap-1.5">
-                              <span className="opacity-70 leading-none">💼</span>
+                              <Briefcase className="w-3.5 h-3.5 text-orange-400 flex-shrink-0 mt-0.5" />
                               <span className="flex-1 line-clamp-2 md:line-clamp-3 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
                             </p>
                           </div>
