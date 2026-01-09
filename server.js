@@ -814,7 +814,7 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     if (db) {
       let query = `
         SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
-               name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count
+               name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship
         FROM telegram_posts 
         WHERE channel = $1 AND media IS NOT NULL AND deleted_at IS NULL
       `;
@@ -920,7 +920,9 @@ app.get('/api/tg-channel-feed', async (req, res) => {
           age: row.age,
           nationality: row.nationality,
           hometown: row.hometown,
-          work: row.work
+          work: row.work,
+          personality: row.personality,
+          relationship: row.relationship
         } : null,
         isHot: hotPostIds.has(row.id)
       }));

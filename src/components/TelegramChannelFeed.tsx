@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters } from "./FeedFilters";
 import { formatDistanceToNow } from "date-fns";
+import { getPersonalityLabel, getRelationshipLabel } from "@/lib/girlfriends/profile-formatter";
 
 interface ProfileData {
   name: string;
@@ -14,6 +15,8 @@ interface ProfileData {
   nationality: string;
   hometown: string;
   work: string;
+  personality?: string | null;
+  relationship?: string | null;
 }
 
 interface TelegramPost {
@@ -750,6 +753,21 @@ export const TelegramChannelFeed = ({
                             <span className="opacity-70 leading-none">💼</span>
                             <span className="flex-1 line-clamp-2 md:line-clamp-3 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
                           </p>
+                          {/* Personality & Relationship pills - only show if defined */}
+                          {(post.profileData.personality || post.profileData.relationship) && (
+                            <div className="flex flex-wrap gap-1.5 mt-1.5">
+                              {post.profileData.personality && (
+                                <span className="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full text-xs font-medium">
+                                  {getPersonalityLabel(post.profileData.personality)}
+                                </span>
+                              )}
+                              {post.profileData.relationship && post.profileData.relationship !== 'girlfriend' && (
+                                <span className="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full text-xs font-medium">
+                                  {getRelationshipLabel(post.profileData.relationship)}
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
