@@ -210,6 +210,13 @@ const Profile = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (showTelegramConfirm) {
+        if (e.key === "Escape") {
+          setShowTelegramConfirm(false);
+        }
+        return;
+      }
+      
       if (e.key === "Escape") {
         goBack();
       } else if (e.key === "ArrowLeft" && skipHistory.length > 0) {
@@ -225,7 +232,7 @@ const Profile = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId]);
+  }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId, showTelegramConfirm]);
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const { offset, velocity } = info;
