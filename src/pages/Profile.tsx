@@ -411,17 +411,17 @@ const Profile = () => {
                   )}
 
                   {profileData.about && (
-                    <div className="pt-2 mt-2 border-t border-white/[0.08]">
-                      <button 
-                        onClick={() => isMobile && setAboutExpanded(!aboutExpanded)}
-                        className={`flex items-center gap-1 text-xs font-medium text-white/50 uppercase tracking-wide mb-2 ${isMobile ? 'cursor-pointer hover:text-white/70' : 'cursor-default'}`}
-                        data-testid="button-about-me-toggle"
-                      >
+                    <div 
+                      className={`pt-2 mt-2 border-t border-white/[0.08] ${isMobile ? 'cursor-pointer' : ''}`}
+                      onClick={() => isMobile && setAboutExpanded(!aboutExpanded)}
+                      data-testid="button-about-me-toggle"
+                    >
+                      <p className={`flex items-center gap-1 text-xs font-medium text-white/50 uppercase tracking-wide ${aboutExpanded ? 'mb-2' : ''}`}>
                         About Me
                         {isMobile && (
                           <span className="text-rose-400">{aboutExpanded ? '▲' : '▼'}</span>
                         )}
-                      </button>
+                      </p>
                       {(!isMobile || aboutExpanded) && (
                         <p className="text-sm text-white/80 leading-relaxed">
                           {profileData.about}
