@@ -87,6 +87,7 @@ export const TelegramChannelFeed = ({
   const nearTopRef = useRef(true);
   const fetchInFlightRef = useRef(false);
   const isFilterChangeRef = useRef(false);
+  const hasInitializedRef = useRef(false);
 
   // Sync refs with state for stable access in callbacks
   useEffect(() => {
@@ -360,7 +361,11 @@ export const TelegramChannelFeed = ({
     }
   }, [channelUsername, fingerprint, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy]);
 
+  // Initial mount effect - runs once only
   useEffect(() => {
+    if (hasInitializedRef.current) return;
+    hasInitializedRef.current = true;
+    
     const cachedData = sessionStorage.getItem('feedCache');
     const scrollContext = sessionStorage.getItem('feedScrollContext');
     let restoredFromCache = false;
@@ -396,15 +401,16 @@ export const TelegramChannelFeed = ({
     if (!restoredFromCache) {
       fetchInitialPosts();
     }
+  }, []);
 
-    // Check for new posts at specified interval (stable - won't reset constantly)
+  // Separate effect for polling - doesn't trigger refetch
+  useEffect(() => {
     const pollInterval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         checkForNewPosts();
       }
     }, refreshInterval);
 
-    // Refetch when page becomes visible
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         checkForNewPosts();
@@ -417,7 +423,7 @@ export const TelegramChannelFeed = ({
       clearInterval(pollInterval);
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [channelUsername, refreshInterval, checkForNewPosts]);
+  }, [refreshInterval, checkForNewPosts]);
 
   // Refetch when filters change (skip initial mount)
   const filtersInitialized = useRef(false);
