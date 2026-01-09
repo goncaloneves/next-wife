@@ -363,6 +363,35 @@ function parseChannelHTML(html, channelName) {
   return { channelInfo, posts, nextCursor };
 }
 
+// ============== SINGLE POST FETCH ==============
+// Fetch a single post directly from Telegram (fallback when not in DB)
+async function fetchSinglePost(postId, channel = 'nextwife_ai') {
+  const telegramChannel = channel.replace(/_/g, '').replace('@', '');
+  const url = `https://t.me/${telegramChannel}/${postId}?embed=1&single=1`;
+  
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+    
+    if (!response.ok) return null;
+    
+    const html = await response.text();
+    const result = parseChannelHTML(html, telegramChannel);
+    
+    if (result.posts.length === 0) return null;
+    
+    // Find the exact post we're looking for
+    const post = result.posts.find(p => p.id === postId) || result.posts[0];
+    return post;
+  } catch (error) {
+    console.error(`Failed to fetch single post ${postId}:`, error.message);
+    return null;
+  }
+}
+
 // ============== DATABASE SYNC ==============
 // Normalize channel name to consistent format (no @, no underscores)
 function normalizeChannel(channel) {
@@ -842,15 +871,34 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       return res.status(503).json({ error: 'Database not available' });
     }
     
-    const result = await pool.query(`
+    let result = await pool.query(`
       SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
              name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
       FROM telegram_posts 
       WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
     `, [channelName, id]);
     
+    // If not in DB, try fetching directly from Telegram
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Profile not found' });
+      console.log(`Post ${id} not in DB, fetching from Telegram...`);
+      const telegramPost = await fetchSinglePost(id, channel);
+      
+      if (telegramPost && telegramPost.media) {
+        // Sync this post to database for future requests
+        await syncPostsToDatabase([telegramPost], channel);
+        
+        // Query again to get the synced data with derived fields
+        result = await pool.query(`
+          SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
+                 name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
+          FROM telegram_posts 
+          WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
+        `, [channelName, id]);
+      }
+      
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Profile not found' });
+      }
     }
     
     const row = result.rows[0];
