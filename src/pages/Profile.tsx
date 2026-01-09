@@ -514,7 +514,7 @@ const Profile = () => {
               className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0 w-full sm:w-auto"
             >
               <MessageCircle className="w-4 h-4 mr-2" />
-              Meet on Telegram
+              Talk on Telegram
             </Button>
           </DialogFooter>
         </DialogContent>
