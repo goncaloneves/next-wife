@@ -398,6 +398,8 @@ export const TelegramChannelFeed = ({
           // Don't restore imageLoadStates - let images lazy load naturally
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
+          // Clear cache after successful restoration (delay for StrictMode)
+          setTimeout(() => sessionStorage.removeItem('feedCache'), 100);
           restoredFromCache = true;
         } else {
           sessionStorage.removeItem('feedCache');
