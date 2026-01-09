@@ -98,7 +98,6 @@ const Profile = () => {
   const [dragOffset, setDragOffset] = useState(0);
   const [activeAction, setActiveAction] = useState<'undo' | 'skip' | null>(null);
   const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
-  const [isLeaving, setIsLeaving] = useState(false);
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -153,7 +152,6 @@ const Profile = () => {
   }, [id]);
 
   const goBack = useCallback(() => {
-    setIsLeaving(true);
     if (id) {
       sessionStorage.setItem('nextwife_last_viewed', id);
     }
@@ -442,9 +440,7 @@ const Profile = () => {
                         className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
                           (isDragging && dragOffset < -30 && canSkip) || activeAction === 'skip'
                             ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
-                            : (canSkip && !isAnimating) || isLeaving
-                              ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
-                              : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+                            : 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20'
                         }`}
                         data-testid="button-action-skip"
                       >
