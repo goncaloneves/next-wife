@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTelegram } from "@/hooks/use-telegram";
 
 const Discover = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [error, setError] = useState(false);
+  useTelegram();
   
   const view = searchParams.get("view");
+  const isAppView = view === "app";
 
   useEffect(() => {
     const fetchLatestProfile = async () => {
@@ -35,13 +38,23 @@ const Discover = () => {
     return (
       <div className="bg-black flex flex-col items-center justify-center min-h-screen text-white">
         <h1 className="text-xl font-bold mb-4">No profiles available</h1>
-        <button 
-          onClick={() => navigate("/")}
-          className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 rounded-full text-white font-medium"
-          data-testid="button-go-home"
-        >
-          Browse All Profiles
-        </button>
+        {isAppView ? (
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 rounded-full text-white font-medium"
+            data-testid="button-retry"
+          >
+            Try Again
+          </button>
+        ) : (
+          <button 
+            onClick={() => navigate("/")}
+            className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 rounded-full text-white font-medium"
+            data-testid="button-go-home"
+          >
+            Browse All Profiles
+          </button>
+        )}
       </div>
     );
   }

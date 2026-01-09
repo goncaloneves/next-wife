@@ -29,6 +29,13 @@ All colors MUST be HSL.
   }
   
   :root {
+    --tg-safe-area-top: 0px;
+    --tg-safe-area-bottom: 0px;
+    --tg-safe-area-left: 0px;
+    --tg-safe-area-right: 0px;
+    --tg-content-safe-area-top: 0px;
+    --tg-content-safe-area-bottom: 0px;
+    
     --background: 20 30% 12%;
     --foreground: 30 20% 92%;
 

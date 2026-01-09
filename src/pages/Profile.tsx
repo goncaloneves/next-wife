@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTelegram } from "@/hooks/use-telegram";
 import {
   Dialog,
   DialogContent,
@@ -93,6 +94,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
+  const { isTelegramApp, safeArea } = useTelegram();
   
   const isAppView = searchParams.get("view") === "app";
   
@@ -314,7 +316,12 @@ const Profile = () => {
     >
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
-        style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+        style={{ 
+          paddingBottom: isTelegramApp 
+            ? `max(0.5rem, ${safeArea.bottom}px)` 
+            : 'max(0.5rem, env(safe-area-inset-bottom))',
+          paddingTop: isTelegramApp ? `${safeArea.top}px` : undefined
+        }}
         onClick={!isMobile ? (e) => e.stopPropagation() : undefined}
       >
         <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => x.set(0)}>
@@ -442,7 +449,7 @@ const Profile = () => {
               </button>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent max-h-[60%] overflow-y-auto">
               <div className="px-4 pt-16 pb-4">
                 {post.isHot && (
                   <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
@@ -517,7 +524,10 @@ const Profile = () => {
                     </div>
                   )}
 
-                  <div className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[70px]">
+                  <div 
+                    className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[80px]"
+                    style={{ paddingBottom: isTelegramApp ? `max(8px, ${safeArea.bottom}px)` : '8px' }}
+                  >
                     {canUndo && (
                       <button
                         onClick={undoSkip}
