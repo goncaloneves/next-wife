@@ -325,6 +325,7 @@ const Profile = () => {
               rotate: isDragging ? dragRotate : 0,
               opacity: isDragging ? dragOpacity : 1,
               aspectRatio: mediaDimensions ? `${mediaDimensions.width} / ${mediaDimensions.height}` : '3 / 4',
+              maxWidth: mediaDimensions ? `${mediaDimensions.width}px` : undefined,
               maxHeight: 'calc(100svh - 2rem)',
             }}
           >
