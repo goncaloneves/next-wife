@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, BadgeCheck } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
@@ -74,6 +75,7 @@ export const TelegramChannelFeed = ({
   const [imageLoadStates, setImageLoadStates] = useState<Record<string, boolean>>({});
   const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
+  const navigate = useNavigate();
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
   const [filters, setFilters] = useState<{ regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[] }>({ regions: [], ageBrackets: [], occupationCategories: [], languages: [], hometowns: [], personalities: [], relationships: [] });
   const listRef = useRef<HTMLDivElement>(null);
@@ -659,7 +661,7 @@ export const TelegramChannelFeed = ({
                   "
                   onClick={() => {
                     trackClick(post.id);
-                    window.open(clickLink, "_blank", "noopener,noreferrer");
+                    navigate(`/profile/${post.id}`);
                   }}
                   style={{ 
                     animationDelay: `${(index % 20) * 0.05}s`,

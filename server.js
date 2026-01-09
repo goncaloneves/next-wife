@@ -783,6 +783,57 @@ app.get('/api/tg-channel-filters', async (req, res) => {
   }
 });
 
+// Get single profile by ID
+app.get('/api/tg-profile/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const channel = req.query.channel || 'nextwife_ai';
+    const channelName = channel.replace('@', '').replace(/_/g, '');
+    
+    if (!pool) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+    
+    const result = await pool.query(`
+      SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
+             name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship
+      FROM telegram_posts 
+      WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
+    `, [channelName, id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+    
+    const row = result.rows[0];
+    const post = {
+      id: row.id,
+      text: row.text,
+      date: row.date,
+      link: row.link,
+      media: row.media,
+      avatar: row.avatar,
+      botLink: row.botLink,
+      profileData: row.name ? {
+        name: row.name,
+        age: row.age,
+        nationality: row.nationality,
+        hometown: row.hometown,
+        work: row.work,
+        personality: row.personality,
+        relationship: row.relationship
+      } : null,
+      isHot: row.click_count > 0,
+      click_count: row.click_count
+    };
+    
+    res.json({ post });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
 // Get feed from database with filters
 app.get('/api/tg-channel-feed', async (req, res) => {
   try {

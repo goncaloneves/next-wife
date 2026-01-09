@@ -39,6 +39,15 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (January 9, 2026)
+20. **Dedicated profile detail pages** - Added individual profile pages with shareable URLs:
+    - Route: `/profile/:id` displays full profile details for a single girlfriend
+    - Hero image with gradient overlay and name/age/verified badge
+    - Location, work, personality, relationship details displayed below image
+    - "Message on Telegram" CTA button opens bot link
+    - Back navigation and "Browse more" link
+    - New API endpoint: `GET /api/tg-profile/:id` fetches single profile by ID directly from PostgreSQL
+    - Feed cards now navigate to profile page instead of opening Telegram directly
+
 19. **Personality and Relationship filters** - Added new filter categories with emoji labels:
     - Personality types: 🙈 Shy, 🤭 Playful, 💕 Caring, 🔥 Passionate, 🌸 Submissive, 😈 Dominant
     - Relationship types: ❓ Stranger, 📚 Classmate, 💼 Coworker, 🤝 Best Friend, 💕 Girlfriend, 💍 Wife
@@ -150,6 +159,12 @@ Posts from Telegram channel include:
 
 ## Backend API
 Express server (`server.js`) provides the following endpoints:
+
+### GET /api/tg-profile/:id
+- Fetches a single profile by ID directly from PostgreSQL
+- Parameters: `:id` (post ID), `?channel=` (optional, defaults to nextwife_ai)
+- Returns JSON with `post` object containing profile data, botLink, and isHot flag
+- Returns 404 if profile not found
 
 ### GET /api/tg-channel-feed
 - Queries PostgreSQL database when filters are applied, falls back to live Telegram scraping
