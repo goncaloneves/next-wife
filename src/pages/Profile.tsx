@@ -227,7 +227,7 @@ const Profile = () => {
               className="w-full text-white/50 hover:text-white hover:bg-white/5 text-sm" 
               data-testid="button-browse-more"
             >
-              Browse more girlfriends
+              Browse more women
             </Button>
           </Link>
         </div>
