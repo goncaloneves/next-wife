@@ -8,7 +8,7 @@ const BotEntry = () => {
   useEffect(() => {
     const fetchLatestProfile = async () => {
       try {
-        const response = await fetch("/api/tg-posts?channel=nextwife_ai&limit=1");
+        const response = await fetch("/api/tg-channel-feed?channel=nextwife_ai&limit=1");
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
         
