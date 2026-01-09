@@ -336,8 +336,8 @@ const Profile = () => {
               )}
             </div>
 
-            <div className="flex-shrink-0 overflow-y-auto border-t border-white/10" style={{ maxHeight: '32vh' }}>
-              <div className="p-4 space-y-2.5">
+            <div className="flex-shrink-0 overflow-y-auto bg-black/60" style={{ maxHeight: '32vh' }}>
+              <div className="px-4 py-3 space-y-2.5">
                 <div className="flex items-center gap-3 text-white/90">
                   <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
                   <span className="text-sm">{profileData.work}</span>
