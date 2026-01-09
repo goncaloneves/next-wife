@@ -744,18 +744,20 @@ export const TelegramChannelFeed = ({
                           <BadgeCheck className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
-                        <div className="space-y-0.5 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
-                          <p className="flex items-center gap-1.5">
-                            <span className="opacity-70">🌍</span>
-                            <span className="flex-1">{post.profileData.nationality} • {post.profileData.hometown}</span>
-                          </p>
-                          <p className="flex items-start gap-1.5">
-                            <span className="opacity-70 leading-none">💼</span>
-                            <span className="flex-1 line-clamp-2 md:line-clamp-3 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
-                          </p>
+                        <div className="flex flex-col gap-3 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
+                          <div className="space-y-0.5">
+                            <p className="flex items-center gap-1.5">
+                              <span className="opacity-70">🌍</span>
+                              <span className="flex-1">{post.profileData.nationality} • {post.profileData.hometown}</span>
+                            </p>
+                            <p className="flex items-start gap-1.5">
+                              <span className="opacity-70 leading-none">💼</span>
+                              <span className="flex-1 line-clamp-2 md:line-clamp-3 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
+                            </p>
+                          </div>
                           {/* Personality & Relationship pills */}
                           {(post.profileData.personality || post.profileData.relationship) && (
-                            <div className="flex flex-wrap gap-2 mt-3">
+                            <div className="flex flex-wrap gap-2">
                               {post.profileData.personality && (
                                 <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                                   {getPersonalityLabel(post.profileData.personality)}
