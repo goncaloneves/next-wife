@@ -155,7 +155,6 @@ const Profile = () => {
       sessionStorage.setItem('nextwife_navigating_skip', 'true');
       setDirection(1);
       setIsAnimating(true);
-      setImageLoaded(false);
       navigate(`/profile/${lastSkipped.profileId}`, { replace: true });
     }
   }, [skipHistory, navigate, isAnimating]);
@@ -170,7 +169,6 @@ const Profile = () => {
     
     setDirection(-1);
     setIsAnimating(true);
-    setImageLoaded(false);
     navigate(`/profile/${nextId}`, { replace: true });
   }, [id, nextId, skipHistory, navigate, isAnimating]);
 
@@ -206,18 +204,9 @@ const Profile = () => {
   }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId]);
 
   useEffect(() => {
-    setImageLoaded(false);
-  }, [id]);
-
-  useEffect(() => {
-    if (imageRef.current?.complete && imageRef.current?.naturalHeight > 0) {
-      setImageLoaded(true);
-    }
-  }, [post?.id]);
-
-  useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
+      setImageLoaded(false);
       try {
         const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
         if (!response.ok) {
@@ -235,8 +224,6 @@ const Profile = () => {
       } finally {
         setLoading(false);
         setIsAnimating(false);
-        setExitX(null);
-        x.set(0);
         isInitialLoad.current = false;
       }
     };
@@ -245,6 +232,19 @@ const Profile = () => {
       fetchProfile();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (post?.media && imageRef.current) {
+      const checkImage = () => {
+        if (imageRef.current?.complete && imageRef.current?.naturalHeight > 0) {
+          setImageLoaded(true);
+        }
+      };
+      checkImage();
+      const timer = setTimeout(checkImage, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [post?.id, post?.media]);
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 100;
@@ -321,7 +321,7 @@ const Profile = () => {
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
         onClick={(e) => e.stopPropagation()}
       >
-        <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => { setIsAnimating(false); setExitX(null); x.set(0); }}>
+        <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => { setExitX(null); x.set(0); }}>
           <motion.article
             key={post.id}
             custom={direction}
