@@ -39,6 +39,15 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
 ## Recent Changes (January 9, 2026)
+21. **Scroll position restoration** - Feed now restores scroll position when returning from profile pages:
+    - Feed state (posts, filters, cursor, etc.) cached to sessionStorage on profile click
+    - On return, cached data restored instantly without re-fetching
+    - Skip fade-in animation for cached items via `skipAnimation` state
+    - Filter arrays normalized for order-independent comparison
+    - Uses `hasInitializedRef` to prevent mount effect from running multiple times
+    - Double requestAnimationFrame ensures layout stability before scrollTo
+    - Cache cleared with 100ms delay to handle React StrictMode double-mount
+
 20. **Dedicated profile detail pages** - Added individual profile pages with shareable URLs:
     - Route: `/profile/:id` displays full profile details for a single girlfriend
     - Hero image with gradient overlay and name/age/verified badge

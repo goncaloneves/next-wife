@@ -181,6 +181,7 @@ export const TelegramChannelFeed = ({
         setImageLoadStates({});
         setImageErrors({});
         setHiddenIds(new Set());
+        setSkipAnimation(false); // Reset animation for fresh loads
       }
       isFilterChangeRef.current = false;
       
@@ -373,12 +374,21 @@ export const TelegramChannelFeed = ({
     if (cachedData && scrollContext) {
       try {
         const cache = JSON.parse(cachedData);
+        // Normalize filter arrays by sorting for order-independent comparison
+        const normalizeFilters = (f: typeof filters) => ({
+          regions: [...(f.regions || [])].sort(),
+          ageBrackets: [...(f.ageBrackets || [])].sort(),
+          occupationCategories: [...(f.occupationCategories || [])].sort(),
+          languages: [...(f.languages || [])].sort(),
+          hometowns: [...(f.hometowns || [])].sort(),
+          personalities: [...(f.personalities || [])].sort(),
+          relationships: [...(f.relationships || [])].sort(),
+        });
         const filtersMatch = 
-          JSON.stringify(cache.filters) === JSON.stringify(filters) &&
+          JSON.stringify(normalizeFilters(cache.filters)) === JSON.stringify(normalizeFilters(filters)) &&
           cache.sortBy === sortBy;
         
         if (filtersMatch && cache.posts?.length > 0) {
-          // Restore everything at once - all posts loaded, no pagination needed
           setAllPosts(cache.posts);
           setChannelInfo(cache.channelInfo);
           setNextCursor(cache.nextCursor);
@@ -388,7 +398,6 @@ export const TelegramChannelFeed = ({
           // Don't restore imageLoadStates - let images lazy load naturally
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
-          sessionStorage.removeItem('feedCache');
           restoredFromCache = true;
         } else {
           sessionStorage.removeItem('feedCache');
@@ -401,6 +410,18 @@ export const TelegramChannelFeed = ({
     if (!restoredFromCache) {
       fetchInitialPosts();
     }
+    
+    // Cleanup: clear cache on unmount (fresh navigation, not back navigation)
+    return () => {
+      // Only clear if not navigating to profile (profile click sets cache just before unmount)
+      // Use a small delay to allow profile navigation to set cache first
+      setTimeout(() => {
+        const scrollContext = sessionStorage.getItem('feedScrollContext');
+        if (!scrollContext) {
+          sessionStorage.removeItem('feedCache');
+        }
+      }, 50);
+    };
   }, []);
 
   // Separate effect for polling - doesn't trigger refetch
@@ -428,12 +449,26 @@ export const TelegramChannelFeed = ({
   // Refetch when filters change (skip initial mount)
   const filtersInitialized = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const prevFiltersRef = useRef<string>('');
+  const prevSortByRef = useRef<string>(sortBy);
   
   useEffect(() => {
-    if (!filtersInitialized.current) {
-      filtersInitialized.current = true;
+    // Include channelUsername in key for future multi-channel support
+    const currentFiltersKey = JSON.stringify([channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy]);
+    
+    // Skip if nothing actually changed (prevents re-fetch on callback recreation)
+    if (prevFiltersRef.current === currentFiltersKey) {
       return;
     }
+    
+    // Skip initial mount
+    if (!filtersInitialized.current) {
+      filtersInitialized.current = true;
+      prevFiltersRef.current = currentFiltersKey;
+      return;
+    }
+    
+    prevFiltersRef.current = currentFiltersKey;
     
     // Cancel any in-flight request
     if (abortControllerRef.current) {
