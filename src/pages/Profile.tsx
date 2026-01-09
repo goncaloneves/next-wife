@@ -336,7 +336,7 @@ const Profile = () => {
               <button
                 onClick={(e) => { e.stopPropagation(); goBack(); }}
                 onPointerDownCapture={(e) => e.stopPropagation()}
-                className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-transform duration-200 shadow-lg hover:scale-105 pointer-events-auto"
+                className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
                 data-testid="button-back"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -344,7 +344,7 @@ const Profile = () => {
               <button
                 onClick={(e) => { e.stopPropagation(); handleShare(); }}
                 onPointerDownCapture={(e) => e.stopPropagation()}
-                className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-transform duration-200 shadow-lg hover:scale-105 pointer-events-auto"
+                className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
                 data-testid="button-share"
               >
                 <Share2 className="w-5 h-5" />
@@ -421,7 +421,7 @@ const Profile = () => {
                         onClick={undoSkip}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                         disabled={isAnimating}
-                        className={`absolute left-1/2 -translate-x-[140px] w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-[transform,background-color] duration-200 shadow-xl pointer-events-auto ${
+                        className={`absolute left-1/2 -translate-x-[140px] w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
                           activeAction === 'undo'
                             ? 'bg-amber-400/30 border-amber-400 text-amber-400 scale-110 shadow-amber-400/40'
                             : 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20'
@@ -437,11 +437,13 @@ const Profile = () => {
                         onClick={skipProfile}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                         disabled={!canSkip || isAnimating}
-                        className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-[transform,background-color] duration-200 shadow-xl pointer-events-auto ${
+                        className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
                           (isDragging && dragOffset < -30 && canSkip) || activeAction === 'skip'
                             ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
-                            : 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20'
-                        } ${!canSkip || isAnimating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            : canSkip && !isAnimating
+                              ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
+                              : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+                        }`}
                         data-testid="button-action-skip"
                       >
                         <X className="w-9 h-9 stroke-[3]" />
@@ -450,7 +452,7 @@ const Profile = () => {
                       <button
                         onClick={openTelegram}
                         onPointerDownCapture={(e) => e.stopPropagation()}
-                        className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-transform duration-200 shadow-xl border-[3px] pointer-events-auto ${
+                        className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] pointer-events-auto ${
                           isDragging && dragOffset > 30
                             ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-400 scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
                             : 'bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
