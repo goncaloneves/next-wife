@@ -51,7 +51,7 @@ const saveSkipHistory = (history: SkipHistoryEntry[]) => {
   } catch {}
 };
 
-const cardVariants = {
+const createCardVariants = (exitX: number | null) => ({
   enter: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
     opacity: 0,
@@ -69,16 +69,18 @@ const cardVariants = {
     },
   },
   exit: (direction: number) => ({
-    x: direction > 0 ? 300 : -300,
+    x: exitX !== null 
+      ? (direction > 0 ? Math.max(exitX, 300) : Math.min(exitX, -300))
+      : (direction > 0 ? 300 : -300),
     opacity: 0,
     rotate: direction > 0 ? 15 : -15,
     scale: 0.95,
     transition: {
-      duration: 0.35,
+      duration: exitX !== null ? 0.2 : 0.35,
       ease: [0.22, 1, 0.36, 1] as const,
     },
   }),
-};
+});
 
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
@@ -92,6 +94,7 @@ const Profile = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
+  const [exitX, setExitX] = useState<number | null>(null);
 
 
   useEffect(() => {
@@ -179,10 +182,12 @@ const Profile = () => {
 
     if (offset < -threshold || velocity < -500) {
       if (nextId) {
+        setExitX(offset);
         skipProfile();
       }
     } else if (offset > threshold || velocity > 500) {
       if (skipHistory.length > 0) {
+        setExitX(offset);
         undoSkip();
       }
     }
@@ -247,11 +252,11 @@ const Profile = () => {
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
         onClick={(e) => e.stopPropagation()}
       >
-        <AnimatePresence mode="wait" custom={direction} onExitComplete={() => setIsAnimating(false)}>
+        <AnimatePresence mode="wait" custom={direction} onExitComplete={() => { setIsAnimating(false); setExitX(null); }}>
           <motion.article
             key={post.id}
             custom={direction}
-            variants={cardVariants}
+            variants={createCardVariants(exitX)}
             initial="enter"
             animate="center"
             exit="exit"
