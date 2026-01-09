@@ -139,8 +139,11 @@ const Profile = () => {
   }, [id]);
 
   const goBack = useCallback(() => {
+    if (id) {
+      sessionStorage.setItem('nextwife_last_viewed', id);
+    }
     navigate("/", { state: { restoreScroll: true } });
-  }, [navigate]);
+  }, [navigate, id]);
 
   const openTelegram = useCallback(() => {
     const url = post?.botLink || post?.link;

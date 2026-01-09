@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -90,12 +90,21 @@ export const TelegramChannelFeed = ({
   const isFilterChangeRef = useRef(false);
   const hasInitializedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [lastViewedId, setLastViewedId] = useState<string | null>(null);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem('nextwife_last_viewed');
+    if (stored) {
+      setLastViewedId(stored);
+      sessionStorage.removeItem('nextwife_last_viewed');
+    }
   }, []);
 
   // Sync refs with state for stable access in callbacks
@@ -649,6 +658,10 @@ export const TelegramChannelFeed = ({
   };
 
   const postsWithMedia = allPosts.filter((post) => post.media);
+  const activePost = useMemo(() => 
+    (lastViewedId && postsWithMedia.find(p => p.id === lastViewedId)) || postsWithMedia[0],
+    [lastViewedId, postsWithMedia]
+  );
   const hasActiveFilters = (filters.regions?.length) ||
                            (filters.ageBrackets?.length) ||
                            (filters.occupationCategories?.length) ||
@@ -713,8 +726,8 @@ export const TelegramChannelFeed = ({
         {/* Posts grid - show whenever we have posts, even while loading new ones */}
         {postsWithMedia.length > 0 && (
         <div>
-          {/* Mobile: Start Swiping CTA with first profile preview */}
-          {isMobile && postsWithMedia[0] && (
+          {/* Mobile: Start Swiping CTA with active profile preview */}
+          {isMobile && activePost && (
             <div className="flex flex-col items-center gap-6 py-4">
               <div 
                 className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer"
@@ -722,8 +735,7 @@ export const TelegramChannelFeed = ({
                   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3)',
                 }}
                 onClick={() => {
-                  const firstPost = postsWithMedia[0];
-                  trackClick(firstPost.id);
+                  trackClick(activePost.id);
                   sessionStorage.removeItem('nextwife_skip_history');
                   sessionStorage.setItem('feedCache', JSON.stringify({
                     posts: allPosts,
@@ -735,27 +747,27 @@ export const TelegramChannelFeed = ({
                     refreshKey,
                     imageLoadStates
                   }));
-                  navigate(`/profile/${firstPost.id}`);
+                  navigate(`/profile/${activePost.id}`);
                 }}
               >
                 <img
-                  src={buildSrc(postsWithMedia[0].media!, postsWithMedia[0].id)}
+                  src={buildSrc(activePost.media!, activePost.id)}
                   alt=""
                   className="w-full h-full object-cover"
                 />
-                {postsWithMedia[0].profileData && (
+                {activePost.profileData && (
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-2xl font-bold text-white drop-shadow-lg">
-                        {postsWithMedia[0].profileData.name}
+                        {activePost.profileData.name}
                       </h3>
                       <span className="text-xl font-semibold text-white/90">
-                        {postsWithMedia[0].profileData.age}
+                        {activePost.profileData.age}
                       </span>
                       <BadgeCheck className="w-5 h-5 text-[#0099FF]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
                     </div>
                     <p className="text-sm text-white/80">
-                      {postsWithMedia[0].profileData.nationality} • {postsWithMedia[0].profileData.hometown}
+                      {activePost.profileData.nationality} • {activePost.profileData.hometown}
                     </p>
                   </div>
                 )}
@@ -768,8 +780,7 @@ export const TelegramChannelFeed = ({
                   boxShadow: "var(--shadow-warm)",
                 }}
                 onClick={() => {
-                  const firstPost = postsWithMedia[0];
-                  trackClick(firstPost.id);
+                  trackClick(activePost.id);
                   sessionStorage.removeItem('nextwife_skip_history');
                   sessionStorage.setItem('feedCache', JSON.stringify({
                     posts: allPosts,
@@ -781,7 +792,7 @@ export const TelegramChannelFeed = ({
                     refreshKey,
                     imageLoadStates
                   }));
-                  navigate(`/profile/${firstPost.id}`);
+                  navigate(`/profile/${activePost.id}`);
                 }}
                 data-testid="button-start-swiping"
               >
