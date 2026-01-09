@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -95,10 +95,30 @@ const Profile = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [exitX, setExitX] = useState<number | null>(null);
+  const [activeAction, setActiveAction] = useState<'undo' | 'skip' | null>(null);
+  const highlightTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
   const opacity = useTransform(x, [-200, -120, -60, 0, 60, 120, 200], [0.2, 0.4, 1, 1, 1, 0.4, 0.2]);
+  
+  const flashAction = useCallback((action: 'undo' | 'skip') => {
+    if (highlightTimeoutRef.current) {
+      clearTimeout(highlightTimeoutRef.current);
+    }
+    setActiveAction(action);
+    highlightTimeoutRef.current = setTimeout(() => {
+      setActiveAction(null);
+    }, 150);
+  }, []);
+  
+  useEffect(() => {
+    return () => {
+      if (highlightTimeoutRef.current) {
+        clearTimeout(highlightTimeoutRef.current);
+      }
+    };
+  }, []);
 
 
   useEffect(() => {
@@ -164,8 +184,14 @@ const Profile = () => {
       if (e.key === "Escape") {
         goBack();
       } else if (e.key === "ArrowLeft") {
+        if (skipHistory.length > 0) {
+          flashAction('undo');
+        }
         undoSkip();
       } else if (e.key === "ArrowRight") {
+        if (nextId) {
+          flashAction('skip');
+        }
         skipProfile();
       } else if (e.key === " ") {
         e.preventDefault();
@@ -175,7 +201,7 @@ const Profile = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goBack, undoSkip, skipProfile, openTelegram]);
+  }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -400,7 +426,11 @@ const Profile = () => {
                         onClick={undoSkip}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                         disabled={isAnimating}
-                        className="absolute left-1/2 -translate-x-[140px] w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20"
+                        className={`absolute left-1/2 -translate-x-[140px] w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                          activeAction === 'undo'
+                            ? 'bg-amber-400/30 border-amber-400 text-amber-400 scale-110 shadow-amber-400/40'
+                            : 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20'
+                        }`}
                         data-testid="button-action-undo"
                       >
                         <Undo2 className="w-6 h-6" />
@@ -413,7 +443,7 @@ const Profile = () => {
                         onPointerDownCapture={(e) => e.stopPropagation()}
                         disabled={!canSkip || isAnimating}
                         className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
-                          isDragging && dragOffset < -30 && canSkip
+                          (isDragging && dragOffset < -30 && canSkip) || activeAction === 'skip'
                             ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
                             : canSkip && !isAnimating
                               ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
