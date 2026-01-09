@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Clock } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
+import { formatDistanceToNow } from "date-fns";
 
 interface ProfileData {
   name: string;
@@ -65,6 +66,30 @@ const Profile = () => {
     }
   };
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Meet ${post?.profileData?.name} on Next Wife`,
+          url: url,
+        });
+      } catch (err) {
+        navigator.clipboard.writeText(url);
+      }
+    } else {
+      navigator.clipboard.writeText(url);
+    }
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    try {
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
+    } catch {
+      return "";
+    }
+  };
+
   const buildImageSrc = (url: string) => {
     return `/api/tg-image-proxy?u=${encodeURIComponent(url)}`;
   };
@@ -94,13 +119,22 @@ const Profile = () => {
     <div className="h-screen flex flex-col bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] overflow-hidden">
       <div className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0">
         <div className="relative flex-1 min-h-[300px]">
-          <button
-            onClick={() => navigate("/", { state: { restoreScroll: true } })}
-            className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur-sm text-white p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg"
-            data-testid="button-back"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
+          <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center">
+            <button
+              onClick={() => navigate("/", { state: { restoreScroll: true } })}
+              className="bg-black/50 backdrop-blur-sm text-white p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg"
+              data-testid="button-back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleShare}
+              className="bg-black/50 backdrop-blur-sm text-white p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg"
+              data-testid="button-share"
+            >
+              <Share2 className="w-5 h-5" />
+            </button>
+          </div>
 
           {!imageLoaded && (
             <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
@@ -155,6 +189,11 @@ const Profile = () => {
             <div className="flex items-center gap-3 text-white/90">
               <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
               <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
+            </div>
+
+            <div className="flex items-center gap-3 text-white/90">
+              <Clock className="w-4 h-4 text-white/50 flex-shrink-0" />
+              <span className="text-sm text-white/60">{formatTimeAgo(post.date)}</span>
             </div>
 
             {(profileData.relationship || profileData.personality) && (
