@@ -172,10 +172,14 @@ const Index = () => {
         {/* Hero Section */}
         <header
           ref={heroRef}
-          className="relative h-screen min-h-[600px] flex flex-col justify-end overflow-hidden pb-12 opacity-0"
+          className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden opacity-0"
+          style={{ paddingBottom: 'max(3rem, calc(env(safe-area-inset-bottom) + 2rem))' }}
         >
           {/* Top Navigation Bar */}
-          <div className="absolute top-8 left-8 z-20 flex items-center gap-4">
+          <div 
+            className="absolute left-8 z-20 flex items-center gap-4"
+            style={{ top: 'max(2rem, calc(env(safe-area-inset-top) + 1rem))' }}
+          >
             {/* Logo Profile Button - Left */}
             <button
               onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
