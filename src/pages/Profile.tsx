@@ -106,6 +106,7 @@ const Profile = () => {
   const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
+  const [mediaDimensions, setMediaDimensions] = useState<{ width: number; height: number } | null>(null);
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -317,12 +318,14 @@ const Profile = () => {
             onDragStart={() => setIsDragging(true)}
             onDrag={(_, info) => { setDragOffset(info.offset.x); x.set(info.offset.x); }}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
-            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 select-none min-h-[400px]"
+            className="relative overflow-hidden rounded-2xl border border-white/10 select-none w-full"
             style={{ 
               transformOrigin: 'center center',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)',
               rotate: isDragging ? dragRotate : 0,
-              opacity: isDragging ? dragOpacity : 1
+              opacity: isDragging ? dragOpacity : 1,
+              aspectRatio: mediaDimensions ? `${mediaDimensions.width} / ${mediaDimensions.height}` : '3 / 4',
+              maxHeight: 'calc(100svh - 2rem)',
             }}
           >
             {!imageLoaded && (
@@ -341,7 +344,11 @@ const Profile = () => {
                     <video
                       src={currentMedia.url}
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoadedData={() => setImageLoaded(true)}
+                      onLoadedMetadata={(e) => {
+                        const video = e.currentTarget;
+                        setMediaDimensions({ width: video.videoWidth, height: video.videoHeight });
+                        setImageLoaded(true);
+                      }}
                       onError={() => setImageLoaded(true)}
                       autoPlay
                       loop
@@ -354,7 +361,11 @@ const Profile = () => {
                       src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
                       alt={profileData.name}
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoad={() => setImageLoaded(true)}
+                      onLoad={(e) => {
+                        const img = e.currentTarget;
+                        setMediaDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+                        setImageLoaded(true);
+                      }}
                       onError={() => setImageLoaded(true)}
                       draggable={false}
                     />
