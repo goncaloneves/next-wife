@@ -844,6 +844,8 @@ export const TelegramChannelFeed = ({
                   `}
                   onClick={() => {
                     trackClick(post.id);
+                    // Set nav flag to preserve skip history when re-entering profile
+                    sessionStorage.setItem('nextwife_navigating_skip', 'true');
                     sessionStorage.setItem('feedScrollContext', JSON.stringify({
                       postId: post.id,
                       scrollY: window.scrollY
