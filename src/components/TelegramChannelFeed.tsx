@@ -79,7 +79,7 @@ export const TelegramChannelFeed = ({
   const [skipAnimation, setSkipAnimation] = useState(false);
   const navigate = useNavigate();
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
-  const [filters, setFilters] = useState<{ regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[] }>({ regions: [], ageBrackets: [], occupationCategories: [], languages: [], hometowns: [], personalities: [], relationships: [] });
+  const [filters, setFilters] = useState<{ regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[]; hasVideo: boolean; hasMultipleMedia: boolean }>({ regions: [], ageBrackets: [], occupationCategories: [], languages: [], hometowns: [], personalities: [], relationships: [], hasVideo: false, hasMultipleMedia: false });
   const listRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -168,6 +168,8 @@ export const TelegramChannelFeed = ({
       if (filters.hometowns?.length) filters.hometowns.forEach(h => filterParams.append('hometown', h));
       if (filters.personalities?.length) filters.personalities.forEach(p => filterParams.append('personality', p));
       if (filters.relationships?.length) filters.relationships.forEach(r => filterParams.append('relationship', r));
+      if (filters.hasVideo) filterParams.append('hasVideo', 'true');
+      if (filters.hasMultipleMedia) filterParams.append('hasMultipleMedia', 'true');
       
       const response = await fetch(
         `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
@@ -234,6 +236,8 @@ export const TelegramChannelFeed = ({
       if (filters.hometowns?.length) filters.hometowns.forEach(h => filterParams.append('hometown', h));
       if (filters.personalities?.length) filters.personalities.forEach(p => filterParams.append('personality', p));
       if (filters.relationships?.length) filters.relationships.forEach(r => filterParams.append('relationship', r));
+      if (filters.hasVideo) filterParams.append('hasVideo', 'true');
+      if (filters.hasMultipleMedia) filterParams.append('hasMultipleMedia', 'true');
       
       const response = await fetch(
         `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
@@ -380,7 +384,7 @@ export const TelegramChannelFeed = ({
     } catch (err) {
       console.error("Error checking for new posts:", err);
     }
-  }, [channelUsername, fingerprint, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy]);
+  }, [channelUsername, fingerprint, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, filters.hasVideo, filters.hasMultipleMedia, sortBy]);
 
   // Initial mount effect - runs once only
   useEffect(() => {
@@ -476,7 +480,7 @@ export const TelegramChannelFeed = ({
   
   useEffect(() => {
     // Include channelUsername in key for future multi-channel support
-    const currentFiltersKey = JSON.stringify([channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy]);
+    const currentFiltersKey = JSON.stringify([channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, filters.hasVideo, filters.hasMultipleMedia, sortBy]);
     
     // Skip if nothing actually changed (prevents re-fetch on callback recreation)
     if (prevFiltersRef.current === currentFiltersKey) {
@@ -512,10 +516,10 @@ export const TelegramChannelFeed = ({
     
     // Fetch with new filters - fetchInitialPosts will replace posts atomically
     fetchInitialPosts();
-  }, [filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy, fetchInitialPosts]);
+  }, [filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, filters.hasVideo, filters.hasMultipleMedia, sortBy, fetchInitialPosts]);
 
   // Handler for filter changes
-  const handleFiltersChange = useCallback((newFilters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[] }) => {
+  const handleFiltersChange = useCallback((newFilters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[]; hasVideo: boolean; hasMultipleMedia: boolean }) => {
     setFilters(newFilters);
     // Report active filter count to parent (count individual selected values, not categories)
     if (onActiveFilterCountChange) {
@@ -525,7 +529,9 @@ export const TelegramChannelFeed = ({
                     newFilters.languages.length + 
                     newFilters.hometowns.length +
                     newFilters.personalities.length +
-                    newFilters.relationships.length;
+                    newFilters.relationships.length +
+                    (newFilters.hasVideo ? 1 : 0) +
+                    (newFilters.hasMultipleMedia ? 1 : 0);
       onActiveFilterCountChange(count);
     }
   }, [onActiveFilterCountChange]);
@@ -673,7 +679,9 @@ export const TelegramChannelFeed = ({
                            (filters.ageBrackets?.length) ||
                            (filters.occupationCategories?.length) ||
                            (filters.languages?.length) ||
-                           (filters.hometowns?.length);
+                           (filters.hometowns?.length) ||
+                           filters.hasVideo ||
+                           filters.hasMultipleMedia;
 
   if (layout === "grid") {
     return (

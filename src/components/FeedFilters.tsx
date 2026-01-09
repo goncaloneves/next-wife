@@ -46,7 +46,7 @@ interface FilterOptions {
 
 interface FeedFiltersProps {
   channel: string;
-  onFiltersChange: (filters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[] }) => void;
+  onFiltersChange: (filters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[]; hasVideo: boolean; hasMultipleMedia: boolean }) => void;
   showFilters?: boolean;
   onShowFiltersChange?: (show: boolean) => void;
   hideButton?: boolean;
@@ -183,6 +183,12 @@ export function FeedFilters({
   const [selectedRelationships, setSelectedRelationships] = useState<string[]>(() => 
     parseUrlArrayParam(searchParams.get('relationship'))
   );
+  const [hasVideo, setHasVideo] = useState<boolean>(() => 
+    searchParams.get('hasVideo') === 'true'
+  );
+  const [hasMultipleMedia, setHasMultipleMedia] = useState<boolean>(() => 
+    searchParams.get('hasMultipleMedia') === 'true'
+  );
   
   const toggleSelection = (current: string[], value: string): string[] => {
     return current.includes(value) 
@@ -241,14 +247,16 @@ export function FeedFilters({
       hometowns: selectedHometowns,
       personalities: selectedPersonalities,
       relationships: selectedRelationships,
+      hasVideo,
+      hasMultipleMedia,
     });
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, onFiltersChange]);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, onFiltersChange]);
 
   useEffect(() => {
     if (!loading) {
       notifyFiltersChange();
     }
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, loading, notifyFiltersChange]);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading, notifyFiltersChange]);
 
   useEffect(() => {
     if (loading) return;
@@ -270,13 +278,23 @@ export function FeedFilters({
     updateParam('cities', selectedHometowns);
     updateParam('personality', selectedPersonalities);
     updateParam('relationship', selectedRelationships);
+    if (hasVideo) {
+      newParams.set('hasVideo', 'true');
+    } else {
+      newParams.delete('hasVideo');
+    }
+    if (hasMultipleMedia) {
+      newParams.set('hasMultipleMedia', 'true');
+    } else {
+      newParams.delete('hasMultipleMedia');
+    }
     
     setSearchParams(newParams, { replace: true });
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, loading, searchParams, setSearchParams]);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading, searchParams, setSearchParams]);
 
   const activeFilterCount = useMemo(() => {
-    return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length + selectedPersonalities.length + selectedRelationships.length;
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships]);
+    return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length + selectedPersonalities.length + selectedRelationships.length + (hasVideo ? 1 : 0) + (hasMultipleMedia ? 1 : 0);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia]);
 
   // Map personality/relationship values to emoji labels
   const personalityOptions = useMemo(() => 
@@ -413,6 +431,25 @@ export function FeedFilters({
               onClearAll={() => setSelectedRelationships([])}
               showAll
             />
+
+            {/* Media Type */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">Media</h3>
+              <div className="flex flex-wrap gap-2">
+                <Chip
+                  label="Has Video"
+                  selected={hasVideo}
+                  onClick={() => setHasVideo(!hasVideo)}
+                  variant="accent"
+                />
+                <Chip
+                  label="Multiple Photos"
+                  selected={hasMultipleMedia}
+                  onClick={() => setHasMultipleMedia(!hasMultipleMedia)}
+                  variant="accent"
+                />
+              </div>
+            </div>
             </div>
           </div>
 
@@ -430,6 +467,8 @@ export function FeedFilters({
                   setSelectedHometowns([]);
                   setSelectedPersonalities([]);
                   setSelectedRelationships([]);
+                  setHasVideo(false);
+                  setHasMultipleMedia(false);
                 }}
                 className="text-orange-400 hover:text-orange-300 hover:bg-orange-400/10 rounded-full px-6"
                 data-testid="clear-all-filters"

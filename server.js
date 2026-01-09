@@ -448,9 +448,13 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       const occupationCategory = post.profileData ? getOccupationCategory(post.profileData.work) : null;
       const language = post.profileData ? getNativeLanguage(post.profileData.nationality) : null;
       
+      // Calculate media flags
+      const hasVideo = post.mediaUrls ? post.mediaUrls.some(m => m.type === 'video') : false;
+      const hasMultipleMedia = post.mediaUrls ? post.mediaUrls.length > 1 : false;
+      
       await pool.query(`
-        INSERT INTO telegram_posts (id, channel, text, date, link, media, media_urls, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, about, updated_at, deleted_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW(), NULL)
+        INSERT INTO telegram_posts (id, channel, text, date, link, media, media_urls, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, about, has_video, has_multiple_media, updated_at, deleted_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, NOW(), NULL)
         ON CONFLICT (id) DO UPDATE SET
           text = EXCLUDED.text,
           date = EXCLUDED.date,
@@ -471,6 +475,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
           personality = EXCLUDED.personality,
           relationship = EXCLUDED.relationship,
           about = EXCLUDED.about,
+          has_video = EXCLUDED.has_video,
+          has_multiple_media = EXCLUDED.has_multiple_media,
           updated_at = NOW(),
           deleted_at = NULL
       `, [
@@ -494,7 +500,9 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
         language,
         post.profileData?.personality || null,
         post.profileData?.relationship || null,
-        post.profileData?.about || null
+        post.profileData?.about || null,
+        hasVideo,
+        hasMultipleMedia
       ]);
       synced++;
     } catch (error) {
@@ -1013,9 +1021,11 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     const hometowns = req.query.hometown ? (Array.isArray(req.query.hometown) ? req.query.hometown : [req.query.hometown]) : null;
     const personalities = req.query.personality ? (Array.isArray(req.query.personality) ? req.query.personality : [req.query.personality]) : null;
     const relationships = req.query.relationship ? (Array.isArray(req.query.relationship) ? req.query.relationship : [req.query.relationship]) : null;
+    const hasVideo = req.query.hasVideo === 'true';
+    const hasMultipleMedia = req.query.hasMultipleMedia === 'true';
     const sortBy = req.query.sort || 'recent'; // 'recent' or 'hot'
     
-    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns || personalities || relationships;
+    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns || personalities || relationships || hasVideo || hasMultipleMedia;
     
     // Always use database when available (for isHot calculation and better performance)
     if (db) {
@@ -1068,6 +1078,14 @@ app.get('/api/tg-channel-feed', async (req, res) => {
         query += ` AND relationship = ANY($${paramIndex})`;
         params.push(relationships);
         paramIndex++;
+      }
+      
+      if (hasVideo) {
+        query += ` AND has_video = true`;
+      }
+      
+      if (hasMultipleMedia) {
+        query += ` AND has_multiple_media = true`;
       }
       
       if (before) {
