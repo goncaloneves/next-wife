@@ -401,7 +401,7 @@ const Profile = () => {
                         onClick={skipProfile}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                         disabled={!canSkip || isAnimating}
-                        className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                        className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
                           (isDragging && dragOffset < -30 && canSkip) || activeAction === 'skip'
                             ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
                             : canSkip && !isAnimating
@@ -410,7 +410,7 @@ const Profile = () => {
                         }`}
                         data-testid="button-action-skip"
                       >
-                        <X className="w-8 h-8 stroke-[3]" />
+                        <X className="w-9 h-9 stroke-[3]" />
                       </button>
 
                       <button
