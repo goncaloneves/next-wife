@@ -123,15 +123,21 @@ const Profile = () => {
   }, []);
 
   useEffect(() => {
-    const captureClick = (e: MouseEvent) => {
+    const swallowEvent = (e: Event) => {
       if (ignoreNextClickRef.current) {
         e.stopPropagation();
         e.preventDefault();
         ignoreNextClickRef.current = false;
       }
     };
-    document.addEventListener('click', captureClick, true);
-    return () => document.removeEventListener('click', captureClick, true);
+    document.addEventListener('click', swallowEvent, true);
+    document.addEventListener('touchend', swallowEvent, true);
+    document.addEventListener('pointerup', swallowEvent, true);
+    return () => {
+      document.removeEventListener('click', swallowEvent, true);
+      document.removeEventListener('touchend', swallowEvent, true);
+      document.removeEventListener('pointerup', swallowEvent, true);
+    };
   }, []);
 
   useEffect(() => {
@@ -169,6 +175,10 @@ const Profile = () => {
   }, []);
 
   const goBack = useCallback(() => {
+    if (ignoreNextClickRef.current) {
+      ignoreNextClickRef.current = false;
+      return;
+    }
     if (id) {
       sessionStorage.setItem('nextwife_last_viewed', id);
     }
