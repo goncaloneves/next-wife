@@ -380,12 +380,12 @@ const Profile = () => {
                       </div>
                     </div>
                   )}
-                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-white/10 pointer-events-none">
+                  <div className="relative flex items-center justify-center pt-4 mt-3 border-t border-white/10 pointer-events-none">
                     <button
                       onClick={undoSkip}
                       onPointerDownCapture={(e) => e.stopPropagation()}
                       disabled={!canUndo || isAnimating}
-                      className={`w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                      className={`absolute left-0 w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
                         canUndo && !isAnimating
                           ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
                           : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
