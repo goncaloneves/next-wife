@@ -373,49 +373,49 @@ const Profile = () => {
                       </div>
                     </div>
                   )}
+                  <div className="flex items-center justify-center gap-5 pt-4 mt-3 border-t border-white/10 pointer-events-none">
+                    <button
+                      onClick={undoSkip}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
+                      disabled={!canUndo || isAnimating}
+                      className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                        canUndo && !isAnimating
+                          ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
+                          : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+                      }`}
+                      data-testid="button-action-undo"
+                    >
+                      <Undo2 className="w-7 h-7" />
+                    </button>
+                    
+                    <button
+                      onClick={skipProfile}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
+                      disabled={!canSkip || isAnimating}
+                      className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                        canSkip && !isAnimating
+                          ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
+                          : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+                      }`}
+                      data-testid="button-action-skip"
+                    >
+                      <X className="w-8 h-8 stroke-[3]" />
+                    </button>
+
+                    <button
+                      onClick={handleMessageClick}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
+                      className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 flex items-center justify-center text-white hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 transition-all shadow-xl shadow-rose-500/30 border-[3px] border-white/30 pointer-events-auto"
+                      data-testid="button-message-telegram"
+                    >
+                      <MessageCircle className="w-9 h-9" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </motion.article>
         </AnimatePresence>
-
-        <div className="flex-shrink-0 bg-black/60 backdrop-blur-lg border-t border-white/10 px-6 py-5 pb-7">
-          <div className="flex items-center justify-center gap-6">
-            <button
-              onClick={undoSkip}
-              disabled={!canUndo || isAnimating}
-              className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl ${
-                canUndo && !isAnimating
-                  ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
-                  : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
-              }`}
-              data-testid="button-action-undo"
-            >
-              <Undo2 className="w-8 h-8" />
-            </button>
-            
-            <button
-              onClick={skipProfile}
-              disabled={!canSkip || isAnimating}
-              className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl ${
-                canSkip && !isAnimating
-                  ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
-                  : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
-              }`}
-              data-testid="button-action-skip"
-            >
-              <X className="w-9 h-9 stroke-[3]" />
-            </button>
-
-            <button
-              onClick={handleMessageClick}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 flex items-center justify-center text-white hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 transition-all shadow-xl shadow-rose-500/30 border-[3px] border-white/30"
-              data-testid="button-message-telegram"
-            >
-              <MessageCircle className="w-10 h-10" />
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
