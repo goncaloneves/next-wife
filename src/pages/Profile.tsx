@@ -366,7 +366,7 @@ const Profile = () => {
                     <img
                       src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
                       alt={profileData.name}
-                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 image-sharpen ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       onLoad={(e) => {
                         const img = e.currentTarget;
                         if (!dimensionsLocked.current) {

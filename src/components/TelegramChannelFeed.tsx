@@ -880,7 +880,7 @@ export const TelegramChannelFeed = ({
                     alt=""
                     loading="lazy"
                     referrerPolicy="no-referrer"
-                    className={`w-full h-full object-cover transition-all duration-300 ${
+                    className={`w-full h-full object-cover transition-all duration-300 image-sharpen ${
                       imageLoadStates[post.id] ? "" : "opacity-0"
                     } ${
                       isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
