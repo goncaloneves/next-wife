@@ -76,7 +76,7 @@ const createCardVariants = (exitX: number | null) => ({
     rotate: direction > 0 ? 15 : -15,
     scale: 0.95,
     transition: {
-      duration: exitX !== null ? 0.2 : 0.35,
+      duration: 0.35,
       ease: [0.22, 1, 0.36, 1] as const,
     },
   }),
