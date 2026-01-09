@@ -727,7 +727,7 @@ export const TelegramChannelFeed = ({
                   
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-[background] duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-0 animate-fade-in md:animate-none"
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-all duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-0 animate-fade-in"
                       style={{ 
                         animationDelay: `${(index % 20) * 0.05 + 0.15}s`,
                         animationFillMode: "forwards"
@@ -744,7 +744,7 @@ export const TelegramChannelFeed = ({
                           <BadgeCheck className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
-                        <div className="flex flex-col gap-3 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-[max-height,opacity] duration-300">
+                        <div className="flex flex-col gap-3 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
                           <div className="space-y-0.5">
                             <p className="flex items-center gap-1.5">
                               <span className="opacity-70">🌍</span>
