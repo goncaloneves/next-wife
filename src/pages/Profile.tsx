@@ -380,13 +380,13 @@ const Profile = () => {
                       </div>
                     </div>
                   )}
-                  <div className="relative flex items-center justify-center pt-4 mt-3 border-t border-white/10 pointer-events-none">
+                  <div className="relative flex items-center justify-center pt-4 mt-3 border-t border-white/10 pointer-events-none min-h-[80px]">
                     {canUndo && (
                       <button
                         onClick={undoSkip}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                         disabled={isAnimating}
-                        className="absolute left-0 w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20"
+                        className="absolute left-1/2 -translate-x-[140px] w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20"
                         data-testid="button-action-undo"
                       >
                         <Undo2 className="w-6 h-6" />
@@ -429,6 +429,21 @@ const Profile = () => {
             </div>
           </motion.article>
         </AnimatePresence>
+      </div>
+      
+      <div className="hidden md:flex fixed bottom-4 right-4 items-center gap-3 text-white/40 text-xs bg-black/40 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10">
+        <div className="flex items-center gap-1">
+          <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-white/60 font-mono">←</kbd>
+          <span>Back</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-white/60 font-mono">→</kbd>
+          <span>Skip</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-white/60 font-mono">Space</kbd>
+          <span>Message</span>
+        </div>
       </div>
     </div>
   );
