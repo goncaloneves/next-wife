@@ -246,6 +246,8 @@ function parseChannelHTML(html, channelName) {
       const nationalityMatch = text.match(/Nationality:\s*([^\n]+)/i);
       const hometownMatch = text.match(/Hometown:\s*([^\n]+)/i);
       const workMatch = text.match(/Work:\s*([^\n]+)/i);
+      const personalityMatch = text.match(/Personality:\s*([^\n]+)/i);
+      const relationshipMatch = text.match(/Relationship:\s*([^\n]+)/i);
 
       if (nameMatch && ageMatch && nationalityMatch && hometownMatch && workMatch) {
         // Strip trailing numbers in parentheses like "(1)", "(2)", "(3)" from names
@@ -255,7 +257,9 @@ function parseChannelHTML(html, channelName) {
           age: parseInt(ageMatch[1]),
           nationality: nationalityMatch[1].trim(),
           hometown: hometownMatch[1].trim(),
-          work: workMatch[1].trim()
+          work: workMatch[1].trim(),
+          personality: personalityMatch ? personalityMatch[1].trim() : null,
+          relationship: relationshipMatch ? relationshipMatch[1].trim() : null
         };
       }
     }
@@ -334,8 +338,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       const language = post.profileData ? getLanguage(post.profileData.nationality) : null;
       
       await pool.query(`
-        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, updated_at, deleted_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW(), NULL)
+        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, updated_at, deleted_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, NOW(), NULL)
         ON CONFLICT (id) DO UPDATE SET
           text = EXCLUDED.text,
           date = EXCLUDED.date,
@@ -352,6 +356,8 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
           age_bracket = EXCLUDED.age_bracket,
           occupation_category = EXCLUDED.occupation_category,
           language = EXCLUDED.language,
+          personality = EXCLUDED.personality,
+          relationship = EXCLUDED.relationship,
           updated_at = NOW(),
           deleted_at = NULL
       `, [
@@ -371,7 +377,9 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
         region,
         ageBracket,
         occupationCategory,
-        language
+        language,
+        post.profileData?.personality || null,
+        post.profileData?.relationship || null
       ]);
       synced++;
     } catch (error) {
