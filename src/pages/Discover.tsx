@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-const BotEntry = () => {
+const Discover = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [error, setError] = useState(false);
@@ -53,4 +53,4 @@ const BotEntry = () => {
   );
 };
 
-export default BotEntry;
+export default Discover;
