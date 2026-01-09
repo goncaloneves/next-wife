@@ -233,7 +233,7 @@ const Index = () => {
                 onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
                 data-testid="button-open-nextwife"
               >
-                Open Next Wife
+                Go to Next Wife
               </Button>
             </div>
           </div>
