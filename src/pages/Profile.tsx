@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Heart, Users } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Clock, Share2 } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel } from "@/lib/girlfriends/profile-formatter";
+import { formatDistanceToNow } from "date-fns";
 
 interface ProfileData {
   name: string;
@@ -58,13 +59,38 @@ const Profile = () => {
   }, [id]);
 
   const handleMessageClick = () => {
-    if (post?.botLink) {
-      window.open(post.botLink, "_blank", "noopener,noreferrer");
+    const url = post?.botLink || post?.link;
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Meet ${post?.profileData?.name} on Next Wife`,
+          url: url,
+        });
+      } catch (err) {
+        navigator.clipboard.writeText(url);
+      }
+    } else {
+      navigator.clipboard.writeText(url);
     }
   };
 
   const buildImageSrc = (url: string) => {
     return `/api/tg-image-proxy?u=${encodeURIComponent(url)}`;
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    try {
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
+    } catch {
+      return "";
+    }
   };
 
   if (loading) {
@@ -89,20 +115,29 @@ const Profile = () => {
   const { profileData } = post;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a]">
+    <div className="min-h-screen bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] pb-24">
       <div className="max-w-lg mx-auto relative">
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 z-50 bg-black/50 backdrop-blur-sm text-white p-2 rounded-full hover:bg-black/70 transition-colors"
-          data-testid="button-back"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </button>
+        <div className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 max-w-lg mx-auto">
+          <button
+            onClick={() => navigate(-1)}
+            className="bg-black/60 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/80 transition-colors shadow-lg"
+            data-testid="button-back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleShare}
+            className="bg-black/60 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/80 transition-colors shadow-lg"
+            data-testid="button-share"
+          >
+            <Share2 className="w-5 h-5" />
+          </button>
+        </div>
 
         <div className="relative">
           <div className="aspect-[3/4] w-full overflow-hidden">
             {!imageLoaded && (
-              <div className="absolute inset-0 bg-gray-800 animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
             )}
             <img
               src={buildImageSrc(post.media)}
@@ -112,88 +147,102 @@ const Profile = () => {
             />
           </div>
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-white drop-shadow-lg">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent pt-20 pb-6 px-5">
+            {post.isHot && (
+              <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-rose-500 rounded-full px-3 py-1 mb-3 shadow-lg">
+                <span className="text-sm">🔥</span>
+                <span className="text-xs font-semibold text-white">Hot</span>
+              </div>
+            )}
+            
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-3xl font-bold text-white">
                 {profileData.name}
               </h1>
-              <span className="text-2xl font-semibold text-white/90">
+              <span className="text-2xl font-light text-white/90">
                 {profileData.age}
               </span>
               <BadgeCheck 
-                className="w-7 h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
-                style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
+                className="w-6 h-6 text-[#1DA1F2] flex-shrink-0" 
+                style={{ fill: '#1DA1F2', stroke: 'white', strokeWidth: 2 }} 
               />
             </div>
+
+            <div className="flex items-center gap-2 text-white/70 text-sm">
+              <MapPin className="w-4 h-4" />
+              <span>{profileData.hometown}</span>
+              <span className="text-white/40">•</span>
+              <Clock className="w-4 h-4" />
+              <span>{formatTimeAgo(post.date)}</span>
+            </div>
           </div>
         </div>
 
-        <div className="p-6 space-y-6 text-white">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <MapPin className="w-5 h-5 text-primary/80" />
-              <div>
-                <p className="text-white/60 text-sm">Location</p>
-                <p className="font-medium">{profileData.nationality} • {profileData.hometown}</p>
-              </div>
+        <div className="relative -mt-3 mx-4">
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-5 space-y-5">
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-sm text-white">
+                🌍 {profileData.nationality}
+              </span>
+              {profileData.relationship && (
+                <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-full px-3 py-1.5 text-sm text-pink-200">
+                  {getRelationshipLabel(profileData.relationship)}
+                </span>
+              )}
+              {profileData.personality && (
+                <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 rounded-full px-3 py-1.5 text-sm text-purple-200">
+                  {getPersonalityLabel(profileData.personality)}
+                </span>
+              )}
             </div>
 
-            <div className="flex items-start gap-3">
-              <Briefcase className="w-5 h-5 text-primary/80 mt-0.5" />
-              <div>
-                <p className="text-white/60 text-sm">Work</p>
-                <p className="font-medium">{profileData.work}</p>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-white/10 rounded-lg">
+                  <Briefcase className="w-4 h-4 text-white/70" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-white/50 text-xs uppercase tracking-wide mb-1">Work</p>
+                  <p className="text-white text-sm leading-relaxed">{profileData.work}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-white/10 rounded-lg">
+                  <MapPin className="w-4 h-4 text-white/70" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-white/50 text-xs uppercase tracking-wide mb-1">Based in</p>
+                  <p className="text-white text-sm">{profileData.hometown}, {profileData.nationality}</p>
+                </div>
               </div>
             </div>
-
-            {profileData.personality && (
-              <div className="flex items-center gap-3">
-                <Heart className="w-5 h-5 text-primary/80" />
-                <div>
-                  <p className="text-white/60 text-sm">Personality</p>
-                  <p className="font-medium">{getPersonalityLabel(profileData.personality)}</p>
-                </div>
-              </div>
-            )}
-
-            {profileData.relationship && (
-              <div className="flex items-center gap-3">
-                <Users className="w-5 h-5 text-primary/80" />
-                <div>
-                  <p className="text-white/60 text-sm">Relationship</p>
-                  <p className="font-medium">{getRelationshipLabel(profileData.relationship)}</p>
-                </div>
-              </div>
-            )}
           </div>
-
-          {post.isHot && (
-            <div className="flex items-center gap-2 bg-gradient-to-r from-orange-500/20 to-rose-500/20 border border-orange-500/30 rounded-lg px-4 py-3">
-              <span className="text-xl">🔥</span>
-              <span className="font-medium text-orange-300">Popular Profile</span>
-            </div>
-          )}
-
-          <Button
-            onClick={handleMessageClick}
-            className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-lg"
-            data-testid="button-message-telegram"
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            Message on Telegram
-          </Button>
-
-          <p className="text-center text-white/40 text-sm">
-            Start chatting with {profileData.name.split(' ')[0]} on Telegram
-          </p>
         </div>
 
-        <div className="p-6 pt-0">
+        <div className="p-4 pt-6">
           <Link to="/" className="block">
-            <Button variant="ghost" className="w-full text-white/60 hover:text-white" data-testid="button-browse-more">
+            <Button 
+              variant="ghost" 
+              className="w-full text-white/50 hover:text-white hover:bg-white/5 text-sm" 
+              data-testid="button-browse-more"
+            >
               Browse more girlfriends
             </Button>
           </Link>
+        </div>
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-transparent pt-6 pb-6 px-4">
+        <div className="max-w-lg mx-auto">
+          <Button
+            onClick={handleMessageClick}
+            className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-xl rounded-full"
+            data-testid="button-message-telegram"
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            Message {profileData.name.split(' ')[0]}
+          </Button>
         </div>
       </div>
     </div>
