@@ -360,7 +360,35 @@ export const TelegramChannelFeed = ({
   }, [channelUsername, fingerprint, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy]);
 
   useEffect(() => {
-    fetchInitialPosts();
+    const cachedData = sessionStorage.getItem('feedCache');
+    const scrollContext = sessionStorage.getItem('feedScrollContext');
+    
+    if (cachedData && scrollContext) {
+      try {
+        const cache = JSON.parse(cachedData);
+        const filtersMatch = 
+          JSON.stringify(cache.filters) === JSON.stringify(filters) &&
+          cache.sortBy === sortBy;
+        
+        if (filtersMatch && cache.posts?.length > 0) {
+          setAllPosts(cache.posts);
+          setChannelInfo(cache.channelInfo);
+          setNextCursor(cache.nextCursor);
+          setHasMore(cache.hasMore);
+          setLoading(false);
+          topFingerprintRef.current = fingerprint(cache.posts);
+          sessionStorage.removeItem('feedCache');
+        } else {
+          sessionStorage.removeItem('feedCache');
+          fetchInitialPosts();
+        }
+      } catch {
+        sessionStorage.removeItem('feedCache');
+        fetchInitialPosts();
+      }
+    } else {
+      fetchInitialPosts();
+    }
 
     // Check for new posts at specified interval (stable - won't reset constantly)
     const pollInterval = setInterval(() => {
@@ -664,6 +692,14 @@ export const TelegramChannelFeed = ({
                     sessionStorage.setItem('feedScrollContext', JSON.stringify({
                       postId: post.id,
                       scrollY: window.scrollY
+                    }));
+                    sessionStorage.setItem('feedCache', JSON.stringify({
+                      posts: allPosts,
+                      channelInfo,
+                      nextCursor,
+                      hasMore,
+                      filters,
+                      sortBy
                     }));
                     navigate(`/profile/${post.id}`);
                   }}
