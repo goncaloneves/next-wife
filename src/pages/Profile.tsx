@@ -351,9 +351,11 @@ const Profile = () => {
               </button>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent">
-              <div className="px-4 pt-16 pb-4 flex flex-col">
-                <div className={`${isMobile ? 'max-h-[22vh] overflow-y-auto touch-pan-y' : ''}`}>
+            {isMobile ? (
+              <div className="absolute inset-0 flex flex-col overflow-y-auto touch-pan-y">
+                <div className="flex-1 min-h-[55vh]" />
+                
+                <div className="bg-gradient-to-t from-black via-black/95 to-black/80 px-4 pt-4 pb-4">
                   {post.isHot && (
                     <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
                       <span>🔥</span>
@@ -362,14 +364,14 @@ const Profile = () => {
                   )}
                   
                   <div className="flex items-center gap-2 mb-3">
-                    <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                    <h1 className="text-2xl font-bold text-white drop-shadow-lg">
                       {profileData.name}
                     </h1>
-                    <span className="text-xl md:text-2xl font-semibold text-white/90">
+                    <span className="text-xl font-semibold text-white/90">
                       {profileData.age}
                     </span>
                     <BadgeCheck 
-                      className="w-6 h-6 md:w-7 md:h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                      className="w-6 h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
                       style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                     />
                   </div>
@@ -416,9 +418,8 @@ const Profile = () => {
                       </div>
                     )}
                   </div>
-                </div>
 
-                <div className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[70px] flex-shrink-0">
+                  <div className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[70px]">
                     {canUndo && (
                       <button
                         onClick={undoSkip}
@@ -464,8 +465,123 @@ const Profile = () => {
                       </button>
                     </div>
                   </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent">
+                <div className="px-4 pt-16 pb-4 flex flex-col">
+                  {post.isHot && (
+                    <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
+                      <span>🔥</span>
+                      <span className="text-xs font-semibold">Hot</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center gap-2 mb-3">
+                    <h1 className="text-3xl font-bold text-white drop-shadow-lg">
+                      {profileData.name}
+                    </h1>
+                    <span className="text-2xl font-semibold text-white/90">
+                      {profileData.age}
+                    </span>
+                    <BadgeCheck 
+                      className="w-7 h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                      style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 text-white/90">
+                      <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                      <span className="text-sm line-clamp-1">{profileData.work}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/90">
+                      <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.hometown}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/90">
+                      <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.nationality}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/90">
+                      <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                      <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
+                    </div>
+
+                    {(profileData.relationship || profileData.personality) && (
+                      <div className="pt-2 mt-2 border-t border-white/[0.08]">
+                        <div className="flex flex-wrap gap-2">
+                          {profileData.relationship && (
+                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                              {getRelationshipLabel(profileData.relationship)}
+                            </span>
+                          )}
+                          {profileData.personality && (
+                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                              {getPersonalityLabel(profileData.personality)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {profileData.about && (
+                      <div className="pt-2 mt-2 border-t border-white/[0.08]">
+                        <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
+                        <p className="text-sm text-white/80 leading-relaxed">{profileData.about}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[70px] flex-shrink-0">
+                    {canUndo && (
+                      <button
+                        onClick={undoSkip}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                        disabled={isAnimating}
+                        className={`absolute left-1/2 -translate-x-[140px] w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                          activeAction === 'undo'
+                            ? 'bg-amber-400/30 border-amber-400 text-amber-400 scale-110 shadow-amber-400/40'
+                            : 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20'
+                        }`}
+                        data-testid="button-action-undo"
+                      >
+                        <Undo2 className="w-6 h-6" />
+                      </button>
+                    )}
+
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={skipProfile}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                        disabled={!canSkip || isAnimating}
+                        className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                          (isDragging && dragOffset < -30 && canSkip) || activeAction === 'skip'
+                            ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
+                            : 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20'
+                        }`}
+                        data-testid="button-action-skip"
+                      >
+                        <X className="w-9 h-9 stroke-[3]" />
+                      </button>
+
+                      <button
+                        onClick={openTelegram}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                        className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] pointer-events-auto ${
+                          isDragging && dragOffset > 30
+                            ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-400 scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
+                            : 'bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
+                        }`}
+                        data-testid="button-message-telegram"
+                      >
+                        <MessageCircle className="w-9 h-9" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.article>
         </AnimatePresence>
       </div>
