@@ -211,12 +211,12 @@ const Index = () => {
             <div className="flex flex-col items-center gap-3">
               <Button
                 size="lg"
-                className="text-lg px-8 py-6 font-bold transition-all duration-300 hover:scale-110 active:scale-95"
+                className="text-lg px-8 py-6 font-bold transition-all duration-300 hover:brightness-125 active:scale-95"
                 style={{
                   background: "var(--gradient-sunset)",
                   boxShadow: "var(--shadow-warm)",
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 8px 40px rgba(198, 58, 75, 0.5), 0 0 60px rgba(232, 115, 85, 0.3)"}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 8px 40px rgba(198, 58, 75, 0.6), 0 0 80px rgba(232, 115, 85, 0.4)"}
                 onMouseLeave={(e) => e.currentTarget.style.boxShadow = "var(--shadow-warm)"}
                 onClick={() => feedContentRef.current?.scrollIntoView({ behavior: 'smooth' })}
                 data-testid="button-pick-your-woman"
