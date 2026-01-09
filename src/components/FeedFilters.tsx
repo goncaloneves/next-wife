@@ -417,7 +417,7 @@ export function FeedFilters({
           </div>
 
           {/* Footer with Clear all and Close buttons */}
-          <div className="flex-shrink-0 flex justify-center items-center gap-3 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:pb-4 border-t border-white/10">
+          <div className="flex-shrink-0 flex justify-center items-center gap-3 pt-4 pb-6 md:py-4 border-t border-white/10">
             {activeFilterCount > 0 && (
               <Button
                 variant="ghost"
