@@ -25,6 +25,7 @@ export const telegramPosts = pgTable("telegram_posts", {
   ageBracket: text("age_bracket"),
   occupationCategory: text("occupation_category"),
   language: text("language"),
+  about: text("about"), // Brief explanation of interests
   
   // Timestamps
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

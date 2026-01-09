@@ -14,6 +14,7 @@ interface ProfileData {
   language?: string;
   personality?: string;
   relationship?: string;
+  about?: string;
 }
 
 interface Post {
@@ -355,19 +356,25 @@ const Profile = () => {
 
                   {(profileData.relationship || profileData.personality) && (
                     <div className="pt-2 mt-2 border-t border-white/10">
-                      <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
                       <div className="flex flex-wrap gap-2">
                         {profileData.relationship && (
-                          <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/40 rounded-full px-3 py-1.5 text-sm text-rose-200 font-medium">
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                             {getRelationshipLabel(profileData.relationship)}
                           </span>
                         )}
                         {profileData.personality && (
-                          <span className="inline-flex items-center gap-1 bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-400/40 rounded-full px-3 py-1.5 text-sm text-purple-200 font-medium">
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                             {getPersonalityLabel(profileData.personality)}
                           </span>
                         )}
                       </div>
+                    </div>
+                  )}
+
+                  {profileData.about && (
+                    <div className="pt-2 mt-2 border-t border-white/10">
+                      <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
+                      <p className="text-sm text-white/80 leading-relaxed">{profileData.about}</p>
                     </div>
                   )}
 
