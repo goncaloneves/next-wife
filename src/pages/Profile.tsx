@@ -254,7 +254,7 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="flex flex-col bg-black overflow-hidden" style={{ height: '100svh', maxHeight: '100svh' }} onClick={goBack}>
+    <div className="flex flex-col bg-black overflow-y-auto overflow-x-hidden" style={{ height: '100svh' }} onClick={goBack}>
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
@@ -274,7 +274,7 @@ const Profile = () => {
             onDragStart={() => setIsDragging(true)}
             onDrag={(_, info) => { setDragOffset(info.offset.x); x.set(info.offset.x); }}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
-            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 select-none"
+            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 select-none min-h-[400px]"
             style={{ 
               transformOrigin: 'center center',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)',
