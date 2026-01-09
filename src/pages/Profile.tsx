@@ -107,6 +107,7 @@ const Profile = () => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [mediaDimensions, setMediaDimensions] = useState<{ width: number; height: number } | null>(null);
+  const dimensionsLocked = useRef(false);
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -141,6 +142,8 @@ const Profile = () => {
       setImageLoaded(false);
       setAboutExpanded(false);
       setMediaIndex(0);
+      setMediaDimensions(null);
+      dimensionsLocked.current = false;
       
       try {
         const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
@@ -346,7 +349,10 @@ const Profile = () => {
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       onLoadedMetadata={(e) => {
                         const video = e.currentTarget;
-                        setMediaDimensions({ width: video.videoWidth, height: video.videoHeight });
+                        if (!dimensionsLocked.current) {
+                          setMediaDimensions({ width: video.videoWidth, height: video.videoHeight });
+                          dimensionsLocked.current = true;
+                        }
                         setImageLoaded(true);
                       }}
                       onError={() => setImageLoaded(true)}
@@ -363,7 +369,10 @@ const Profile = () => {
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       onLoad={(e) => {
                         const img = e.currentTarget;
-                        setMediaDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+                        if (!dimensionsLocked.current) {
+                          setMediaDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+                          dimensionsLocked.current = true;
+                        }
                         setImageLoaded(true);
                       }}
                       onError={() => setImageLoaded(true)}
