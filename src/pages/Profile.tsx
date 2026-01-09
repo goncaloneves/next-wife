@@ -178,12 +178,6 @@ const Profile = () => {
   }, [goBack, undoSkip, skipProfile, openTelegram]);
 
   useEffect(() => {
-    setDragOffset(0);
-    setIsDragging(false);
-    setIsAnimating(false);
-    setExitX(null);
-    x.set(0);
-    
     const fetchProfile = async () => {
       setLoading(true);
       try {
@@ -202,6 +196,9 @@ const Profile = () => {
         setNextId(null);
       } finally {
         setLoading(false);
+        setIsAnimating(false);
+        setExitX(null);
+        x.set(0);
       }
     };
 
