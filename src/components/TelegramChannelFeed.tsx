@@ -887,6 +887,7 @@ export const TelegramChannelFeed = ({
                     src={buildSrc(post.media!, post.id)}
                     alt=""
                     loading="lazy"
+                    decoding="async"
                     referrerPolicy="no-referrer"
                     className={`w-full h-full object-cover transition-all duration-300 ${
                       imageLoadStates[post.id] ? "" : "opacity-0"
