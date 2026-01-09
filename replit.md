@@ -18,7 +18,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Dark Theme:** Supports a dark theme for consistent user experience.
 
 **Technical Implementations & Feature Specifications:**
-- **Real-time Feed & Filtering:** Displays Telegram channel posts with filtering capabilities by Region, Age bracket, Occupation Category, Personality, and Relationship. Filters are multi-selectable.
+- **Real-time Feed & Filtering:** Displays Telegram channel posts with filtering capabilities by Region, Age bracket, Occupation Category, Personality, Relationship, and Media type (Has Video, Multiple Photos). Filters are multi-selectable.
 - **Dedicated Profile Pages:** Individual profile pages (`/profile/:id`) with shareable URLs, displaying full details and a "Message on Telegram" CTA.
 - **Multi-Media Carousel:** Profiles with multiple photos/videos display a Tinder-style carousel with dot indicators at the top. Users can tap left/right sides of the image to navigate between media. Media stored as JSONB array [{type: 'photo'|'video', url: string}] in `media_urls` column.
 - **Bot Link Handling:** Special handling for `@nextwifebot` links; clicking an image with a bot link redirects to the bot, otherwise opens a lightbox. The backend extracts these links.
@@ -34,7 +34,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Silent Error Handling:** API failures are handled silently without displaying error blocks to the user.
 
 **System Design Choices:**
-- **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language) and `click_count` for sorting.
+- **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media) and `click_count` for sorting.
 - **Background Sync Service:** Regularly fetches posts from Telegram and updates the database, enriching data with derived fields.
 - **Image Proxy:** Proxies Telegram CDN images to prevent CORS issues.
 

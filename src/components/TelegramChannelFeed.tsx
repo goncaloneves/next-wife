@@ -215,7 +215,7 @@ export const TelegramChannelFeed = ({
     } finally {
       fetchInFlightRef.current = false;
     }
-  }, [channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy, fingerprint]);
+  }, [channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, filters.hasVideo, filters.hasMultipleMedia, sortBy, fingerprint]);
 
   const fetchNextPage = useCallback(async () => {
     if (!hasMore || isLoadingMore || !nextCursor) return;
