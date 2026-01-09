@@ -106,8 +106,6 @@ const Profile = () => {
   const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
-  const [mediaDimensions, setMediaDimensions] = useState<{ width: number; height: number } | null>(null);
-  const dimensionsLocked = useRef(false);
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -142,8 +140,6 @@ const Profile = () => {
       setImageLoaded(false);
       setAboutExpanded(false);
       setMediaIndex(0);
-      setMediaDimensions(null);
-      dimensionsLocked.current = false;
       
       try {
         const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
@@ -327,8 +323,6 @@ const Profile = () => {
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)',
               rotate: isDragging ? dragRotate : 0,
               opacity: isDragging ? dragOpacity : 1,
-              maxWidth: mediaDimensions ? `${mediaDimensions.width}px` : undefined,
-              maxHeight: mediaDimensions ? `${mediaDimensions.height}px` : undefined,
             }}
           >
             {!imageLoaded && (
@@ -347,14 +341,7 @@ const Profile = () => {
                     <video
                       src={currentMedia.url}
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoadedMetadata={(e) => {
-                        const video = e.currentTarget;
-                        if (!dimensionsLocked.current) {
-                          setMediaDimensions({ width: video.videoWidth, height: video.videoHeight });
-                          dimensionsLocked.current = true;
-                        }
-                        setImageLoaded(true);
-                      }}
+                      onLoadedMetadata={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
                       autoPlay
                       loop
@@ -367,14 +354,7 @@ const Profile = () => {
                       src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
                       alt={profileData.name}
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 image-sharpen ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoad={(e) => {
-                        const img = e.currentTarget;
-                        if (!dimensionsLocked.current) {
-                          setMediaDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-                          dimensionsLocked.current = true;
-                        }
-                        setImageLoaded(true);
-                      }}
+                      onLoad={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
                       draggable={false}
                     />
