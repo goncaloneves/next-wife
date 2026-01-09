@@ -328,9 +328,17 @@ export function FeedFilters({
     <div className="space-y-3 relative" data-testid="feed-filters">
 
 
+      {/* Mobile backdrop to hide content behind filters */}
+      {showFilters && (
+        <div 
+          className="fixed inset-0 bg-black z-40 md:hidden" 
+          onClick={() => setShowFilters(false)}
+        />
+      )}
+
       {/* Expanded filter sections - absolute overlay to avoid layout shift */}
       {showFilters && (
-        <div className="absolute left-0 right-0 z-50 mx-4 bg-black/95 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200">
+        <div className="fixed md:absolute inset-x-0 top-0 md:top-auto md:left-0 md:right-0 z-50 mx-0 md:mx-4 bg-black md:bg-black/95 md:backdrop-blur-md md:rounded-2xl md:border md:border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200 h-screen md:h-auto overflow-y-auto md:overflow-visible">
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
             {/* Region */}
