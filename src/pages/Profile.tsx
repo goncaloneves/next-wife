@@ -297,25 +297,6 @@ const Profile = () => {
               </button>
             </div>
 
-            {isDragging && dragOffset > 30 && canUndo && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="absolute top-1/3 left-4 bg-amber-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[-15deg] border-2 border-white shadow-lg z-30"
-              >
-                UNDO
-              </motion.div>
-            )}
-            {isDragging && dragOffset < -30 && canSkip && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="absolute top-1/3 right-4 bg-rose-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[15deg] border-2 border-white shadow-lg z-30"
-              >
-                SKIP
-              </motion.div>
-            )}
-
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent">
               <div className="px-4 pt-16 pb-4">
                 {post.isHot && (
@@ -382,9 +363,11 @@ const Profile = () => {
                       onPointerDownCapture={(e) => e.stopPropagation()}
                       disabled={!canUndo || isAnimating}
                       className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
-                        canUndo && !isAnimating
-                          ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
-                          : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+                        isDragging && dragOffset > 30 && canUndo
+                          ? 'bg-amber-400/30 border-amber-400 text-amber-400 scale-110 shadow-amber-400/40'
+                          : canUndo && !isAnimating
+                            ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
+                            : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
                       }`}
                       data-testid="button-action-undo"
                     >
@@ -396,9 +379,11 @@ const Profile = () => {
                       onPointerDownCapture={(e) => e.stopPropagation()}
                       disabled={!canSkip || isAnimating}
                       className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
-                        canSkip && !isAnimating
-                          ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
-                          : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+                        isDragging && dragOffset < -30 && canSkip
+                          ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
+                          : canSkip && !isAnimating
+                            ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
+                            : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
                       }`}
                       data-testid="button-action-skip"
                     >
