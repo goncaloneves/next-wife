@@ -216,10 +216,10 @@ const Index = () => {
                   background: "var(--gradient-sunset)",
                   boxShadow: "var(--shadow-warm)",
                 }}
-                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
-                data-testid="button-open-nextwife"
+                onClick={() => feedContentRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                data-testid="button-pick-your-woman"
               >
-                Open Next Wife 🌻
+                Pick Your Woman 🌻
               </Button>
               <Button
                 size="lg"
@@ -230,10 +230,10 @@ const Index = () => {
                   border: "1px solid rgba(255, 255, 255, 0.2)",
                   boxShadow: "0 4px 24px rgba(198, 58, 75, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.1)",
                 }}
-                onClick={() => feedContentRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                data-testid="button-pick-your-woman"
+                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
+                data-testid="button-open-nextwife"
               >
-                Pick Your Woman 🌻
+                Open Next Wife
               </Button>
             </div>
           </div>
