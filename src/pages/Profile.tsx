@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
+import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
@@ -90,10 +90,9 @@ const Profile = () => {
   const [skipHistory, setSkipHistory] = useState<SkipHistoryEntry[]>([]);
   const [direction, setDirection] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
 
-  const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 0, 200], [-15, 0, 15]);
-  const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 0.8, 1, 0.8, 0.5]);
 
   useEffect(() => {
     setSkipHistory(getSkipHistory());
@@ -169,9 +168,8 @@ const Profile = () => {
 
     if (id) {
       fetchProfile();
-      x.set(0);
     }
-  }, [id, x]);
+  }, [id]);
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 100;
@@ -238,7 +236,6 @@ const Profile = () => {
   const { profileData } = post;
   const canUndo = skipHistory.length > 0;
   const canSkip = !!nextId;
-  const dragX = x.get();
 
   return (
     <div 
@@ -260,8 +257,9 @@ const Profile = () => {
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.9}
-            onDragEnd={handleDragEnd}
-            style={{ x, rotate, opacity }}
+            onDragStart={() => setIsDragging(true)}
+            onDrag={(_, info) => setDragOffset(info.offset.x)}
+            onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
             className="flex-1 flex flex-col min-h-0 relative"
           >
             <div className="relative flex-1 min-h-[300px] select-none">
@@ -315,7 +313,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              {dragX > 30 && canUndo && (
+              {isDragging && dragOffset > 30 && canUndo && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -324,7 +322,7 @@ const Profile = () => {
                   UNDO
                 </motion.div>
               )}
-              {dragX < -30 && canSkip && (
+              {isDragging && dragOffset < -30 && canSkip && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
