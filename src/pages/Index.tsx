@@ -208,17 +208,29 @@ const Index = () => {
               Meet the woman you create and embark on a romantic journey, sharing unique stories from around the globe.
             </p>
 
-            <Button
-              size="lg"
-              className="text-lg px-8 py-6 font-bold transition-all duration-300"
-              style={{
-                background: "var(--gradient-sunset)",
-                boxShadow: "var(--shadow-warm)",
-              }}
-              onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
-            >
-              Open Next Wife 🌻
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                className="text-lg px-8 py-6 font-bold transition-all duration-300"
+                style={{
+                  background: "var(--gradient-sunset)",
+                  boxShadow: "var(--shadow-warm)",
+                }}
+                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
+                data-testid="button-open-nextwife"
+              >
+                Open Next Wife 🌻
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-lg px-8 py-6 font-bold transition-all duration-300 border-white/30 text-white hover:bg-white/10"
+                onClick={() => feedContentRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                data-testid="button-pick-your-woman"
+              >
+                Pick Your Woman 💃
+              </Button>
+            </div>
           </div>
 
           {/* QR Code positioned in bottom right of video section */}
