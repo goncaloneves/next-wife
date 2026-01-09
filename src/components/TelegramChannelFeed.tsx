@@ -332,6 +332,7 @@ export const TelegramChannelFeed = ({
           if (currentNearTop) {
             // User is near top: refresh everything including images
             console.log('[checkForNewPosts] -> Refreshing with NEW IDs (changing refreshKey)');
+            setLastViewedId(null);
             setAllPosts(fetchedPosts);
             setNextCursor(data.nextBefore);
             setHasMore(data.hasMore);
@@ -358,6 +359,7 @@ export const TelegramChannelFeed = ({
           if (currentNearTop) {
             // Update content but DON'T reload images
             console.log('[checkForNewPosts] -> Updating content ONLY (NOT changing refreshKey)');
+            setLastViewedId(null);
             setAllPosts(fetchedPosts);
             setNextCursor(data.nextBefore);
             setHasMore(data.hasMore);
@@ -561,6 +563,7 @@ export const TelegramChannelFeed = ({
       
       // If user scrolls back to top AND there are pending new posts, auto-refresh
       if (nearTop && pendingNewCount > 0) {
+        setLastViewedId(null);
         fetchInitialPosts();
         setPendingNewCount(0);
       }
@@ -580,6 +583,7 @@ export const TelegramChannelFeed = ({
       
       // If user scrolls back to top AND there are pending new posts, auto-refresh
       if (nearTop && pendingNewCount > 0) {
+        setLastViewedId(null);
         fetchInitialPosts();
         setPendingNewCount(0);
       }
