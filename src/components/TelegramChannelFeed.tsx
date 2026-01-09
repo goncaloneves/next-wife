@@ -740,7 +740,12 @@ export const TelegramChannelFeed = ({
                             {post.profileData.age}
                           </span>
                           {/* Verified badge like Tinder */}
-                          <BadgeCheck className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                          <div className="relative group/badge">
+                            <BadgeCheck className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none">
+                              Verified
+                            </span>
+                          </div>
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="flex flex-col gap-3 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">

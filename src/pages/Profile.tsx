@@ -162,10 +162,15 @@ const Profile = () => {
               <span className="text-2xl font-light text-white/90">
                 {profileData.age}
               </span>
-              <BadgeCheck 
-                className="w-6 h-6 text-[#1DA1F2] flex-shrink-0" 
-                style={{ fill: '#1DA1F2', stroke: 'white', strokeWidth: 2 }} 
-              />
+              <div className="relative group">
+                <BadgeCheck 
+                  className="w-6 h-6 text-[#1DA1F2] flex-shrink-0 cursor-help" 
+                  style={{ fill: '#1DA1F2', stroke: 'white', strokeWidth: 2 }} 
+                />
+                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  Verified
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center gap-2 text-white/70 text-sm">
