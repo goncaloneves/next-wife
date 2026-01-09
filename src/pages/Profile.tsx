@@ -119,7 +119,7 @@ const Profile = () => {
       <div className="max-w-lg mx-auto relative">
         <div className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 max-w-lg mx-auto">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/", { state: { restoreScroll: true } })}
             className="bg-black/60 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/80 transition-colors shadow-lg"
             data-testid="button-back"
           >
