@@ -954,7 +954,7 @@ export const TelegramChannelFeed = ({
                             </p>
                             <p className="flex items-start gap-1.5">
                               <Briefcase className="w-3.5 h-3.5 text-orange-400 flex-shrink-0 mt-0.5" />
-                              <span className="flex-1 line-clamp-2 md:line-clamp-3 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
+                              <span className="flex-1 line-clamp-2 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
                             </p>
                           </div>
                           {/* Personality & Relationship pills */}
