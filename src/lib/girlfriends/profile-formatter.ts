@@ -1,0 +1,27 @@
+export const PERSONALITY_LABELS: Record<string, string> = {
+  shy: '🙈 Shy',
+  playful: '🤭 Playful',
+  caring: '💕 Caring',
+  passionate: '🔥 Passionate',
+  submissive: '🌸 Submissive',
+  dominant: '😈 Dominant',
+};
+
+export const RELATIONSHIP_TYPE_LABELS: Record<string, string> = {
+  stranger: '❓ Stranger',
+  classmate: '📚 Classmate',
+  coworker: '💼 Coworker',
+  bestfriend: '🤝 Best Friend',
+  girlfriend: '💕 Girlfriend',
+  wife: '💍 Wife',
+};
+
+export function getPersonalityLabel(personality: string | null): string | null {
+  if (!personality) return null;
+  return PERSONALITY_LABELS[personality.toLowerCase()] || personality;
+}
+
+export function getRelationshipLabel(relationship: string | null): string | null {
+  if (!relationship) return null;
+  return RELATIONSHIP_TYPE_LABELS[relationship.toLowerCase()] || relationship;
+}
