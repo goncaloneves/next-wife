@@ -98,6 +98,7 @@ const Profile = () => {
   const [activeAction, setActiveAction] = useState<'undo' | 'skip' | null>(null);
   const highlightTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialLoad = useRef(true);
+  const imageRef = useRef<HTMLImageElement>(null);
   
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -203,6 +204,16 @@ const Profile = () => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId]);
+
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [id]);
+
+  useEffect(() => {
+    if (imageRef.current?.complete && imageRef.current?.naturalHeight > 0) {
+      setImageLoaded(true);
+    }
+  }, [post?.id]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -338,6 +349,7 @@ const Profile = () => {
               </div>
             )}
             <img
+              ref={imageRef}
               src={buildImageSrc(post.media)}
               alt={profileData.name}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
