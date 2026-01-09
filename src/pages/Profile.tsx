@@ -98,7 +98,7 @@ const Profile = () => {
   
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
-  const opacity = useTransform(x, [-300, -100, -99, 0, 99, 100, 300], [0.2, 0.2, 1, 1, 1, 0.2, 0.2]);
+  const opacity = useTransform(x, [-300, -130, -100, 0, 100, 130, 300], [0.2, 0.2, 1, 1, 1, 0.2, 0.2]);
 
 
   useEffect(() => {
