@@ -178,9 +178,12 @@ const Profile = () => {
   }, [goBack, undoSkip, skipProfile, openTelegram]);
 
   useEffect(() => {
+    x.set(0);
+    setDragOffset(0);
+    setIsDragging(false);
+    
     const fetchProfile = async () => {
       setLoading(true);
-      x.set(0);
       try {
         const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
         if (!response.ok) {
@@ -197,14 +200,20 @@ const Profile = () => {
         setNextId(null);
       } finally {
         setLoading(false);
-        setIsAnimating(false);
-        setExitX(null);
       }
     };
 
     if (id) {
       fetchProfile();
     }
+    
+    const safetyTimeout = setTimeout(() => {
+      setIsAnimating(false);
+      setExitX(null);
+      x.set(0);
+    }, 600);
+    
+    return () => clearTimeout(safetyTimeout);
   }, [id]);
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
