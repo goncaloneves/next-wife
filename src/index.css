@@ -203,11 +203,4 @@ All colors MUST be HSL.
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  .image-sharpen {
-    filter: contrast(1.08) saturate(1.05);
-    image-rendering: -webkit-optimize-contrast;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
 }
