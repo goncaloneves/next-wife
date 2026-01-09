@@ -921,7 +921,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       SELECT id, text, date, link, media, media_urls, avatar, bot_link as "botLink", 
              name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
       FROM telegram_posts 
-      WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
+      WHERE channel = $1 AND id = $2 AND deleted_at IS NULL AND name IS NOT NULL AND media IS NOT NULL
     `, [channelName, id]);
     
     // If not in DB, try fetching directly from Telegram
