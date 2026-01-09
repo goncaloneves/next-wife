@@ -59,17 +59,21 @@ const Index = () => {
     const state = location.state as { restoreScroll?: boolean } | null;
     if (state?.restoreScroll) {
       const savedContext = sessionStorage.getItem('feedScrollContext');
-      if (savedContext) {
-        const { scrollY } = JSON.parse(savedContext);
-        sessionStorage.removeItem('feedScrollContext');
-        
-        // Double RAF ensures React has committed and layout is stable
+      
+      // Double RAF ensures React has committed and layout is stable
+      requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
+          if (savedContext) {
+            const { scrollY } = JSON.parse(savedContext);
+            sessionStorage.removeItem('feedScrollContext');
             window.scrollTo(0, scrollY);
-          });
+          } else {
+            // Fallback: scroll to feed section if no saved position
+            feedContentRef.current?.scrollIntoView({ behavior: 'instant' });
+          }
         });
-      }
+      });
+      
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
