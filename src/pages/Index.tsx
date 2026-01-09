@@ -58,22 +58,40 @@ const Index = () => {
   useEffect(() => {
     const state = location.state as { restoreScroll?: boolean } | null;
     if (state?.restoreScroll) {
-      const savedPosition = sessionStorage.getItem('feedScrollPosition');
-      if (savedPosition) {
-        const targetScroll = parseInt(savedPosition, 10);
-        const attemptScroll = (attempts: number) => {
-          if (attempts <= 0) {
-            sessionStorage.removeItem('feedScrollPosition');
-            return;
-          }
-          window.scrollTo(0, targetScroll);
-          if (Math.abs(window.scrollY - targetScroll) > 50) {
-            setTimeout(() => attemptScroll(attempts - 1), 200);
-          } else {
-            sessionStorage.removeItem('feedScrollPosition');
-          }
+      const savedContext = sessionStorage.getItem('feedScrollContext');
+      if (savedContext) {
+        const { postId, scrollY } = JSON.parse(savedContext);
+        let observer: MutationObserver | null = null;
+        let timeoutId: NodeJS.Timeout | null = null;
+        
+        const cleanup = () => {
+          if (observer) observer.disconnect();
+          if (timeoutId) clearTimeout(timeoutId);
+          sessionStorage.removeItem('feedScrollContext');
         };
-        setTimeout(() => attemptScroll(10), 300);
+        
+        const scrollToPost = () => {
+          const element = document.querySelector(`[data-post-id="${postId}"]`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'instant', block: 'center' });
+            cleanup();
+            return true;
+          }
+          return false;
+        };
+        
+        if (!scrollToPost()) {
+          observer = new MutationObserver(() => {
+            scrollToPost();
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+          
+          timeoutId = setTimeout(() => {
+            if (observer) observer.disconnect();
+            window.scrollTo(0, scrollY);
+            sessionStorage.removeItem('feedScrollContext');
+          }, 5000);
+        }
       }
       window.history.replaceState({}, document.title);
     }
