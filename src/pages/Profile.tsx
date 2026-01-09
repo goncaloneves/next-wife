@@ -232,7 +232,7 @@ const Profile = () => {
 
   if (loading && isFirstLoad.current) {
     return (
-      <div className="h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center" style={{ minHeight: '100dvh' }}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500" />
       </div>
     );
@@ -240,7 +240,7 @@ const Profile = () => {
 
   if (!post?.profileData) {
     return (
-      <div className="h-screen bg-black flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center" style={{ minHeight: '100dvh' }}>
         <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
         <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
           Back to Home
@@ -254,7 +254,7 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="h-screen flex flex-col bg-black overflow-hidden" onClick={goBack}>
+    <div className="min-h-screen flex flex-col bg-black overflow-hidden" style={{ height: '100dvh', maxHeight: '100dvh' }} onClick={goBack}>
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
         onClick={(e) => e.stopPropagation()}
@@ -378,7 +378,7 @@ const Profile = () => {
                     </div>
                   )}
 
-                  <div className="relative flex items-center justify-center pt-4 mt-3 border-t border-white/[0.08] pointer-events-none min-h-[80px]">
+                  <div className="relative flex items-center justify-center pt-4 mt-3 border-t border-white/[0.08] pointer-events-none min-h-[80px]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
                     {canUndo && (
                       <button
                         onClick={undoSkip}
