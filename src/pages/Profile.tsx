@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Dialog,
   DialogContent,
@@ -84,6 +85,7 @@ const cardVariants = {
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   const [post, setPost] = useState<Post | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
@@ -284,10 +286,15 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }}>
+    <div 
+      className="flex flex-col bg-black overflow-x-hidden" 
+      style={{ minHeight: '100svh' }}
+      onClick={!isMobile ? goBack : undefined}
+    >
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+        onClick={!isMobile ? (e) => e.stopPropagation() : undefined}
       >
         <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => x.set(0)}>
           <motion.article
