@@ -232,7 +232,7 @@ const Profile = () => {
 
   if (loading && isFirstLoad.current) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center" style={{ minHeight: '100dvh' }}>
+      <div className="bg-black flex items-center justify-center" style={{ height: '100svh' }}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500" />
       </div>
     );
@@ -240,7 +240,7 @@ const Profile = () => {
 
   if (!post?.profileData) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center" style={{ minHeight: '100dvh' }}>
+      <div className="bg-black flex flex-col items-center justify-center" style={{ height: '100svh' }}>
         <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
         <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
           Back to Home
@@ -254,9 +254,10 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="min-h-screen flex flex-col bg-black overflow-hidden" style={{ height: '100dvh', maxHeight: '100dvh' }} onClick={goBack}>
+    <div className="flex flex-col bg-black overflow-hidden" style={{ height: '100svh', maxHeight: '100svh' }} onClick={goBack}>
       <div 
-        className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
+        className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
+        style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
         onClick={(e) => e.stopPropagation()}
       >
         <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => x.set(0)}>
@@ -273,7 +274,7 @@ const Profile = () => {
             onDragStart={() => setIsDragging(true)}
             onDrag={(_, info) => { setDragOffset(info.offset.x); x.set(info.offset.x); }}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
-            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 select-none min-h-[500px]"
+            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 select-none"
             style={{ 
               transformOrigin: 'center center',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)',
@@ -378,7 +379,7 @@ const Profile = () => {
                     </div>
                   )}
 
-                  <div className="relative flex items-center justify-center pt-4 mt-3 border-t border-white/[0.08] pointer-events-none min-h-[80px]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+                  <div className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[70px]">
                     {canUndo && (
                       <button
                         onClick={undoSkip}
