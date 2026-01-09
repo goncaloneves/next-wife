@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
@@ -95,6 +95,9 @@ const Profile = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [exitX, setExitX] = useState<number | null>(null);
+  
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
 
 
   useEffect(() => {
@@ -252,7 +255,7 @@ const Profile = () => {
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
         onClick={(e) => e.stopPropagation()}
       >
-        <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => { setIsAnimating(false); setExitX(null); }}>
+        <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => { setIsAnimating(false); setExitX(null); x.set(0); }}>
           <motion.article
             key={post.id}
             custom={direction}
@@ -264,12 +267,13 @@ const Profile = () => {
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.9}
             onDragStart={() => setIsDragging(true)}
-            onDrag={(_, info) => setDragOffset(info.offset.x)}
+            onDrag={(_, info) => { setDragOffset(info.offset.x); x.set(info.offset.x); }}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
             className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 select-none min-h-[500px]"
             style={{ 
               transformOrigin: 'center center',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)'
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)',
+              rotate
             }}
           >
             {!imageLoaded && (
