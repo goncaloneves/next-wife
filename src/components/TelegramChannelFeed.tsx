@@ -727,11 +727,7 @@ export const TelegramChannelFeed = ({
                   
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-[background] duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-0 animate-fade-in md:[animation:none] md:opacity-100"
-                      style={{ 
-                        animationDelay: `${(index % 20) * 0.05 + 0.15}s`,
-                        animationFillMode: "forwards"
-                      }}>
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-[background] duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-xl md:text-2xl font-bold drop-shadow-lg">
