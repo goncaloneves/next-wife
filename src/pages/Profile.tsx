@@ -151,7 +151,12 @@ const Profile = () => {
 
   const openTelegram = useCallback(() => {
     const url = post?.botLink || post?.link;
-    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    if (url) {
+      const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+      if (!newWindow) {
+        window.location.assign(url);
+      }
+    }
   }, [post]);
 
   const undoSkip = useCallback(() => {
