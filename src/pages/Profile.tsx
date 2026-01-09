@@ -163,6 +163,7 @@ const Profile = () => {
         console.error("Failed to fetch profile:", error);
       } finally {
         setLoading(false);
+        setIsAnimating(false);
       }
     };
 
