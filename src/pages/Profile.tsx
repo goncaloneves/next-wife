@@ -102,7 +102,19 @@ const Profile = () => {
 
 
   useEffect(() => {
-    setSkipHistory(getSkipHistory());
+    const navEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+    const isPageRefresh = navEntries.length > 0 && navEntries[0].type === 'reload';
+    const isFromSkip = sessionStorage.getItem('nextwife_navigating_skip') === 'true';
+    
+    if (isFromSkip) {
+      sessionStorage.removeItem('nextwife_navigating_skip');
+      setSkipHistory(getSkipHistory());
+    } else if (!isPageRefresh) {
+      sessionStorage.removeItem(SKIP_HISTORY_KEY);
+      setSkipHistory([]);
+    } else {
+      setSkipHistory(getSkipHistory());
+    }
   }, []);
 
   const goBack = useCallback(() => {
@@ -118,6 +130,7 @@ const Profile = () => {
     if (lastSkipped) {
       setSkipHistory(newHistory);
       saveSkipHistory(newHistory);
+      sessionStorage.setItem('nextwife_navigating_skip', 'true');
       setDirection(1);
       setIsAnimating(true);
       setImageLoaded(false);
@@ -131,6 +144,7 @@ const Profile = () => {
     const newHistory = [...skipHistory, { profileId: id, timestamp: Date.now() }];
     setSkipHistory(newHistory);
     saveSkipHistory(newHistory);
+    sessionStorage.setItem('nextwife_navigating_skip', 'true');
     
     setDirection(-1);
     setIsAnimating(true);
