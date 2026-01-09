@@ -8,11 +8,11 @@ export const PERSONALITY_LABELS: Record<string, string> = {
 };
 
 export const RELATIONSHIP_TYPE_LABELS: Record<string, string> = {
-  stranger: '❓ Stranger',
+  stranger: '👋 Stranger',
   classmate: '📚 Classmate',
   coworker: '💼 Coworker',
-  'best friend': '🤝 Best Friend',
-  bestfriend: '🤝 Best Friend',
+  'best friend': '💛 Best Friend',
+  bestfriend: '💛 Best Friend',
   girlfriend: '💕 Girlfriend',
   wife: '💍 Wife',
 };
