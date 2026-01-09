@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const BotEntry = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [error, setError] = useState(false);
+  
+  const view = searchParams.get("view");
 
   useEffect(() => {
     const fetchLatestProfile = async () => {
@@ -14,7 +17,8 @@ const BotEntry = () => {
         
         if (data.posts && data.posts.length > 0) {
           const latestPost = data.posts[0];
-          navigate(`/profile/${latestPost.id}`, { replace: true });
+          const queryString = view ? `?view=${view}` : "";
+          navigate(`/profile/${latestPost.id}${queryString}`, { replace: true });
         } else {
           setError(true);
         }
@@ -25,7 +29,7 @@ const BotEntry = () => {
     };
 
     fetchLatestProfile();
-  }, [navigate]);
+  }, [navigate, view]);
 
   if (error) {
     return (

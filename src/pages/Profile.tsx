@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -91,7 +91,10 @@ const cardVariants = {
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
+  
+  const isAppView = searchParams.get("view") === "app";
   
   const [post, setPost] = useState<Post | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
@@ -195,8 +198,9 @@ const Profile = () => {
     sessionStorage.setItem(NAV_FLAG_KEY, 'true');
     setDirection(1);
     setIsAnimating(true);
-    navigate(`/profile/${lastSkipped.profileId}`, { replace: true });
-  }, [skipHistory, navigate, isAnimating]);
+    const viewParam = isAppView ? "?view=app" : "";
+    navigate(`/profile/${lastSkipped.profileId}${viewParam}`, { replace: true });
+  }, [skipHistory, navigate, isAnimating, isAppView]);
 
   const skipProfile = useCallback(() => {
     if (!id || !nextId || isAnimating) return;
@@ -207,8 +211,9 @@ const Profile = () => {
     sessionStorage.setItem(NAV_FLAG_KEY, 'true');
     setDirection(-1);
     setIsAnimating(true);
-    navigate(`/profile/${nextId}`, { replace: true });
-  }, [id, nextId, skipHistory, navigate, isAnimating]);
+    const viewParam = isAppView ? "?view=app" : "";
+    navigate(`/profile/${nextId}${viewParam}`, { replace: true });
+  }, [id, nextId, skipHistory, navigate, isAnimating, isAppView]);
 
   const flashAction = useCallback((action: 'undo' | 'skip') => {
     if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
@@ -225,7 +230,7 @@ const Profile = () => {
         return;
       }
       
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !isAppView) {
         goBack();
       } else if (e.key === "ArrowLeft" && skipHistory.length > 0) {
         flashAction('undo');
@@ -240,7 +245,7 @@ const Profile = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId, showTelegramConfirm]);
+  }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId, showTelegramConfirm, isAppView]);
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const { offset, velocity } = info;
@@ -281,9 +286,11 @@ const Profile = () => {
     return (
       <div className="bg-black flex flex-col items-center justify-center" style={{ minHeight: '100svh' }}>
         <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
-        <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
-          Back to Home
-        </Button>
+        {!isAppView && (
+          <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
+            Back to Home
+          </Button>
+        )}
       </div>
     );
   }
@@ -296,7 +303,7 @@ const Profile = () => {
     <div 
       className="flex flex-col bg-black overflow-x-hidden" 
       style={{ minHeight: '100svh' }}
-      onClick={!isMobile ? goBack : undefined}
+      onClick={!isMobile && !isAppView ? goBack : undefined}
     >
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
@@ -406,14 +413,18 @@ const Profile = () => {
             })()}
 
             <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center pointer-events-none">
-              <button
-                onClick={(e) => { e.stopPropagation(); goBack(); }}
-                onPointerDownCapture={(e) => e.stopPropagation()}
-                className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
-                data-testid="button-back"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
+              {!isAppView ? (
+                <button
+                  onClick={(e) => { e.stopPropagation(); goBack(); }}
+                  onPointerDownCapture={(e) => e.stopPropagation()}
+                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
+                  data-testid="button-back"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+              ) : (
+                <div />
+              )}
               <button
                 onClick={(e) => { e.stopPropagation(); handleShare(); }}
                 onPointerDownCapture={(e) => e.stopPropagation()}
