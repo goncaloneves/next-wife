@@ -753,16 +753,16 @@ export const TelegramChannelFeed = ({
                             <span className="opacity-70 leading-none">💼</span>
                             <span className="flex-1 line-clamp-2 md:line-clamp-3 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
                           </p>
-                          {/* Personality & Relationship pills - only show if defined */}
+                          {/* Personality & Relationship pills */}
                           {(post.profileData.personality || post.profileData.relationship) && (
-                            <div className="flex flex-wrap gap-1.5 mt-1.5">
+                            <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-white/10">
                               {post.profileData.personality && (
-                                <span className="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full text-xs font-medium">
+                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                                   {getPersonalityLabel(post.profileData.personality)}
                                 </span>
                               )}
-                              {post.profileData.relationship && post.profileData.relationship !== 'girlfriend' && (
-                                <span className="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full text-xs font-medium">
+                              {post.profileData.relationship && (
+                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                                   {getRelationshipLabel(post.profileData.relationship)}
                                 </span>
                               )}
