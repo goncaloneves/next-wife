@@ -132,7 +132,7 @@ const Profile = () => {
 
   return (
     <div 
-      className="h-screen flex flex-col bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] overflow-hidden cursor-pointer"
+      className="h-screen flex flex-col bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] overflow-hidden"
       onClick={goBack}
     >
       <div 
