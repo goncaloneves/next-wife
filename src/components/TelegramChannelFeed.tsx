@@ -87,7 +87,6 @@ export const TelegramChannelFeed = ({
   const nearTopRef = useRef(true);
   const fetchInFlightRef = useRef(false);
   const isFilterChangeRef = useRef(false);
-  const restoringFromCacheRef = useRef(false);
 
   // Sync refs with state for stable access in callbacks
   useEffect(() => {
@@ -197,7 +196,7 @@ export const TelegramChannelFeed = ({
   }, [channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy, fingerprint]);
 
   const fetchNextPage = useCallback(async () => {
-    if (!hasMore || isLoadingMore || !nextCursor || restoringFromCacheRef.current) return;
+    if (!hasMore || isLoadingMore || !nextCursor) return;
 
     setIsLoadingMore(true);
 
@@ -374,25 +373,15 @@ export const TelegramChannelFeed = ({
           cache.sortBy === sortBy;
         
         if (filtersMatch && cache.posts?.length > 0) {
+          // Restore everything at once - all posts loaded, no pagination needed
           setAllPosts(cache.posts);
           setChannelInfo(cache.channelInfo);
           setNextCursor(cache.nextCursor);
           setHasMore(cache.hasMore);
           setLoading(false);
           if (cache.refreshKey) setRefreshKey(cache.refreshKey);
-          if (cache.imageLoadStates) setImageLoadStates(cache.imageLoadStates);
+          // Don't restore imageLoadStates - let images lazy load naturally
           setSkipAnimation(true);
-          restoringFromCacheRef.current = true;
-          // Clear restoration flag after user interaction
-          const clearRestoring = () => {
-            restoringFromCacheRef.current = false;
-            window.removeEventListener('wheel', clearRestoring);
-            window.removeEventListener('touchstart', clearRestoring);
-          };
-          window.addEventListener('wheel', clearRestoring, { once: true });
-          window.addEventListener('touchstart', clearRestoring, { once: true });
-          // Also clear after a timeout as fallback
-          setTimeout(() => { restoringFromCacheRef.current = false; }, 2000);
           topFingerprintRef.current = fingerprint(cache.posts);
           sessionStorage.removeItem('feedCache');
           restoredFromCache = true;
