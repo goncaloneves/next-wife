@@ -285,7 +285,7 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }} onClick={goBack}>
+    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }} onClick={() => !showTelegramConfirm && goBack()}>
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
@@ -480,32 +480,30 @@ const Profile = () => {
         </div>
       </div>
 
-      <div onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
-        <AlertDialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
-          <AlertDialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-xl font-bold text-center">
-                Meet {post?.profileData?.name}?
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-white/70 text-center">
-                You will be redirected to Telegram to meet and talk with {post?.profileData?.name}.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="flex-row gap-3 sm:justify-center">
-              <AlertDialogCancel className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white mt-0">
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={confirmOpenTelegram}
-                className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Open Telegram
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+      <AlertDialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
+        <AlertDialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-center">
+              Meet {post?.profileData?.name}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-white/70 text-center">
+              You will be redirected to Telegram to meet and talk with {post?.profileData?.name}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-3 sm:justify-center">
+            <AlertDialogCancel className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white mt-0">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmOpenTelegram}
+              className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Open Telegram
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
