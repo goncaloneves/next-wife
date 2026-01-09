@@ -154,16 +154,16 @@ const Profile = () => {
               </div>
             )}
             
-            <div className="flex items-baseline gap-2">
-              <h1 className="text-2xl font-bold text-white">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl md:text-2xl font-bold text-white drop-shadow-lg">
                 {profileData.name}
               </h1>
-              <span className="text-xl font-light text-white">
+              <span className="text-lg md:text-xl font-semibold text-white opacity-90">
                 {profileData.age}
               </span>
               <BadgeCheck 
-                className="w-5 h-5 text-[#1DA1F2] flex-shrink-0" 
-                style={{ fill: '#1DA1F2', stroke: 'white', strokeWidth: 2.5 }} 
+                className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
               />
             </div>
           </div>
