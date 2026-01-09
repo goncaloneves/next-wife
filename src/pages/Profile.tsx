@@ -378,7 +378,7 @@ const Profile = () => {
                     </div>
                   )}
 
-                  <div className="relative flex items-center justify-center pt-4 mt-3 border-t border-white/10 pointer-events-none min-h-[80px]">
+                  <div className="relative flex items-center justify-center pt-4 mt-3 pointer-events-none min-h-[80px]">
                     {canUndo && (
                       <button
                         onClick={undoSkip}
