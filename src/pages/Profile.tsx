@@ -222,7 +222,7 @@ const Profile = () => {
                 </div>
                 <div className="flex-1">
                   <p className="text-white/50 text-xs uppercase tracking-wide mb-1">Based in</p>
-                  <p className="text-white text-sm">{profileData.hometown}, {profileData.nationality}</p>
+                  <p className="text-white text-sm">{profileData.hometown}</p>
                 </div>
               </div>
             </div>
