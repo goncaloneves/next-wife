@@ -99,7 +99,7 @@ const Profile = () => {
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const dialogJustClosedRef = useRef(false);
+  const ignoreNextClickRef = useRef(false);
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -120,6 +120,18 @@ const Profile = () => {
     return () => {
       if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
     };
+  }, []);
+
+  useEffect(() => {
+    const captureClick = (e: MouseEvent) => {
+      if (ignoreNextClickRef.current) {
+        e.stopPropagation();
+        e.preventDefault();
+        ignoreNextClickRef.current = false;
+      }
+    };
+    document.addEventListener('click', captureClick, true);
+    return () => document.removeEventListener('click', captureClick, true);
   }, []);
 
   useEffect(() => {
@@ -151,15 +163,9 @@ const Profile = () => {
 
   const handleDialogChange = useCallback((open: boolean) => {
     if (!open) {
-      dialogJustClosedRef.current = true;
-      setTimeout(() => { dialogJustClosedRef.current = false; }, 100);
+      ignoreNextClickRef.current = true;
     }
     setShowTelegramConfirm(open);
-  }, []);
-
-  const handleBackgroundClick = useCallback(() => {
-    if (dialogJustClosedRef.current) return;
-    goBack();
   }, []);
 
   const goBack = useCallback(() => {
@@ -297,7 +303,7 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }} onClick={handleBackgroundClick}>
+    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }} onClick={goBack}>
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
