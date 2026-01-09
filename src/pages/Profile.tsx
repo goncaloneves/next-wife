@@ -3,7 +3,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useTelegram } from "@/hooks/use-telegram";
+import { useTelegram, openTelegramLinkAndClose } from "@/hooks/use-telegram";
 import {
   Dialog,
   DialogContent,
@@ -185,10 +185,14 @@ const Profile = () => {
   const confirmOpenTelegram = useCallback(() => {
     const url = post?.botLink || post?.link;
     if (url) {
-      window.open(url, "_blank", "noopener,noreferrer");
+      if (isAppView) {
+        openTelegramLinkAndClose(url);
+      } else {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
     }
     setShowTelegramConfirm(false);
-  }, [post]);
+  }, [post, isAppView]);
 
   const undoSkip = useCallback(() => {
     if (skipHistory.length === 0 || isAnimating) return;

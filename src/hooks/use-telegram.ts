@@ -10,6 +10,9 @@ interface SafeAreaInsets {
 interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
+  close: () => void;
+  openTelegramLink?: (url: string) => void;
+  openLink?: (url: string) => void;
   disableVerticalSwipes?: () => void;
   requestSafeArea?: () => void;
   onEvent: (event: string, callback: (data: SafeAreaInsets) => void) => void;
@@ -19,6 +22,22 @@ interface TelegramWebApp {
   viewportHeight?: number;
   viewportStableHeight?: number;
   isExpanded?: boolean;
+}
+
+export function openTelegramLinkAndClose(url: string) {
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
+    if (url.includes('t.me') && tg.openTelegramLink) {
+      tg.openTelegramLink(url);
+    } else if (tg.openLink) {
+      tg.openLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
+    setTimeout(() => tg.close(), 100);
+  } else {
+    window.open(url, '_blank');
+  }
 }
 
 declare global {
