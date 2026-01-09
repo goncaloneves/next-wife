@@ -495,17 +495,10 @@ const Profile = () => {
               You will be redirected to Telegram to meet and talk with {post?.profileData?.name}.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex-row gap-3 sm:justify-center">
-            <Button 
-              variant="outline"
-              onClick={() => setShowTelegramConfirm(false)}
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
-            >
-              Cancel
-            </Button>
+          <DialogFooter className="sm:justify-center">
             <Button 
               onClick={confirmOpenTelegram}
-              className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0"
+              className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0 w-full sm:w-auto"
             >
               <MessageCircle className="w-4 h-4 mr-2" />
               Open Telegram
