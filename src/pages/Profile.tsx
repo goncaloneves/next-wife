@@ -156,6 +156,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
+      x.set(0);
       try {
         const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
         if (!response.ok) {
@@ -168,9 +169,12 @@ const Profile = () => {
         }
       } catch (error) {
         console.error("Failed to fetch profile:", error);
+        setPost(null);
+        setNextId(null);
       } finally {
         setLoading(false);
         setIsAnimating(false);
+        setExitX(null);
       }
     };
 
