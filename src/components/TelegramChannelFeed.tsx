@@ -75,6 +75,7 @@ export const TelegramChannelFeed = ({
   const [imageLoadStates, setImageLoadStates] = useState<Record<string, boolean>>({});
   const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
+  const [skipAnimation, setSkipAnimation] = useState(false);
   const navigate = useNavigate();
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
   const [filters, setFilters] = useState<{ regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[] }>({ regions: [], ageBrackets: [], occupationCategories: [], languages: [], hometowns: [], personalities: [], relationships: [] });
@@ -362,6 +363,7 @@ export const TelegramChannelFeed = ({
   useEffect(() => {
     const cachedData = sessionStorage.getItem('feedCache');
     const scrollContext = sessionStorage.getItem('feedScrollContext');
+    let restoredFromCache = false;
     
     if (cachedData && scrollContext) {
       try {
@@ -376,17 +378,21 @@ export const TelegramChannelFeed = ({
           setNextCursor(cache.nextCursor);
           setHasMore(cache.hasMore);
           setLoading(false);
+          if (cache.refreshKey) setRefreshKey(cache.refreshKey);
+          if (cache.imageLoadStates) setImageLoadStates(cache.imageLoadStates);
+          setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
           sessionStorage.removeItem('feedCache');
+          restoredFromCache = true;
         } else {
           sessionStorage.removeItem('feedCache');
-          fetchInitialPosts();
         }
       } catch {
         sessionStorage.removeItem('feedCache');
-        fetchInitialPosts();
       }
-    } else {
+    }
+    
+    if (!restoredFromCache) {
       fetchInitialPosts();
     }
 
@@ -682,11 +688,12 @@ export const TelegramChannelFeed = ({
                 <div
                   key={`${post.id}-${refreshKey}`}
                   data-post-id={post.id}
-                  className="
-                    aspect-[3/4] cursor-pointer overflow-hidden group relative opacity-0 animate-fade-in
+                  className={`
+                    aspect-[3/4] cursor-pointer overflow-hidden group relative
                     flex-shrink-0 w-[90vw] md:w-auto
                     snap-center md:snap-align-none
-                  "
+                    ${skipAnimation ? 'opacity-100' : 'opacity-0 animate-fade-in'}
+                  `}
                   onClick={() => {
                     trackClick(post.id);
                     sessionStorage.setItem('feedScrollContext', JSON.stringify({
@@ -699,11 +706,13 @@ export const TelegramChannelFeed = ({
                       nextCursor,
                       hasMore,
                       filters,
-                      sortBy
+                      sortBy,
+                      refreshKey,
+                      imageLoadStates
                     }));
                     navigate(`/profile/${post.id}`);
                   }}
-                  style={{ 
+                  style={skipAnimation ? undefined : { 
                     animationDelay: `${(index % 20) * 0.05}s`,
                     animationFillMode: "forwards"
                   }}
