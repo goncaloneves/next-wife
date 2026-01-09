@@ -490,6 +490,9 @@ export const TelegramChannelFeed = ({
     
     prevFiltersRef.current = currentFiltersKey;
     
+    // Clear last viewed profile so preview shows first result from new filters
+    setLastViewedId(null);
+    
     // Cancel any in-flight request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
