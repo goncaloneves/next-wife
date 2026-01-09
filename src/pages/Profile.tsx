@@ -472,7 +472,7 @@ const Profile = () => {
                         }`}
                         data-testid="button-message-telegram"
                       >
-                        <MessageCircle className="w-9 h-9" />
+                        <Heart className="w-9 h-9" />
                       </button>
                     </div>
                   </div>
