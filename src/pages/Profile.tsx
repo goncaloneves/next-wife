@@ -101,9 +101,6 @@ const Profile = () => {
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const aboutSectionRef = useRef<HTMLDivElement>(null);
-  const [mobileScrollHeight, setMobileScrollHeight] = useState<number | null>(null);
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -125,25 +122,6 @@ const Profile = () => {
       if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isMobile || !post?.id) return;
-    
-    const measureAndSetHeight = () => {
-      if (scrollContainerRef.current && aboutSectionRef.current) {
-        const aboutTop = aboutSectionRef.current.offsetTop;
-        const viewportHeight = window.innerHeight;
-        const ctaBlockHeight = 100;
-        const availableHeight = viewportHeight * 0.4;
-        const clampedHeight = Math.min(Math.max(aboutTop - 8, 0), availableHeight);
-        setMobileScrollHeight(clampedHeight);
-        scrollContainerRef.current.scrollTop = 0;
-      }
-    };
-    
-    const timeout = setTimeout(measureAndSetHeight, 50);
-    return () => clearTimeout(timeout);
-  }, [post?.id, isMobile]);
 
   
   useEffect(() => {
@@ -374,77 +352,70 @@ const Profile = () => {
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent">
-              <div className="px-4 pt-16 pb-4 flex flex-col">
-                <div 
-                  ref={isMobile ? scrollContainerRef : undefined}
-                  className={`${isMobile ? 'overflow-y-auto' : ''}`}
-                  style={isMobile && mobileScrollHeight ? { maxHeight: mobileScrollHeight } : undefined}
-                >
-                  {post.isHot && (
-                    <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
-                      <span>🔥</span>
-                      <span className="text-xs font-semibold">Hot</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center gap-2 mb-3">
-                    <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
-                      {profileData.name}
-                    </h1>
-                    <span className="text-xl md:text-2xl font-semibold text-white/90">
-                      {profileData.age}
-                    </span>
-                    <BadgeCheck 
-                      className="w-6 h-6 md:w-7 md:h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
-                      style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
-                    />
+              <div className="px-4 pt-16 pb-4">
+                {post.isHot && (
+                  <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
+                    <span>🔥</span>
+                    <span className="text-xs font-semibold">Hot</span>
                   </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3 text-white/90">
-                      <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                      <span className="text-sm line-clamp-1">{profileData.work}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-white/90">
-                      <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                      <span className="text-sm">{profileData.hometown}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-white/90">
-                      <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
-                      <span className="text-sm">{profileData.nationality}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-white/90">
-                      <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                      <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
-                    </div>
-
-                    {(profileData.relationship || profileData.personality) && (
-                      <div className="pt-2 mt-2 border-t border-white/[0.08]">
-                        <div className="flex flex-wrap gap-2">
-                          {profileData.relationship && (
-                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                              {getRelationshipLabel(profileData.relationship)}
-                            </span>
-                          )}
-                          {profileData.personality && (
-                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                              {getPersonalityLabel(profileData.personality)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {profileData.about && (
-                      <div ref={isMobile ? aboutSectionRef : undefined} className="pt-2 mt-2 border-t border-white/[0.08]">
-                        <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
-                        <p className="text-base text-white/80 leading-relaxed">{profileData.about}</p>
-                      </div>
-                    )}
-                  </div>
+                )}
+                
+                <div className="flex items-center gap-2 mb-3">
+                  <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                    {profileData.name}
+                  </h1>
+                  <span className="text-xl md:text-2xl font-semibold text-white/90">
+                    {profileData.age}
+                  </span>
+                  <BadgeCheck 
+                    className="w-6 h-6 md:w-7 md:h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                    style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
+                  />
                 </div>
 
-                <div className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[70px] flex-shrink-0">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 text-white/90">
+                    <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                    <span className="text-sm">{profileData.work}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-white/90">
+                    <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                    <span className="text-sm">{profileData.hometown}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-white/90">
+                    <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
+                    <span className="text-sm">{profileData.nationality}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-white/90">
+                    <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                    <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
+                  </div>
+
+                  {(profileData.relationship || profileData.personality) && (
+                    <div className="pt-2 mt-2 border-t border-white/[0.08]">
+                      <div className="flex flex-wrap gap-2">
+                        {profileData.relationship && (
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                            {getRelationshipLabel(profileData.relationship)}
+                          </span>
+                        )}
+                        {profileData.personality && (
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                            {getPersonalityLabel(profileData.personality)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {profileData.about && (
+                    <div className="pt-2 mt-2 border-t border-white/[0.08]">
+                      <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
+                      <p className="text-sm text-white/80 leading-relaxed">{profileData.about}</p>
+                    </div>
+                  )}
+
+                  <div className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[70px]">
                     {canUndo && (
                       <button
                         onClick={undoSkip}
@@ -490,6 +461,7 @@ const Profile = () => {
                       </button>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </motion.article>
