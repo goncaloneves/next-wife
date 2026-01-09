@@ -809,7 +809,7 @@ export const TelegramChannelFeed = ({
                 }}
                 data-testid="button-start-swiping"
               >
-                Start Swiping to Explore 💕
+                Start Exploring 💕
               </Button>
             </div>
           )}
