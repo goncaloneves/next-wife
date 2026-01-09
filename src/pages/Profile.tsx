@@ -98,6 +98,7 @@ const Profile = () => {
   
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
+  const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 0.8, 1, 0.8, 0.5]);
 
 
   useEffect(() => {
@@ -271,7 +272,8 @@ const Profile = () => {
             style={{ 
               transformOrigin: 'center center',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)',
-              rotate
+              rotate,
+              opacity: isDragging ? opacity : 1
             }}
           >
             {!imageLoaded && (
