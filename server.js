@@ -827,7 +827,7 @@ app.get('/api/tg-channel-filters', async (req, res) => {
   }
 });
 
-// Get single profile by ID
+// Get single profile by ID with adjacent profile IDs for navigation
 app.get('/api/tg-profile/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -850,6 +850,21 @@ app.get('/api/tg-profile/:id', async (req, res) => {
     }
     
     const row = result.rows[0];
+    
+    // Get previous profile (newer post - higher ID)
+    const prevResult = await pool.query(`
+      SELECT id FROM telegram_posts 
+      WHERE channel = $1 AND id > $2 AND deleted_at IS NULL AND media IS NOT NULL AND name IS NOT NULL
+      ORDER BY id ASC LIMIT 1
+    `, [channelName, id]);
+    
+    // Get next profile (older post - lower ID)
+    const nextResult = await pool.query(`
+      SELECT id FROM telegram_posts 
+      WHERE channel = $1 AND id < $2 AND deleted_at IS NULL AND media IS NOT NULL AND name IS NOT NULL
+      ORDER BY id DESC LIMIT 1
+    `, [channelName, id]);
+    
     const post = {
       id: row.id,
       text: row.text,
@@ -872,7 +887,11 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       click_count: row.click_count
     };
     
-    res.json({ post });
+    res.json({ 
+      post,
+      prevId: prevResult.rows.length > 0 ? prevResult.rows[0].id : null,
+      nextId: nextResult.rows.length > 0 ? nextResult.rows[0].id : null
+    });
   } catch (error) {
     console.error('Error fetching profile:', error);
     res.status(500).json({ error: 'Failed to fetch profile' });
