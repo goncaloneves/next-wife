@@ -98,6 +98,7 @@ const Profile = () => {
   const [dragOffset, setDragOffset] = useState(0);
   const [activeAction, setActiveAction] = useState<'undo' | 'skip' | null>(null);
   const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
+  const [aboutExpanded, setAboutExpanded] = useState(false);
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -130,6 +131,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       setLoading(true);
       setImageLoaded(false);
+      setAboutExpanded(false);
       
       try {
         const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
@@ -411,7 +413,18 @@ const Profile = () => {
                   {profileData.about && (
                     <div className="pt-2 mt-2 border-t border-white/[0.08]">
                       <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
-                      <p className="text-sm text-white/80 leading-relaxed">{profileData.about}</p>
+                      <p className={`text-sm text-white/80 leading-relaxed ${isMobile && !aboutExpanded ? 'line-clamp-2' : ''}`}>
+                        {profileData.about}
+                      </p>
+                      {isMobile && profileData.about.length > 100 && !aboutExpanded && (
+                        <button 
+                          onClick={() => setAboutExpanded(true)}
+                          className="text-xs text-rose-400 mt-1 hover:underline"
+                          data-testid="button-read-more"
+                        >
+                          Read more
+                        </button>
+                      )}
                     </div>
                   )}
 
