@@ -2,6 +2,16 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 
@@ -87,6 +97,7 @@ const Profile = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [activeAction, setActiveAction] = useState<'undo' | 'skip' | null>(null);
+  const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -150,6 +161,10 @@ const Profile = () => {
   }, [navigate, id, skipHistory]);
 
   const openTelegram = useCallback(() => {
+    setShowTelegramConfirm(true);
+  }, []);
+
+  const confirmOpenTelegram = useCallback(() => {
     const url = post?.botLink || post?.link;
     if (url) {
       const newWindow = window.open(url, "_blank", "noopener,noreferrer");
@@ -157,6 +172,7 @@ const Profile = () => {
         window.location.assign(url);
       }
     }
+    setShowTelegramConfirm(false);
   }, [post]);
 
   const undoSkip = useCallback(() => {
@@ -472,6 +488,31 @@ const Profile = () => {
           <span>Message</span>
         </div>
       </div>
+
+      <AlertDialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
+        <AlertDialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-center">
+              Meet {post?.profileData?.name}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-white/70 text-center">
+              You will be redirected to Telegram to meet and talk with {post?.profileData?.name}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-3 sm:justify-center">
+            <AlertDialogCancel className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white mt-0">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmOpenTelegram}
+              className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Open Telegram
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
