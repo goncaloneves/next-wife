@@ -148,7 +148,7 @@ const Profile = () => {
 
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/60 to-transparent pt-16 pb-4 px-4">
             {post.isHot && (
-              <div className="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1 mb-2">
+              <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
                 <span>🔥</span>
                 <span className="text-xs">Hot</span>
               </div>
@@ -169,7 +169,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="bg-black/40 backdrop-blur-sm flex-shrink-0 overflow-y-auto border-t border-white/10" style={{ maxHeight: '45vh' }}>
+        <div className="bg-black/40 backdrop-blur-sm flex-shrink-0 overflow-y-auto border-t border-white/10" style={{ maxHeight: '35vh' }}>
           <div className="p-4 space-y-3">
             <div className="flex items-center gap-3 text-white/90">
               <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
@@ -214,18 +214,7 @@ const Profile = () => {
               </div>
             )}
 
-            <div className="pt-2">
-              <Link to="/" state={{ restoreScroll: true }} className="block">
-                <Button 
-                  variant="ghost" 
-                  className="w-full text-white/40 hover:text-white/70 hover:bg-white/5 text-sm h-10" 
-                  data-testid="button-browse-more"
-                >
-                  Browse more
-                </Button>
-              </Link>
-            </div>
-          </div>
+                      </div>
         </div>
 
         <div className="flex-shrink-0 bg-black/60 backdrop-blur-sm border-t border-white/10 p-4 pb-6">
