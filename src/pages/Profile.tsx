@@ -244,7 +244,7 @@ const Profile = () => {
       onClick={goBack}
     >
       <div 
-        className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default"
+        className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
         onClick={(e) => e.stopPropagation()}
       >
         <AnimatePresence mode="wait" custom={direction} onExitComplete={() => setIsAnimating(false)}>
@@ -261,7 +261,7 @@ const Profile = () => {
             onDragStart={() => setIsDragging(true)}
             onDrag={(_, info) => setDragOffset(info.offset.x)}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
-            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl select-none"
+            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl select-none min-h-[500px]"
             style={{ transformOrigin: 'center center' }}
           >
             {!imageLoaded && (
