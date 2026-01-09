@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilterCount, setActiveFilterCount] = useState(0);
@@ -54,6 +55,19 @@ const Index = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const state = location.state as { restoreScroll?: boolean } | null;
+    if (state?.restoreScroll) {
+      const savedPosition = sessionStorage.getItem('feedScrollPosition');
+      if (savedPosition) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedPosition, 10));
+          sessionStorage.removeItem('feedScrollPosition');
+        }, 100);
+      }
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const features = [
     {

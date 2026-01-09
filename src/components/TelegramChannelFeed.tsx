@@ -661,6 +661,7 @@ export const TelegramChannelFeed = ({
                   "
                   onClick={() => {
                     trackClick(post.id);
+                    sessionStorage.setItem('feedScrollPosition', String(window.scrollY));
                     navigate(`/profile/${post.id}`);
                   }}
                   style={{ 

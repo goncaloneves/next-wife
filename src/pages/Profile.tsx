@@ -221,7 +221,7 @@ const Profile = () => {
         </div>
 
         <div className="p-4 pt-6">
-          <Link to="/" className="block">
+          <Link to="/" state={{ restoreScroll: true }} className="block">
             <Button 
               variant="ghost" 
               className="w-full text-white/50 hover:text-white hover:bg-white/5 text-sm" 
