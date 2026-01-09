@@ -353,7 +353,7 @@ const Profile = () => {
 
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent">
               <div className="px-4 pt-16 pb-4 flex flex-col">
-                <div className={`${isMobile ? 'max-h-[45vh] overflow-y-auto' : ''}`}>
+                <div className={`${isMobile ? 'max-h-[28vh] overflow-y-auto' : ''}`}>
                   {post.isHot && (
                     <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
                       <span>🔥</span>
