@@ -502,10 +502,10 @@ const Profile = () => {
         <DialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
-              Meet {post?.profileData?.name}?
+              Ready to meet {post?.profileData?.name}?
             </DialogTitle>
             <DialogDescription className="text-white/70 text-center">
-              You will be redirected to Telegram to meet and talk with {post?.profileData?.name}.
+              She's waiting for you on Telegram.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center">
