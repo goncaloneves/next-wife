@@ -286,7 +286,14 @@ const Profile = () => {
     return (
       <div className="bg-black flex flex-col items-center justify-center" style={{ minHeight: '100svh' }}>
         <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
-        {!isAppView && (
+        {isAppView ? (
+          <Button 
+            onClick={() => navigate("/discover?view=app", { replace: true })} 
+            className="bg-gradient-to-r from-orange-500 to-rose-500 text-white border-0"
+          >
+            Find Someone New
+          </Button>
+        ) : (
           <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
             Back to Home
           </Button>
