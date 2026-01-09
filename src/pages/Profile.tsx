@@ -440,10 +440,8 @@ const Profile = () => {
                         className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-[transform,background-color] duration-200 shadow-xl pointer-events-auto ${
                           (isDragging && dragOffset < -30 && canSkip) || activeAction === 'skip'
                             ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
-                            : canSkip && !isAnimating
-                              ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
-                              : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
-                        }`}
+                            : 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20'
+                        } ${!canSkip || isAnimating ? 'opacity-50 cursor-not-allowed' : ''}`}
                         data-testid="button-action-skip"
                       >
                         <X className="w-9 h-9 stroke-[3]" />
