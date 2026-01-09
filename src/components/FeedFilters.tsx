@@ -338,8 +338,8 @@ export function FeedFilters({
 
       {/* Expanded filter sections - absolute overlay to avoid layout shift */}
       {showFilters && (
-        <div className="fixed md:absolute inset-x-0 top-0 md:top-auto md:left-0 md:right-0 z-50 mx-0 md:mx-4 bg-black md:bg-black/95 md:backdrop-blur-md md:rounded-2xl md:border md:border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200 h-screen md:h-auto flex flex-col">
-          <div className="p-4 flex-1 overflow-y-auto">
+        <div className="fixed md:absolute inset-0 md:inset-auto md:top-0 md:left-0 md:right-0 z-50 mx-0 md:mx-4 bg-black md:bg-black/95 md:backdrop-blur-md md:rounded-2xl md:border md:border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200 flex flex-col md:max-h-[80vh]">
+          <div className="p-4 flex-1 overflow-y-auto min-h-0">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
             {/* Region */}
             <FilterSection
@@ -417,7 +417,7 @@ export function FeedFilters({
           </div>
 
           {/* Footer with Clear all and Close buttons */}
-          <div className="flex justify-center gap-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:pb-3 border-t border-white/10">
+          <div className="flex-shrink-0 flex justify-center gap-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:pb-3 border-t border-white/10">
             {activeFilterCount > 0 && (
               <Button
                 variant="ghost"
