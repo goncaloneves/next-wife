@@ -1,9 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Clock, Undo2, X } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
-import { formatDistanceToNow } from "date-fns";
 
 interface ProfileData {
   name: string;
@@ -208,14 +207,6 @@ const Profile = () => {
     }
   };
 
-  const formatTimeAgo = (dateString: string) => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
-    } catch {
-      return "";
-    }
-  };
-
   const buildImageSrc = (url: string) => {
     return `/api/tg-image-proxy?u=${encodeURIComponent(url)}`;
   };
@@ -365,14 +356,9 @@ const Profile = () => {
               <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
             </div>
 
-            <div className="flex items-center gap-3 text-white/90">
-              <Clock className="w-4 h-4 text-white/50 flex-shrink-0" />
-              <span className="text-sm text-white/60">{formatTimeAgo(post.date)}</span>
-            </div>
-
             {(profileData.relationship || profileData.personality) && (
               <div className="pt-2.5 border-t border-white/10">
-                <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">Looking for</p>
+                <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">Basics</p>
                 <div className="flex flex-wrap gap-2">
                   {profileData.relationship && (
                     <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/40 rounded-full px-3 py-1.5 text-sm text-rose-200 font-medium">
