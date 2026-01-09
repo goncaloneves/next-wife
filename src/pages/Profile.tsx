@@ -3,15 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 
@@ -480,30 +478,34 @@ const Profile = () => {
         </div>
       </div>
 
-      <AlertDialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
-        <AlertDialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold text-center">
+      <Dialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
+        <DialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-center">
               Meet {post?.profileData?.name}?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-white/70 text-center">
+            </DialogTitle>
+            <DialogDescription className="text-white/70 text-center">
               You will be redirected to Telegram to meet and talk with {post?.profileData?.name}.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-row gap-3 sm:justify-center">
-            <AlertDialogCancel className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white mt-0">
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row gap-3 sm:justify-center">
+            <Button 
+              variant="outline"
+              onClick={() => setShowTelegramConfirm(false)}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
+            >
               Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction 
+            </Button>
+            <Button 
               onClick={confirmOpenTelegram}
               className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0"
             >
               <MessageCircle className="w-4 h-4 mr-2" />
               Open Telegram
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
