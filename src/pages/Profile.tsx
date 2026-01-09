@@ -250,7 +250,7 @@ const Profile = () => {
     return `/api/tg-image-proxy?u=${encodeURIComponent(url)}`;
   };
 
-  if (loading) {
+  if (loading && !isAnimating) {
     return (
       <div className="h-screen bg-black flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
