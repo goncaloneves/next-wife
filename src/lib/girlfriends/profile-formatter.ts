@@ -11,6 +11,7 @@ export const RELATIONSHIP_TYPE_LABELS: Record<string, string> = {
   stranger: '❓ Stranger',
   classmate: '📚 Classmate',
   coworker: '💼 Coworker',
+  'best friend': '🤝 Best Friend',
   bestfriend: '🤝 Best Friend',
   girlfriend: '💕 Girlfriend',
   wife: '💍 Wife',
