@@ -724,6 +724,7 @@ export const TelegramChannelFeed = ({
                 onClick={() => {
                   const firstPost = postsWithMedia[0];
                   trackClick(firstPost.id);
+                  sessionStorage.removeItem('nextwife_skip_history');
                   sessionStorage.setItem('feedCache', JSON.stringify({
                     posts: allPosts,
                     channelInfo,
@@ -769,6 +770,7 @@ export const TelegramChannelFeed = ({
                 onClick={() => {
                   const firstPost = postsWithMedia[0];
                   trackClick(firstPost.id);
+                  sessionStorage.removeItem('nextwife_skip_history');
                   sessionStorage.setItem('feedCache', JSON.stringify({
                     posts: allPosts,
                     channelInfo,
