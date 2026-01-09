@@ -248,7 +248,7 @@ const Profile = () => {
         onClick={(e) => e.stopPropagation()}
       >
         <AnimatePresence mode="wait" custom={direction} onExitComplete={() => setIsAnimating(false)}>
-          <motion.div
+          <motion.article
             key={post.id}
             custom={direction}
             variants={cardVariants}
@@ -261,40 +261,60 @@ const Profile = () => {
             onDragStart={() => setIsDragging(true)}
             onDrag={(_, info) => setDragOffset(info.offset.x)}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
-            className="flex-1 flex flex-col min-h-0 relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl"
+            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl select-none"
+            style={{ transformOrigin: 'center center' }}
           >
-            <div className="relative flex-1 min-h-[300px] select-none">
-              <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center pointer-events-none">
-                <button
-                  onClick={(e) => { e.stopPropagation(); goBack(); }}
-                  onPointerDownCapture={(e) => e.stopPropagation()}
-                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
-                  data-testid="button-back"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleShare(); }}
-                  onPointerDownCapture={(e) => e.stopPropagation()}
-                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
-                  data-testid="button-share"
-                >
-                  <Share2 className="w-5 h-5" />
-                </button>
-              </div>
+            {!imageLoaded && (
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
+            )}
+            <img
+              src={buildImageSrc(post.media)}
+              alt={profileData.name}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={() => setImageLoaded(true)}
+              draggable={false}
+            />
 
-              {!imageLoaded && (
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
-              )}
-              <img
-                src={buildImageSrc(post.media)}
-                alt={profileData.name}
-                className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                onLoad={() => setImageLoaded(true)}
-                draggable={false}
-              />
+            <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center pointer-events-none">
+              <button
+                onClick={(e) => { e.stopPropagation(); goBack(); }}
+                onPointerDownCapture={(e) => e.stopPropagation()}
+                className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
+                data-testid="button-back"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleShare(); }}
+                onPointerDownCapture={(e) => e.stopPropagation()}
+                className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
+                data-testid="button-share"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
+            </div>
 
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent pt-20 pb-4 px-4">
+            {isDragging && dragOffset > 30 && canUndo && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute top-1/3 left-4 bg-amber-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[-15deg] border-2 border-white shadow-lg z-30"
+              >
+                UNDO
+              </motion.div>
+            )}
+            {isDragging && dragOffset < -30 && canSkip && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute top-1/3 right-4 bg-rose-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[15deg] border-2 border-white shadow-lg z-30"
+              >
+                SKIP
+              </motion.div>
+            )}
+
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent">
+              <div className="px-4 pt-16 pb-4">
                 {post.isHot && (
                   <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
                     <span>🔥</span>
@@ -302,7 +322,7 @@ const Profile = () => {
                   </div>
                 )}
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-3">
                   <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
                     {profileData.name}
                   </h1>
@@ -314,70 +334,49 @@ const Profile = () => {
                     style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                   />
                 </div>
-              </div>
 
-              {isDragging && dragOffset > 30 && canUndo && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute top-1/2 left-4 -translate-y-1/2 bg-amber-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[-15deg] border-2 border-white shadow-lg"
-                >
-                  UNDO
-                </motion.div>
-              )}
-              {isDragging && dragOffset < -30 && canSkip && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute top-1/2 right-4 -translate-y-1/2 bg-rose-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[15deg] border-2 border-white shadow-lg"
-                >
-                  SKIP
-                </motion.div>
-              )}
-            </div>
-
-            <div className="flex-shrink-0 overflow-y-auto" style={{ maxHeight: '32vh' }}>
-              <div className="px-4 py-3 space-y-2.5">
-                <div className="flex items-center gap-3 text-white/90">
-                  <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                  <span className="text-sm">{profileData.work}</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-white/90">
-                  <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                  <span className="text-sm">{profileData.hometown}</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-white/90">
-                  <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
-                  <span className="text-sm">{profileData.nationality}</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-white/90">
-                  <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                  <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
-                </div>
-
-                {(profileData.relationship || profileData.personality) && (
-                  <div className="pt-2.5 border-t border-white/10">
-                    <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
-                    <div className="flex flex-wrap gap-2">
-                      {profileData.relationship && (
-                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/40 rounded-full px-3 py-1.5 text-sm text-rose-200 font-medium">
-                          {getRelationshipLabel(profileData.relationship)}
-                        </span>
-                      )}
-                      {profileData.personality && (
-                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-400/40 rounded-full px-3 py-1.5 text-sm text-purple-200 font-medium">
-                          {getPersonalityLabel(profileData.personality)}
-                        </span>
-                      )}
-                    </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 text-white/90">
+                    <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                    <span className="text-sm">{profileData.work}</span>
                   </div>
-                )}
+
+                  <div className="flex items-center gap-3 text-white/90">
+                    <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                    <span className="text-sm">{profileData.hometown}</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-white/90">
+                    <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
+                    <span className="text-sm">{profileData.nationality}</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-white/90">
+                    <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                    <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
+                  </div>
+
+                  {(profileData.relationship || profileData.personality) && (
+                    <div className="pt-2 mt-2 border-t border-white/10">
+                      <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
+                      <div className="flex flex-wrap gap-2">
+                        {profileData.relationship && (
+                          <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/40 rounded-full px-3 py-1.5 text-sm text-rose-200 font-medium">
+                            {getRelationshipLabel(profileData.relationship)}
+                          </span>
+                        )}
+                        {profileData.personality && (
+                          <span className="inline-flex items-center gap-1 bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-400/40 rounded-full px-3 py-1.5 text-sm text-purple-200 font-medium">
+                            {getPersonalityLabel(profileData.personality)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </motion.div>
+          </motion.article>
         </AnimatePresence>
 
         <div className="flex-shrink-0 bg-black/60 backdrop-blur-lg border-t border-white/10 px-6 py-5 pb-7">
