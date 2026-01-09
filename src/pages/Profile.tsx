@@ -378,19 +378,19 @@ const Profile = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 text-white/90">
                     <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                    <span className="text-sm truncate">{profileData.work}</span>
+                    <span className="text-sm truncate">{profileData.work?.replace(/\.$/, '')}</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/90">
                     <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                    <span className="text-sm">{profileData.hometown}</span>
+                    <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/90">
                     <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
-                    <span className="text-sm">{profileData.nationality}</span>
+                    <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/90">
                     <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                    <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
+                    <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
                   </div>
 
                   {(profileData.relationship || profileData.personality) && (
