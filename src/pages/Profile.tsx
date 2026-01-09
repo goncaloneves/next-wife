@@ -419,7 +419,7 @@ const Profile = () => {
                       <p className={`flex items-center gap-1 text-xs font-medium text-white/50 uppercase tracking-wide ${aboutExpanded ? 'mb-2' : ''}`}>
                         About Me
                         {isMobile && (
-                          <span className="text-rose-400">{aboutExpanded ? '▲' : '▼'}</span>
+                          <span className="text-rose-400">{aboutExpanded ? '−' : '+'}</span>
                         )}
                       </p>
                       {(!isMobile || aboutExpanded) && (
