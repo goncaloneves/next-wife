@@ -378,7 +378,7 @@ const Profile = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 text-white/90">
                     <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                    <span className="text-sm truncate md:whitespace-normal md:overflow-visible">{profileData.work?.replace(/\.$/, '')}</span>
+                    <span className="text-sm truncate md:whitespace-normal md:line-clamp-2">{profileData.work?.replace(/\.$/, '')}</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/90">
                     <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
