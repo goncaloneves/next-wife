@@ -97,6 +97,7 @@ const Profile = () => {
   const [exitX, setExitX] = useState<number | null>(null);
   const [activeAction, setActiveAction] = useState<'undo' | 'skip' | null>(null);
   const highlightTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isInitialLoad = useRef(true);
   
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -225,6 +226,7 @@ const Profile = () => {
         setIsAnimating(false);
         setExitX(null);
         x.set(0);
+        isInitialLoad.current = false;
       }
     };
 
@@ -276,7 +278,7 @@ const Profile = () => {
     return `/api/tg-image-proxy?u=${encodeURIComponent(url)}`;
   };
 
-  if (loading && !isAnimating) {
+  if (loading && isInitialLoad.current && !post) {
     return (
       <div className="h-screen bg-black flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
@@ -331,13 +333,16 @@ const Profile = () => {
             }}
           >
             {!imageLoaded && (
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500"></div>
+              </div>
             )}
             <img
               src={buildImageSrc(post.media)}
               alt={profileData.name}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
               onLoad={() => setImageLoaded(true)}
+              onError={() => setImageLoaded(true)}
               draggable={false}
             />
 
