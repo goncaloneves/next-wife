@@ -132,7 +132,10 @@ const Profile = () => {
     const measureAndSetHeight = () => {
       if (scrollContainerRef.current && aboutSectionRef.current) {
         const aboutTop = aboutSectionRef.current.offsetTop;
-        const clampedHeight = Math.max(aboutTop - 8, 150);
+        const viewportHeight = window.innerHeight;
+        const ctaBlockHeight = 100;
+        const availableHeight = viewportHeight * 0.4;
+        const clampedHeight = Math.min(Math.max(aboutTop - 8, 0), availableHeight);
         setMobileScrollHeight(clampedHeight);
         scrollContainerRef.current.scrollTop = 0;
       }
@@ -435,7 +438,7 @@ const Profile = () => {
                     {profileData.about && (
                       <div ref={isMobile ? aboutSectionRef : undefined} className="pt-2 mt-2 border-t border-white/[0.08]">
                         <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
-                        <p className="text-sm text-white/80 leading-relaxed">{profileData.about}</p>
+                        <p className="text-base text-white/80 leading-relaxed">{profileData.about}</p>
                       </div>
                     )}
                   </div>
