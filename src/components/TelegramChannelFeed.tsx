@@ -755,7 +755,7 @@ export const TelegramChannelFeed = ({
                           </p>
                           {/* Personality & Relationship pills */}
                           {(post.profileData.personality || post.profileData.relationship) && (
-                            <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-white/10">
+                            <div className="flex flex-wrap gap-2 mt-2">
                               {post.profileData.personality && (
                                 <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                                   {getPersonalityLabel(post.profileData.personality)}
