@@ -113,7 +113,6 @@ const Profile = () => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   
-  const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   
@@ -161,7 +160,6 @@ const Profile = () => {
       } finally {
         setLoading(false);
         setIsAnimating(false);
-        isFirstLoad.current = false;
       }
     };
     
@@ -282,7 +280,7 @@ const Profile = () => {
     }
   };
 
-  if (loading && isFirstLoad.current) {
+  if (loading) {
     return (
       <div className="bg-black flex items-center justify-center" style={{ minHeight: '100svh' }}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500" />
