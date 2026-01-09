@@ -183,16 +183,14 @@ const Profile = () => {
     const velocity = info.velocity.x;
     const offset = info.offset.x;
 
-    if (offset < -threshold || velocity < -500) {
-      if (nextId) {
-        setExitX(offset);
-        skipProfile();
-      }
-    } else if (offset > threshold || velocity > 500) {
-      if (skipHistory.length > 0) {
-        setExitX(offset);
-        undoSkip();
-      }
+    if ((offset < -threshold || velocity < -500) && nextId) {
+      setExitX(offset);
+      skipProfile();
+    } else if ((offset > threshold || velocity > 500) && skipHistory.length > 0) {
+      setExitX(offset);
+      undoSkip();
+    } else {
+      x.set(0);
     }
   };
 
