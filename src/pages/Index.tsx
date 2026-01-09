@@ -60,10 +60,20 @@ const Index = () => {
     if (state?.restoreScroll) {
       const savedPosition = sessionStorage.getItem('feedScrollPosition');
       if (savedPosition) {
-        setTimeout(() => {
-          window.scrollTo(0, parseInt(savedPosition, 10));
-          sessionStorage.removeItem('feedScrollPosition');
-        }, 100);
+        const targetScroll = parseInt(savedPosition, 10);
+        const attemptScroll = (attempts: number) => {
+          if (attempts <= 0) {
+            sessionStorage.removeItem('feedScrollPosition');
+            return;
+          }
+          window.scrollTo(0, targetScroll);
+          if (Math.abs(window.scrollY - targetScroll) > 50) {
+            setTimeout(() => attemptScroll(attempts - 1), 200);
+          } else {
+            sessionStorage.removeItem('feedScrollPosition');
+          }
+        };
+        setTimeout(() => attemptScroll(10), 300);
       }
       window.history.replaceState({}, document.title);
     }
