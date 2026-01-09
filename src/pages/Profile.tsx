@@ -99,7 +99,6 @@ const Profile = () => {
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const ignoreNextClickRef = useRef(false);
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -123,22 +122,15 @@ const Profile = () => {
   }, []);
 
   useEffect(() => {
-    const swallowEvent = (e: Event) => {
-      if (ignoreNextClickRef.current) {
-        e.stopPropagation();
-        e.preventDefault();
-        ignoreNextClickRef.current = false;
-      }
-    };
-    document.addEventListener('click', swallowEvent, true);
-    document.addEventListener('touchend', swallowEvent, true);
-    document.addEventListener('pointerup', swallowEvent, true);
+    if (showTelegramConfirm) {
+      document.body.style.pointerEvents = 'none';
+    } else {
+      document.body.style.pointerEvents = '';
+    }
     return () => {
-      document.removeEventListener('click', swallowEvent, true);
-      document.removeEventListener('touchend', swallowEvent, true);
-      document.removeEventListener('pointerup', swallowEvent, true);
+      document.body.style.pointerEvents = '';
     };
-  }, []);
+  }, [showTelegramConfirm]);
 
   useEffect(() => {
     if (!id) return;
@@ -167,18 +159,7 @@ const Profile = () => {
     fetchProfile();
   }, [id]);
 
-  const handleDialogChange = useCallback((open: boolean) => {
-    if (!open) {
-      ignoreNextClickRef.current = true;
-    }
-    setShowTelegramConfirm(open);
-  }, []);
-
   const goBack = useCallback(() => {
-    if (ignoreNextClickRef.current) {
-      ignoreNextClickRef.current = false;
-      return;
-    }
     if (id) {
       sessionStorage.setItem('nextwife_last_viewed', id);
     }
@@ -508,8 +489,8 @@ const Profile = () => {
         </div>
       </div>
 
-      <Dialog open={showTelegramConfirm} onOpenChange={handleDialogChange}>
-        <DialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
+      <Dialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
+        <DialogContent className="bg-black/95 border-white/10 text-white max-w-sm" style={{ pointerEvents: 'auto' }}>
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
               Meet {post?.profileData?.name}?
