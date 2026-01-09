@@ -917,6 +917,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       return res.status(503).json({ error: 'Database not available' });
     }
     
+    // First check if post exists with valid enriched data
     let result = await pool.query(`
       SELECT id, text, date, link, media, media_urls, avatar, bot_link as "botLink", 
              name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
@@ -924,23 +925,40 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       WHERE channel = $1 AND id = $2 AND deleted_at IS NULL AND name IS NOT NULL AND media IS NOT NULL
     `, [channelName, id]);
     
-    // If not in DB, try fetching directly from Telegram
+    // If not found with valid data, check if it exists at all or needs Telegram fetch
     if (result.rows.length === 0) {
-      console.log(`Post ${id} not in DB, fetching from Telegram...`);
-      const telegramPost = await fetchSinglePost(id, channel);
+      // Check if post exists but lacks enriched data
+      const existsCheck = await pool.query(`
+        SELECT id FROM telegram_posts WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
+      `, [channelName, id]);
       
-      if (telegramPost && telegramPost.media) {
-        // Sync this post to database for future requests
-        await syncPostsToDatabase([telegramPost], channel);
+      const needsTelegramFetch = existsCheck.rows.length === 0;
+      
+      if (needsTelegramFetch) {
+        console.log(`Post ${id} not in DB, fetching from Telegram...`);
+        const telegramPost = await fetchSinglePost(id, channel);
         
-        // Query again to get the synced data with derived fields
-        result = await pool.query(`
-          SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
-                 name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about, media_urls
-          FROM telegram_posts 
-          WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
-        `, [channelName, id]);
+        if (telegramPost && telegramPost.media) {
+          // Sync this post to database for future requests
+          await syncPostsToDatabase([telegramPost], channel);
+        }
+      } else {
+        console.log(`Post ${id} exists but lacks enriched data, re-syncing from Telegram...`);
+        const telegramPost = await fetchSinglePost(id, channel);
+        
+        if (telegramPost && telegramPost.media) {
+          // Re-sync to enrich the existing post
+          await syncPostsToDatabase([telegramPost], channel);
+        }
       }
+      
+      // Query again with enriched data requirement
+      result = await pool.query(`
+        SELECT id, text, date, link, media, media_urls, avatar, bot_link as "botLink", 
+               name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
+        FROM telegram_posts 
+        WHERE channel = $1 AND id = $2 AND deleted_at IS NULL AND name IS NOT NULL AND media IS NOT NULL
+      `, [channelName, id]);
       
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'Profile not found' });
