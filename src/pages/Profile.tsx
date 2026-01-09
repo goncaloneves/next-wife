@@ -138,20 +138,30 @@ const Profile = () => {
     navigate(`/profile/${nextId}`, { replace: true });
   }, [id, nextId, skipHistory, navigate, isAnimating]);
 
+  const openTelegram = useCallback(() => {
+    const url = post?.botLink || post?.link;
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  }, [post]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         goBack();
       } else if (e.key === "ArrowLeft") {
-        undoSkip();
-      } else if (e.key === "ArrowRight") {
         skipProfile();
+      } else if (e.key === "ArrowRight") {
+        openTelegram();
+      } else if (e.key === " ") {
+        e.preventDefault();
+        openTelegram();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goBack, undoSkip, skipProfile]);
+  }, [goBack, skipProfile, openTelegram]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -191,9 +201,9 @@ const Profile = () => {
     if ((offset < -threshold || velocity < -500) && nextId) {
       setExitX(offset);
       skipProfile();
-    } else if ((offset > threshold || velocity > 500) && skipHistory.length > 0) {
-      setExitX(offset);
-      undoSkip();
+    } else if (offset > threshold || velocity > 500) {
+      x.set(0);
+      openTelegram();
     } else {
       x.set(0);
     }
@@ -372,22 +382,6 @@ const Profile = () => {
                   )}
                   <div className="flex items-center justify-center gap-5 pt-4 mt-3 border-t border-white/10 pointer-events-none">
                     <button
-                      onClick={undoSkip}
-                      onPointerDownCapture={(e) => e.stopPropagation()}
-                      disabled={!canUndo || isAnimating}
-                      className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
-                        isDragging && dragOffset > 30 && canUndo
-                          ? 'bg-amber-400/30 border-amber-400 text-amber-400 scale-110 shadow-amber-400/40'
-                          : canUndo && !isAnimating
-                            ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
-                            : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
-                      }`}
-                      data-testid="button-action-undo"
-                    >
-                      <Undo2 className="w-7 h-7" />
-                    </button>
-                    
-                    <button
                       onClick={skipProfile}
                       onPointerDownCapture={(e) => e.stopPropagation()}
                       disabled={!canSkip || isAnimating}
@@ -406,7 +400,11 @@ const Profile = () => {
                     <button
                       onClick={handleMessageClick}
                       onPointerDownCapture={(e) => e.stopPropagation()}
-                      className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 flex items-center justify-center text-white hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 transition-all shadow-xl shadow-rose-500/30 border-[3px] border-white/30 pointer-events-auto"
+                      className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] pointer-events-auto ${
+                        isDragging && dragOffset > 30
+                          ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-400 scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
+                          : 'bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
+                      }`}
                       data-testid="button-message-telegram"
                     >
                       <MessageCircle className="w-9 h-9" />
