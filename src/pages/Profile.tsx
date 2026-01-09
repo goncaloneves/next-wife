@@ -101,6 +101,9 @@ const Profile = () => {
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const aboutSectionRef = useRef<HTMLDivElement>(null);
+  const [mobileScrollHeight, setMobileScrollHeight] = useState<number | null>(null);
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -122,6 +125,22 @@ const Profile = () => {
       if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMobile || !post?.id) return;
+    
+    const measureAndSetHeight = () => {
+      if (scrollContainerRef.current && aboutSectionRef.current) {
+        const aboutTop = aboutSectionRef.current.offsetTop;
+        const clampedHeight = Math.max(aboutTop - 8, 150);
+        setMobileScrollHeight(clampedHeight);
+        scrollContainerRef.current.scrollTop = 0;
+      }
+    };
+    
+    const timeout = setTimeout(measureAndSetHeight, 50);
+    return () => clearTimeout(timeout);
+  }, [post?.id, isMobile]);
 
   
   useEffect(() => {
@@ -353,7 +372,11 @@ const Profile = () => {
 
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent">
               <div className="px-4 pt-16 pb-4 flex flex-col">
-                <div className={`${isMobile ? 'overflow-y-auto flex-1' : ''}`}>
+                <div 
+                  ref={isMobile ? scrollContainerRef : undefined}
+                  className={`${isMobile ? 'overflow-y-auto' : ''}`}
+                  style={isMobile && mobileScrollHeight ? { maxHeight: mobileScrollHeight } : undefined}
+                >
                   {post.isHot && (
                     <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
                       <span>🔥</span>
@@ -410,7 +433,7 @@ const Profile = () => {
                     )}
 
                     {profileData.about && (
-                      <div className="pt-2 mt-2 border-t border-white/[0.08]">
+                      <div ref={isMobile ? aboutSectionRef : undefined} className="pt-2 mt-2 border-t border-white/[0.08]">
                         <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
                         <p className="text-sm text-white/80 leading-relaxed">{profileData.about}</p>
                       </div>
