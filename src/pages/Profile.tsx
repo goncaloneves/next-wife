@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Clock } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
@@ -35,6 +35,21 @@ const Profile = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  const goBack = useCallback(() => {
+    navigate("/", { state: { restoreScroll: true } });
+  }, [navigate]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "ArrowLeft") {
+        goBack();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [goBack]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -116,12 +131,18 @@ const Profile = () => {
   const { profileData } = post;
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] overflow-hidden">
-      <div className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0">
+    <div 
+      className="h-screen flex flex-col bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] overflow-hidden cursor-pointer"
+      onClick={goBack}
+    >
+      <div 
+        className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="relative flex-1 min-h-[300px]">
           <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center">
             <button
-              onClick={() => navigate("/", { state: { restoreScroll: true } })}
+              onClick={goBack}
               className="bg-black/50 backdrop-blur-sm text-white p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg"
               data-testid="button-back"
             >
