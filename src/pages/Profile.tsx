@@ -261,7 +261,7 @@ const Profile = () => {
             onDragStart={() => setIsDragging(true)}
             onDrag={(_, info) => setDragOffset(info.offset.x)}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
-            className="flex-1 flex flex-col min-h-0 relative"
+            className="flex-1 flex flex-col min-h-0 relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl"
           >
             <div className="relative flex-1 min-h-[300px] select-none">
               <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center pointer-events-none">
@@ -284,12 +284,12 @@ const Profile = () => {
               </div>
 
               {!imageLoaded && (
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse rounded-xl" />
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
               )}
               <img
                 src={buildImageSrc(post.media)}
                 alt={profileData.name}
-                className={`w-full h-full object-cover transition-opacity duration-300 rounded-t-xl ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                 onLoad={() => setImageLoaded(true)}
                 draggable={false}
               />
@@ -336,7 +336,7 @@ const Profile = () => {
               )}
             </div>
 
-            <div className="bg-black/50 backdrop-blur-md flex-shrink-0 overflow-y-auto border-t border-white/10" style={{ maxHeight: '32vh' }}>
+            <div className="flex-shrink-0 overflow-y-auto border-t border-white/10" style={{ maxHeight: '32vh' }}>
               <div className="p-4 space-y-2.5">
                 <div className="flex items-center gap-3 text-white/90">
                   <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
