@@ -186,7 +186,7 @@ const Index = () => {
             </p>
 
             <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
-              Meet the wife you create and embark on a romantic journey, sharing unique stories from around the globe.
+              Meet the woman you create and embark on a romantic journey, sharing unique stories from around the globe.
             </p>
 
             <Button
