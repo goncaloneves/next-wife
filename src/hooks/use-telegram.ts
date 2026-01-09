@@ -10,6 +10,7 @@ interface SafeAreaInsets {
 interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
+  disableVerticalSwipes?: () => void;
   requestSafeArea?: () => void;
   onEvent: (event: string, callback: (data: SafeAreaInsets) => void) => void;
   offEvent: (event: string, callback: (data: SafeAreaInsets) => void) => void;
@@ -41,8 +42,18 @@ export function useTelegram(enabled: boolean = true) {
     if (tg) {
       setIsTelegramApp(true);
       
-      tg.ready();
       tg.expand();
+      tg.ready();
+      
+      if (tg.disableVerticalSwipes) {
+        tg.disableVerticalSwipes();
+      }
+      
+      setTimeout(() => {
+        if (!tg.isExpanded) {
+          tg.expand();
+        }
+      }, 100);
       
       if (tg.safeAreaInset) {
         setSafeArea(tg.safeAreaInset);
@@ -85,7 +96,10 @@ export function useTelegram(enabled: boolean = true) {
 export function initTelegramApp() {
   const tg = window.Telegram?.WebApp;
   if (tg) {
-    tg.ready();
     tg.expand();
+    tg.ready();
+    if (tg.disableVerticalSwipes) {
+      tg.disableVerticalSwipes();
+    }
   }
 }
