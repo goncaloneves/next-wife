@@ -739,7 +739,8 @@ export const TelegramChannelFeed = ({
                 }}
                 onClick={() => {
                   trackClick(activePost.id);
-                  sessionStorage.removeItem('nextwife_skip_history');
+                  // Set nav flag to preserve skip history when re-entering profile
+                  sessionStorage.setItem('nextwife_navigating_skip', 'true');
                   sessionStorage.setItem('feedScrollContext', JSON.stringify({
                     postId: activePost.id,
                     scrollY: window.scrollY
@@ -788,7 +789,8 @@ export const TelegramChannelFeed = ({
                 }}
                 onClick={() => {
                   trackClick(activePost.id);
-                  sessionStorage.removeItem('nextwife_skip_history');
+                  // Set nav flag to preserve skip history when re-entering profile
+                  sessionStorage.setItem('nextwife_navigating_skip', 'true');
                   sessionStorage.setItem('feedScrollContext', JSON.stringify({
                     postId: activePost.id,
                     scrollY: window.scrollY
