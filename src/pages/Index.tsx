@@ -208,10 +208,10 @@ const Index = () => {
               Meet the woman you create and embark on a romantic journey, sharing unique stories from around the globe.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col items-center gap-3">
               <Button
                 size="lg"
-                className="text-lg px-8 py-6 font-bold transition-all duration-300"
+                className="text-lg px-10 py-6 font-bold transition-all duration-300"
                 style={{
                   background: "var(--gradient-sunset)",
                   boxShadow: "var(--shadow-warm)",
@@ -221,20 +221,13 @@ const Index = () => {
               >
                 Pick Your Woman 🌻
               </Button>
-              <Button
-                size="lg"
-                className="text-lg px-8 py-6 font-semibold tracking-wide transition-all duration-300 hover:scale-[1.02] text-white"
-                style={{
-                  background: "linear-gradient(135deg, rgba(198, 58, 75, 0.4) 0%, rgba(232, 115, 85, 0.3) 100%)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  boxShadow: "0 4px 24px rgba(198, 58, 75, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.1)",
-                }}
+              <button
+                className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
                 onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
                 data-testid="button-open-nextwife"
               >
-                Open Next Wife
-              </Button>
+                or Open Next Wife →
+              </button>
             </div>
           </div>
 
