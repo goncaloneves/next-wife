@@ -263,17 +263,19 @@ const Profile = () => {
             className="flex-1 flex flex-col min-h-0 relative"
           >
             <div className="relative flex-1 min-h-[300px] select-none">
-              <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center">
+              <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center pointer-events-none">
                 <button
                   onClick={(e) => { e.stopPropagation(); goBack(); }}
-                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105"
+                  onPointerDownCapture={(e) => e.stopPropagation()}
+                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
                   data-testid="button-back"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleShare(); }}
-                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105"
+                  onPointerDownCapture={(e) => e.stopPropagation()}
+                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
                   data-testid="button-share"
                 >
                   <Share2 className="w-5 h-5" />
