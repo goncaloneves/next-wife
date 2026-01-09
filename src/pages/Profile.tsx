@@ -94,9 +94,10 @@ const Profile = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
-  const { isTelegramApp, safeArea } = useTelegram();
-  
   const isAppView = searchParams.get("view") === "app";
+  const { isTelegramApp, safeArea } = useTelegram(isAppView);
+  
+  const useTelegramSafeAreas = isAppView && isTelegramApp;
   
   const [post, setPost] = useState<Post | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
@@ -317,10 +318,10 @@ const Profile = () => {
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
         style={{ 
-          paddingBottom: isTelegramApp 
+          paddingBottom: useTelegramSafeAreas 
             ? `max(0.5rem, ${safeArea.bottom}px)` 
             : 'max(0.5rem, env(safe-area-inset-bottom))',
-          paddingTop: isTelegramApp ? `${safeArea.top}px` : undefined
+          paddingTop: useTelegramSafeAreas ? `${safeArea.top}px` : undefined
         }}
         onClick={!isMobile ? (e) => e.stopPropagation() : undefined}
       >
@@ -526,7 +527,7 @@ const Profile = () => {
 
                   <div 
                     className="relative flex items-center justify-center pt-3 mt-2 border-t border-white/[0.08] pointer-events-none min-h-[80px]"
-                    style={{ paddingBottom: isTelegramApp ? `max(8px, ${safeArea.bottom}px)` : '8px' }}
+                    style={{ paddingBottom: useTelegramSafeAreas ? `max(8px, ${safeArea.bottom}px)` : '8px' }}
                   >
                     {canUndo && (
                       <button

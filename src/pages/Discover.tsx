@@ -6,10 +6,11 @@ const Discover = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [error, setError] = useState(false);
-  useTelegram();
   
   const view = searchParams.get("view");
   const isAppView = view === "app";
+  
+  useTelegram(isAppView);
 
   useEffect(() => {
     const fetchLatestProfile = async () => {

@@ -28,12 +28,14 @@ declare global {
   }
 }
 
-export function useTelegram() {
+export function useTelegram(enabled: boolean = true) {
   const [isTelegramApp, setIsTelegramApp] = useState(false);
   const [safeArea, setSafeArea] = useState<SafeAreaInsets>({ top: 0, bottom: 0, left: 0, right: 0 });
   const [contentSafeArea, setContentSafeArea] = useState<SafeAreaInsets>({ top: 0, bottom: 0, left: 0, right: 0 });
 
   useEffect(() => {
+    if (!enabled) return;
+    
     const tg = window.Telegram?.WebApp;
     
     if (tg) {
@@ -75,7 +77,7 @@ export function useTelegram() {
         tg.offEvent('contentSafeAreaChanged', handleContentSafeAreaChange);
       };
     }
-  }, []);
+  }, [enabled]);
 
   return { isTelegramApp, safeArea, contentSafeArea };
 }
