@@ -170,10 +170,7 @@ const Profile = () => {
   const confirmOpenTelegram = useCallback(() => {
     const url = post?.botLink || post?.link;
     if (url) {
-      const newWindow = window.open(url, "_blank", "noopener,noreferrer");
-      if (!newWindow) {
-        window.location.assign(url);
-      }
+      window.open(url, "_blank", "noopener,noreferrer");
     }
     setShowTelegramConfirm(false);
   }, [post]);
