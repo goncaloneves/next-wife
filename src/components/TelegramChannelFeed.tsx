@@ -72,7 +72,7 @@ export const TelegramChannelFeed = ({
   const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
-  const [filters, setFilters] = useState<{ regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[] }>({ regions: [], ageBrackets: [], occupationCategories: [], languages: [], hometowns: [] });
+  const [filters, setFilters] = useState<{ regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[] }>({ regions: [], ageBrackets: [], occupationCategories: [], languages: [], hometowns: [], personalities: [], relationships: [] });
   const listRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -141,6 +141,8 @@ export const TelegramChannelFeed = ({
       if (filters.occupationCategories?.length) filters.occupationCategories.forEach(o => filterParams.append('occupationCategory', o));
       if (filters.languages?.length) filters.languages.forEach(l => filterParams.append('language', l));
       if (filters.hometowns?.length) filters.hometowns.forEach(h => filterParams.append('hometown', h));
+      if (filters.personalities?.length) filters.personalities.forEach(p => filterParams.append('personality', p));
+      if (filters.relationships?.length) filters.relationships.forEach(r => filterParams.append('relationship', r));
       
       const response = await fetch(
         `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
@@ -185,7 +187,7 @@ export const TelegramChannelFeed = ({
     } finally {
       fetchInFlightRef.current = false;
     }
-  }, [channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, sortBy, fingerprint]);
+  }, [channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy, fingerprint]);
 
   const fetchNextPage = useCallback(async () => {
     if (!hasMore || isLoadingMore || !nextCursor) return;
@@ -204,6 +206,8 @@ export const TelegramChannelFeed = ({
       if (filters.occupationCategories?.length) filters.occupationCategories.forEach(o => filterParams.append('occupationCategory', o));
       if (filters.languages?.length) filters.languages.forEach(l => filterParams.append('language', l));
       if (filters.hometowns?.length) filters.hometowns.forEach(h => filterParams.append('hometown', h));
+      if (filters.personalities?.length) filters.personalities.forEach(p => filterParams.append('personality', p));
+      if (filters.relationships?.length) filters.relationships.forEach(r => filterParams.append('relationship', r));
       
       const response = await fetch(
         `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
@@ -348,7 +352,7 @@ export const TelegramChannelFeed = ({
     } catch (err) {
       console.error("Error checking for new posts:", err);
     }
-  }, [channelUsername, fingerprint, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, sortBy]);
+  }, [channelUsername, fingerprint, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy]);
 
   useEffect(() => {
     fetchInitialPosts();
@@ -402,10 +406,10 @@ export const TelegramChannelFeed = ({
     
     // Fetch with new filters - fetchInitialPosts will replace posts atomically
     fetchInitialPosts();
-  }, [filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, sortBy, fetchInitialPosts]);
+  }, [filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, sortBy, fetchInitialPosts]);
 
   // Handler for filter changes
-  const handleFiltersChange = useCallback((newFilters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[] }) => {
+  const handleFiltersChange = useCallback((newFilters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[] }) => {
     setFilters(newFilters);
     // Report active filter count to parent (count individual selected values, not categories)
     if (onActiveFilterCountChange) {
@@ -413,7 +417,9 @@ export const TelegramChannelFeed = ({
                     newFilters.ageBrackets.length + 
                     newFilters.occupationCategories.length + 
                     newFilters.languages.length + 
-                    newFilters.hometowns.length;
+                    newFilters.hometowns.length +
+                    newFilters.personalities.length +
+                    newFilters.relationships.length;
       onActiveFilterCountChange(count);
     }
   }, [onActiveFilterCountChange]);

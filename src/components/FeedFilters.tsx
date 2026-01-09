@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
 
 function parseUrlArrayParam(value: string | null): string[] {
   if (!value) return [];
@@ -39,11 +40,13 @@ interface FilterOptions {
   occupationCategories: string[];
   languages: string[];
   hometowns: Record<string, string[]>;
+  personalities: string[];
+  relationships: string[];
 }
 
 interface FeedFiltersProps {
   channel: string;
-  onFiltersChange: (filters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[] }) => void;
+  onFiltersChange: (filters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[] }) => void;
   showFilters?: boolean;
   onShowFiltersChange?: (show: boolean) => void;
   hideButton?: boolean;
@@ -155,6 +158,8 @@ export function FeedFilters({
     occupationCategories: [],
     languages: [],
     hometowns: {},
+    personalities: [],
+    relationships: [],
   });
   
   const [selectedRegions, setSelectedRegions] = useState<string[]>(() => 
@@ -171,6 +176,12 @@ export function FeedFilters({
   );
   const [selectedHometowns, setSelectedHometowns] = useState<string[]>(() => 
     parseUrlArrayParam(searchParams.get('cities'))
+  );
+  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>(() => 
+    parseUrlArrayParam(searchParams.get('personality'))
+  );
+  const [selectedRelationships, setSelectedRelationships] = useState<string[]>(() => 
+    parseUrlArrayParam(searchParams.get('relationship'))
   );
   
   const toggleSelection = (current: string[], value: string): string[] => {
@@ -228,14 +239,16 @@ export function FeedFilters({
       occupationCategories: selectedOccupations,
       languages: selectedLanguages,
       hometowns: selectedHometowns,
+      personalities: selectedPersonalities,
+      relationships: selectedRelationships,
     });
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, onFiltersChange]);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, onFiltersChange]);
 
   useEffect(() => {
     if (!loading) {
       notifyFiltersChange();
     }
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, loading, notifyFiltersChange]);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, loading, notifyFiltersChange]);
 
   useEffect(() => {
     if (loading) return;
@@ -255,13 +268,51 @@ export function FeedFilters({
     updateParam('jobs', selectedOccupations);
     updateParam('langs', selectedLanguages);
     updateParam('cities', selectedHometowns);
+    updateParam('personality', selectedPersonalities);
+    updateParam('relationship', selectedRelationships);
     
     setSearchParams(newParams, { replace: true });
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, loading, searchParams, setSearchParams]);
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, loading, searchParams, setSearchParams]);
 
   const activeFilterCount = useMemo(() => {
-    return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length;
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns]);
+    return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length + selectedPersonalities.length + selectedRelationships.length;
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships]);
+
+  // Map personality/relationship values to emoji labels
+  const personalityOptions = useMemo(() => 
+    (filterOptions.personalities || []).map(p => PERSONALITY_LABELS[p] || p),
+    [filterOptions.personalities]
+  );
+  const relationshipOptions = useMemo(() => 
+    (filterOptions.relationships || []).map(r => RELATIONSHIP_TYPE_LABELS[r] || r),
+    [filterOptions.relationships]
+  );
+  
+  // Reverse map for selected values (label -> value)
+  const personalityLabelToValue = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const [value, label] of Object.entries(PERSONALITY_LABELS)) {
+      map[label] = value;
+    }
+    return map;
+  }, []);
+  const relationshipLabelToValue = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const [value, label] of Object.entries(RELATIONSHIP_TYPE_LABELS)) {
+      map[label] = value;
+    }
+    return map;
+  }, []);
+  
+  // Selected labels for display
+  const selectedPersonalityLabels = useMemo(() => 
+    selectedPersonalities.map(p => PERSONALITY_LABELS[p] || p),
+    [selectedPersonalities]
+  );
+  const selectedRelationshipLabels = useMemo(() => 
+    selectedRelationships.map(r => RELATIONSHIP_TYPE_LABELS[r] || r),
+    [selectedRelationships]
+  );
 
   // Return nothing while loading - no skeleton placeholders needed
   if (loading) {
@@ -328,6 +379,32 @@ export function FeedFilters({
               onClearAll={() => setSelectedHometowns([])}
               emptyMessage="Select a region to see cities"
             />
+
+            {/* Personality */}
+            <FilterSection
+              title="Personality"
+              options={personalityOptions}
+              selected={selectedPersonalityLabels}
+              onToggle={(label) => {
+                const value = personalityLabelToValue[label] || label;
+                setSelectedPersonalities(toggleSelection(selectedPersonalities, value));
+              }}
+              onClearAll={() => setSelectedPersonalities([])}
+              showAll
+            />
+
+            {/* Relationship */}
+            <FilterSection
+              title="Relationship"
+              options={relationshipOptions}
+              selected={selectedRelationshipLabels}
+              onToggle={(label) => {
+                const value = relationshipLabelToValue[label] || label;
+                setSelectedRelationships(toggleSelection(selectedRelationships, value));
+              }}
+              onClearAll={() => setSelectedRelationships([])}
+              showAll
+            />
             </div>
           </div>
 
@@ -343,6 +420,8 @@ export function FeedFilters({
                   setSelectedOccupations([]);
                   setSelectedLanguages([]);
                   setSelectedHometowns([]);
+                  setSelectedPersonalities([]);
+                  setSelectedRelationships([]);
                 }}
                 className="text-orange-400 hover:text-orange-300 hover:bg-orange-400/10 rounded-full px-6"
                 data-testid="clear-all-filters"

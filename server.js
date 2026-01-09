@@ -732,24 +732,30 @@ app.get('/api/tg-channel-filters', async (req, res) => {
         ageBrackets: ["21-25", "26-30", "30+"],
         occupationCategories: ALL_OCCUPATION_CATEGORIES,
         languages: [],
-        hometowns: {}
+        hometowns: {},
+        personalities: [],
+        relationships: []
       });
     }
     
     const channel = req.query.channel || 'nextwife_ai';
     const channelName = channel.replace('@', '').replace(/_/g, '');
     
-    // Get distinct regions, occupation categories, languages, and hometowns from database
-    const [regionsResult, occupationResult, languagesResult, hometownsResult] = await Promise.all([
+    // Get distinct regions, occupation categories, languages, hometowns, personalities, and relationships from database
+    const [regionsResult, occupationResult, languagesResult, hometownsResult, personalitiesResult, relationshipsResult] = await Promise.all([
       pool.query(`SELECT DISTINCT region FROM telegram_posts WHERE channel = $1 AND region IS NOT NULL AND deleted_at IS NULL ORDER BY region`, [channelName]),
       pool.query(`SELECT DISTINCT occupation_category FROM telegram_posts WHERE channel = $1 AND occupation_category IS NOT NULL AND deleted_at IS NULL ORDER BY occupation_category`, [channelName]),
       pool.query(`SELECT DISTINCT language FROM telegram_posts WHERE channel = $1 AND language IS NOT NULL AND deleted_at IS NULL ORDER BY language`, [channelName]),
-      pool.query(`SELECT DISTINCT region, hometown FROM telegram_posts WHERE channel = $1 AND hometown IS NOT NULL AND region IS NOT NULL AND deleted_at IS NULL ORDER BY region, hometown`, [channelName])
+      pool.query(`SELECT DISTINCT region, hometown FROM telegram_posts WHERE channel = $1 AND hometown IS NOT NULL AND region IS NOT NULL AND deleted_at IS NULL ORDER BY region, hometown`, [channelName]),
+      pool.query(`SELECT DISTINCT personality FROM telegram_posts WHERE channel = $1 AND personality IS NOT NULL AND deleted_at IS NULL ORDER BY personality`, [channelName]),
+      pool.query(`SELECT DISTINCT relationship FROM telegram_posts WHERE channel = $1 AND relationship IS NOT NULL AND deleted_at IS NULL ORDER BY relationship`, [channelName])
     ]);
     
     const regions = regionsResult.rows.map(r => r.region);
     const occupationCategories = occupationResult.rows.map(r => r.occupation_category);
     const languages = languagesResult.rows.map(r => r.language);
+    const personalities = personalitiesResult.rows.map(r => r.personality);
+    const relationships = relationshipsResult.rows.map(r => r.relationship);
     
     // Group hometowns by region
     const hometowns = {};
@@ -767,7 +773,9 @@ app.get('/api/tg-channel-filters', async (req, res) => {
       ageBrackets: ["21-25", "26-30", "30+"],
       occupationCategories: occupationCategories.length > 0 ? occupationCategories : ALL_OCCUPATION_CATEGORIES,
       languages,
-      hometowns
+      hometowns,
+      personalities,
+      relationships
     });
   } catch (error) {
     console.error('Error fetching filters:', error);
@@ -796,9 +804,11 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     const occupationCategories = req.query.occupationCategory ? (Array.isArray(req.query.occupationCategory) ? req.query.occupationCategory : [req.query.occupationCategory]) : null;
     const languages = req.query.language ? (Array.isArray(req.query.language) ? req.query.language : [req.query.language]) : null;
     const hometowns = req.query.hometown ? (Array.isArray(req.query.hometown) ? req.query.hometown : [req.query.hometown]) : null;
+    const personalities = req.query.personality ? (Array.isArray(req.query.personality) ? req.query.personality : [req.query.personality]) : null;
+    const relationships = req.query.relationship ? (Array.isArray(req.query.relationship) ? req.query.relationship : [req.query.relationship]) : null;
     const sortBy = req.query.sort || 'recent'; // 'recent' or 'hot'
     
-    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns;
+    const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns || personalities || relationships;
     
     // Always use database when available (for isHot calculation and better performance)
     if (db) {
@@ -838,6 +848,18 @@ app.get('/api/tg-channel-feed', async (req, res) => {
       if (hometowns && hometowns.length > 0) {
         query += ` AND hometown = ANY($${paramIndex})`;
         params.push(hometowns);
+        paramIndex++;
+      }
+      
+      if (personalities && personalities.length > 0) {
+        query += ` AND personality = ANY($${paramIndex})`;
+        params.push(personalities);
+        paramIndex++;
+      }
+      
+      if (relationships && relationships.length > 0) {
+        query += ` AND relationship = ANY($${paramIndex})`;
+        params.push(relationships);
         paramIndex++;
       }
       

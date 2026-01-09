@@ -13,7 +13,7 @@ A Vite + React + TypeScript web application that displays posts from the @nextwi
 ## Key Features
 - Real-time Telegram channel feed display
 - Tinder-style profile badges on images (Name, Age, Nationality, Hometown, Work)
-- **Feed filtering by Region, Age bracket, and Occupation Category**
+- **Feed filtering by Region, Age bracket, Occupation Category, Personality, and Relationship**
 - PostgreSQL database for persistent storage and fast filtered queries
 - Image loading with retry mechanism (3 attempts with progressive timing)
 - Post filtering (hides service messages)
@@ -38,7 +38,16 @@ Posts containing @nextwifebot links with parameterized URLs (e.g., `?start=gf_UK
 - No Bali references in hero section or features
 - Privacy-focused: Messages NOT logged, NOT used for AI training
 
-## Recent Changes (December 22, 2025)
+## Recent Changes (January 9, 2026)
+19. **Personality and Relationship filters** - Added new filter categories with emoji labels:
+    - Personality types: 🙈 Shy, 🤭 Playful, 💕 Caring, 🔥 Passionate, 🌸 Submissive, 😈 Dominant
+    - Relationship types: ❓ Stranger, 📚 Classmate, 💼 Coworker, 🤝 Best Friend, 💕 Girlfriend, 💍 Wife
+    - Parser extracts "Personality:" and "Relationship:" fields from Telegram posts
+    - Default: relationship="girlfriend" when not specified, personality=null
+    - Values stored lowercase in DB, mapped to emoji labels via `src/lib/girlfriends/profile-formatter.ts`
+    - URL parameters: `?personality=` and `?relationship=` for deep linking
+
+## Changes (December 22, 2025)
 18. **Hot sorting by popularity** - Added "Hot" button with 🔥 emoji to sort girlfriends by popularity:
     - Click tracking: Each profile click increments `click_count` in database
     - POST `/api/tg-post-click?id=<postId>` endpoint for async click tracking
