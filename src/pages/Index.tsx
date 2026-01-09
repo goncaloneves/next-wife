@@ -229,7 +229,7 @@ const Index = () => {
                 onClick={() => feedContentRef.current?.scrollIntoView({ behavior: 'smooth' })}
                 data-testid="button-pick-your-woman"
               >
-                Pick Your Woman 🌻
+                Choose Your Woman 🌻
               </Button>
               <button
                 className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
@@ -297,7 +297,7 @@ const Index = () => {
             <div className="max-w-7xl mx-auto">
               <div className="relative mb-8">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white">
-                  Pick your Woman 🌻
+                  Choose Your Woman 🌻
                 </h2>
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden sm:flex gap-2">
                   <SortButtons 
