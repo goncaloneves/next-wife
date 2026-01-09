@@ -355,7 +355,7 @@ const Profile = () => {
                   </div>
 
                   {(profileData.relationship || profileData.personality) && (
-                    <div className="pt-2 mt-2 border-t border-white/10">
+                    <div className="pt-2 mt-2">
                       <div className="flex flex-wrap gap-2">
                         {profileData.relationship && (
                           <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
@@ -372,7 +372,7 @@ const Profile = () => {
                   )}
 
                   {profileData.about && (
-                    <div className="pt-2 mt-2 border-t border-white/10">
+                    <div className="pt-3 mt-2">
                       <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
                       <p className="text-sm text-white/80 leading-relaxed">{profileData.about}</p>
                     </div>
