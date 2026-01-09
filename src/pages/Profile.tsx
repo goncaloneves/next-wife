@@ -121,17 +121,7 @@ const Profile = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (showTelegramConfirm) {
-      document.body.style.pointerEvents = 'none';
-    } else {
-      document.body.style.pointerEvents = '';
-    }
-    return () => {
-      document.body.style.pointerEvents = '';
-    };
-  }, [showTelegramConfirm]);
-
+  
   useEffect(() => {
     if (!id) return;
     
@@ -490,7 +480,16 @@ const Profile = () => {
       </div>
 
       <Dialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
-        <DialogContent className="bg-black/95 border-white/10 text-white max-w-sm" style={{ pointerEvents: 'auto' }}>
+        <DialogContent 
+          className="bg-black/95 border-white/10 text-white max-w-sm"
+          onPointerDownOutside={(e) => {
+            e.preventDefault();
+            requestAnimationFrame(() => setShowTelegramConfirm(false));
+          }}
+          onInteractOutside={(e) => {
+            e.preventDefault();
+          }}
+        >
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
               Meet {post?.profileData?.name}?
