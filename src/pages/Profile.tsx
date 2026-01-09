@@ -389,9 +389,9 @@ const Profile = () => {
                   
                   {hasMultipleMedia && (
                     <>
-                      <div 
+                      <motion.div 
                         className="absolute left-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
-                        onClick={(e) => { 
+                        onTap={(e) => { 
                           e.stopPropagation(); 
                           if (mediaIndex > 0) {
                             setImageLoaded(false);
@@ -400,9 +400,9 @@ const Profile = () => {
                         }}
                         data-testid="media-prev"
                       />
-                      <div 
+                      <motion.div 
                         className="absolute right-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
-                        onClick={(e) => { 
+                        onTap={(e) => { 
                           e.stopPropagation(); 
                           if (mediaIndex < mediaList.length - 1) {
                             setImageLoaded(false);
