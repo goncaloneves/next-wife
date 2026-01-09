@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 
 interface ProfileData {
@@ -494,7 +494,7 @@ const Profile = () => {
         </div>
         <div className="flex items-center gap-1">
           <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-white/60 font-mono">Space</kbd>
-          <span>Message</span>
+          <span>Meet</span>
         </div>
       </div>
 
@@ -513,8 +513,8 @@ const Profile = () => {
               onClick={confirmOpenTelegram}
               className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0 w-full sm:w-auto"
             >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Talk on Telegram
+              <Heart className="w-4 h-4 mr-2" />
+              Meet on Telegram
             </Button>
           </DialogFooter>
         </DialogContent>
