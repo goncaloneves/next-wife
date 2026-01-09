@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
@@ -50,6 +51,35 @@ const saveSkipHistory = (history: SkipHistoryEntry[]) => {
   } catch {}
 };
 
+const cardVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+    rotate: direction > 0 ? 15 : -15,
+    scale: 0.9,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    rotate: 0,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+    rotate: direction > 0 ? 15 : -15,
+    scale: 0.95,
+    transition: {
+      duration: 0.35,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  }),
+};
+
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -57,13 +87,13 @@ const Profile = () => {
   const [nextId, setNextId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
-  const [dragOffset, setDragOffset] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const [skipHistory, setSkipHistory] = useState<SkipHistoryEntry[]>([]);
-  
-  const dragStartX = useRef<number>(0);
-  const imageRef = useRef<HTMLDivElement>(null);
+  const [direction, setDirection] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-200, 0, 200], [-15, 0, 15]);
+  const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 0.8, 1, 0.8, 0.5]);
 
   useEffect(() => {
     setSkipHistory(getSkipHistory());
@@ -74,7 +104,7 @@ const Profile = () => {
   }, [navigate]);
 
   const undoSkip = useCallback(() => {
-    if (skipHistory.length === 0) return;
+    if (skipHistory.length === 0 || isAnimating) return;
     
     const newHistory = [...skipHistory];
     const lastSkipped = newHistory.pop();
@@ -82,31 +112,25 @@ const Profile = () => {
     if (lastSkipped) {
       setSkipHistory(newHistory);
       saveSkipHistory(newHistory);
-      setSwipeDirection('right');
+      setDirection(1);
+      setIsAnimating(true);
       setImageLoaded(false);
-      setTimeout(() => {
-        navigate(`/profile/${lastSkipped.profileId}`, { replace: true });
-        setSwipeDirection(null);
-        setDragOffset(0);
-      }, 200);
+      navigate(`/profile/${lastSkipped.profileId}`, { replace: true });
     }
-  }, [skipHistory, navigate]);
+  }, [skipHistory, navigate, isAnimating]);
 
   const skipProfile = useCallback(() => {
-    if (!id || !nextId) return;
+    if (!id || !nextId || isAnimating) return;
     
     const newHistory = [...skipHistory, { profileId: id, timestamp: Date.now() }];
     setSkipHistory(newHistory);
     saveSkipHistory(newHistory);
     
-    setSwipeDirection('left');
+    setDirection(-1);
+    setIsAnimating(true);
     setImageLoaded(false);
-    setTimeout(() => {
-      navigate(`/profile/${nextId}`, { replace: true });
-      setSwipeDirection(null);
-      setDragOffset(0);
-    }, 200);
-  }, [id, nextId, skipHistory, navigate]);
+    navigate(`/profile/${nextId}`, { replace: true });
+  }, [id, nextId, skipHistory, navigate, isAnimating]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -145,46 +169,23 @@ const Profile = () => {
 
     if (id) {
       fetchProfile();
+      x.set(0);
     }
-  }, [id]);
+  }, [id, x]);
 
-  const handlePointerDown = (e: React.PointerEvent) => {
-    const target = e.target as HTMLElement;
-    if (target.closest('button')) {
-      return;
-    }
-    if (imageRef.current) {
-      imageRef.current.setPointerCapture(e.pointerId);
-    }
-    dragStartX.current = e.clientX;
-    setIsDragging(true);
-  };
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const threshold = 100;
+    const velocity = info.velocity.x;
+    const offset = info.offset.x;
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    const diff = e.clientX - dragStartX.current;
-    const maxDrag = 150;
-    const clampedDiff = Math.max(-maxDrag, Math.min(maxDrag, diff));
-    setDragOffset(clampedDiff);
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    
-    const threshold = 80;
-    const diff = e.clientX - dragStartX.current;
-
-    if (Math.abs(diff) > threshold) {
-      if (diff < 0 && nextId) {
+    if (offset < -threshold || velocity < -500) {
+      if (nextId) {
         skipProfile();
-      } else if (diff > 0 && skipHistory.length > 0) {
-        undoSkip();
-      } else {
-        setDragOffset(0);
       }
-    } else {
-      setDragOffset(0);
+    } else if (offset > threshold || velocity > 500) {
+      if (skipHistory.length > 0) {
+        undoSkip();
+      }
     }
   };
 
@@ -235,28 +236,9 @@ const Profile = () => {
   }
 
   const { profileData } = post;
-
-  const getTransformStyle = () => {
-    if (swipeDirection === 'left') {
-      return { transform: 'translateX(-120%) rotate(-10deg)', opacity: 0 };
-    }
-    if (swipeDirection === 'right') {
-      return { transform: 'translateX(120%) rotate(10deg)', opacity: 0 };
-    }
-    if (isDragging || dragOffset !== 0) {
-      const rotation = dragOffset * 0.05;
-      const opacity = 1 - Math.abs(dragOffset) / 300;
-      return { 
-        transform: `translateX(${dragOffset}px) rotate(${rotation}deg)`,
-        opacity: Math.max(0.7, opacity),
-        transition: isDragging ? 'none' : 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-      };
-    }
-    return {};
-  };
-
   const canUndo = skipHistory.length > 0;
   const canSkip = !!nextId;
+  const dragX = x.get();
 
   return (
     <div 
@@ -267,126 +249,143 @@ const Profile = () => {
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
-        <div 
-          ref={imageRef}
-          className="relative flex-1 min-h-[300px] select-none transition-all duration-200 ease-out"
-          style={getTransformStyle()}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={() => { setIsDragging(false); setDragOffset(0); }}
-        >
-          <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center">
-            <button
-              onClick={(e) => { e.stopPropagation(); goBack(); }}
-              className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105"
-              data-testid="button-back"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); handleShare(); }}
-              className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105"
-              data-testid="button-share"
-            >
-              <Share2 className="w-5 h-5" />
-            </button>
-          </div>
-
-          {!imageLoaded && (
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse rounded-xl" />
-          )}
-          <img
-            src={buildImageSrc(post.media)}
-            alt={profileData.name}
-            className={`w-full h-full object-cover transition-opacity duration-300 rounded-t-xl ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={() => setImageLoaded(true)}
-            draggable={false}
-          />
-
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent pt-20 pb-4 px-4">
-            {post.isHot && (
-              <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
-                <span>🔥</span>
-                <span className="text-xs font-semibold">Hot</span>
+        <AnimatePresence mode="wait" custom={direction} onExitComplete={() => setIsAnimating(false)}>
+          <motion.div
+            key={post.id}
+            custom={direction}
+            variants={cardVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.9}
+            onDragEnd={handleDragEnd}
+            style={{ x, rotate, opacity }}
+            className="flex-1 flex flex-col min-h-0 relative"
+          >
+            <div className="relative flex-1 min-h-[300px] select-none">
+              <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center">
+                <button
+                  onClick={(e) => { e.stopPropagation(); goBack(); }}
+                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105"
+                  data-testid="button-back"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleShare(); }}
+                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105"
+                  data-testid="button-share"
+                >
+                  <Share2 className="w-5 h-5" />
+                </button>
               </div>
-            )}
-            
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
-                {profileData.name}
-              </h1>
-              <span className="text-xl md:text-2xl font-semibold text-white/90">
-                {profileData.age}
-              </span>
-              <BadgeCheck 
-                className="w-6 h-6 md:w-7 md:h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
-                style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
+
+              {!imageLoaded && (
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse rounded-xl" />
+              )}
+              <img
+                src={buildImageSrc(post.media)}
+                alt={profileData.name}
+                className={`w-full h-full object-cover transition-opacity duration-300 rounded-t-xl ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoad={() => setImageLoaded(true)}
+                draggable={false}
               />
-            </div>
-          </div>
 
-          {dragOffset > 20 && canUndo && (
-            <div className="absolute top-1/2 left-4 -translate-y-1/2 bg-amber-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[-15deg] border-2 border-white shadow-lg">
-              UNDO
-            </div>
-          )}
-          {dragOffset < -20 && canSkip && (
-            <div className="absolute top-1/2 right-4 -translate-y-1/2 bg-rose-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[15deg] border-2 border-white shadow-lg">
-              SKIP
-            </div>
-          )}
-        </div>
-
-        <div className="bg-black/50 backdrop-blur-md flex-shrink-0 overflow-y-auto border-t border-white/10" style={{ maxHeight: '32vh' }}>
-          <div className="p-4 space-y-2.5">
-            <div className="flex items-center gap-3 text-white/90">
-              <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
-              <span className="text-sm">{profileData.work}</span>
-            </div>
-
-            <div className="flex items-center gap-3 text-white/90">
-              <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
-              <span className="text-sm">{profileData.hometown}</span>
-            </div>
-
-            <div className="flex items-center gap-3 text-white/90">
-              <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
-              <span className="text-sm">{profileData.nationality}</span>
-            </div>
-
-            <div className="flex items-center gap-3 text-white/90">
-              <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
-              <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
-            </div>
-
-            {(profileData.relationship || profileData.personality) && (
-              <div className="pt-2.5 border-t border-white/10">
-                <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
-                <div className="flex flex-wrap gap-2">
-                  {profileData.relationship && (
-                    <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/40 rounded-full px-3 py-1.5 text-sm text-rose-200 font-medium">
-                      {getRelationshipLabel(profileData.relationship)}
-                    </span>
-                  )}
-                  {profileData.personality && (
-                    <span className="inline-flex items-center gap-1 bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-400/40 rounded-full px-3 py-1.5 text-sm text-purple-200 font-medium">
-                      {getPersonalityLabel(profileData.personality)}
-                    </span>
-                  )}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent pt-20 pb-4 px-4">
+                {post.isHot && (
+                  <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
+                    <span>🔥</span>
+                    <span className="text-xs font-semibold">Hot</span>
+                  </div>
+                )}
+                
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                    {profileData.name}
+                  </h1>
+                  <span className="text-xl md:text-2xl font-semibold text-white/90">
+                    {profileData.age}
+                  </span>
+                  <BadgeCheck 
+                    className="w-6 h-6 md:w-7 md:h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                    style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
+                  />
                 </div>
               </div>
-            )}
-          </div>
-        </div>
+
+              {dragX > 30 && canUndo && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="absolute top-1/2 left-4 -translate-y-1/2 bg-amber-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[-15deg] border-2 border-white shadow-lg"
+                >
+                  UNDO
+                </motion.div>
+              )}
+              {dragX < -30 && canSkip && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="absolute top-1/2 right-4 -translate-y-1/2 bg-rose-500 text-white px-4 py-2 rounded-lg font-bold transform rotate-[15deg] border-2 border-white shadow-lg"
+                >
+                  SKIP
+                </motion.div>
+              )}
+            </div>
+
+            <div className="bg-black/50 backdrop-blur-md flex-shrink-0 overflow-y-auto border-t border-white/10" style={{ maxHeight: '32vh' }}>
+              <div className="p-4 space-y-2.5">
+                <div className="flex items-center gap-3 text-white/90">
+                  <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                  <span className="text-sm">{profileData.work}</span>
+                </div>
+
+                <div className="flex items-center gap-3 text-white/90">
+                  <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                  <span className="text-sm">{profileData.hometown}</span>
+                </div>
+
+                <div className="flex items-center gap-3 text-white/90">
+                  <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
+                  <span className="text-sm">{profileData.nationality}</span>
+                </div>
+
+                <div className="flex items-center gap-3 text-white/90">
+                  <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                  <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
+                </div>
+
+                {(profileData.relationship || profileData.personality) && (
+                  <div className="pt-2.5 border-t border-white/10">
+                    <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
+                    <div className="flex flex-wrap gap-2">
+                      {profileData.relationship && (
+                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/40 rounded-full px-3 py-1.5 text-sm text-rose-200 font-medium">
+                          {getRelationshipLabel(profileData.relationship)}
+                        </span>
+                      )}
+                      {profileData.personality && (
+                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-400/40 rounded-full px-3 py-1.5 text-sm text-purple-200 font-medium">
+                          {getPersonalityLabel(profileData.personality)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
         <div className="flex-shrink-0 bg-black/60 backdrop-blur-lg border-t border-white/10 px-6 py-5 pb-7">
           <div className="flex items-center justify-center gap-6">
             <button
               onClick={undoSkip}
-              disabled={!canUndo}
+              disabled={!canUndo || isAnimating}
               className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl ${
-                canUndo 
+                canUndo && !isAnimating
                   ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
                   : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
               }`}
@@ -397,9 +396,9 @@ const Profile = () => {
             
             <button
               onClick={skipProfile}
-              disabled={!canSkip}
+              disabled={!canSkip || isAnimating}
               className={`w-16 h-16 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl ${
-                canSkip 
+                canSkip && !isAnimating
                   ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
                   : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
               }`}
