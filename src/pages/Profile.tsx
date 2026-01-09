@@ -149,6 +149,10 @@ const Profile = () => {
   }, [id]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) {
+      return;
+    }
     if (imageRef.current) {
       imageRef.current.setPointerCapture(e.pointerId);
     }
