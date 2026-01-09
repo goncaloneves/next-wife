@@ -251,7 +251,8 @@ function parseChannelHTML(html, channelName) {
   if (subsMatch) channelInfo.subscribers = subsMatch[1].trim();
   
   const posts = [];
-  const postRegex = /<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/g;
+  // Match entire widget message wrap to capture full content including text after grouped media
+  const postRegex = /<div class="tgme_widget_message_wrap[^"]*"[^>]*>\s*<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<div class="tgme_widget_message_footer/g;
   let match;
 
   while ((match = postRegex.exec(html)) !== null) {
@@ -328,9 +329,43 @@ function parseChannelHTML(html, channelName) {
     const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(postContent);
     const date = dateMatch ? dateMatch[1] : new Date().toISOString();
 
-    const imageMatch = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/.exec(postContent);
-    let media = imageMatch ? imageMatch[1] : null;
-    if (media && media.startsWith('//')) media = 'https:' + media;
+    // Extract ALL media URLs (photos and videos) from the post
+    const mediaUrls = [];
+    
+    // Extract photos from grouped media and single photos
+    const photoRegex = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/g;
+    let photoMatch;
+    while ((photoMatch = photoRegex.exec(postContent)) !== null) {
+      let url = photoMatch[1];
+      if (url && url.startsWith('//')) url = 'https:' + url;
+      if (url && !mediaUrls.some(m => m.url === url)) {
+        mediaUrls.push({ type: 'photo', url });
+      }
+    }
+    
+    // Extract videos - look for video elements with src attribute
+    const videoRegex = /<video[^>]*src="([^"]+)"[^>]*class="[^"]*tgme_widget_message_video[^"]*"/g;
+    let videoMatch;
+    while ((videoMatch = videoRegex.exec(postContent)) !== null) {
+      let url = videoMatch[1];
+      if (url && url.startsWith('//')) url = 'https:' + url;
+      if (url && !mediaUrls.some(m => m.url === url)) {
+        mediaUrls.push({ type: 'video', url });
+      }
+    }
+    
+    // Also try alternate video pattern where class comes before src
+    const videoRegex2 = /<video[^>]*class="[^"]*tgme_widget_message_video[^"]*"[^>]*src="([^"]+)"/g;
+    while ((videoMatch = videoRegex2.exec(postContent)) !== null) {
+      let url = videoMatch[1];
+      if (url && url.startsWith('//')) url = 'https:' + url;
+      if (url && !mediaUrls.some(m => m.url === url)) {
+        mediaUrls.push({ type: 'video', url });
+      }
+    }
+    
+    // Keep backward compatibility - use first media as primary
+    let media = mediaUrls.length > 0 ? mediaUrls[0].url : null;
 
     let avatar = null;
     const avatarMatch = /<[^>]*class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*style="[^"]*background-image:\s*url\((?:'|")?([^'")]+)(?:'|")?\)[^"]*"[^>]*>/i.exec(postContent);
@@ -346,6 +381,7 @@ function parseChannelHTML(html, channelName) {
         date,
         link: `https://t.me/${channelName}/${postId.split('/').pop()}`,
         media,
+        mediaUrls: mediaUrls.length > 0 ? mediaUrls : null,
         avatar,
         botLink,
         profileData
@@ -413,13 +449,14 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       const language = post.profileData ? getNativeLanguage(post.profileData.nationality) : null;
       
       await pool.query(`
-        INSERT INTO telegram_posts (id, channel, text, date, link, media, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, about, updated_at, deleted_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW(), NULL)
+        INSERT INTO telegram_posts (id, channel, text, date, link, media, media_urls, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, about, updated_at, deleted_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW(), NULL)
         ON CONFLICT (id) DO UPDATE SET
           text = EXCLUDED.text,
           date = EXCLUDED.date,
           link = EXCLUDED.link,
           media = EXCLUDED.media,
+          media_urls = EXCLUDED.media_urls,
           avatar = EXCLUDED.avatar,
           bot_link = EXCLUDED.bot_link,
           name = EXCLUDED.name,
@@ -443,6 +480,7 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
         post.date,
         post.link,
         post.media,
+        post.mediaUrls ? JSON.stringify(post.mediaUrls) : null,
         post.avatar,
         post.botLink,
         post.profileData?.name || null,
@@ -872,7 +910,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
     }
     
     let result = await pool.query(`
-      SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
+      SELECT id, text, date, link, media, media_urls, avatar, bot_link as "botLink", 
              name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
       FROM telegram_posts 
       WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
@@ -890,7 +928,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
         // Query again to get the synced data with derived fields
         result = await pool.query(`
           SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
-                 name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
+                 name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about, media_urls
           FROM telegram_posts 
           WHERE channel = $1 AND id = $2 AND deleted_at IS NULL
         `, [channelName, id]);
@@ -923,6 +961,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       date: row.date,
       link: row.link,
       media: row.media,
+      mediaUrls: row.media_urls,
       avatar: row.avatar,
       botLink: row.botLink,
       profileData: row.name ? {
@@ -981,10 +1020,10 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     // Always use database when available (for isHot calculation and better performance)
     if (db) {
       let query = `
-        SELECT id, text, date, link, media, avatar, bot_link as "botLink", 
+        SELECT id, text, date, link, media, media_urls, avatar, bot_link as "botLink", 
                name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
         FROM telegram_posts 
-        WHERE channel = $1 AND media IS NOT NULL AND deleted_at IS NULL
+        WHERE channel = $1 AND media IS NOT NULL AND name IS NOT NULL AND deleted_at IS NULL
       `;
       const params = [channelName];
       let paramIndex = 2;
@@ -1081,6 +1120,7 @@ app.get('/api/tg-channel-feed', async (req, res) => {
         date: row.date,
         link: row.link,
         media: row.media,
+        mediaUrls: row.media_urls,
         avatar: row.avatar,
         botLink: row.botLink,
         profileData: row.name ? {

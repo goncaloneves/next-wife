@@ -26,12 +26,18 @@ interface ProfileData {
   about?: string;
 }
 
+interface MediaItem {
+  type: 'photo' | 'video';
+  url: string;
+}
+
 interface Post {
   id: string;
   text: string;
   date: string;
   link: string;
   media: string;
+  mediaUrls?: MediaItem[] | null;
   avatar: string;
   botLink?: string;
   profileData?: ProfileData;
@@ -99,6 +105,7 @@ const Profile = () => {
   const [activeAction, setActiveAction] = useState<'undo' | 'skip' | null>(null);
   const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
   const [aboutExpanded, setAboutExpanded] = useState(false);
+  const [mediaIndex, setMediaIndex] = useState(0);
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -132,6 +139,7 @@ const Profile = () => {
       setLoading(true);
       setImageLoaded(false);
       setAboutExpanded(false);
+      setMediaIndex(0);
       
       try {
         const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
@@ -322,14 +330,80 @@ const Profile = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500" />
               </div>
             )}
-            <img
-              src={`/api/tg-image-proxy?u=${encodeURIComponent(post.media)}`}
-              alt={profileData.name}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageLoaded(true)}
-              draggable={false}
-            />
+            {(() => {
+              const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+              const currentMedia = mediaList[mediaIndex] || mediaList[0];
+              const hasMultipleMedia = mediaList.length > 1;
+              
+              return (
+                <>
+                  {currentMedia.type === 'video' ? (
+                    <video
+                      src={currentMedia.url}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                      onLoadedData={() => setImageLoaded(true)}
+                      onError={() => setImageLoaded(true)}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      controls={false}
+                    />
+                  ) : (
+                    <img
+                      src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
+                      alt={profileData.name}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                      onLoad={() => setImageLoaded(true)}
+                      onError={() => setImageLoaded(true)}
+                      draggable={false}
+                    />
+                  )}
+                  
+                  {hasMultipleMedia && (
+                    <>
+                      <div 
+                        className="absolute left-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          if (mediaIndex > 0) {
+                            setImageLoaded(false);
+                            setMediaIndex(prev => prev - 1);
+                          }
+                        }}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                        data-testid="media-prev"
+                      />
+                      <div 
+                        className="absolute right-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          if (mediaIndex < mediaList.length - 1) {
+                            setImageLoaded(false);
+                            setMediaIndex(prev => prev + 1);
+                          }
+                        }}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                        data-testid="media-next"
+                      />
+                      
+                      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 pointer-events-none">
+                        {mediaList.map((_, idx) => (
+                          <div 
+                            key={idx}
+                            className={`h-1 rounded-full transition-all duration-200 ${
+                              idx === mediaIndex 
+                                ? 'w-6 bg-white' 
+                                : 'w-1.5 bg-white/50'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              );
+            })()}
 
             <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center pointer-events-none">
               <button

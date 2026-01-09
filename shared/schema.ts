@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, index } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, index, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -10,6 +10,7 @@ export const telegramPosts = pgTable("telegram_posts", {
   date: timestamp("date", { withTimezone: true }).notNull(),
   link: text("link"),
   media: text("media"),
+  mediaUrls: jsonb("media_urls"), // Array of {type: 'photo'|'video', url: string}
   avatar: text("avatar"),
   botLink: text("bot_link"),
   

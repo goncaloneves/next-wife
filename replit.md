@@ -20,6 +20,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 **Technical Implementations & Feature Specifications:**
 - **Real-time Feed & Filtering:** Displays Telegram channel posts with filtering capabilities by Region, Age bracket, Occupation Category, Personality, and Relationship. Filters are multi-selectable.
 - **Dedicated Profile Pages:** Individual profile pages (`/profile/:id`) with shareable URLs, displaying full details and a "Message on Telegram" CTA.
+- **Multi-Media Carousel:** Profiles with multiple photos/videos display a Tinder-style carousel with dot indicators at the top. Users can tap left/right sides of the image to navigate between media. Media stored as JSONB array [{type: 'photo'|'video', url: string}] in `media_urls` column.
 - **Bot Link Handling:** Special handling for `@nextwifebot` links; clicking an image with a bot link redirects to the bot, otherwise opens a lightbox. The backend extracts these links.
 - **Image Loading:** Includes a retry mechanism (3 attempts with progressive timing) for robust image loading.
 - **Post Filtering:** Hides service messages from the feed.
