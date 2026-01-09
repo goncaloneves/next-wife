@@ -99,6 +99,7 @@ const Profile = () => {
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dialogJustClosedRef = useRef(false);
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -147,6 +148,19 @@ const Profile = () => {
     
     fetchProfile();
   }, [id]);
+
+  const handleDialogChange = useCallback((open: boolean) => {
+    if (!open) {
+      dialogJustClosedRef.current = true;
+      setTimeout(() => { dialogJustClosedRef.current = false; }, 100);
+    }
+    setShowTelegramConfirm(open);
+  }, []);
+
+  const handleBackgroundClick = useCallback(() => {
+    if (dialogJustClosedRef.current) return;
+    goBack();
+  }, []);
 
   const goBack = useCallback(() => {
     if (id) {
@@ -283,7 +297,7 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }} onClick={() => !showTelegramConfirm && goBack()}>
+    <div className="flex flex-col bg-black overflow-x-hidden" style={{ minHeight: '100svh' }} onClick={handleBackgroundClick}>
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-2 px-2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
@@ -478,7 +492,7 @@ const Profile = () => {
         </div>
       </div>
 
-      <Dialog open={showTelegramConfirm} onOpenChange={setShowTelegramConfirm}>
+      <Dialog open={showTelegramConfirm} onOpenChange={handleDialogChange}>
         <DialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
