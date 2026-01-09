@@ -35,6 +35,7 @@ interface SkipHistoryEntry {
 }
 
 const SKIP_HISTORY_KEY = 'nextwife_skip_history';
+const NAV_FLAG_KEY = 'nextwife_navigating_skip';
 
 const getSkipHistory = (): SkipHistoryEntry[] => {
   try {
@@ -51,40 +52,30 @@ const saveSkipHistory = (history: SkipHistoryEntry[]) => {
   } catch {}
 };
 
-const createCardVariants = (exitX: number | null) => ({
+const cardVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
     opacity: 0,
-    rotate: direction > 0 ? 15 : -15,
     scale: 0.9,
   }),
   center: {
     x: 0,
     opacity: 1,
-    rotate: 0,
     scale: 1,
-    transition: {
-      duration: 0.4,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
   },
   exit: (direction: number) => ({
-    x: exitX !== null 
-      ? (direction > 0 ? Math.max(exitX, 300) : Math.min(exitX, -300))
-      : (direction > 0 ? 300 : -300),
+    x: direction > 0 ? 300 : -300,
     opacity: 0,
-    rotate: direction > 0 ? 15 : -15,
     scale: 0.95,
-    transition: {
-      duration: 0.35,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
   }),
-});
+};
 
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  
   const [post, setPost] = useState<Post | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -94,69 +85,81 @@ const Profile = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
-  const [exitX, setExitX] = useState<number | null>(null);
   const [activeAction, setActiveAction] = useState<'undo' | 'skip' | null>(null);
-  const highlightTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const isInitialLoad = useRef(true);
-  const imageRef = useRef<HTMLImageElement>(null);
+  
+  const isFirstLoad = useRef(true);
+  const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
-  const opacity = useTransform(x, [-200, -120, -60, 0, 60, 120, 200], [0.2, 0.4, 1, 1, 1, 0.4, 0.2]);
-  
-  const flashAction = useCallback((action: 'undo' | 'skip') => {
-    if (highlightTimeoutRef.current) {
-      clearTimeout(highlightTimeoutRef.current);
+  const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
+  const dragOpacity = useTransform(x, [-200, -100, 0, 100, 200], [0.3, 0.6, 1, 0.6, 0.3]);
+
+  useEffect(() => {
+    const isFromNav = sessionStorage.getItem(NAV_FLAG_KEY) === 'true';
+    if (isFromNav) {
+      sessionStorage.removeItem(NAV_FLAG_KEY);
+      setSkipHistory(getSkipHistory());
+    } else {
+      sessionStorage.removeItem(SKIP_HISTORY_KEY);
+      setSkipHistory([]);
     }
-    setActiveAction(action);
-    highlightTimeoutRef.current = setTimeout(() => {
-      setActiveAction(null);
-    }, 150);
   }, []);
-  
+
   useEffect(() => {
     return () => {
-      if (highlightTimeoutRef.current) {
-        clearTimeout(highlightTimeoutRef.current);
-      }
+      if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
     };
   }, []);
 
-
   useEffect(() => {
-    const navEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-    const isPageRefresh = navEntries.length > 0 && navEntries[0].type === 'reload';
-    const isFromSkip = sessionStorage.getItem('nextwife_navigating_skip') === 'true';
+    if (!id) return;
     
-    if (isFromSkip) {
-      sessionStorage.removeItem('nextwife_navigating_skip');
-      setSkipHistory(getSkipHistory());
-    } else if (!isPageRefresh) {
-      sessionStorage.removeItem(SKIP_HISTORY_KEY);
-      setSkipHistory([]);
-    } else {
-      setSkipHistory(getSkipHistory());
-    }
-  }, []);
+    const fetchProfile = async () => {
+      setLoading(true);
+      setImageLoaded(false);
+      
+      try {
+        const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
+        if (!response.ok) throw new Error('Profile not found');
+        const data = await response.json();
+        setPost(data.post || null);
+        setNextId(data.nextId || null);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        setPost(null);
+        setNextId(null);
+      } finally {
+        setLoading(false);
+        setIsAnimating(false);
+        isFirstLoad.current = false;
+      }
+    };
+    
+    fetchProfile();
+  }, [id]);
 
   const goBack = useCallback(() => {
     navigate("/", { state: { restoreScroll: true } });
   }, [navigate]);
+
+  const openTelegram = useCallback(() => {
+    const url = post?.botLink || post?.link;
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+  }, [post]);
 
   const undoSkip = useCallback(() => {
     if (skipHistory.length === 0 || isAnimating) return;
     
     const newHistory = [...skipHistory];
     const lastSkipped = newHistory.pop();
+    if (!lastSkipped) return;
     
-    if (lastSkipped) {
-      setSkipHistory(newHistory);
-      saveSkipHistory(newHistory);
-      sessionStorage.setItem('nextwife_navigating_skip', 'true');
-      setDirection(1);
-      setIsAnimating(true);
-      navigate(`/profile/${lastSkipped.profileId}`, { replace: true });
-    }
+    setSkipHistory(newHistory);
+    saveSkipHistory(newHistory);
+    sessionStorage.setItem(NAV_FLAG_KEY, 'true');
+    setDirection(1);
+    setIsAnimating(true);
+    navigate(`/profile/${lastSkipped.profileId}`, { replace: true });
   }, [skipHistory, navigate, isAnimating]);
 
   const skipProfile = useCallback(() => {
@@ -165,139 +168,70 @@ const Profile = () => {
     const newHistory = [...skipHistory, { profileId: id, timestamp: Date.now() }];
     setSkipHistory(newHistory);
     saveSkipHistory(newHistory);
-    sessionStorage.setItem('nextwife_navigating_skip', 'true');
-    
+    sessionStorage.setItem(NAV_FLAG_KEY, 'true');
     setDirection(-1);
     setIsAnimating(true);
     navigate(`/profile/${nextId}`, { replace: true });
   }, [id, nextId, skipHistory, navigate, isAnimating]);
 
-  const openTelegram = useCallback(() => {
-    const url = post?.botLink || post?.link;
-    if (url) {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-  }, [post]);
+  const flashAction = useCallback((action: 'undo' | 'skip') => {
+    if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
+    setActiveAction(action);
+    actionTimeoutRef.current = setTimeout(() => setActiveAction(null), 150);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         goBack();
-      } else if (e.key === "ArrowLeft") {
-        if (skipHistory.length > 0) {
-          flashAction('undo');
-        }
+      } else if (e.key === "ArrowLeft" && skipHistory.length > 0) {
+        flashAction('undo');
         undoSkip();
-      } else if (e.key === "ArrowRight") {
-        if (nextId) {
-          flashAction('skip');
-        }
+      } else if (e.key === "ArrowRight" && nextId) {
+        flashAction('skip');
         skipProfile();
       } else if (e.key === " ") {
         e.preventDefault();
         openTelegram();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId]);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      setLoading(true);
-      setImageLoaded(false);
-      try {
-        const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
-        if (!response.ok) {
-          throw new Error('Profile not found');
-        }
-        const data = await response.json();
-        if (data.post) {
-          setPost(data.post);
-          setNextId(data.nextId);
-        }
-      } catch (error) {
-        console.error("Failed to fetch profile:", error);
-        setPost(null);
-        setNextId(null);
-      } finally {
-        setLoading(false);
-        setIsAnimating(false);
-        isInitialLoad.current = false;
-      }
-    };
-
-    if (id) {
-      fetchProfile();
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (post?.media && imageRef.current) {
-      const checkImage = () => {
-        if (imageRef.current?.complete && imageRef.current?.naturalHeight > 0) {
-          setImageLoaded(true);
-        }
-      };
-      checkImage();
-      const timer = setTimeout(checkImage, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [post?.id, post?.media]);
-
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const threshold = 100;
-    const velocity = info.velocity.x;
-    const offset = info.offset.x;
-
-    if ((offset < -threshold || velocity < -500) && nextId) {
-      setExitX(offset);
+    const { offset, velocity } = info;
+    
+    if ((offset.x < -100 || velocity.x < -500) && nextId) {
       skipProfile();
-    } else if (offset > threshold || velocity > 500) {
-      x.set(0);
+    } else if (offset.x > 100 || velocity.x > 500) {
       openTelegram();
-    } else {
-      x.set(0);
     }
-  };
-
-  const handleMessageClick = () => {
-    const url = post?.botLink || post?.link;
-    if (url) {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
+    x.set(0);
   };
 
   const handleShare = async () => {
     const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Meet ${post?.profileData?.name} on Next Wife`,
-          url: url,
-        });
-      } catch (err) {
-        navigator.clipboard.writeText(url);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `Meet ${post?.profileData?.name} on Next Wife`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
       }
-    } else {
-      navigator.clipboard.writeText(url);
+    } catch {
+      await navigator.clipboard.writeText(url);
     }
   };
 
-  const buildImageSrc = (url: string) => {
-    return `/api/tg-image-proxy?u=${encodeURIComponent(url)}`;
-  };
-
-  if (loading && isInitialLoad.current && !post) {
+  if (loading && isFirstLoad.current) {
     return (
       <div className="h-screen bg-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500" />
       </div>
     );
   }
 
-  if (!post || !post.profileData) {
+  if (!post?.profileData) {
     return (
       <div className="h-screen bg-black flex flex-col items-center justify-center">
         <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
@@ -313,19 +247,16 @@ const Profile = () => {
   const canSkip = !!nextId;
 
   return (
-    <div 
-      className="h-screen flex flex-col bg-black overflow-hidden"
-      onClick={goBack}
-    >
+    <div className="h-screen flex flex-col bg-black overflow-hidden" onClick={goBack}>
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
         onClick={(e) => e.stopPropagation()}
       >
-        <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => { setExitX(null); x.set(0); }}>
+        <AnimatePresence mode="popLayout" custom={direction} onExitComplete={() => x.set(0)}>
           <motion.article
             key={post.id}
             custom={direction}
-            variants={createCardVariants(exitX)}
+            variants={cardVariants}
             initial="enter"
             animate="center"
             exit="exit"
@@ -339,18 +270,17 @@ const Profile = () => {
             style={{ 
               transformOrigin: 'center center',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)',
-              rotate: isDragging ? rotate : 0,
-              opacity: isDragging ? opacity : 1
+              rotate: isDragging ? dragRotate : 0,
+              opacity: isDragging ? dragOpacity : 1
             }}
           >
             {!imageLoaded && (
               <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500" />
               </div>
             )}
             <img
-              ref={imageRef}
-              src={buildImageSrc(post.media)}
+              src={`/api/tg-image-proxy?u=${encodeURIComponent(post.media)}`}
               alt={profileData.name}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
               onLoad={() => setImageLoaded(true)}
@@ -404,17 +334,14 @@ const Profile = () => {
                     <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
                     <span className="text-sm">{profileData.work}</span>
                   </div>
-
                   <div className="flex items-center gap-3 text-white/90">
                     <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
                     <span className="text-sm">{profileData.hometown}</span>
                   </div>
-
                   <div className="flex items-center gap-3 text-white/90">
                     <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
                     <span className="text-sm">{profileData.nationality}</span>
                   </div>
-
                   <div className="flex items-center gap-3 text-white/90">
                     <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
                     <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
@@ -437,6 +364,7 @@ const Profile = () => {
                       </div>
                     </div>
                   )}
+
                   <div className="relative flex items-center justify-center pt-4 mt-3 border-t border-white/10 pointer-events-none min-h-[80px]">
                     {canUndo && (
                       <button
@@ -472,7 +400,7 @@ const Profile = () => {
                       </button>
 
                       <button
-                        onClick={handleMessageClick}
+                        onClick={openTelegram}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                         className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] pointer-events-auto ${
                           isDragging && dragOffset > 30
