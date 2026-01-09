@@ -115,6 +115,7 @@ const Profile = () => {
   
   const isFirstLoad = useRef(true);
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -393,7 +394,6 @@ const Profile = () => {
                             setMediaIndex(prev => prev - 1);
                           }
                         }}
-                        onPointerDownCapture={(e) => e.stopPropagation()}
                         data-testid="media-prev"
                       />
                       <div 
@@ -405,7 +405,6 @@ const Profile = () => {
                             setMediaIndex(prev => prev + 1);
                           }
                         }}
-                        onPointerDownCapture={(e) => e.stopPropagation()}
                         data-testid="media-next"
                       />
                       
@@ -450,7 +449,7 @@ const Profile = () => {
               </button>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent max-h-[60%] overflow-y-auto">
+            <div ref={contentContainerRef} className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent max-h-[60%] overflow-y-auto">
               <div className="px-4 pt-16 pb-4">
                 {post.isHot && (
                   <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
@@ -510,7 +509,15 @@ const Profile = () => {
                   {profileData.about && (
                     <div 
                       className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
-                      onClick={() => setAboutExpanded(!aboutExpanded)}
+                      onClick={() => {
+                        const newExpanded = !aboutExpanded;
+                        setAboutExpanded(newExpanded);
+                        if (newExpanded && contentContainerRef.current) {
+                          setTimeout(() => {
+                            contentContainerRef.current?.scrollTo({ top: contentContainerRef.current.scrollHeight, behavior: 'smooth' });
+                          }, 50);
+                        }
+                      }}
                       data-testid="button-about-me-toggle"
                     >
                       <p className={`flex items-center gap-1 text-xs font-medium text-white/50 uppercase tracking-wide ${aboutExpanded ? 'mb-2' : ''}`}>
