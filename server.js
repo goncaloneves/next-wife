@@ -258,8 +258,8 @@ function parseChannelHTML(html, channelName) {
           nationality: nationalityMatch[1].trim(),
           hometown: hometownMatch[1].trim(),
           work: workMatch[1].trim(),
-          personality: personalityMatch ? personalityMatch[1].trim().toLowerCase() : null,
-          relationship: relationshipMatch ? relationshipMatch[1].trim().toLowerCase() : 'girlfriend'
+          personality: personalityMatch ? personalityMatch[1].trim().replace(/^[\p{Emoji}\s]+/u, '').toLowerCase() : null,
+          relationship: relationshipMatch ? relationshipMatch[1].trim().replace(/^[\p{Emoji}\s]+/u, '').toLowerCase() : 'girlfriend'
         };
       }
     }
