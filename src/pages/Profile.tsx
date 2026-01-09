@@ -150,9 +150,9 @@ const Profile = () => {
       if (e.key === "Escape") {
         goBack();
       } else if (e.key === "ArrowLeft") {
-        skipProfile();
+        undoSkip();
       } else if (e.key === "ArrowRight") {
-        openTelegram();
+        skipProfile();
       } else if (e.key === " ") {
         e.preventDefault();
         openTelegram();
@@ -161,7 +161,7 @@ const Profile = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goBack, skipProfile, openTelegram]);
+  }, [goBack, undoSkip, skipProfile, openTelegram]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -380,35 +380,51 @@ const Profile = () => {
                       </div>
                     </div>
                   )}
-                  <div className="flex items-center justify-center gap-5 pt-4 mt-3 border-t border-white/10 pointer-events-none">
+                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-white/10 pointer-events-none">
                     <button
-                      onClick={skipProfile}
+                      onClick={undoSkip}
                       onPointerDownCapture={(e) => e.stopPropagation()}
-                      disabled={!canSkip || isAnimating}
-                      className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
-                        isDragging && dragOffset < -30 && canSkip
-                          ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
-                          : canSkip && !isAnimating
-                            ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
-                            : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+                      disabled={!canUndo || isAnimating}
+                      className={`w-12 h-12 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                        canUndo && !isAnimating
+                          ? 'bg-white/10 border-amber-400 text-amber-400 hover:bg-amber-400/20 hover:scale-110 shadow-amber-400/20' 
+                          : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
                       }`}
-                      data-testid="button-action-skip"
+                      data-testid="button-action-undo"
                     >
-                      <X className="w-8 h-8 stroke-[3]" />
+                      <Undo2 className="w-6 h-6" />
                     </button>
 
-                    <button
-                      onClick={handleMessageClick}
-                      onPointerDownCapture={(e) => e.stopPropagation()}
-                      className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] pointer-events-auto ${
-                        isDragging && dragOffset > 30
-                          ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-400 scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
-                          : 'bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
-                      }`}
-                      data-testid="button-message-telegram"
-                    >
-                      <MessageCircle className="w-9 h-9" />
-                    </button>
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={skipProfile}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                        disabled={!canSkip || isAnimating}
+                        className={`w-14 h-14 rounded-full backdrop-blur-sm border-[3px] flex items-center justify-center transition-all shadow-xl pointer-events-auto ${
+                          isDragging && dragOffset < -30 && canSkip
+                            ? 'bg-rose-500/30 border-rose-500 text-rose-500 scale-110 shadow-rose-500/40'
+                            : canSkip && !isAnimating
+                              ? 'bg-white/10 border-rose-500 text-rose-500 hover:bg-rose-500/20 hover:scale-110 shadow-rose-500/20' 
+                              : 'bg-white/5 border-white/20 text-white/20 cursor-not-allowed'
+                        }`}
+                        data-testid="button-action-skip"
+                      >
+                        <X className="w-8 h-8 stroke-[3]" />
+                      </button>
+
+                      <button
+                        onClick={handleMessageClick}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                        className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] pointer-events-auto ${
+                          isDragging && dragOffset > 30
+                            ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-400 scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
+                            : 'bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
+                        }`}
+                        data-testid="button-message-telegram"
+                      >
+                        <MessageCircle className="w-9 h-9" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
