@@ -222,7 +222,7 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="h-screen bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] flex items-center justify-center">
+      <div className="h-screen bg-black flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
       </div>
     );
@@ -230,7 +230,7 @@ const Profile = () => {
 
   if (!post || !post.profileData) {
     return (
-      <div className="h-screen bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] flex flex-col items-center justify-center">
+      <div className="h-screen bg-black flex flex-col items-center justify-center">
         <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
         <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
           Back to Home
