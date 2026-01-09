@@ -242,9 +242,6 @@ const Profile = () => {
     <div 
       className="h-screen flex flex-col bg-black overflow-hidden"
       onClick={goBack}
-      style={{
-        boxShadow: 'inset 0 0 150px 60px rgba(139, 69, 69, 0.3), inset 0 0 80px 30px rgba(100, 40, 40, 0.2)'
-      }}
     >
       <div 
         className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0 cursor-default py-3 px-2"
@@ -264,8 +261,11 @@ const Profile = () => {
             onDragStart={() => setIsDragging(true)}
             onDrag={(_, info) => setDragOffset(info.offset.x)}
             onDragEnd={(e, info) => { setIsDragging(false); setDragOffset(0); handleDragEnd(e, info); }}
-            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl select-none min-h-[500px]"
-            style={{ transformOrigin: 'center center' }}
+            className="flex-1 relative overflow-hidden rounded-2xl border border-white/10 select-none min-h-[500px]"
+            style={{ 
+              transformOrigin: 'center center',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)'
+            }}
           >
             {!imageLoaded && (
               <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
