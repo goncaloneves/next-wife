@@ -71,7 +71,7 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="h-screen bg-gray-100 flex items-center justify-center">
+      <div className="h-screen bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
       </div>
     );
@@ -79,9 +79,9 @@ const Profile = () => {
 
   if (!post || !post.profileData) {
     return (
-      <div className="h-screen bg-gray-100 flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">Profile not found</h1>
-        <Button onClick={() => navigate("/")} variant="outline">
+      <div className="h-screen bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
+        <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
           Back to Home
         </Button>
       </div>
@@ -91,19 +91,19 @@ const Profile = () => {
   const { profileData } = post;
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
+    <div className="h-screen flex flex-col bg-gradient-to-b from-[#1a0a0a] via-[#2d1810] to-[#1a0a0a] overflow-hidden">
       <div className="flex-1 flex flex-col max-w-lg mx-auto w-full min-h-0">
         <div className="relative flex-1 min-h-[300px]">
           <button
             onClick={() => navigate("/", { state: { restoreScroll: true } })}
-            className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-sm text-gray-700 p-2.5 rounded-full hover:bg-white transition-colors shadow-lg"
+            className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur-sm text-white p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg"
             data-testid="button-back"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
 
           {!imageLoaded && (
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-400 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
           )}
           <img
             src={buildImageSrc(post.media)}
@@ -112,7 +112,7 @@ const Profile = () => {
             onLoad={() => setImageLoaded(true)}
           />
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-16 pb-4 px-4">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/60 to-transparent pt-16 pb-4 px-4">
             {post.isHot && (
               <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 rounded-full px-2.5 py-0.5 mb-2 shadow-lg">
                 <span className="text-xs">🔥</span>
@@ -135,39 +135,39 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="bg-white flex-shrink-0 overflow-y-auto" style={{ maxHeight: '45vh' }}>
+        <div className="bg-black/40 backdrop-blur-sm flex-shrink-0 overflow-y-auto border-t border-white/10" style={{ maxHeight: '45vh' }}>
           <div className="p-4 space-y-3">
-            <div className="flex items-center gap-2 text-gray-700">
-              <Briefcase className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-3 text-white/90">
+              <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
               <span className="text-sm">{profileData.work}</span>
             </div>
 
-            <div className="flex items-center gap-2 text-gray-700">
-              <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-3 text-white/90">
+              <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
               <span className="text-sm">{profileData.hometown}</span>
             </div>
 
-            <div className="flex items-center gap-2 text-gray-700">
-              <Globe className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-3 text-white/90">
+              <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
               <span className="text-sm">{profileData.nationality}</span>
             </div>
 
-            <div className="flex items-center gap-2 text-gray-700">
-              <MessageSquare className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-3 text-white/90">
+              <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
               <span className="text-sm">{getLanguageDisplay(profileData.language)}</span>
             </div>
 
             {(profileData.relationship || profileData.personality) && (
-              <div className="pt-2 border-t border-gray-100">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Looking for</p>
+              <div className="pt-3 border-t border-white/10">
+                <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">Looking for</p>
                 <div className="flex flex-wrap gap-2">
                   {profileData.relationship && (
-                    <span className="inline-flex items-center gap-1 bg-rose-50 border border-rose-200 rounded-full px-3 py-1.5 text-sm text-rose-700 font-medium">
+                    <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/40 rounded-full px-3 py-1.5 text-sm text-rose-200 font-medium">
                       {getRelationshipLabel(profileData.relationship)}
                     </span>
                   )}
                   {profileData.personality && (
-                    <span className="inline-flex items-center gap-1 bg-purple-50 border border-purple-200 rounded-full px-3 py-1.5 text-sm text-purple-700 font-medium">
+                    <span className="inline-flex items-center gap-1 bg-gradient-to-r from-purple-500/30 to-indigo-500/30 border border-purple-400/40 rounded-full px-3 py-1.5 text-sm text-purple-200 font-medium">
                       {getPersonalityLabel(profileData.personality)}
                     </span>
                   )}
@@ -179,7 +179,7 @@ const Profile = () => {
               <Link to="/" state={{ restoreScroll: true }} className="block">
                 <Button 
                   variant="ghost" 
-                  className="w-full text-gray-400 hover:text-gray-600 hover:bg-gray-50 text-sm h-10" 
+                  className="w-full text-white/40 hover:text-white/70 hover:bg-white/5 text-sm h-10" 
                   data-testid="button-browse-more"
                 >
                   Browse more
@@ -189,10 +189,10 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="flex-shrink-0 bg-white border-t border-gray-100 p-4 pb-6">
+        <div className="flex-shrink-0 bg-black/60 backdrop-blur-sm border-t border-white/10 p-4 pb-6">
           <Button
             onClick={handleMessageClick}
-            className="w-full h-12 text-base font-semibold bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white shadow-lg rounded-full"
+            className="w-full h-12 text-base font-semibold bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-lg rounded-full"
             data-testid="button-message-telegram"
           >
             <MessageCircle className="w-5 h-5 mr-2" />
