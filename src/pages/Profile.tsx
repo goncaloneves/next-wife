@@ -63,13 +63,13 @@ const cardVariants = {
     x: 0,
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const },
   },
   exit: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
     opacity: 0,
     scale: 0.95,
-    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
