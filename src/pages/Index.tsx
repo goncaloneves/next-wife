@@ -223,12 +223,17 @@ const Index = () => {
               </Button>
               <Button
                 size="lg"
-                variant="outline"
-                className="text-lg px-8 py-6 font-bold transition-all duration-300 border-white/30 text-white hover:bg-white/10"
+                className="text-lg px-8 py-6 font-semibold tracking-wide transition-all duration-300 hover:scale-[1.02] text-white"
+                style={{
+                  background: "linear-gradient(135deg, rgba(198, 58, 75, 0.4) 0%, rgba(232, 115, 85, 0.3) 100%)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  boxShadow: "0 4px 24px rgba(198, 58, 75, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.1)",
+                }}
                 onClick={() => feedContentRef.current?.scrollIntoView({ behavior: 'smooth' })}
                 data-testid="button-pick-your-woman"
               >
-                Pick Your Woman 💃
+                Pick Your Woman 🌻
               </Button>
             </div>
           </div>
