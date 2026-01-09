@@ -60,38 +60,15 @@ const Index = () => {
     if (state?.restoreScroll) {
       const savedContext = sessionStorage.getItem('feedScrollContext');
       if (savedContext) {
-        const { postId, scrollY } = JSON.parse(savedContext);
-        let observer: MutationObserver | null = null;
-        let timeoutId: NodeJS.Timeout | null = null;
+        const { scrollY } = JSON.parse(savedContext);
+        sessionStorage.removeItem('feedScrollContext');
         
-        const cleanup = () => {
-          if (observer) observer.disconnect();
-          if (timeoutId) clearTimeout(timeoutId);
-          sessionStorage.removeItem('feedScrollContext');
-        };
-        
-        const scrollToPost = () => {
-          const element = document.querySelector(`[data-post-id="${postId}"]`);
-          if (element) {
-            element.scrollIntoView({ behavior: 'instant', block: 'center' });
-            cleanup();
-            return true;
-          }
-          return false;
-        };
-        
-        if (!scrollToPost()) {
-          observer = new MutationObserver(() => {
-            scrollToPost();
-          });
-          observer.observe(document.body, { childList: true, subtree: true });
-          
-          timeoutId = setTimeout(() => {
-            if (observer) observer.disconnect();
+        // Double RAF ensures React has committed and layout is stable
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
             window.scrollTo(0, scrollY);
-            sessionStorage.removeItem('feedScrollContext');
-          }, 5000);
-        }
+          });
+        });
       }
       window.history.replaceState({}, document.title);
     }
