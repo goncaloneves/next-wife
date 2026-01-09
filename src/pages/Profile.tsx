@@ -358,7 +358,7 @@ const Profile = () => {
 
             {(profileData.relationship || profileData.personality) && (
               <div className="pt-2.5 border-t border-white/10">
-                <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">Basics</p>
+                <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
                 <div className="flex flex-wrap gap-2">
                   {profileData.relationship && (
                     <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/40 rounded-full px-3 py-1.5 text-sm text-rose-200 font-medium">
