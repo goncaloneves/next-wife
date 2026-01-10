@@ -27,8 +27,9 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
   - Safe area handling for device notches/home indicators
   - "Meet on Telegram" opens link and closes mini app via `openTelegramLink()` + `close()`
 - **Profile Layout:** Fixed footer with action buttons (skip/heart/undo) that stays in place when About Me expands. About Me section can expand to full image height without scroll.
-- **Multi-Media Carousel:** Profiles with multiple photos/videos display a Tinder-style carousel with dot indicators at the top. Users can tap left/right sides of the image to navigate between media. Media stored as JSONB array [{type: 'photo'|'video', url: string}] in `media_urls` column.
-- **Video Playback:** Videos play in a loop on hover (desktop) or tap (mobile). Simple muted autoplay with native HTML5 video looping.
+- **Multi-Media Carousel:** Profiles with multiple photos/videos display an Instagram-style carousel with segmented progress bars at the top. Users can tap left/right sides of the image to navigate between media. Media stored as JSONB array [{type: 'photo'|'video', url: string}] in `media_urls` column.
+- **Instagram-style Auto-Advance:** Media carousel auto-advances like Instagram Stories - each photo/video shows for 5 seconds with an animated progress bar, then advances to the next. After the last media item, it loops back to the first. Progress bars show: filled (past), animating (current), dimmed (upcoming).
+- **Video Playback:** Videos play with muted autoplay, no looping - they advance to next media when finished. Progress bar syncs with video playback duration.
 - **Bot Link Handling:** Special handling for `@nextwifebot` links; clicking an image with a bot link redirects to the bot, otherwise opens a lightbox. The backend extracts these links.
 - **Image Loading:** Includes a retry mechanism (3 attempts with progressive timing) for robust image loading.
 - **Post Filtering:** Hides service messages from the feed.
