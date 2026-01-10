@@ -558,13 +558,13 @@ const Profile = () => {
                         {profileData.age}
                       </span>
                       <BadgeCheck 
-                        className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                        className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
                         style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                       />
                       {/* Fire indicator for hot profiles */}
                       {post.isHot && (
                         <Flame 
-                          className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0" 
+                          className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
                           style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                         />
                       )}
