@@ -329,17 +329,17 @@ function parseChannelHTML(html, channelName) {
     const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(postContent);
     const date = dateMatch ? dateMatch[1] : new Date().toISOString();
 
-    // Extract ALL media URLs (photos and videos) from the post
-    const mediaUrls = [];
+    // Extract ALL media URLs (photos and videos) from the post in DOM order
+    const mediaItems = [];
     
-    // Extract photos from grouped media and single photos
+    // Find all media elements with their positions to maintain original order
     const photoRegex = /<a[^>]*class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/g;
     let photoMatch;
     while ((photoMatch = photoRegex.exec(postContent)) !== null) {
       let url = photoMatch[1];
       if (url && url.startsWith('//')) url = 'https:' + url;
-      if (url && !mediaUrls.some(m => m.url === url)) {
-        mediaUrls.push({ type: 'photo', url });
+      if (url) {
+        mediaItems.push({ type: 'photo', url, index: photoMatch.index });
       }
     }
     
@@ -349,8 +349,8 @@ function parseChannelHTML(html, channelName) {
     while ((videoMatch = videoRegex.exec(postContent)) !== null) {
       let url = videoMatch[1];
       if (url && url.startsWith('//')) url = 'https:' + url;
-      if (url && !mediaUrls.some(m => m.url === url)) {
-        mediaUrls.push({ type: 'video', url });
+      if (url) {
+        mediaItems.push({ type: 'video', url, index: videoMatch.index });
       }
     }
     
@@ -359,8 +359,17 @@ function parseChannelHTML(html, channelName) {
     while ((videoMatch = videoRegex2.exec(postContent)) !== null) {
       let url = videoMatch[1];
       if (url && url.startsWith('//')) url = 'https:' + url;
-      if (url && !mediaUrls.some(m => m.url === url)) {
-        mediaUrls.push({ type: 'video', url });
+      if (url) {
+        mediaItems.push({ type: 'video', url, index: videoMatch.index });
+      }
+    }
+    
+    // Sort by position in HTML to preserve original order, then dedupe
+    mediaItems.sort((a, b) => a.index - b.index);
+    const mediaUrls = [];
+    for (const item of mediaItems) {
+      if (!mediaUrls.some(m => m.url === item.url)) {
+        mediaUrls.push({ type: item.type, url: item.url });
       }
     }
     
@@ -459,8 +468,8 @@ function parseSinglePostHTML(html, postId, channelName) {
     }
   }
   
-  // Extract media URLs
-  const mediaUrls = [];
+  // Extract media URLs in DOM order
+  const mediaItems = [];
   
   // Photos
   const photoRegex = /class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/g;
@@ -468,8 +477,8 @@ function parseSinglePostHTML(html, postId, channelName) {
   while ((photoMatch = photoRegex.exec(html)) !== null) {
     let url = photoMatch[1];
     if (url && url.startsWith('//')) url = 'https:' + url;
-    if (url && !mediaUrls.some(m => m.url === url)) {
-      mediaUrls.push({ type: 'photo', url });
+    if (url) {
+      mediaItems.push({ type: 'photo', url, index: photoMatch.index });
     }
   }
   
@@ -479,8 +488,8 @@ function parseSinglePostHTML(html, postId, channelName) {
   while ((videoMatch = videoRegex.exec(html)) !== null) {
     let url = videoMatch[1];
     if (url && url.startsWith('//')) url = 'https:' + url;
-    if (url && !mediaUrls.some(m => m.url === url)) {
-      mediaUrls.push({ type: 'video', url });
+    if (url) {
+      mediaItems.push({ type: 'video', url, index: videoMatch.index });
     }
   }
   
@@ -488,8 +497,17 @@ function parseSinglePostHTML(html, postId, channelName) {
   while ((videoMatch = videoRegex2.exec(html)) !== null) {
     let url = videoMatch[1];
     if (url && url.startsWith('//')) url = 'https:' + url;
-    if (url && !mediaUrls.some(m => m.url === url)) {
-      mediaUrls.push({ type: 'video', url });
+    if (url) {
+      mediaItems.push({ type: 'video', url, index: videoMatch.index });
+    }
+  }
+  
+  // Sort by position in HTML to preserve original order, then dedupe
+  mediaItems.sort((a, b) => a.index - b.index);
+  const mediaUrls = [];
+  for (const item of mediaItems) {
+    if (!mediaUrls.some(m => m.url === item.url)) {
+      mediaUrls.push({ type: item.type, url: item.url });
     }
   }
   
