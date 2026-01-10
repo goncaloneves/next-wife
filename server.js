@@ -918,6 +918,53 @@ app.get('/api/tg-channel-filters', async (req, res) => {
   }
 });
 
+// Diagnostic endpoint for debugging profile loading issues
+app.get('/api/debug-profile/:id', async (req, res) => {
+  const { id } = req.params;
+  const channel = req.query.channel || 'nextwife_ai';
+  const channelName = channel.replace('@', '').replace(/_/g, '');
+  
+  const debug = {
+    id,
+    channel: channelName,
+    dbConnected: !!pool,
+    steps: []
+  };
+  
+  try {
+    // Step 1: Check DB
+    const dbResult = await pool.query(`
+      SELECT id, name, media IS NOT NULL as has_media, deleted_at
+      FROM telegram_posts WHERE channel = $1 AND id = $2
+    `, [channelName, id]);
+    debug.steps.push({
+      step: 'DB query',
+      found: dbResult.rows.length > 0,
+      row: dbResult.rows[0] || null
+    });
+    
+    // Step 2: Try Telegram fetch
+    const telegramPost = await fetchSinglePost(id, channel);
+    debug.steps.push({
+      step: 'Telegram fetch',
+      success: !!telegramPost,
+      hasMedia: telegramPost?.media || false,
+      hasName: telegramPost?.profileData?.name || null
+    });
+    
+    // Step 3: Count total posts in DB
+    const countResult = await pool.query(`
+      SELECT COUNT(*) as total FROM telegram_posts WHERE channel = $1 AND deleted_at IS NULL
+    `, [channelName]);
+    debug.totalPosts = parseInt(countResult.rows[0].total);
+    
+    res.json(debug);
+  } catch (error) {
+    debug.error = error.message;
+    res.json(debug);
+  }
+});
+
 // Get single profile by ID with adjacent profile IDs for navigation
 app.get('/api/tg-profile/:id', async (req, res) => {
   try {
