@@ -406,21 +406,33 @@ async function fetchSinglePost(postId, channel = 'nextwife_ai') {
   const url = `https://t.me/${telegramChannel}/${postId}?embed=1&single=1`;
   
   try {
+    console.log(`  [fetchSinglePost] Fetching ${url}`);
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       }
     });
     
-    if (!response.ok) return null;
+    console.log(`  [fetchSinglePost] Response status: ${response.status}`);
+    if (!response.ok) {
+      console.log(`  [fetchSinglePost] Non-OK response, returning null`);
+      return null;
+    }
     
     const html = await response.text();
-    const result = parseChannelHTML(html, telegramChannel);
+    console.log(`  [fetchSinglePost] HTML length: ${html.length}, has Name: ${html.includes('Name:')}, has media: ${html.includes('background-image')}`);
     
-    if (result.posts.length === 0) return null;
+    const result = parseChannelHTML(html, telegramChannel);
+    console.log(`  [fetchSinglePost] Parsed ${result.posts.length} posts`);
+    
+    if (result.posts.length === 0) {
+      console.log(`  [fetchSinglePost] No posts found in parsed HTML`);
+      return null;
+    }
     
     // Find the exact post we're looking for
     const post = result.posts.find(p => p.id === postId) || result.posts[0];
+    console.log(`  [fetchSinglePost] Found post: id=${post.id}, media=${!!post.media}, name=${post.profileData?.name || 'null'}`);
     return post;
   } catch (error) {
     console.error(`Failed to fetch single post ${postId}:`, error.message);
@@ -917,6 +929,8 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       return res.status(503).json({ error: 'Database not available' });
     }
     
+    console.log(`[Profile API] Request for profile ${id}, channel=${channelName}`);
+    
     // First check if post exists (with or without enriched data)
     let result = await pool.query(`
       SELECT id, text, date, link, media, media_urls, avatar, bot_link as "botLink", 
@@ -925,9 +939,11 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       WHERE channel = $1 AND id = $2 AND deleted_at IS NULL AND media IS NOT NULL
     `, [channelName, id]);
     
+    console.log(`[Profile API] DB query result: ${result.rows.length} rows, name=${result.rows[0]?.name || 'null'}`);
+    
     // If not found in DB at all, fetch from Telegram
     if (result.rows.length === 0) {
-      console.log(`Post ${id} not in DB, fetching from Telegram...`);
+      console.log(`[Profile API] Post ${id} not in DB, fetching from Telegram...`);
       const telegramPost = await fetchSinglePost(id, channel);
       console.log(`  Telegram fetch result:`, telegramPost ? `media=${!!telegramPost.media}, profileData=${!!telegramPost.profileData}, name=${telegramPost.profileData?.name || 'null'}` : 'null');
       
