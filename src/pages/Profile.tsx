@@ -515,7 +515,7 @@ const Profile = () => {
                         {mediaList.map((_, idx) => (
                           <div 
                             key={idx}
-                            className="flex-1 h-1 rounded-sm bg-black/50 overflow-hidden"
+                            className="flex-1 h-1 rounded-sm bg-white/30 overflow-hidden"
                           >
                             {idx < mediaIndex ? (
                               <div className="h-full bg-white/90 w-full" />
@@ -525,16 +525,14 @@ const Profile = () => {
                                 className="h-full bg-white/90 origin-left will-change-transform"
                                 style={{ transform: 'scaleX(0)' }}
                               />
-                            ) : (
-                              <div className="h-full bg-white/30 w-full" />
-                            )}
+                            ) : null}
                           </div>
                         ))}
                       </div>
                     </>
                   ) : (
                     <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
-                      <div className="flex-1 h-1 rounded-sm bg-black/50 overflow-hidden">
+                      <div className="flex-1 h-1 rounded-sm bg-white/30 overflow-hidden">
                         <div 
                           ref={el => progressRefs.current[0] = el}
                           className="h-full bg-white/90 origin-left will-change-transform"
