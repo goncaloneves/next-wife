@@ -97,7 +97,6 @@ export const TelegramChannelFeed = ({
   const hasInitializedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
   const [lastViewedId, setLastViewedId] = useState<string | null>(null);
-  const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
   useEffect(() => {
@@ -893,25 +892,18 @@ export const TelegramChannelFeed = ({
                   {(() => {
                     const firstMedia = post.mediaUrls?.[0];
                     const isVideo = firstMedia?.type === 'video';
-                    const isPlaying = playingVideos.has(post.id);
                     
                     if (isVideo) {
                       return (
                         <div 
-                          className="w-full h-full relative"
+                          className="w-full h-full relative group/video"
                           onMouseEnter={() => {
                             if (!isMobile) {
-                              setPlayingVideos(prev => new Set(prev).add(post.id));
                               videoRefs.current[post.id]?.play();
                             }
                           }}
                           onMouseLeave={() => {
                             if (!isMobile) {
-                              setPlayingVideos(prev => {
-                                const next = new Set(prev);
-                                next.delete(post.id);
-                                return next;
-                              });
                               const video = videoRefs.current[post.id];
                               if (video) {
                                 video.pause();
@@ -922,16 +914,13 @@ export const TelegramChannelFeed = ({
                           onClick={(e) => {
                             if (isMobile) {
                               e.stopPropagation();
-                              if (isPlaying) {
-                                setPlayingVideos(prev => {
-                                  const next = new Set(prev);
-                                  next.delete(post.id);
-                                  return next;
-                                });
-                                videoRefs.current[post.id]?.pause();
-                              } else {
-                                setPlayingVideos(prev => new Set(prev).add(post.id));
-                                videoRefs.current[post.id]?.play();
+                              const video = videoRefs.current[post.id];
+                              if (video) {
+                                if (video.paused) {
+                                  video.play();
+                                } else {
+                                  video.pause();
+                                }
                               }
                             }
                           }}
@@ -963,15 +952,13 @@ export const TelegramChannelFeed = ({
                               }, delay);
                             }}
                           />
-                          {!isPlaying && (
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                              <div className="w-16 h-16 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M8 5v14l11-7z" />
-                                </svg>
-                              </div>
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none md:group-hover/video:opacity-0 transition-opacity">
+                            <div className="w-16 h-16 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+                              <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
                             </div>
-                          )}
+                          </div>
                         </div>
                       );
                     }
