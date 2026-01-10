@@ -116,8 +116,12 @@ const Profile = () => {
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
+  const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number | null>(null);
+  const photoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const photoStartTimeRef = useRef<number>(0);
+  
+  const PHOTO_DURATION_MS = 5000;
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -140,52 +144,99 @@ const Profile = () => {
     };
   }, []);
 
+  const advanceToNextMedia = useCallback(() => {
+    if (!post) return;
+    const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+    setMediaIndex(prev => {
+      const next = prev + 1;
+      if (next >= mediaList.length) {
+        return 0;
+      }
+      return next;
+    });
+    setImageLoaded(false);
+  }, [post]);
+
   useEffect(() => {
-    const video = videoRef.current;
-    const progress = progressRef.current;
-    if (!video || !progress) return;
-
-    const updateProgress = () => {
-      if (video.duration > 0) {
-        const percent = video.currentTime / video.duration;
-        progress.style.transform = `scaleX(${percent})`;
-      }
-      rafRef.current = requestAnimationFrame(updateProgress);
-    };
-
-    const startLoop = () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(updateProgress);
-    };
-
-    const stopLoop = () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-    };
-
-    const resetProgress = () => {
-      progress.style.transform = 'scaleX(0)';
-    };
-
-    video.addEventListener('play', startLoop);
-    video.addEventListener('pause', stopLoop);
-    video.addEventListener('ended', resetProgress);
-    video.addEventListener('loadedmetadata', resetProgress);
-
-    if (!video.paused) {
-      startLoop();
+    if (!post || !imageLoaded) return;
+    
+    const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+    const currentMedia = mediaList[mediaIndex];
+    const progressBar = progressRefs.current[mediaIndex];
+    
+    if (photoTimerRef.current) {
+      clearTimeout(photoTimerRef.current);
+      photoTimerRef.current = null;
     }
-
-    return () => {
-      stopLoop();
-      video.removeEventListener('play', startLoop);
-      video.removeEventListener('pause', stopLoop);
-      video.removeEventListener('ended', resetProgress);
-      video.removeEventListener('loadedmetadata', resetProgress);
-    };
-  }, [mediaIndex, post?.id]);
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    
+    if (currentMedia?.type === 'video') {
+      const video = videoRef.current;
+      if (!video || !progressBar) return;
+      
+      const updateVideoProgress = () => {
+        if (video.duration > 0) {
+          const percent = video.currentTime / video.duration;
+          progressBar.style.transform = `scaleX(${percent})`;
+        }
+        rafRef.current = requestAnimationFrame(updateVideoProgress);
+      };
+      
+      const handleVideoEnded = () => {
+        progressBar.style.transform = 'scaleX(1)';
+        advanceToNextMedia();
+      };
+      
+      const startVideoLoop = () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        progressBar.style.transform = 'scaleX(0)';
+        rafRef.current = requestAnimationFrame(updateVideoProgress);
+      };
+      
+      video.removeAttribute('loop');
+      video.addEventListener('ended', handleVideoEnded);
+      video.addEventListener('play', startVideoLoop);
+      
+      if (!video.paused) {
+        startVideoLoop();
+      }
+      
+      return () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        video.removeEventListener('ended', handleVideoEnded);
+        video.removeEventListener('play', startVideoLoop);
+      };
+    } else {
+      if (!progressBar) return;
+      
+      photoStartTimeRef.current = performance.now();
+      progressBar.style.transform = 'scaleX(0)';
+      
+      const updatePhotoProgress = () => {
+        const elapsed = performance.now() - photoStartTimeRef.current;
+        const percent = Math.min(elapsed / PHOTO_DURATION_MS, 1);
+        progressBar.style.transform = `scaleX(${percent})`;
+        
+        if (percent < 1) {
+          rafRef.current = requestAnimationFrame(updatePhotoProgress);
+        }
+      };
+      
+      rafRef.current = requestAnimationFrame(updatePhotoProgress);
+      
+      photoTimerRef.current = setTimeout(() => {
+        advanceToNextMedia();
+      }, PHOTO_DURATION_MS);
+      
+      return () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        if (photoTimerRef.current) clearTimeout(photoTimerRef.current);
+      };
+    }
+  }, [mediaIndex, post?.id, imageLoaded, advanceToNextMedia, post]);
 
   
   useEffect(() => {
@@ -420,7 +471,6 @@ const Profile = () => {
                       onLoadedMetadata={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
                       muted
-                      loop
                       autoPlay
                       playsInline
                       controls={false}
@@ -444,7 +494,6 @@ const Profile = () => {
                           e.stopPropagation(); 
                           if (mediaIndex > 0) {
                             setImageLoaded(false);
-                            if (progressRef.current) progressRef.current.style.transform = 'scaleX(0)';
                             setMediaIndex(prev => prev - 1);
                           }
                         }}
@@ -456,7 +505,6 @@ const Profile = () => {
                           e.stopPropagation(); 
                           if (mediaIndex < mediaList.length - 1) {
                             setImageLoaded(false);
-                            if (progressRef.current) progressRef.current.style.transform = 'scaleX(0)';
                             setMediaIndex(prev => prev + 1);
                           }
                         }}
@@ -464,33 +512,31 @@ const Profile = () => {
                       />
                       
                       <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
-                        {mediaList.map((media, idx) => (
+                        {mediaList.map((_, idx) => (
                           <div 
                             key={idx}
                             className="flex-1 h-1 rounded-sm bg-black/50 overflow-hidden"
                           >
-                            {idx === mediaIndex && media.type === 'video' ? (
+                            {idx < mediaIndex ? (
+                              <div className="h-full bg-white/90 w-full" />
+                            ) : idx === mediaIndex ? (
                               <div 
-                                ref={progressRef}
+                                ref={el => progressRefs.current[idx] = el}
                                 className="h-full bg-white/90 origin-left will-change-transform"
                                 style={{ transform: 'scaleX(0)' }}
                               />
                             ) : (
-                              <div 
-                                className={`h-full transition-all duration-200 ${
-                                  idx === mediaIndex ? 'bg-white/90 w-full' : 'w-0'
-                                }`}
-                              />
+                              <div className="h-full bg-white/30 w-full" />
                             )}
                           </div>
                         ))}
                       </div>
                     </>
-                  ) : currentMedia.type === 'video' && (
+                  ) : (
                     <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
                       <div className="flex-1 h-1 rounded-sm bg-black/50 overflow-hidden">
                         <div 
-                          ref={progressRef}
+                          ref={el => progressRefs.current[0] = el}
                           className="h-full bg-white/90 origin-left will-change-transform"
                           style={{ transform: 'scaleX(0)' }}
                         />
