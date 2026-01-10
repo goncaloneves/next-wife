@@ -1034,12 +1034,6 @@ export const TelegramChannelFeed = ({
                           <div className="absolute top-2 right-2 pointer-events-none">
                             <svg className="w-7 h-7" viewBox="0 0 36 36">
                               <circle
-                                cx="18"
-                                cy="18"
-                                r="15"
-                                fill="rgba(0,0,0,0.4)"
-                              />
-                              <circle
                                 ref={el => { progressCircleRefs.current[post.id] = el; }}
                                 cx="18"
                                 cy="18"
@@ -1053,7 +1047,7 @@ export const TelegramChannelFeed = ({
                                 transform="rotate(-90 18 18)"
                                 style={{ willChange: 'stroke-dasharray' }}
                               />
-                              <path d="M15 12v12l9-6z" fill="white" />
+                              <path d="M15 12v12l9-6z" fill="white" stroke="rgba(0,0,0,0.3)" strokeWidth="0.5" />
                             </svg>
                           </div>
                         </div>
