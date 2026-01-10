@@ -750,13 +750,12 @@ export const TelegramChannelFeed = ({
         
         {/* Posts grid - show whenever we have posts, even while loading new ones */}
         {postsWithMedia.length > 0 && (
-        <div className={isMobile ? "flex flex-col items-center gap-6 py-4" : ""}>
+        <div className="flex flex-col items-center gap-6 py-4 md:block md:py-0">
           <div 
             ref={gridRef}
-            className={isMobile ? "grid grid-cols-1 gap-0.5 w-full max-w-sm" : "grid grid-cols-4 gap-0.5"}
+            className="grid grid-cols-1 md:grid-cols-4 gap-0.5 w-full max-w-sm md:max-w-none"
           >
-            {(isMobile ? postsWithMedia.slice(0, 1) : postsWithMedia).map((post, index) => {
-              // On mobile, show only first card but with full desktop behavior
+            {postsWithMedia.map((post, index) => {
               // Skip rendering if image failed too many times
               if (hiddenIds.has(post.id)) {
                 return null;
@@ -774,6 +773,7 @@ export const TelegramChannelFeed = ({
                   data-post-id={post.id}
                   className={`
                     aspect-[3/4] cursor-pointer overflow-hidden group relative
+                    ${index === 0 ? '' : 'hidden md:block'}
                     ${skipAnimation ? 'opacity-100' : 'opacity-0 animate-fade-in'}
                   `}
                   onClick={() => {
@@ -1008,11 +1008,11 @@ export const TelegramChannelFeed = ({
             })}
           </div>
           
-          {/* Mobile: Discover button */}
-          {isMobile && postsWithMedia.length > 0 && (
+          {/* Discover button - mobile only */}
+          {postsWithMedia.length > 0 && (
             <Button
               size="lg"
-              className="text-lg px-10 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95"
+              className="text-lg px-10 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95 md:hidden"
               style={{
                 background: "var(--gradient-sunset)",
                 boxShadow: "var(--shadow-warm)",
@@ -1027,9 +1027,9 @@ export const TelegramChannelFeed = ({
             </Button>
           )}
 
-          {/* Loading indicator - only show on desktop */}
-          {!isMobile && hasMore && isLoadingMore && (
-            <div className="flex items-center justify-center py-8">
+          {/* Loading indicator - desktop only */}
+          {hasMore && isLoadingMore && (
+            <div className="hidden md:flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           )}
