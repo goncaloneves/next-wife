@@ -13,7 +13,7 @@ interface BoomerangState {
 
 const MAX_CAPTURE_ERRORS = 3;
 const MIN_FRAMES = 5;
-const CAPTURE_FPS = 30;
+const CAPTURE_FPS = 14;
 
 export function useBoomerangVideo() {
   const statesRef = useRef<Map<string, BoomerangState>>(new Map());
