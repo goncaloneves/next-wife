@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, BadgeCheck, MapPin, Briefcase } from "lucide-react";
+import { ArrowUp, BadgeCheck, MapPin, Briefcase, Flame } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -1074,7 +1074,11 @@ export const TelegramChannelFeed = ({
                           </div>
                           {/* Fire indicator for hot profiles */}
                           {post.isHot && (
-                            <span className="text-base drop-shadow-lg" data-testid={`badge-hot-${post.id}`}>🔥</span>
+                            <Flame 
+                              className="w-5 h-5 md:w-6 md:h-6 drop-shadow-lg flex-shrink-0" 
+                              style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                              data-testid={`badge-hot-${post.id}`}
+                            />
                           )}
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}

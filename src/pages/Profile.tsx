@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 
 interface ProfileData {
@@ -469,7 +469,10 @@ const Profile = () => {
                     />
                     {/* Fire indicator for hot profiles */}
                     {post.isHot && (
-                      <span className="text-lg drop-shadow-lg">🔥</span>
+                      <Flame 
+                        className="w-6 h-6 md:w-7 md:h-7 drop-shadow-lg flex-shrink-0" 
+                        style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                      />
                     )}
                   </div>
 
