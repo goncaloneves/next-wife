@@ -98,6 +98,7 @@ export const TelegramChannelFeed = ({
   const [isMobile, setIsMobile] = useState(false);
   const [lastViewedId, setLastViewedId] = useState<string | null>(null);
   const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
+  const [videoProgress, setVideoProgress] = useState<Record<string, number>>({});
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
   useEffect(() => {
@@ -988,6 +989,17 @@ export const TelegramChannelFeed = ({
                               isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
                             } md:group-hover:opacity-100 md:group-hover:scale-105`}
                             onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
+                            onTimeUpdate={(e) => {
+                              const video = e.currentTarget;
+                              if (video.duration > 0) {
+                                setVideoProgress(prev => ({ ...prev, [post.id]: video.currentTime / video.duration }));
+                              }
+                            }}
+                            onSeeked={(e) => {
+                              if (e.currentTarget.currentTime < 0.1) {
+                                setVideoProgress(prev => ({ ...prev, [post.id]: 0 }));
+                              }
+                            }}
                             onError={() => {
                               const currentTries = imageErrors[post.id] || 0;
                               if (currentTries >= 2) {
@@ -1001,10 +1013,30 @@ export const TelegramChannelFeed = ({
                               }, delay);
                             }}
                           />
-                          {/* Video indicator - play icon */}
+                          {/* Video indicator - circular progress around play icon */}
                           <div className="absolute top-2 right-2 pointer-events-none">
-                            <svg className="w-5 h-5" viewBox="0 0 24 24">
-                              <path d="M8 5v14l11-7z" fill="white" stroke="rgba(0,0,0,0.25)" strokeWidth="0.75" />
+                            <svg className="w-7 h-7" viewBox="0 0 36 36">
+                              <circle
+                                cx="18"
+                                cy="18"
+                                r="15"
+                                fill="rgba(0,0,0,0.4)"
+                                stroke="rgba(255,255,255,0.3)"
+                                strokeWidth="2"
+                              />
+                              <circle
+                                cx="18"
+                                cy="18"
+                                r="15"
+                                fill="none"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeDasharray={`${(videoProgress[post.id] || 0) * 94.2} 94.2`}
+                                transform="rotate(-90 18 18)"
+                                style={{ transition: 'stroke-dasharray 0.1s linear' }}
+                              />
+                              <path d="M15 12v12l9-6z" fill="white" />
                             </svg>
                           </div>
                         </div>
