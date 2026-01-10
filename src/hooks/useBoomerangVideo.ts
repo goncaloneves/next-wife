@@ -99,6 +99,7 @@ export function useBoomerangVideo() {
         object-fit: cover;
         pointer-events: none;
         opacity: 0;
+        z-index: 5;
       `;
       overlayCanvas.dataset.boomerangCanvas = id;
       state.overlayCanvas = overlayCanvas;
@@ -335,6 +336,7 @@ export function useSingleBoomerangVideo() {
         object-fit: cover;
         pointer-events: none;
         opacity: 0;
+        z-index: 5;
       `;
       overlayCanvas.dataset.boomerangCanvas = 'single';
       overlayCanvasRef.current = overlayCanvas;
