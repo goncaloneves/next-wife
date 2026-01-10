@@ -200,6 +200,10 @@ const Profile = () => {
         };
       }
       
+      // Restart video from beginning when navigating to it
+      video.currentTime = 0;
+      video.play().catch(() => {});
+      
       videoElement = video;
       
       const updateVideoProgress = () => {
