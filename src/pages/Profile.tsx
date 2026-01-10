@@ -335,7 +335,7 @@ const Profile = () => {
     }
   };
 
-  if (loading) {
+  if (loading && !post) {
     return (
       <div className="bg-black flex items-center justify-center" style={{ minHeight: '100svh' }}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500" />
