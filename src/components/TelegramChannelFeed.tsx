@@ -1038,8 +1038,6 @@ export const TelegramChannelFeed = ({
                                 cy="18"
                                 r="15"
                                 fill="rgba(0,0,0,0.4)"
-                                stroke="rgba(255,255,255,0.3)"
-                                strokeWidth="2"
                               />
                               <circle
                                 ref={el => { progressCircleRefs.current[post.id] = el; }}
