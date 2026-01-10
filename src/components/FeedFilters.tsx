@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
 
@@ -563,7 +563,11 @@ export function SortButtons({ sortBy, onSortChange }: SortButtonsProps) {
         )}
         data-testid="toggle-hot"
       >
-        🔥 Hot
+        <Flame 
+          className="w-4 h-4" 
+          style={{ fill: sortBy === 'hot' ? '#FFF' : '#FF6B35', stroke: sortBy === 'hot' ? '#FFF' : '#FF4500', strokeWidth: 1.5 }}
+        />
+        Hot
       </button>
     </div>
   );
