@@ -843,7 +843,7 @@ export const TelegramChannelFeed = ({
                         preload="metadata"
                         className={`w-full h-full object-cover transition-all duration-300 ${
                           imageLoadStates[post.id] ? "" : "opacity-0"
-                        }`}
+                        } group-hover:scale-105 group-active:scale-105`}
                         onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                         onError={() => {
                           const currentTries = imageErrors[post.id] || 0;
@@ -886,7 +886,7 @@ export const TelegramChannelFeed = ({
                       referrerPolicy="no-referrer"
                       className={`w-full h-full object-cover transition-all duration-300 ${
                         imageLoadStates[post.id] ? "" : "opacity-0"
-                      }`}
+                      } group-hover:scale-105 group-active:scale-105`}
                       onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                       onError={() => {
                         const currentTries = imageErrors[post.id] || 0;
@@ -922,8 +922,11 @@ export const TelegramChannelFeed = ({
                           <span className="text-lg font-semibold opacity-90">
                             {post.profileData.age}
                           </span>
-                          <div className="relative">
+                          <div className="relative group/badge">
                             <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none">
+                              Verified
+                            </span>
                           </div>
                           {post.isHot && (
                             <Flame 
