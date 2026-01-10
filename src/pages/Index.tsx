@@ -329,7 +329,7 @@ const Index = () => {
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white">
                   Choose Your Woman 🌻
                 </h2>
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden xl:flex gap-2">
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden min-[1100px]:flex gap-2">
                   <SortButtons 
                     sortBy={sortBy} 
                     onSortChange={setSortBy} 
@@ -340,7 +340,7 @@ const Index = () => {
                     activeCount={activeFilterCount}
                   />
                 </div>
-                <div className="flex justify-center gap-2 mt-4 xl:hidden">
+                <div className="flex justify-center gap-2 mt-4 min-[1100px]:hidden">
                   <SortButtons 
                     sortBy={sortBy} 
                     onSortChange={setSortBy} 
