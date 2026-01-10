@@ -756,6 +756,7 @@ export const TelegramChannelFeed = ({
             className={isMobile ? "grid grid-cols-1 gap-0.5 w-full max-w-sm" : "grid grid-cols-4 gap-0.5"}
           >
             {(isMobile ? postsWithMedia.slice(0, 1) : postsWithMedia).map((post, index) => {
+              // On mobile, show only first card but with full desktop behavior
               // Skip rendering if image failed too many times
               if (hiddenIds.has(post.id)) {
                 return null;
@@ -773,33 +774,11 @@ export const TelegramChannelFeed = ({
                   data-post-id={post.id}
                   className={`
                     aspect-[3/4] cursor-pointer overflow-hidden group relative
-                    flex-shrink-0 w-[90vw] md:w-auto
-                    snap-center md:snap-align-none
                     ${skipAnimation ? 'opacity-100' : 'opacity-0 animate-fade-in'}
                   `}
                   onClick={() => {
                     trackClick(post.id);
-                    if (isMobile) {
-                      navigate('/discover');
-                    } else {
-                      // Set nav flag to preserve skip history when re-entering profile
-                      sessionStorage.setItem('nextwife_navigating_skip', 'true');
-                      sessionStorage.setItem('feedScrollContext', JSON.stringify({
-                        postId: post.id,
-                        scrollY: window.scrollY
-                      }));
-                      sessionStorage.setItem('feedCache', JSON.stringify({
-                        posts: allPosts,
-                        channelInfo,
-                        nextCursor,
-                        hasMore,
-                        filters,
-                        sortBy,
-                        refreshKey,
-                        imageLoadStates
-                      }));
-                      navigate(`/profile/${post.id}`);
-                    }
+                    navigate('/discover');
                   }}
                   style={skipAnimation ? undefined : { 
                     animationDelay: `${(index % 20) * 0.05}s`,
@@ -819,50 +798,23 @@ export const TelegramChannelFeed = ({
                         <div 
                           className="w-full h-full relative"
                           onMouseEnter={() => {
-                            if (!isMobile) {
-                              setPlayingVideos(prev => new Set(prev).add(post.id));
-                              const video = videoRefs.current[post.id];
-                              if (video) {
-                                video.currentTime = 0;
-                                video.play().catch(() => {});
-                              }
+                            setPlayingVideos(prev => new Set(prev).add(post.id));
+                            const video = videoRefs.current[post.id];
+                            if (video) {
+                              video.currentTime = 0;
+                              video.play().catch(() => {});
                             }
                           }}
                           onMouseLeave={() => {
-                            if (!isMobile) {
-                              setPlayingVideos(prev => {
-                                const next = new Set(prev);
-                                next.delete(post.id);
-                                return next;
-                              });
-                              const video = videoRefs.current[post.id];
-                              if (video) {
-                                video.pause();
-                                video.currentTime = 0;
-                              }
-                            }
-                          }}
-                          onClick={(e) => {
-                            if (isMobile) {
-                              e.stopPropagation();
-                              const video = videoRefs.current[post.id];
-                              if (isPlaying) {
-                                setPlayingVideos(prev => {
-                                  const next = new Set(prev);
-                                  next.delete(post.id);
-                                  return next;
-                                });
-                                if (video) {
-                                  video.pause();
-                                  video.currentTime = 0;
-                                }
-                              } else {
-                                setPlayingVideos(prev => new Set(prev).add(post.id));
-                                if (video) {
-                                  video.currentTime = 0;
-                                  video.play().catch(() => {});
-                                }
-                              }
+                            setPlayingVideos(prev => {
+                              const next = new Set(prev);
+                              next.delete(post.id);
+                              return next;
+                            });
+                            const video = videoRefs.current[post.id];
+                            if (video) {
+                              video.pause();
+                              video.currentTime = 0;
                             }
                           }}
                         >
@@ -914,9 +866,7 @@ export const TelegramChannelFeed = ({
                             preload="metadata"
                             className={`w-full h-full object-cover transition-all duration-300 ${
                               imageLoadStates[post.id] ? "" : "opacity-0"
-                            } ${
-                              isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
-                            } md:group-hover:opacity-100 md:group-hover:scale-105`}
+                            } opacity-70 group-hover:opacity-100 group-hover:scale-105`}
                             onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                             onError={() => {
                               const currentTries = imageErrors[post.id] || 0;
@@ -964,9 +914,7 @@ export const TelegramChannelFeed = ({
                         referrerPolicy="no-referrer"
                         className={`w-full h-full object-cover transition-all duration-300 ${
                           imageLoadStates[post.id] ? "" : "opacity-0"
-                        } ${
-                          isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
-                        } md:group-hover:opacity-100 md:group-hover:scale-105`}
+                        } opacity-70 group-hover:opacity-100 group-hover:scale-105`}
                         onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                         onError={() => {
                           const currentTries = imageErrors[post.id] || 0;
@@ -999,18 +947,18 @@ export const TelegramChannelFeed = ({
                   
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-[background] duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-100">
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-[background] duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-xl md:text-2xl font-bold drop-shadow-lg">
+                          <h3 className="text-2xl font-bold drop-shadow-lg">
                             {post.profileData.name}
                           </h3>
-                          <span className="text-lg md:text-xl font-semibold opacity-90">
+                          <span className="text-xl font-semibold opacity-90">
                             {post.profileData.age}
                           </span>
                           {/* Verified badge like Tinder */}
                           <div className="relative group/badge">
-                            <BadgeCheck className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                            <BadgeCheck className="w-6 h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
                             <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none">
                               Verified
                             </span>
@@ -1018,14 +966,14 @@ export const TelegramChannelFeed = ({
                           {/* Fire indicator for hot profiles */}
                           {post.isHot && (
                             <Flame 
-                              className="w-5 h-5 md:w-6 md:h-6 drop-shadow-lg flex-shrink-0" 
+                              className="w-6 h-6 drop-shadow-lg flex-shrink-0" 
                               style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                               data-testid={`badge-hot-${post.id}`}
                             />
                           )}
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
-                        <div className="flex flex-col gap-3 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
+                        <div className="flex flex-col gap-3 text-sm max-h-0 opacity-0 overflow-hidden group-hover:max-h-40 group-hover:opacity-100 transition-all duration-300">
                           <div className="space-y-0.5">
                             <p className="flex items-center gap-1.5">
                               <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
