@@ -174,6 +174,20 @@ const Profile = () => {
     const currentMedia = mediaList[mediaIndex];
     const progressBar = progressRefs.current[mediaIndex];
     
+    // Reset all progress bars to proper state when mediaIndex changes
+    progressRefs.current.forEach((bar, idx) => {
+      if (bar) {
+        if (idx < mediaIndex) {
+          // Past media: filled
+          bar.style.transform = 'scaleX(1)';
+        } else if (idx > mediaIndex) {
+          // Future media: empty
+          bar.style.transform = 'scaleX(0)';
+        }
+        // Current media handled below
+      }
+    });
+    
     if (currentMedia?.type === 'video') {
       const video = videoRef.current;
       if (!video || !progressBar) {
