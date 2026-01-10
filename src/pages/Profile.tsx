@@ -196,6 +196,10 @@ const Profile = () => {
     if (!post || !imageLoaded) return;
     
     const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+    
+    // Skip auto-advance for single media items
+    if (mediaList.length === 1) return;
+    
     const currentMedia = mediaList[mediaIndex];
     const progressBar = progressRefs.current[mediaIndex];
     
@@ -565,17 +569,7 @@ const Profile = () => {
                         ))}
                       </div>
                     </>
-                  ) : (
-                    <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
-                      <div className="flex-1 h-1 rounded-sm bg-white/30 overflow-hidden">
-                        <div 
-                          ref={el => progressRefs.current[0] = el}
-                          className="h-full bg-white/90 origin-left will-change-transform"
-                          style={{ transform: 'scaleX(0)' }}
-                        />
-                      </div>
-                    </div>
-                  )}
+                  ) : null}
                 </>
               );
             })()}
