@@ -950,20 +950,30 @@ export const TelegramChannelFeed = ({
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-[background] duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
                         <p className="mb-1 text-2xl font-bold drop-shadow-lg leading-snug">
-                          {post.profileData.name}{' '}
-                          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
-                            <span className="text-xl font-semibold opacity-90">
-                              {post.profileData.age}
-                            </span>
-                            <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg relative top-[3px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
-                            {post.isHot && (
-                              <Flame 
-                                className="w-5 h-5 drop-shadow-lg relative top-[3px]" 
-                                style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
-                                data-testid={`badge-hot-${post.id}`}
-                              />
-                            )}
-                          </span>
+                          {(() => {
+                            const nameParts = post.profileData.name.split(' ');
+                            const lastName = nameParts.pop() || '';
+                            const firstName = nameParts.join(' ');
+                            return (
+                              <>
+                                {firstName && <>{firstName} </>}
+                                <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+                                  <span>{lastName}</span>
+                                  <span className="text-xl font-semibold opacity-90 ml-1">
+                                    {post.profileData.age}
+                                  </span>
+                                  <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg relative top-[3px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                                  {post.isHot && (
+                                    <Flame 
+                                      className="w-5 h-5 drop-shadow-lg relative top-[3px]" 
+                                      style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                                      data-testid={`badge-hot-${post.id}`}
+                                    />
+                                  )}
+                                </span>
+                              </>
+                            );
+                          })()}
                         </p>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="flex flex-col gap-3 text-sm max-h-0 opacity-0 overflow-hidden group-hover:max-h-40 group-hover:opacity-100 transition-all duration-300">
