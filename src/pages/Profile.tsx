@@ -112,6 +112,7 @@ const Profile = () => {
   const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
+  const [videoProgress, setVideoProgress] = useState(0);
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
@@ -370,6 +371,17 @@ const Profile = () => {
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       onLoadedMetadata={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
+                      onTimeUpdate={(e) => {
+                        const video = e.currentTarget;
+                        if (video.duration > 0) {
+                          setVideoProgress((video.currentTime / video.duration) * 100);
+                        }
+                      }}
+                      onSeeked={(e) => {
+                        if (e.currentTarget.currentTime < 0.1) {
+                          setVideoProgress(0);
+                        }
+                      }}
                       muted
                       loop
                       autoPlay
@@ -387,7 +399,7 @@ const Profile = () => {
                     />
                   )}
                   
-                  {hasMultipleMedia && (
+                  {hasMultipleMedia ? (
                     <>
                       <motion.div 
                         className="absolute left-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
@@ -395,6 +407,7 @@ const Profile = () => {
                           e.stopPropagation(); 
                           if (mediaIndex > 0) {
                             setImageLoaded(false);
+                            setVideoProgress(0);
                             setMediaIndex(prev => prev - 1);
                           }
                         }}
@@ -406,6 +419,7 @@ const Profile = () => {
                           e.stopPropagation(); 
                           if (mediaIndex < mediaList.length - 1) {
                             setImageLoaded(false);
+                            setVideoProgress(0);
                             setMediaIndex(prev => prev + 1);
                           }
                         }}
@@ -413,18 +427,36 @@ const Profile = () => {
                       />
                       
                       <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
-                        {mediaList.map((_, idx) => (
+                        {mediaList.map((media, idx) => (
                           <div 
                             key={idx}
-                            className={`flex-1 h-1 rounded-sm transition-all duration-200 ${
-                              idx === mediaIndex 
-                                ? 'bg-white/90' 
-                                : 'bg-black/50'
-                            }`}
-                          />
+                            className="flex-1 h-1 rounded-sm bg-black/50 overflow-hidden"
+                          >
+                            {idx === mediaIndex && media.type === 'video' ? (
+                              <div 
+                                className="h-full bg-white/90 transition-[width] duration-100 ease-linear"
+                                style={{ width: `${videoProgress}%` }}
+                              />
+                            ) : (
+                              <div 
+                                className={`h-full transition-all duration-200 ${
+                                  idx === mediaIndex ? 'bg-white/90 w-full' : 'w-0'
+                                }`}
+                              />
+                            )}
+                          </div>
                         ))}
                       </div>
                     </>
+                  ) : currentMedia.type === 'video' && (
+                    <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
+                      <div className="flex-1 h-1 rounded-sm bg-black/50 overflow-hidden">
+                        <div 
+                          className="h-full bg-white/90 transition-[width] duration-100 ease-linear"
+                          style={{ width: `${videoProgress}%` }}
+                        />
+                      </div>
+                    </div>
                   )}
                 </>
               );
