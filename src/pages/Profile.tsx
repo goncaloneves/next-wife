@@ -528,7 +528,7 @@ const Profile = () => {
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pt-16 pb-2">
                   <div className="flex items-baseline mb-3">
-                    <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                    <h1 className="text-2xl font-bold text-white drop-shadow-lg">
                       {profileData.name}
                     </h1>
                     <span className="inline-flex items-center gap-1 ml-2">
@@ -536,13 +536,13 @@ const Profile = () => {
                         {profileData.age}
                       </span>
                       <BadgeCheck 
-                        className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                        className="w-5 h-5 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
                         style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                       />
                       {/* Fire indicator for hot profiles */}
                       {post.isHot && (
                         <Flame 
-                          className="w-5 h-5 md:w-6 md:h-6 drop-shadow-lg flex-shrink-0" 
+                          className="w-5 h-5 drop-shadow-lg flex-shrink-0" 
                           style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                         />
                       )}
