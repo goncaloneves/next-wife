@@ -351,9 +351,26 @@ const Profile = () => {
     setShowTelegramConfirm(true);
   }, []);
 
+  const trackConversion = useCallback(async (postId: string) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      await fetch(`${apiUrl}/api/tg-post-click`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId }),
+      });
+    } catch (err) {
+      console.error('Failed to track conversion:', err);
+    }
+  }, []);
+
   const confirmOpenTelegram = useCallback(() => {
     const url = post?.botLink || post?.link;
     if (url) {
+      // Track conversion when user clicks to meet on Telegram
+      if (post?.id) {
+        trackConversion(post.id);
+      }
       if (isAppView) {
         openTelegramLinkAndClose(url);
       } else {
@@ -361,7 +378,7 @@ const Profile = () => {
       }
     }
     setShowTelegramConfirm(false);
-  }, [post, isAppView]);
+  }, [post, isAppView, trackConversion]);
 
   const undoSkip = useCallback(() => {
     if (skipHistory.length === 0 || isAnimating) return;

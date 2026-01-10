@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
-import { FilterButton, SortButtons } from "@/components/FeedFilters";
+import { FilterButton } from "@/components/FeedFilters";
 import { ProfileFilterModal } from "@/components/ProfileFilterModal";
 import { getStoredFilters, saveFilters, getActiveFilterCount, type SharedFilters } from "@/lib/filterStorage";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -16,11 +16,6 @@ const Index = () => {
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<SharedFilters>(getStoredFilters);
-  const [sortBy, setSortByState] = useState<'recent' | 'hot'>(() => {
-    const sort = searchParams.get('sort');
-    return sort === 'hot' ? 'hot' : 'recent';
-  });
-  
   const activeFilterCount = getActiveFilterCount(filters);
   
   useEffect(() => {
@@ -53,16 +48,6 @@ const Index = () => {
     saveFilters(newFilters);
   }, []);
   
-  const setSortBy = (sort: 'recent' | 'hot') => {
-    setSortByState(sort);
-    const newParams = new URLSearchParams(searchParams);
-    if (sort === 'hot') {
-      newParams.set('sort', 'hot');
-    } else {
-      newParams.delete('sort');
-    }
-    setSearchParams(newParams, { replace: true });
-  };
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
@@ -364,10 +349,6 @@ const Index = () => {
                   Choose Your Woman 🌻
                 </h2>
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden min-[1100px]:flex gap-2">
-                  <SortButtons 
-                    sortBy={sortBy} 
-                    onSortChange={setSortBy} 
-                  />
                   <FilterButton 
                     isOpen={showFilters} 
                     onClick={() => setShowFilters(!showFilters)} 
@@ -375,10 +356,6 @@ const Index = () => {
                   />
                 </div>
                 <div className="flex justify-center gap-2 mt-4 min-[1100px]:hidden">
-                  <SortButtons 
-                    sortBy={sortBy} 
-                    onSortChange={setSortBy} 
-                  />
                   <FilterButton 
                     isOpen={showFilters} 
                     onClick={() => setShowFilters(!showFilters)} 
@@ -391,7 +368,6 @@ const Index = () => {
                 layout="grid" 
                 feedSectionRef={feedContentRef}
                 filters={filters}
-                sortBy={sortBy}
               />
             </div>
           </div>

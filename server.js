@@ -1236,8 +1236,6 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     const relationships = req.query.relationship ? (Array.isArray(req.query.relationship) ? req.query.relationship : [req.query.relationship]) : null;
     const hasVideo = req.query.hasVideo === 'true';
     const hasMultipleMedia = req.query.hasMultipleMedia === 'true';
-    const sortBy = req.query.sort || 'recent'; // 'recent' or 'hot'
-    
     const hasFilters = regions || ageBrackets || occupationCategories || languages || hometowns || personalities || relationships || hasVideo || hasMultipleMedia;
     
     // Always use database when available (for isHot calculation and better performance)
@@ -1307,13 +1305,8 @@ app.get('/api/tg-channel-feed', async (req, res) => {
         paramIndex++;
       }
       
-      // Sort by popularity (click_count) or by recency (id)
-      if (sortBy === 'hot') {
-        // Hot sorting: posts with clicks first (sorted by click_count DESC), then zero-click posts by newest
-        query += ` ORDER BY CASE WHEN COALESCE(click_count, 0) > 0 THEN 0 ELSE 1 END, COALESCE(click_count, 0) DESC, date DESC LIMIT $${paramIndex}`;
-      } else {
-        query += ` ORDER BY id::bigint DESC LIMIT $${paramIndex}`;
-      }
+      // Always sort by recency (newest first)
+      query += ` ORDER BY id::bigint DESC LIMIT $${paramIndex}`;
       params.push(limit);
       
       // First, get the GLOBAL top 8 hot IDs from entire dataset (ignoring filters)

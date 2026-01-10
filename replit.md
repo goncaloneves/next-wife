@@ -37,13 +37,13 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Content Parsing:** Extracts personality and relationship types from Telegram post text.
 - **Language Display:** Uses `countries-list` to derive and display native languages alongside English.
 - **Scroll Position Restoration:** Caches feed state in `sessionStorage` to restore scroll position upon returning from profile pages.
-- **"Hot" Sorting:** Allows sorting profiles by popularity (`click_count`) with a "Hot" badge overlay. Click tracking is asynchronous.
+- **Conversion Tracking:** Tracks when users click "Meet on Telegram" (the final conversion point) rather than feed clicks. The `click_count` field stores these conversions for future analytics.
 - **Automatic Deleted Post Detection:** A background scheduler soft-deletes posts removed from Telegram, and a quick sync mechanism handles instant updates on page load.
 - **Occupation Categories:** Groups 283 job titles into 12 broad categories for simplified filtering.
 - **Silent Error Handling:** API failures are handled silently without displaying error blocks to the user.
 
 **System Design Choices:**
-- **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media) and `click_count` for sorting.
+- **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media) and `click_count` for conversion tracking.
 - **Background Sync Service:** Regularly fetches posts from Telegram and updates the database, enriching data with derived fields.
 - **Image Proxy:** Proxies Telegram CDN images to prevent CORS issues.
 
