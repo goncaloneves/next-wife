@@ -778,6 +778,8 @@ export const TelegramChannelFeed = ({
                   `}
                   onClick={() => {
                     trackClick(post.id);
+                    setLastViewedId(post.id);
+                    sessionStorage.setItem('nextwife_last_viewed', post.id);
                     navigate('/discover');
                   }}
                   style={skipAnimation ? undefined : { 
