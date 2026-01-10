@@ -197,9 +197,9 @@ export function FeedFilters({
         />
       )}
 
-      {/* Expanded filter sections - absolute overlay to avoid layout shift */}
+      {/* Expanded filter sections - fixed centered overlay */}
       {showFilters && (
-        <div className="fixed md:absolute inset-0 md:inset-auto md:top-0 md:left-0 md:right-0 z-50 mx-0 md:mx-4 bg-gradient-to-b from-zinc-900 to-black md:bg-black/95 md:backdrop-blur-md md:rounded-2xl md:border md:border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200 flex flex-col md:max-h-[80vh]" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="fixed inset-0 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[min(90vw,960px)] z-50 bg-gradient-to-b from-zinc-900 to-black md:bg-black/95 md:backdrop-blur-md md:rounded-2xl md:border md:border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200 flex flex-col md:max-h-[80vh]" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
           {/* Mobile Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10 md:hidden">
             <div className="flex items-center gap-3">
