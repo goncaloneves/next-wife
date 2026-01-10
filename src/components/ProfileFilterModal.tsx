@@ -11,23 +11,16 @@ import {
   fetchFilterOptions,
   toggleArrayValue 
 } from "./filters/FilterComponents";
+import { type SharedFilters, DEFAULT_FILTERS } from "@/lib/filterStorage";
 
-export interface ProfileFilters {
-  regions: string[];
-  ageBrackets: string[];
-  occupationCategories: string[];
-  personalities: string[];
-  relationships: string[];
-  hasVideo: boolean;
-  hasMultipleMedia: boolean;
-}
+export type ProfileFilters = SharedFilters;
 
 interface ProfileFilterModalProps {
   isOpen: boolean;
   onClose: () => void;
   channel: string;
-  filters: ProfileFilters;
-  onFiltersChange: (filters: ProfileFilters) => void;
+  filters: SharedFilters;
+  onFiltersChange: (filters: SharedFilters) => void;
 }
 
 export function ProfileFilterModal({ 
@@ -107,15 +100,7 @@ export function ProfileFilterModal({
   }, [localFilters, onFiltersChange, onClose]);
 
   const handleClearAll = useCallback(() => {
-    setLocalFilters({
-      regions: [],
-      ageBrackets: [],
-      occupationCategories: [],
-      personalities: [],
-      relationships: [],
-      hasVideo: false,
-      hasMultipleMedia: false,
-    });
+    setLocalFilters({ ...DEFAULT_FILTERS });
   }, []);
 
   return (

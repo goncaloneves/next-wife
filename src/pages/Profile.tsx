@@ -15,6 +15,7 @@ import {
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { ProfileFilterModal, ProfileFilterButton, type ProfileFilters } from "@/components/ProfileFilterModal";
+import { getStoredFilters, saveFilters, type SharedFilters } from "@/lib/filterStorage";
 
 interface ProfileData {
   name: string;
@@ -54,31 +55,6 @@ interface SkipHistoryEntry {
 
 const SKIP_HISTORY_KEY = 'nextwife_skip_history';
 const NAV_FLAG_KEY = 'nextwife_navigating_skip';
-const PROFILE_FILTERS_KEY = 'nextwife_profile_filters';
-
-const getStoredFilters = (): ProfileFilters => {
-  try {
-    const stored = sessionStorage.getItem(PROFILE_FILTERS_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch {}
-  return {
-    regions: [],
-    ageBrackets: [],
-    occupationCategories: [],
-    personalities: [],
-    relationships: [],
-    hasVideo: false,
-    hasMultipleMedia: false,
-  };
-};
-
-const saveFilters = (filters: ProfileFilters) => {
-  try {
-    sessionStorage.setItem(PROFILE_FILTERS_KEY, JSON.stringify(filters));
-  } catch {}
-};
 
 const getSkipHistory = (): SkipHistoryEntry[] => {
   try {
@@ -139,7 +115,7 @@ const Profile = () => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState<ProfileFilters>(getStoredFilters);
+  const [filters, setFilters] = useState<SharedFilters>(getStoredFilters);
   
   useEffect(() => {
     saveFilters(filters);

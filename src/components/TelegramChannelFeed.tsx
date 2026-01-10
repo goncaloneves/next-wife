@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters } from "./FeedFilters";
 import { formatDistanceToNow } from "date-fns";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
+import { getStoredFilters, saveFilters, type SharedFilters } from "@/lib/filterStorage";
 
 interface ProfileData {
   name: string;
@@ -85,7 +86,11 @@ export const TelegramChannelFeed = ({
   const [skipAnimation, setSkipAnimation] = useState(false);
   const navigate = useNavigate();
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
-  const [filters, setFilters] = useState<{ regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[]; hasVideo: boolean; hasMultipleMedia: boolean }>({ regions: [], ageBrackets: [], occupationCategories: [], languages: [], hometowns: [], personalities: [], relationships: [], hasVideo: false, hasMultipleMedia: false });
+  const [filters, setFilters] = useState<SharedFilters>(getStoredFilters);
+  
+  useEffect(() => {
+    saveFilters(filters);
+  }, [filters]);
   const listRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
