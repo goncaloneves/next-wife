@@ -98,8 +98,9 @@ export const TelegramChannelFeed = ({
   const [isMobile, setIsMobile] = useState(false);
   const [lastViewedId, setLastViewedId] = useState<string | null>(null);
   const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
-  const [videoProgress, setVideoProgress] = useState<Record<string, number>>({});
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  const progressCircleRefs = useRef<Record<string, SVGCircleElement | null>>({});
+  const rafRefs = useRef<Record<string, number>>({});
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -976,7 +977,34 @@ export const TelegramChannelFeed = ({
                           }}
                         >
                           <video
-                            ref={el => { videoRefs.current[post.id] = el; }}
+                            ref={el => { 
+                              videoRefs.current[post.id] = el;
+                              if (el) {
+                                const updateProgress = () => {
+                                  const circle = progressCircleRefs.current[post.id];
+                                  if (circle && el.duration > 0) {
+                                    const progress = el.currentTime / el.duration;
+                                    circle.style.strokeDasharray = `${progress * 94.2} 94.2`;
+                                  }
+                                  rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
+                                };
+                                
+                                el.onplay = () => {
+                                  if (rafRefs.current[post.id]) cancelAnimationFrame(rafRefs.current[post.id]);
+                                  rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
+                                };
+                                el.onpause = () => {
+                                  if (rafRefs.current[post.id]) {
+                                    cancelAnimationFrame(rafRefs.current[post.id]);
+                                    delete rafRefs.current[post.id];
+                                  }
+                                };
+                                el.onended = () => {
+                                  const circle = progressCircleRefs.current[post.id];
+                                  if (circle) circle.style.strokeDasharray = '0 94.2';
+                                };
+                              }
+                            }}
                             key={`video-${post.id}`}
                             src={buildSrc(firstMedia.url, post.id)}
                             muted
@@ -989,17 +1017,6 @@ export const TelegramChannelFeed = ({
                               isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
                             } md:group-hover:opacity-100 md:group-hover:scale-105`}
                             onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
-                            onTimeUpdate={(e) => {
-                              const video = e.currentTarget;
-                              if (video.duration > 0) {
-                                setVideoProgress(prev => ({ ...prev, [post.id]: video.currentTime / video.duration }));
-                              }
-                            }}
-                            onSeeked={(e) => {
-                              if (e.currentTarget.currentTime < 0.1) {
-                                setVideoProgress(prev => ({ ...prev, [post.id]: 0 }));
-                              }
-                            }}
                             onError={() => {
                               const currentTries = imageErrors[post.id] || 0;
                               if (currentTries >= 2) {
@@ -1025,6 +1042,7 @@ export const TelegramChannelFeed = ({
                                 strokeWidth="2"
                               />
                               <circle
+                                ref={el => { progressCircleRefs.current[post.id] = el; }}
                                 cx="18"
                                 cy="18"
                                 r="15"
@@ -1032,9 +1050,9 @@ export const TelegramChannelFeed = ({
                                 stroke="white"
                                 strokeWidth="2"
                                 strokeLinecap="round"
-                                strokeDasharray={`${(videoProgress[post.id] || 0) * 94.2} 94.2`}
+                                strokeDasharray="0 94.2"
                                 transform="rotate(-90 18 18)"
-                                style={{ transition: 'stroke-dasharray 0.1s linear' }}
+                                style={{ willChange: 'stroke-dasharray' }}
                               />
                               <path d="M15 12v12l9-6z" fill="white" />
                             </svg>
