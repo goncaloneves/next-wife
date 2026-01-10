@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters } from "./FeedFilters";
 import { formatDistanceToNow } from "date-fns";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
+import { useBoomerangVideo } from "@/hooks/useBoomerangVideo";
 
 interface ProfileData {
   name: string;
@@ -99,6 +100,7 @@ export const TelegramChannelFeed = ({
   const [lastViewedId, setLastViewedId] = useState<string | null>(null);
   const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  const { startBoomerang, stopBoomerang } = useBoomerangVideo();
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -902,7 +904,8 @@ export const TelegramChannelFeed = ({
                           onMouseEnter={() => {
                             if (!isMobile) {
                               setPlayingVideos(prev => new Set(prev).add(post.id));
-                              videoRefs.current[post.id]?.play();
+                              const video = videoRefs.current[post.id];
+                              if (video) startBoomerang(video, post.id);
                             }
                           }}
                           onMouseLeave={() => {
@@ -912,11 +915,7 @@ export const TelegramChannelFeed = ({
                                 next.delete(post.id);
                                 return next;
                               });
-                              const video = videoRefs.current[post.id];
-                              if (video) {
-                                video.pause();
-                                video.currentTime = 0;
-                              }
+                              stopBoomerang(post.id, videoRefs.current[post.id]);
                             }
                           }}
                           onClick={(e) => {
@@ -928,10 +927,11 @@ export const TelegramChannelFeed = ({
                                   next.delete(post.id);
                                   return next;
                                 });
-                                videoRefs.current[post.id]?.pause();
+                                stopBoomerang(post.id, videoRefs.current[post.id]);
                               } else {
                                 setPlayingVideos(prev => new Set(prev).add(post.id));
-                                videoRefs.current[post.id]?.play();
+                                const video = videoRefs.current[post.id];
+                                if (video) startBoomerang(video, post.id);
                               }
                             }
                           }}
@@ -941,7 +941,6 @@ export const TelegramChannelFeed = ({
                             key={`video-${post.id}`}
                             src={buildSrc(firstMedia.url, post.id)}
                             muted
-                            loop
                             playsInline
                             preload="metadata"
                             className={`w-full h-full object-cover transition-all duration-300 ${

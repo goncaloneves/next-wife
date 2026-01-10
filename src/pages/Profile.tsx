@@ -4,6 +4,7 @@ import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTelegram, openTelegramLinkAndClose } from "@/hooks/use-telegram";
+import { useSingleBoomerangVideo } from "@/hooks/useBoomerangVideo";
 import {
   Dialog,
   DialogContent,
@@ -115,6 +116,8 @@ const Profile = () => {
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { start: startBoomerang, stop: stopBoomerang } = useSingleBoomerangVideo();
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -140,6 +143,8 @@ const Profile = () => {
   
   useEffect(() => {
     if (!id) return;
+    
+    stopBoomerang();
     
     const fetchProfile = async () => {
       setLoading(true);
@@ -364,12 +369,14 @@ const Profile = () => {
                 <>
                   {currentMedia.type === 'video' ? (
                     <video
+                      ref={videoRef}
                       src={currentMedia.url}
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoadedMetadata={() => setImageLoaded(true)}
+                      onLoadedMetadata={() => {
+                        setImageLoaded(true);
+                        if (videoRef.current) startBoomerang(videoRef.current);
+                      }}
                       onError={() => setImageLoaded(true)}
-                      autoPlay
-                      loop
                       muted
                       playsInline
                       controls={false}
