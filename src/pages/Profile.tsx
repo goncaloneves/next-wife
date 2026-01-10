@@ -564,7 +564,7 @@ const Profile = () => {
                       {/* Fire indicator for hot profiles */}
                       {post.isHot && (
                         <Flame 
-                          className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
+                          className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
                           style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                         />
                       )}
