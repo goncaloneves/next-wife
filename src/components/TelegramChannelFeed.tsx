@@ -975,7 +975,7 @@ export const TelegramChannelFeed = ({
                                 {firstName && <>{firstName} </>}
                                 <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
                                   <span>{lastName}</span>
-                                  <span className="text-xl font-semibold opacity-90 ml-1">
+                                  <span className="text-xl font-semibold opacity-90 ml-2">
                                     {post.profileData.age}
                                   </span>
                                   <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg relative top-[3px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
