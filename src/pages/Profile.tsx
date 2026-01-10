@@ -118,10 +118,6 @@ const Profile = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number | null>(null);
-  const photoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const photoStartTimeRef = useRef<number>(0);
-  
-  const PHOTO_DURATION_MS = 5000;
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -144,69 +140,17 @@ const Profile = () => {
     };
   }, []);
 
-  const advanceToNextMedia = useCallback(() => {
-    if (!post) return;
-    const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
-    
-    if (mediaList.length === 1) {
-      const currentMedia = mediaList[0];
-      const progressBar = progressRefs.current[0];
-      
-      if (currentMedia.type === 'video') {
-        // Single video: restart playback
-        const video = videoRef.current;
-        if (video) {
-          video.currentTime = 0;
-          video.play();
-        }
-        if (progressBar) progressBar.style.transform = 'scaleX(0)';
-      } else {
-        // Single photo: reset progress bar and restart timer
-        if (progressBar) progressBar.style.transform = 'scaleX(0)';
-        photoStartTimeRef.current = performance.now();
-        
-        if (photoTimerRef.current) clearTimeout(photoTimerRef.current);
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        
-        const updatePhotoProgress = () => {
-          const elapsed = performance.now() - photoStartTimeRef.current;
-          const percent = Math.min(elapsed / PHOTO_DURATION_MS, 1);
-          if (progressBar) progressBar.style.transform = `scaleX(${percent})`;
-          if (percent < 1) {
-            rafRef.current = requestAnimationFrame(updatePhotoProgress);
-          }
-        };
-        rafRef.current = requestAnimationFrame(updatePhotoProgress);
-        photoTimerRef.current = setTimeout(() => advanceToNextMedia(), PHOTO_DURATION_MS);
-      }
-      return;
-    }
-    
-    setMediaIndex(prev => {
-      const next = prev + 1;
-      if (next >= mediaList.length) {
-        return 0;
-      }
-      return next;
-    });
-    setImageLoaded(false);
-  }, [post]);
-
   useEffect(() => {
     if (!post || !imageLoaded) return;
     
     const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
     
-    // Skip auto-advance for single media items
+    // Skip for single media items (no progress bar shown)
     if (mediaList.length === 1) return;
     
     const currentMedia = mediaList[mediaIndex];
     const progressBar = progressRefs.current[mediaIndex];
     
-    if (photoTimerRef.current) {
-      clearTimeout(photoTimerRef.current);
-      photoTimerRef.current = null;
-    }
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
@@ -224,19 +168,12 @@ const Profile = () => {
         rafRef.current = requestAnimationFrame(updateVideoProgress);
       };
       
-      const handleVideoEnded = () => {
-        progressBar.style.transform = 'scaleX(1)';
-        advanceToNextMedia();
-      };
-      
       const startVideoLoop = () => {
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
         progressBar.style.transform = 'scaleX(0)';
         rafRef.current = requestAnimationFrame(updateVideoProgress);
       };
       
-      video.removeAttribute('loop');
-      video.addEventListener('ended', handleVideoEnded);
       video.addEventListener('play', startVideoLoop);
       
       if (!video.paused) {
@@ -245,37 +182,15 @@ const Profile = () => {
       
       return () => {
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        video.removeEventListener('ended', handleVideoEnded);
         video.removeEventListener('play', startVideoLoop);
       };
     } else {
-      if (!progressBar) return;
-      
-      photoStartTimeRef.current = performance.now();
-      progressBar.style.transform = 'scaleX(0)';
-      
-      const updatePhotoProgress = () => {
-        const elapsed = performance.now() - photoStartTimeRef.current;
-        const percent = Math.min(elapsed / PHOTO_DURATION_MS, 1);
-        progressBar.style.transform = `scaleX(${percent})`;
-        
-        if (percent < 1) {
-          rafRef.current = requestAnimationFrame(updatePhotoProgress);
-        }
-      };
-      
-      rafRef.current = requestAnimationFrame(updatePhotoProgress);
-      
-      photoTimerRef.current = setTimeout(() => {
-        advanceToNextMedia();
-      }, PHOTO_DURATION_MS);
-      
-      return () => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        if (photoTimerRef.current) clearTimeout(photoTimerRef.current);
-      };
+      // Photos: just show filled progress bar (no auto-advance)
+      if (progressBar) {
+        progressBar.style.transform = 'scaleX(1)';
+      }
     }
-  }, [mediaIndex, post?.id, imageLoaded, advanceToNextMedia, post]);
+  }, [mediaIndex, post?.id, imageLoaded, post]);
 
   
   useEffect(() => {
@@ -510,6 +425,7 @@ const Profile = () => {
                       onLoadedMetadata={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
                       muted
+                      loop
                       autoPlay
                       playsInline
                       controls={false}
