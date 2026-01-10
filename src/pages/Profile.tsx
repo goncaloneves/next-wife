@@ -112,11 +112,12 @@ const Profile = () => {
   const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
-  const [videoProgress, setVideoProgress] = useState(0);
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -138,6 +139,53 @@ const Profile = () => {
       if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const progress = progressRef.current;
+    if (!video || !progress) return;
+
+    const updateProgress = () => {
+      if (video.duration > 0) {
+        const percent = video.currentTime / video.duration;
+        progress.style.transform = `scaleX(${percent})`;
+      }
+      rafRef.current = requestAnimationFrame(updateProgress);
+    };
+
+    const startLoop = () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(updateProgress);
+    };
+
+    const stopLoop = () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+
+    const resetProgress = () => {
+      progress.style.transform = 'scaleX(0)';
+    };
+
+    video.addEventListener('play', startLoop);
+    video.addEventListener('pause', stopLoop);
+    video.addEventListener('ended', resetProgress);
+    video.addEventListener('loadedmetadata', resetProgress);
+
+    if (!video.paused) {
+      startLoop();
+    }
+
+    return () => {
+      stopLoop();
+      video.removeEventListener('play', startLoop);
+      video.removeEventListener('pause', stopLoop);
+      video.removeEventListener('ended', resetProgress);
+      video.removeEventListener('loadedmetadata', resetProgress);
+    };
+  }, [mediaIndex, post?.id]);
 
   
   useEffect(() => {
@@ -371,17 +419,6 @@ const Profile = () => {
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       onLoadedMetadata={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
-                      onTimeUpdate={(e) => {
-                        const video = e.currentTarget;
-                        if (video.duration > 0) {
-                          setVideoProgress((video.currentTime / video.duration) * 100);
-                        }
-                      }}
-                      onSeeked={(e) => {
-                        if (e.currentTarget.currentTime < 0.1) {
-                          setVideoProgress(0);
-                        }
-                      }}
                       muted
                       loop
                       autoPlay
@@ -407,7 +444,7 @@ const Profile = () => {
                           e.stopPropagation(); 
                           if (mediaIndex > 0) {
                             setImageLoaded(false);
-                            setVideoProgress(0);
+                            if (progressRef.current) progressRef.current.style.transform = 'scaleX(0)';
                             setMediaIndex(prev => prev - 1);
                           }
                         }}
@@ -419,7 +456,7 @@ const Profile = () => {
                           e.stopPropagation(); 
                           if (mediaIndex < mediaList.length - 1) {
                             setImageLoaded(false);
-                            setVideoProgress(0);
+                            if (progressRef.current) progressRef.current.style.transform = 'scaleX(0)';
                             setMediaIndex(prev => prev + 1);
                           }
                         }}
@@ -434,8 +471,9 @@ const Profile = () => {
                           >
                             {idx === mediaIndex && media.type === 'video' ? (
                               <div 
-                                className="h-full bg-white/90 transition-[width] duration-100 ease-linear"
-                                style={{ width: `${videoProgress}%` }}
+                                ref={progressRef}
+                                className="h-full bg-white/90 origin-left will-change-transform"
+                                style={{ transform: 'scaleX(0)' }}
                               />
                             ) : (
                               <div 
@@ -452,8 +490,9 @@ const Profile = () => {
                     <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
                       <div className="flex-1 h-1 rounded-sm bg-black/50 overflow-hidden">
                         <div 
-                          className="h-full bg-white/90 transition-[width] duration-100 ease-linear"
-                          style={{ width: `${videoProgress}%` }}
+                          ref={progressRef}
+                          className="h-full bg-white/90 origin-left will-change-transform"
+                          style={{ transform: 'scaleX(0)' }}
                         />
                       </div>
                     </div>
