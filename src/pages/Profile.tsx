@@ -531,7 +531,7 @@ const Profile = () => {
                     <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
                       {profileData.name}
                     </h1>
-                    <span className="text-xl md:text-2xl font-semibold text-white/90">
+                    <span className="text-xl font-semibold text-white/90">
                       {profileData.age}
                     </span>
                     <BadgeCheck 
