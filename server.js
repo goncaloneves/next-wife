@@ -400,6 +400,126 @@ function parseChannelHTML(html, channelName) {
 }
 
 // ============== SINGLE POST FETCH ==============
+// Parse single-post embed HTML (different format from channel feed)
+function parseSinglePostHTML(html, postId, channelName) {
+  // Single-post embeds don't have tgme_widget_message_wrap or data-post
+  // They have tgme_widget_message directly
+  
+  // Extract text content
+  const textMatch = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(html);
+  const text = textMatch ? textMatch[1]
+    .replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '')
+    .replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .trim() : '';
+  
+  if (!text) return null;
+  
+  // Parse profile data
+  let profileData = null;
+  const nameMatch = text.match(/Name:\s*([^\n]+)/i);
+  const ageMatch = text.match(/Age:\s*(\d+)/i);
+  const nationalityMatch = text.match(/Nationality:\s*([^\n]+)/i);
+  const hometownMatch = text.match(/Hometown:\s*([^\n]+)/i);
+  const workMatch = text.match(/Work:\s*([^\n]+)/i);
+  const personalityMatch = text.match(/Personality:\s*([^\n]+)/i);
+  const relationshipMatch = text.match(/Relationship:\s*([^\n]+)/i);
+  const aboutMatch = text.match(/About:\s*([^\n]+(?:\n(?!Meet me|Name:|Age:|Nationality:|Hometown:|Work:|Personality:|Relationship:)[^\n]+)*)/i);
+
+  if (nameMatch && ageMatch && nationalityMatch && hometownMatch && workMatch) {
+    const cleanName = nameMatch[1].trim().replace(/\s*\(\d+\)\s*$/, '');
+    profileData = {
+      name: cleanName,
+      age: parseInt(ageMatch[1]),
+      nationality: nationalityMatch[1].trim(),
+      hometown: hometownMatch[1].trim(),
+      work: workMatch[1].trim(),
+      personality: personalityMatch ? personalityMatch[1].trim().toLowerCase() : null,
+      relationship: relationshipMatch ? relationshipMatch[1].trim().toLowerCase() : 'girlfriend',
+      about: aboutMatch ? aboutMatch[1].trim() : null
+    };
+  }
+  
+  // Extract bot link
+  let botLink = null;
+  const linkRegex = /<a\s+([^>]*?)href="([^"]*?)"([^>]*?)>([\s\S]*?)<\/a>/gi;
+  let linkMatch;
+  while ((linkMatch = linkRegex.exec(html)) !== null) {
+    const href = linkMatch[2];
+    const linkText = linkMatch[4];
+    if (href.toLowerCase().includes('nextwifebot') || linkText.toLowerCase().includes('nextwifebot')) {
+      botLink = href.replace(/&amp;/g, '&').replace(/&quot;/g, '"')
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num)))
+        .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+      break;
+    }
+  }
+  
+  // Extract media URLs
+  const mediaUrls = [];
+  
+  // Photos
+  const photoRegex = /class="[^"]*tgme_widget_message_photo_wrap[^"]*"[^>]*style="[^"]*background-image:url\('([^']*)'/g;
+  let photoMatch;
+  while ((photoMatch = photoRegex.exec(html)) !== null) {
+    let url = photoMatch[1];
+    if (url && url.startsWith('//')) url = 'https:' + url;
+    if (url && !mediaUrls.some(m => m.url === url)) {
+      mediaUrls.push({ type: 'photo', url });
+    }
+  }
+  
+  // Videos
+  const videoRegex = /<video[^>]*src="([^"]+)"[^>]*class="[^"]*tgme_widget_message_video/g;
+  let videoMatch;
+  while ((videoMatch = videoRegex.exec(html)) !== null) {
+    let url = videoMatch[1];
+    if (url && url.startsWith('//')) url = 'https:' + url;
+    if (url && !mediaUrls.some(m => m.url === url)) {
+      mediaUrls.push({ type: 'video', url });
+    }
+  }
+  
+  const videoRegex2 = /<video[^>]*class="[^"]*tgme_widget_message_video[^"]*"[^>]*src="([^"]+)"/g;
+  while ((videoMatch = videoRegex2.exec(html)) !== null) {
+    let url = videoMatch[1];
+    if (url && url.startsWith('//')) url = 'https:' + url;
+    if (url && !mediaUrls.some(m => m.url === url)) {
+      mediaUrls.push({ type: 'video', url });
+    }
+  }
+  
+  const media = mediaUrls.length > 0 ? mediaUrls[0].url : null;
+  
+  // Extract date
+  const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(html);
+  const date = dateMatch ? dateMatch[1] : new Date().toISOString();
+  
+  // Extract avatar
+  let avatar = null;
+  const avatarMatch = /class="[^"]*tgme_widget_message_user_photo[^"]*"[^>]*style="[^"]*background-image:\s*url\((?:'|")?([^'")]+)(?:'|")?\)/i.exec(html);
+  if (avatarMatch) avatar = avatarMatch[1];
+  if (avatar && avatar.startsWith('//')) avatar = 'https:' + avatar;
+  
+  if (!media) return null;
+  
+  return {
+    id: postId,
+    text,
+    date,
+    link: `https://t.me/${channelName}/${postId}`,
+    media,
+    mediaUrls: mediaUrls.length > 0 ? mediaUrls : null,
+    avatar,
+    botLink,
+    profileData
+  };
+}
+
 // Fetch a single post directly from Telegram (fallback when not in DB)
 async function fetchSinglePost(postId, channel = 'nextwife_ai') {
   const telegramChannel = channel.replace(/_/g, '').replace('@', '');
@@ -422,15 +542,22 @@ async function fetchSinglePost(postId, channel = 'nextwife_ai') {
     const html = await response.text();
     console.log(`  [fetchSinglePost] HTML length: ${html.length}, has Name: ${html.includes('Name:')}, has media: ${html.includes('background-image')}`);
     
+    // Try single-post parser first (for ?single=1 embeds)
+    const singlePost = parseSinglePostHTML(html, postId, telegramChannel);
+    if (singlePost) {
+      console.log(`  [fetchSinglePost] Parsed single post: media=${!!singlePost.media}, name=${singlePost.profileData?.name || 'null'}`);
+      return singlePost;
+    }
+    
+    // Fallback to channel feed parser
     const result = parseChannelHTML(html, telegramChannel);
-    console.log(`  [fetchSinglePost] Parsed ${result.posts.length} posts`);
+    console.log(`  [fetchSinglePost] Fallback: Parsed ${result.posts.length} posts from channel format`);
     
     if (result.posts.length === 0) {
       console.log(`  [fetchSinglePost] No posts found in parsed HTML`);
       return null;
     }
     
-    // Find the exact post we're looking for
     const post = result.posts.find(p => p.id === postId) || result.posts[0];
     console.log(`  [fetchSinglePost] Found post: id=${post.id}, media=${!!post.media}, name=${post.profileData?.name || 'null'}`);
     return post;

@@ -1,0 +1,152 @@
+2026-01-10 01:43:18.78
+225e85cc
+User
+Page 157: synced 20 posts (next cursor: 1823)
+2026-01-10 01:43:21.88
+225e85cc
+User
+Page 158: synced 20 posts (next cursor: 1803)
+2026-01-10 01:43:24.08
+225e85cc
+User
+Page 159: synced 20 posts (next cursor: 1783)
+2026-01-10 01:43:26.61
+225e85cc
+User
+Page 160: synced 20 posts (next cursor: 1761)
+2026-01-10 01:43:29.98
+225e85cc
+User
+Page 161: synced 20 posts (next cursor: 1741)
+2026-01-10 01:43:32.21
+225e85cc
+User
+Page 162: synced 20 posts (next cursor: 1721)
+2026-01-10 01:43:35.08
+225e85cc
+User
+Page 163: synced 20 posts (next cursor: 1701)
+2026-01-10 01:43:37.41
+225e85cc
+User
+Page 164: synced 20 posts (next cursor: 1681)
+2026-01-10 01:43:40.08
+225e85cc
+User
+Page 165: synced 20 posts (next cursor: 1661)
+2026-01-10 01:43:40.76
+225e85cc
+User
+[Profile API] Request for profile 5121, channel=nextwifeai
+2026-01-10 01:43:40.79
+225e85cc
+User
+[Profile API] Post 5121 not in DB, fetching from Telegram...
+2026-01-10 01:43:40.79
+225e85cc
+User
+[Profile API] DB query result: 0 rows, name=null
+2026-01-10 01:43:40.79
+225e85cc
+User
+[fetchSinglePost] Fetching https://t.me/nextwifeai/5121?embed=1&single=1
+2026-01-10 01:43:41.17
+225e85cc
+User
+[fetchSinglePost] Response status: 200
+2026-01-10 01:43:41.17
+225e85cc
+User
+Telegram fetch result: null
+2026-01-10 01:43:41.17
+225e85cc
+User
+[fetchSinglePost] HTML length: 16480, has Name: true, has media: true
+2026-01-10 01:43:41.17
+225e85cc
+User
+[fetchSinglePost] No posts found in parsed HTML
+2026-01-10 01:43:41.17
+225e85cc
+User
+[fetchSinglePost] Parsed 0 posts
+2026-01-10 01:43:41.58
+225e85cc
+User
+Page 166: synced 20 posts (next cursor: 1641)
+2026-01-10 01:43:44.48
+225e85cc
+User
+Page 167: synced 20 posts (next cursor: 1621)
+2026-01-10 01:43:46.88
+225e85cc
+User
+Page 168: synced 20 posts (next cursor: 1601)
+2026-01-10 01:43:51.51
+225e85cc
+User
+Page 169: synced 20 posts (next cursor: 1580)
+2026-01-10 01:43:51.96
+225e85cc
+User
+[Profile API] Request for profile 5121, channel=nextwifeai
+2026-01-10 01:43:52.00
+225e85cc
+User
+[fetchSinglePost] Fetching https://t.me/nextwifeai/5121?embed=1&single=1
+2026-01-10 01:43:52.00
+225e85cc
+User
+[Profile API] Post 5121 not in DB, fetching from Telegram...
+2026-01-10 01:43:52.00
+225e85cc
+User
+[Profile API] DB query result: 0 rows, name=null
+2026-01-10 01:43:52.13
+225e85cc
+User
+[fetchSinglePost] Response status: 200
+2026-01-10 01:43:52.13
+225e85cc
+User
+Telegram fetch result: null
+2026-01-10 01:43:52.13
+225e85cc
+User
+[fetchSinglePost] Parsed 0 posts
+2026-01-10 01:43:52.13
+225e85cc
+User
+[fetchSinglePost] HTML length: 16480, has Name: true, has media: true
+2026-01-10 01:43:52.13
+225e85cc
+User
+[fetchSinglePost] No posts found in parsed HTML
+2026-01-10 01:43:53.08
+225e85cc
+User
+Page 170: synced 6 posts (next cursor: 1569)
+2026-01-10 01:43:53.31
+225e85cc
+User
+⏰ Scheduled sync starting...
+2026-01-10 01:43:53.38
+225e85cc
+User
+🔍 Detecting deleted posts for @nextwifeai (checking IDs 4855-5116)...
+2026-01-10 01:43:53.88
+225e85cc
+User
+✅ Background sync complete: 3350 posts synced
+2026-01-10 01:43:55.16
+225e85cc
+User
+[Profile API] DB query result: 1 rows, name=Cecilia De Santis
+2026-01-10 01:44:19.31
+225e85cc
+User
+✅ Delete detection complete: 0 deleted, 0 resurrected
+2026-01-10 01:44:19.38
+225e85cc
+User
+⏰ Scheduled sync complete: { deleted: 0, resurrected: 0 }
