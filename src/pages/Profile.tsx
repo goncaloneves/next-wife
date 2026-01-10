@@ -118,6 +118,7 @@ const Profile = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number | null>(null);
+  const loadedMediaRef = useRef<Set<number>>(new Set());
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -248,6 +249,7 @@ const Profile = () => {
       setImageLoaded(false);
       setAboutExpanded(false);
       setMediaIndex(0);
+      loadedMediaRef.current = new Set();
       
       try {
         const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
@@ -469,7 +471,10 @@ const Profile = () => {
                       ref={videoRef}
                       src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
                       className={`absolute inset-0 w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoadedMetadata={() => setImageLoaded(true)}
+                      onLoadedMetadata={() => {
+                        loadedMediaRef.current.add(mediaIndex);
+                        setImageLoaded(true);
+                      }}
                       onError={() => setImageLoaded(true)}
                       muted
                       loop
@@ -482,7 +487,10 @@ const Profile = () => {
                       src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
                       alt={profileData.name}
                       className={`absolute inset-0 w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoad={() => setImageLoaded(true)}
+                      onLoad={() => {
+                        loadedMediaRef.current.add(mediaIndex);
+                        setImageLoaded(true);
+                      }}
                       onError={() => setImageLoaded(true)}
                       draggable={false}
                     />
@@ -495,8 +503,11 @@ const Profile = () => {
                         onTap={(e) => { 
                           e.stopPropagation(); 
                           if (mediaIndex > 0) {
-                            setImageLoaded(false);
-                            setMediaIndex(prev => prev - 1);
+                            const nextIdx = mediaIndex - 1;
+                            if (!loadedMediaRef.current.has(nextIdx)) {
+                              setImageLoaded(false);
+                            }
+                            setMediaIndex(nextIdx);
                           }
                         }}
                         data-testid="media-prev"
@@ -506,8 +517,11 @@ const Profile = () => {
                         onTap={(e) => { 
                           e.stopPropagation(); 
                           if (mediaIndex < mediaList.length - 1) {
-                            setImageLoaded(false);
-                            setMediaIndex(prev => prev + 1);
+                            const nextIdx = mediaIndex + 1;
+                            if (!loadedMediaRef.current.has(nextIdx)) {
+                              setImageLoaded(false);
+                            }
+                            setMediaIndex(nextIdx);
                           }
                         }}
                         data-testid="media-next"
