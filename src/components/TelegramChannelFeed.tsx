@@ -963,13 +963,11 @@ export const TelegramChannelFeed = ({
                               }, delay);
                             }}
                           />
-                          {/* Video indicator - Instagram Reels clapperboard style */}
+                          {/* Video indicator - simple play icon */}
                           <div className="absolute top-2 right-2 pointer-events-none">
-                            <div className="w-6 h-6 bg-black/60 rounded flex items-center justify-center backdrop-blur-sm">
-                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z" />
-                              </svg>
-                            </div>
+                            <svg className="w-5 h-5 text-white drop-shadow-md" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
                           </div>
                         </div>
                       );
