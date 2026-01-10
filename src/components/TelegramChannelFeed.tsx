@@ -780,11 +780,44 @@ export const TelegramChannelFeed = ({
                   navigate(`/profile/${activePost.id}`);
                 }}
               >
-                <img
-                  src={buildSrc(activePost.media!, activePost.id)}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
+                {(() => {
+                  const firstMedia = activePost.mediaUrls?.[0];
+                  const isVideo = firstMedia?.type === 'video';
+                  
+                  if (isVideo) {
+                    return (
+                      <div className="w-full h-full relative">
+                        <video
+                          ref={el => { videoRefs.current[activePost.id] = el; }}
+                          src={buildSrc(firstMedia.url, activePost.id)}
+                          muted
+                          playsInline
+                          autoPlay
+                          preload="metadata"
+                          className="w-full h-full object-cover"
+                          onLoadedData={() => {
+                            setImageLoadStates((prev) => ({ ...prev, [activePost.id]: true }));
+                            const video = videoRefs.current[activePost.id];
+                            if (video) startBoomerang(video, activePost.id);
+                          }}
+                        />
+                        <div className="absolute top-2 right-2 pointer-events-none">
+                          <svg className="w-5 h-5" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" fill="white" stroke="rgba(0,0,0,0.25)" strokeWidth="0.75" />
+                          </svg>
+                        </div>
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <img
+                      src={buildSrc(activePost.media!, activePost.id)}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  );
+                })()}
                 {activePost.profileData && (
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent">
                     <div className="flex items-center gap-2 mb-1">
