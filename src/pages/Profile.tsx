@@ -418,14 +418,14 @@ const Profile = () => {
                         data-testid="media-next"
                       />
                       
-                      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 pointer-events-none">
+                      <div className="absolute top-3 left-4 right-4 z-20 flex gap-1 pointer-events-none">
                         {mediaList.map((_, idx) => (
                           <div 
                             key={idx}
-                            className={`h-1 rounded-full transition-all duration-200 ${
+                            className={`flex-1 h-1.5 rounded-sm transition-all duration-200 ${
                               idx === mediaIndex 
-                                ? 'w-6 bg-white' 
-                                : 'w-1.5 bg-white/50'
+                                ? 'bg-white' 
+                                : 'bg-white/40'
                             }`}
                           />
                         ))}
