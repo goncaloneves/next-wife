@@ -141,24 +141,51 @@ const Profile = () => {
   }, []);
 
   useEffect(() => {
-    if (!post || !imageLoaded) return;
+    let videoPlayListener: (() => void) | null = null;
+    let videoElement: HTMLVideoElement | null = null;
     
-    const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
-    
-    // Skip for single media items (no progress bar shown)
-    if (mediaList.length === 1) return;
-    
-    const currentMedia = mediaList[mediaIndex];
-    const progressBar = progressRefs.current[mediaIndex];
-    
+    // Cancel any existing RAF immediately on effect run
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
     
+    if (!post || !imageLoaded) {
+      return () => {
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+      };
+    }
+    
+    const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+    
+    // Skip for single media items (no progress bar shown)
+    if (mediaList.length === 1) {
+      return () => {
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+      };
+    }
+    
+    const currentMedia = mediaList[mediaIndex];
+    const progressBar = progressRefs.current[mediaIndex];
+    
     if (currentMedia?.type === 'video') {
       const video = videoRef.current;
-      if (!video || !progressBar) return;
+      if (!video || !progressBar) {
+        return () => {
+          if (rafRef.current) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+          }
+        };
+      }
+      
+      videoElement = video;
       
       const updateVideoProgress = () => {
         if (video.duration > 0) {
@@ -174,22 +201,28 @@ const Profile = () => {
         rafRef.current = requestAnimationFrame(updateVideoProgress);
       };
       
+      videoPlayListener = startVideoLoop;
       video.addEventListener('play', startVideoLoop);
       
       if (!video.paused) {
         startVideoLoop();
       }
-      
-      return () => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        video.removeEventListener('play', startVideoLoop);
-      };
     } else {
       // Photos: just show filled progress bar (no auto-advance)
       if (progressBar) {
         progressBar.style.transform = 'scaleX(1)';
       }
     }
+    
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      if (videoElement && videoPlayListener) {
+        videoElement.removeEventListener('play', videoPlayListener);
+      }
+    };
   }, [mediaIndex, post?.id, imageLoaded, post]);
 
   
