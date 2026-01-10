@@ -4,7 +4,6 @@ import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTelegram, openTelegramLinkAndClose } from "@/hooks/use-telegram";
-import { useSingleBoomerangVideo } from "@/hooks/useBoomerangVideo";
 import {
   Dialog,
   DialogContent,
@@ -117,7 +116,6 @@ const Profile = () => {
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { start: startBoomerang, stop: stopBoomerang } = useSingleBoomerangVideo();
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
@@ -143,8 +141,6 @@ const Profile = () => {
   
   useEffect(() => {
     if (!id) return;
-    
-    stopBoomerang();
     
     const fetchProfile = async () => {
       setLoading(true);
@@ -371,14 +367,12 @@ const Profile = () => {
                     <video
                       ref={videoRef}
                       src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
-                      crossOrigin="anonymous"
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoadedMetadata={() => {
-                        setImageLoaded(true);
-                        if (videoRef.current) startBoomerang(videoRef.current);
-                      }}
+                      onLoadedMetadata={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
                       muted
+                      loop
+                      autoPlay
                       playsInline
                       controls={false}
                     />
@@ -459,7 +453,7 @@ const Profile = () => {
               </button>
             </div>
 
-            <div className={`absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
+            <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pt-16 pb-2">
                   {post.isHot && (

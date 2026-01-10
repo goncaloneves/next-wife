@@ -9,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters } from "./FeedFilters";
 import { formatDistanceToNow } from "date-fns";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
-import { useBoomerangVideo } from "@/hooks/useBoomerangVideo";
 
 interface ProfileData {
   name: string;
@@ -100,7 +99,6 @@ export const TelegramChannelFeed = ({
   const [lastViewedId, setLastViewedId] = useState<string | null>(null);
   const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
-  const { startBoomerang, stopBoomerang } = useBoomerangVideo();
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -790,16 +788,14 @@ export const TelegramChannelFeed = ({
                         <video
                           ref={el => { videoRefs.current[activePost.id] = el; }}
                           src={buildSrc(firstMedia.url, activePost.id)}
-                          crossOrigin="anonymous"
                           muted
+                          loop
                           playsInline
                           autoPlay
                           preload="metadata"
                           className="w-full h-full object-cover"
                           onLoadedData={() => {
                             setImageLoadStates((prev) => ({ ...prev, [activePost.id]: true }));
-                            const video = videoRefs.current[activePost.id];
-                            if (video) startBoomerang(video, activePost.id);
                           }}
                         />
                         <div className="absolute top-2 right-2 pointer-events-none">
@@ -820,7 +816,7 @@ export const TelegramChannelFeed = ({
                   );
                 })()}
                 {activePost.profileData && (
-                  <div className="absolute bottom-0 left-0 right-0 z-10 p-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-2xl font-bold text-white drop-shadow-lg">
                         {activePost.profileData.name}
@@ -939,7 +935,10 @@ export const TelegramChannelFeed = ({
                             if (!isMobile) {
                               setPlayingVideos(prev => new Set(prev).add(post.id));
                               const video = videoRefs.current[post.id];
-                              if (video) startBoomerang(video, post.id);
+                              if (video) {
+                                video.currentTime = 0;
+                                video.play().catch(() => {});
+                              }
                             }
                           }}
                           onMouseLeave={() => {
@@ -949,23 +948,33 @@ export const TelegramChannelFeed = ({
                                 next.delete(post.id);
                                 return next;
                               });
-                              stopBoomerang(post.id, videoRefs.current[post.id]);
+                              const video = videoRefs.current[post.id];
+                              if (video) {
+                                video.pause();
+                                video.currentTime = 0;
+                              }
                             }
                           }}
                           onClick={(e) => {
                             if (isMobile) {
                               e.stopPropagation();
+                              const video = videoRefs.current[post.id];
                               if (isPlaying) {
                                 setPlayingVideos(prev => {
                                   const next = new Set(prev);
                                   next.delete(post.id);
                                   return next;
                                 });
-                                stopBoomerang(post.id, videoRefs.current[post.id]);
+                                if (video) {
+                                  video.pause();
+                                  video.currentTime = 0;
+                                }
                               } else {
                                 setPlayingVideos(prev => new Set(prev).add(post.id));
-                                const video = videoRefs.current[post.id];
-                                if (video) startBoomerang(video, post.id);
+                                if (video) {
+                                  video.currentTime = 0;
+                                  video.play().catch(() => {});
+                                }
                               }
                             }
                           }}
@@ -974,8 +983,8 @@ export const TelegramChannelFeed = ({
                             ref={el => { videoRefs.current[post.id] = el; }}
                             key={`video-${post.id}`}
                             src={buildSrc(firstMedia.url, post.id)}
-                            crossOrigin="anonymous"
                             muted
+                            loop
                             playsInline
                             preload="metadata"
                             className={`w-full h-full object-cover transition-all duration-300 ${
@@ -1065,7 +1074,7 @@ export const TelegramChannelFeed = ({
                   
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
-                    <div className="absolute bottom-0 left-0 right-0 z-10 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-[background] duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-100">
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-[background] duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-xl md:text-2xl font-bold drop-shadow-lg">
