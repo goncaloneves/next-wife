@@ -98,6 +98,7 @@ export const TelegramChannelFeed = ({
   const [isMobile, setIsMobile] = useState(false);
   const [lastViewedId, setLastViewedId] = useState<string | null>(null);
   const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
   const progressCircleRefs = useRef<Record<string, SVGCircleElement | null>>({});
   const rafRefs = useRef<Record<string, number>>({});
