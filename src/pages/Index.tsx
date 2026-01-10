@@ -5,8 +5,7 @@ import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
-import { FilterButton } from "@/components/FeedFilters";
-import { ProfileFilterModal } from "@/components/ProfileFilterModal";
+import { FeedFilters, FilterButton } from "@/components/FeedFilters";
 import { getStoredFilters, saveFilters, getActiveFilterCount, type SharedFilters } from "@/lib/filterStorage";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -417,12 +416,12 @@ const Index = () => {
         </div>
         </footer>
 
-      <ProfileFilterModal
-        isOpen={showFilters}
-        onClose={() => setShowFilters(false)}
+      <FeedFilters
         channel="nextwife_ai"
-        filters={filters}
         onFiltersChange={handleFiltersChange}
+        showFilters={showFilters}
+        onShowFiltersChange={setShowFilters}
+        hideButton
       />
       </div>
     </div>
