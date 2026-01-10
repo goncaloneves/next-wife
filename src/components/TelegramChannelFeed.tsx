@@ -761,23 +761,7 @@ export const TelegramChannelFeed = ({
                 }}
                 onClick={() => {
                   trackClick(activePost.id);
-                  // Set nav flag to preserve skip history when re-entering profile
-                  sessionStorage.setItem('nextwife_navigating_skip', 'true');
-                  sessionStorage.setItem('feedScrollContext', JSON.stringify({
-                    postId: activePost.id,
-                    scrollY: window.scrollY
-                  }));
-                  sessionStorage.setItem('feedCache', JSON.stringify({
-                    posts: allPosts,
-                    channelInfo,
-                    nextCursor,
-                    hasMore,
-                    filters,
-                    sortBy,
-                    refreshKey,
-                    imageLoadStates
-                  }));
-                  navigate(`/profile/${activePost.id}`);
+                  navigate('/discover');
                 }}
               >
                 {(() => {
@@ -838,27 +822,11 @@ export const TelegramChannelFeed = ({
                 }}
                 onClick={() => {
                   trackClick(activePost.id);
-                  // Set nav flag to preserve skip history when re-entering profile
-                  sessionStorage.setItem('nextwife_navigating_skip', 'true');
-                  sessionStorage.setItem('feedScrollContext', JSON.stringify({
-                    postId: activePost.id,
-                    scrollY: window.scrollY
-                  }));
-                  sessionStorage.setItem('feedCache', JSON.stringify({
-                    posts: allPosts,
-                    channelInfo,
-                    nextCursor,
-                    hasMore,
-                    filters,
-                    sortBy,
-                    refreshKey,
-                    imageLoadStates
-                  }));
-                  navigate(`/profile/${activePost.id}`);
+                  navigate('/discover');
                 }}
                 data-testid="button-start-swiping"
               >
-                View Profiles 💕
+                Discover 💕
               </Button>
             </div>
           )}
