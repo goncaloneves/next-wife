@@ -965,10 +965,19 @@ export const TelegramChannelFeed = ({
                           />
                           {!isPlaying && (
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                              <div className="w-16 h-16 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M8 5v14l11-7z" />
-                                </svg>
+                              <div className="relative w-16 h-16 group/play">
+                                {/* Outer glow */}
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-500/30 to-rose-500/30 blur-xl scale-150" />
+                                {/* Gradient border ring */}
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-400 via-rose-500 to-pink-500 p-[2px]">
+                                  <div className="w-full h-full rounded-full bg-black/60 backdrop-blur-md" />
+                                </div>
+                                {/* Play icon */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <svg className="w-7 h-7 text-white ml-1 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                  </svg>
+                                </div>
                               </div>
                             </div>
                           )}
