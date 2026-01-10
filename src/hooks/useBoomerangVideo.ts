@@ -13,6 +13,7 @@ interface BoomerangState {
 
 const MAX_CAPTURE_ERRORS = 3;
 const MIN_FRAMES = 5;
+const CAPTURE_FPS = 30;
 
 export function useBoomerangVideo() {
   const statesRef = useRef<Map<string, BoomerangState>>(new Map());
@@ -119,24 +120,25 @@ export function useBoomerangVideo() {
       video.loop = false;
       
       let lastCaptureTime = 0;
-      let captureStartTime = 0;
-      let playbackFps = 30;
       
       const captureLoop = async (now: number) => {
         if (state.cancelled) return;
         
         if (state.phase === 'capturing') {
-          if (captureStartTime === 0) captureStartTime = now;
-          
-          try {
-            const bitmap = await createImageBitmap(video);
-            state.frames.push(bitmap);
-            overlayCtx.drawImage(bitmap, 0, 0, width, height);
-          } catch (e) {
-            state.captureErrors++;
-            if (state.captureErrors >= MAX_CAPTURE_ERRORS) {
-              abortBoomerang();
-              return;
+          const elapsed = now - lastCaptureTime;
+          if (elapsed >= 1000 / CAPTURE_FPS) {
+            lastCaptureTime = now;
+            
+            try {
+              const bitmap = await createImageBitmap(video);
+              state.frames.push(bitmap);
+              overlayCtx.drawImage(bitmap, 0, 0, width, height);
+            } catch (e) {
+              state.captureErrors++;
+              if (state.captureErrors >= MAX_CAPTURE_ERRORS) {
+                abortBoomerang();
+                return;
+              }
             }
           }
           
@@ -150,8 +152,6 @@ export function useBoomerangVideo() {
             state.phase = 'playing';
             state.frameIndex = state.frames.length - 1;
             state.reverse = true;
-            const captureDuration = (now - captureStartTime) / 1000;
-            playbackFps = state.frames.length / captureDuration;
             lastCaptureTime = now;
           } else if ((nearEnd || video.ended) && !hasEnoughFrames) {
             abortBoomerang();
@@ -161,7 +161,7 @@ export function useBoomerangVideo() {
           state.rafId = requestAnimationFrame(captureLoop);
         } else {
           const elapsed = now - lastCaptureTime;
-          if (elapsed >= 1000 / playbackFps) {
+          if (elapsed >= 1000 / CAPTURE_FPS) {
             lastCaptureTime = now;
             
             if (state.frames.length > 0 && state.frameIndex >= 0 && state.frameIndex < state.frames.length) {
@@ -356,24 +356,25 @@ export function useSingleBoomerangVideo() {
       video.loop = false;
       
       let lastCaptureTime = 0;
-      let captureStartTime = 0;
-      let playbackFps = 30;
       
       const captureLoop = async (now: number) => {
         if (cancelledRef.current) return;
         
         if (phaseRef.current === 'capturing') {
-          if (captureStartTime === 0) captureStartTime = now;
-          
-          try {
-            const bitmap = await createImageBitmap(video);
-            framesRef.current.push(bitmap);
-            overlayCtx.drawImage(bitmap, 0, 0, width, height);
-          } catch (e) {
-            captureErrorsRef.current++;
-            if (captureErrorsRef.current >= MAX_CAPTURE_ERRORS) {
-              abort();
-              return;
+          const elapsed = now - lastCaptureTime;
+          if (elapsed >= 1000 / CAPTURE_FPS) {
+            lastCaptureTime = now;
+            
+            try {
+              const bitmap = await createImageBitmap(video);
+              framesRef.current.push(bitmap);
+              overlayCtx.drawImage(bitmap, 0, 0, width, height);
+            } catch (e) {
+              captureErrorsRef.current++;
+              if (captureErrorsRef.current >= MAX_CAPTURE_ERRORS) {
+                abort();
+                return;
+              }
             }
           }
           
@@ -387,8 +388,6 @@ export function useSingleBoomerangVideo() {
             phaseRef.current = 'playing';
             frameIndexRef.current = framesRef.current.length - 1;
             reverseRef.current = true;
-            const captureDuration = (now - captureStartTime) / 1000;
-            playbackFps = framesRef.current.length / captureDuration;
             lastCaptureTime = now;
           } else if ((nearEnd || video.ended) && !hasEnoughFrames) {
             abort();
@@ -398,7 +397,7 @@ export function useSingleBoomerangVideo() {
           rafIdRef.current = requestAnimationFrame(captureLoop);
         } else {
           const elapsed = now - lastCaptureTime;
-          if (elapsed >= 1000 / playbackFps) {
+          if (elapsed >= 1000 / CAPTURE_FPS) {
             lastCaptureTime = now;
             
             if (framesRef.current.length > 0 && frameIndexRef.current >= 0 && frameIndexRef.current < framesRef.current.length) {
