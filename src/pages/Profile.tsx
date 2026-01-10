@@ -422,10 +422,10 @@ const Profile = () => {
                         {mediaList.map((_, idx) => (
                           <div 
                             key={idx}
-                            className={`flex-1 h-1.5 rounded-sm transition-all duration-200 ${
+                            className={`flex-1 h-1 rounded-sm transition-all duration-200 ${
                               idx === mediaIndex 
-                                ? 'bg-white' 
-                                : 'bg-gray-600/80'
+                                ? 'bg-white/90' 
+                                : 'bg-gray-500/50'
                             }`}
                           />
                         ))}
