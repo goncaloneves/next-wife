@@ -949,28 +949,30 @@ export const TelegramChannelFeed = ({
                   {post.profileData && (
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-[background] duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-2xl font-bold drop-shadow-lg">
+                        <div className="mb-1 leading-tight">
+                          <h3 className="inline text-2xl font-bold drop-shadow-lg">
                             {post.profileData.name}
                           </h3>
-                          <span className="text-xl font-semibold opacity-90">
-                            {post.profileData.age}
-                          </span>
-                          {/* Verified badge like Tinder */}
-                          <div className="relative group/badge">
-                            <BadgeCheck className="w-6 h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
-                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none">
-                              Verified
+                          <span className="inline-flex items-center gap-1.5 ml-2 align-middle">
+                            <span className="text-xl font-semibold opacity-90">
+                              {post.profileData.age}
                             </span>
-                          </div>
-                          {/* Fire indicator for hot profiles */}
-                          {post.isHot && (
-                            <Flame 
-                              className="w-6 h-6 drop-shadow-lg flex-shrink-0" 
-                              style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
-                              data-testid={`badge-hot-${post.id}`}
-                            />
-                          )}
+                            {/* Verified badge like Tinder */}
+                            <span className="relative group/badge inline-block">
+                              <BadgeCheck className="w-6 h-6 text-[#0099FF] drop-shadow-lg" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                              <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none">
+                                Verified
+                              </span>
+                            </span>
+                            {/* Fire indicator for hot profiles */}
+                            {post.isHot && (
+                              <Flame 
+                                className="w-6 h-6 drop-shadow-lg" 
+                                style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                                data-testid={`badge-hot-${post.id}`}
+                              />
+                            )}
+                          </span>
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="flex flex-col gap-3 text-sm max-h-0 opacity-0 overflow-hidden group-hover:max-h-40 group-hover:opacity-100 transition-all duration-300">
