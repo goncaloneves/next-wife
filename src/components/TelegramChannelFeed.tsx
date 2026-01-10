@@ -751,150 +751,10 @@ export const TelegramChannelFeed = ({
         {/* Posts grid - show whenever we have posts, even while loading new ones */}
         {postsWithMedia.length > 0 && (
         <div>
-          {/* Mobile: Start Swiping CTA with active profile preview */}
-          {isMobile && activePost && (
-            <div className="flex flex-col items-center gap-6 py-4">
-              <div 
-                className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer"
-                style={{
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3)',
-                }}
-                onClick={() => {
-                  trackClick(activePost.id);
-                  // Set nav flag to preserve skip history when re-entering profile
-                  sessionStorage.setItem('nextwife_navigating_skip', 'true');
-                  sessionStorage.setItem('feedScrollContext', JSON.stringify({
-                    postId: activePost.id,
-                    scrollY: window.scrollY
-                  }));
-                  sessionStorage.setItem('feedCache', JSON.stringify({
-                    posts: allPosts,
-                    channelInfo,
-                    nextCursor,
-                    hasMore,
-                    filters,
-                    sortBy,
-                    refreshKey,
-                    imageLoadStates
-                  }));
-                  navigate(`/profile/${activePost.id}`);
-                }}
-              >
-                {(() => {
-                  const firstMedia = activePost.mediaUrls?.[0];
-                  const isVideo = firstMedia?.type === 'video';
-                  
-                  if (isVideo) {
-                    return (
-                      <div className="w-full h-full relative">
-                        <video
-                          ref={el => { videoRefs.current[activePost.id] = el; }}
-                          src={buildSrc(firstMedia.url, activePost.id)}
-                          muted
-                          loop
-                          playsInline
-                          autoPlay
-                          preload="metadata"
-                          className="w-full h-full object-cover"
-                          onLoadedData={() => {
-                            setImageLoadStates((prev) => ({ ...prev, [activePost.id]: true }));
-                          }}
-                        />
-                      </div>
-                    );
-                  }
-                  
-                  return (
-                    <img
-                      src={buildSrc(activePost.media!, activePost.id)}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  );
-                })()}
-                {activePost.profileData && (
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-2xl font-bold text-white drop-shadow-lg">
-                        {activePost.profileData.name}
-                      </h3>
-                      <span className="text-xl font-semibold text-white/90">
-                        {activePost.profileData.age}
-                      </span>
-                      <BadgeCheck className="w-5 h-5 text-[#0099FF]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
-                      {activePost.isHot && (
-                        <Flame 
-                          className="w-5 h-5 drop-shadow-lg flex-shrink-0" 
-                          style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
-                        />
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-1 text-sm">
-                      <p className="flex items-center gap-1.5 text-white/90">
-                        <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                        <span>{activePost.profileData.hometown}</span>
-                      </p>
-                      <p className="flex items-start gap-1.5 text-white/90">
-                        <Briefcase className="w-3.5 h-3.5 text-orange-400 flex-shrink-0 mt-0.5" />
-                        <span className="line-clamp-2 leading-tight">{activePost.profileData.work?.replace(/\.$/, '')}</span>
-                      </p>
-                    </div>
-                    {(activePost.profileData.personality || activePost.profileData.relationship) && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {activePost.profileData.personality && (
-                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
-                            {getPersonalityLabel(activePost.profileData.personality)}
-                          </span>
-                        )}
-                        {activePost.profileData.relationship && (
-                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
-                            {getRelationshipLabel(activePost.profileData.relationship)}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-              <Button
-                size="lg"
-                className="text-lg px-10 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95"
-                style={{
-                  background: "var(--gradient-sunset)",
-                  boxShadow: "var(--shadow-warm)",
-                }}
-                onClick={() => {
-                  trackClick(activePost.id);
-                  // Set nav flag to preserve skip history when re-entering profile
-                  sessionStorage.setItem('nextwife_navigating_skip', 'true');
-                  sessionStorage.setItem('feedScrollContext', JSON.stringify({
-                    postId: activePost.id,
-                    scrollY: window.scrollY
-                  }));
-                  sessionStorage.setItem('feedCache', JSON.stringify({
-                    posts: allPosts,
-                    channelInfo,
-                    nextCursor,
-                    hasMore,
-                    filters,
-                    sortBy,
-                    refreshKey,
-                    imageLoadStates
-                  }));
-                  navigate(`/profile/${activePost.id}`);
-                }}
-                data-testid="button-start-swiping"
-              >
-                View Profiles 💕
-              </Button>
-            </div>
-          )}
-
-          {/* Desktop: Grid */}
-          {!isMobile && (
+          {/* Grid for both mobile and desktop */}
           <div 
             ref={gridRef}
-            className="grid grid-cols-4 gap-0.5"
+            className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-0.5 px-2 md:px-0"
           >
             {postsWithMedia.map((post, index) => {
               // Skip rendering if image failed too many times
@@ -1196,10 +1056,9 @@ export const TelegramChannelFeed = ({
               );
             })}
           </div>
-          )}
 
-          {/* Loading indicator - only show on desktop */}
-          {!isMobile && hasMore && isLoadingMore && (
+          {/* Loading indicator */}
+          {hasMore && isLoadingMore && (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
