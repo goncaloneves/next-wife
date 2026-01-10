@@ -1,48 +1,18 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Flame } from "lucide-react";
+import { Flame, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
-
-function parseUrlArrayParam(value: string | null): string[] {
-  if (!value) return [];
-  return value.split(',').map(v => decodeURIComponent(v.trim())).filter(Boolean);
-}
-
-// Hook to get responsive maxVisible based on screen width
-// Ensures exactly 3 rows of chips at each breakpoint
-// Grid column widths: mobile=full, md=50%, lg=33%
-// ~2 chips fit per row in each column
-function useResponsiveMaxVisible() {
-  const [maxVisible, setMaxVisible] = useState(4); // mobile default
-  
-  useEffect(() => {
-    const updateMaxVisible = () => {
-      const width = window.innerWidth;
-      // All breakpoints: ~2 chips per row in grid column
-      // 3 rows = All + 4 chips + button = 6 items
-      // So maxVisible = 4 for all sizes
-      setMaxVisible(4);
-    };
-    
-    updateMaxVisible();
-    window.addEventListener('resize', updateMaxVisible);
-    return () => window.removeEventListener('resize', updateMaxVisible);
-  }, []);
-  
-  return maxVisible;
-}
-
-interface FilterOptions {
-  regions: string[];
-  ageBrackets: string[];
-  occupationCategories: string[];
-  languages: string[];
-  hometowns: Record<string, string[]>;
-  personalities: string[];
-  relationships: string[];
-}
+import { 
+  FilterOptions, 
+  EMPTY_FILTER_OPTIONS, 
+  Chip, 
+  FilterSection, 
+  fetchFilterOptions, 
+  parseUrlArrayParam,
+  toggleArrayValue 
+} from "./filters/FilterComponents";
 
 interface FeedFiltersProps {
   channel: string;
@@ -50,97 +20,6 @@ interface FeedFiltersProps {
   showFilters?: boolean;
   onShowFiltersChange?: (show: boolean) => void;
   hideButton?: boolean;
-}
-
-interface ChipProps {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
-  variant?: "default" | "accent";
-}
-
-function Chip({ label, selected, onClick, variant = "default" }: ChipProps) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
-        "focus:outline-none focus:ring-2 focus:ring-orange-400/50",
-        selected
-          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/25 scale-105"
-          : variant === "accent"
-          ? "bg-white/15 text-white/90 hover:bg-white/25 hover:scale-102"
-          : "bg-white/10 text-white/80 hover:bg-white/20 hover:text-white"
-      )}
-      data-testid={`chip-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
-    >
-      {label}
-    </button>
-  );
-}
-
-function FilterSection({ 
-  title, 
-  options, 
-  selected, 
-  onToggle,
-  onClearAll,
-  showAll = false,
-  emptyMessage
-}: { 
-  title: string;
-  options: string[];
-  selected: string[];
-  onToggle: (value: string) => void;
-  onClearAll: () => void;
-  showAll?: boolean;
-  emptyMessage?: string;
-}) {
-  const [expanded, setExpanded] = useState(showAll);
-  const responsiveMaxVisible = useResponsiveMaxVisible();
-  const maxVisible = showAll ? options.length : responsiveMaxVisible;
-  const visibleOptions = expanded ? options : options.slice(0, maxVisible);
-  const hasMore = options.length > maxVisible;
-  const isAllSelected = selected.length === 0;
-
-  return (
-    <div className="space-y-3">
-      {title && <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">{title}</h3>}
-      {options.length === 0 && emptyMessage ? (
-        <p className="text-sm text-white/40 px-1">{emptyMessage}</p>
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          <Chip
-            label="All"
-            selected={isAllSelected}
-            onClick={onClearAll}
-          />
-          {visibleOptions.map((option) => (
-            <Chip
-              key={option}
-              label={option}
-              selected={selected.includes(option)}
-              onClick={() => onToggle(option)}
-              variant="accent"
-            />
-          ))}
-          {hasMore && (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 px-3 py-2.5 rounded-full text-sm text-white/60 hover:text-white/90 transition-colors"
-              data-testid={`expand-${title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
-            >
-              {expanded ? (
-                <>Show less <ChevronUp className="w-4 h-4" /></>
-              ) : (
-                <>{options.length - maxVisible} more <ChevronDown className="w-4 h-4" /></>
-              )}
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  );
 }
 
 export function FeedFilters({ 
@@ -152,15 +31,7 @@ export function FeedFilters({
 }: FeedFiltersProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    regions: [],
-    ageBrackets: [],
-    occupationCategories: [],
-    languages: [],
-    hometowns: {},
-    personalities: [],
-    relationships: [],
-  });
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(EMPTY_FILTER_OPTIONS);
   
   const [selectedRegions, setSelectedRegions] = useState<string[]>(() => 
     parseUrlArrayParam(searchParams.get('regions'))
@@ -190,34 +61,17 @@ export function FeedFilters({
     searchParams.get('hasMultipleMedia') === 'true'
   );
   
-  const toggleSelection = (current: string[], value: string): string[] => {
-    return current.includes(value) 
-      ? current.filter(v => v !== value)
-      : [...current, value];
-  };
   const [loading, setLoading] = useState(true);
   const [internalShowFilters, setInternalShowFilters] = useState(false);
   
-  // Support both controlled and uncontrolled modes
   const showFilters = controlledShowFilters !== undefined ? controlledShowFilters : internalShowFilters;
   const setShowFilters = onShowFiltersChange || setInternalShowFilters;
 
   useEffect(() => {
-    const fetchFilters = async () => {
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/tg-channel-filters?channel=${channel}`);
-        if (response.ok) {
-          const data = await response.json();
-          setFilterOptions(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch filter options:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFilters();
+    fetchFilterOptions(channel).then(data => {
+      setFilterOptions(data);
+      setLoading(false);
+    });
   }, [channel]);
 
   const availableHometowns = useMemo(() => {
@@ -364,7 +218,7 @@ export function FeedFilters({
               title="Region"
               options={filterOptions.regions}
               selected={selectedRegions}
-              onToggle={(value) => setSelectedRegions(toggleSelection(selectedRegions, value))}
+              onToggle={(value) => setSelectedRegions(toggleArrayValue(selectedRegions, value))}
               onClearAll={() => setSelectedRegions([])}
             />
 
@@ -373,7 +227,7 @@ export function FeedFilters({
               title="Age"
               options={filterOptions.ageBrackets}
               selected={selectedAgeBrackets}
-              onToggle={(value) => setSelectedAgeBrackets(toggleSelection(selectedAgeBrackets, value))}
+              onToggle={(value) => setSelectedAgeBrackets(toggleArrayValue(selectedAgeBrackets, value))}
               onClearAll={() => setSelectedAgeBrackets([])}
               showAll
             />
@@ -383,7 +237,7 @@ export function FeedFilters({
               title="Language"
               options={filterOptions.languages}
               selected={selectedLanguages}
-              onToggle={(value) => setSelectedLanguages(toggleSelection(selectedLanguages, value))}
+              onToggle={(value) => setSelectedLanguages(toggleArrayValue(selectedLanguages, value))}
               onClearAll={() => setSelectedLanguages([])}
             />
 
@@ -392,7 +246,7 @@ export function FeedFilters({
               title="Occupation"
               options={filterOptions.occupationCategories}
               selected={selectedOccupations}
-              onToggle={(value) => setSelectedOccupations(toggleSelection(selectedOccupations, value))}
+              onToggle={(value) => setSelectedOccupations(toggleArrayValue(selectedOccupations, value))}
               onClearAll={() => setSelectedOccupations([])}
             />
 
@@ -401,7 +255,7 @@ export function FeedFilters({
               title={selectedRegions.length > 0 ? `Cities in ${selectedRegions.join(', ')}` : "City"}
               options={availableHometowns}
               selected={selectedHometowns}
-              onToggle={(value) => setSelectedHometowns(toggleSelection(selectedHometowns, value))}
+              onToggle={(value) => setSelectedHometowns(toggleArrayValue(selectedHometowns, value))}
               onClearAll={() => setSelectedHometowns([])}
               emptyMessage="Select a region to see cities"
             />
@@ -413,7 +267,7 @@ export function FeedFilters({
               selected={selectedPersonalityLabels}
               onToggle={(label) => {
                 const value = personalityLabelToValue[label] || label;
-                setSelectedPersonalities(toggleSelection(selectedPersonalities, value));
+                setSelectedPersonalities(toggleArrayValue(selectedPersonalities, value));
               }}
               onClearAll={() => setSelectedPersonalities([])}
               showAll
@@ -426,7 +280,7 @@ export function FeedFilters({
               selected={selectedRelationshipLabels}
               onToggle={(label) => {
                 const value = relationshipLabelToValue[label] || label;
-                setSelectedRelationships(toggleSelection(selectedRelationships, value));
+                setSelectedRelationships(toggleArrayValue(selectedRelationships, value));
               }}
               onClearAll={() => setSelectedRelationships([])}
               showAll

@@ -1,18 +1,16 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
+import { X, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
-
-interface FilterOptions {
-  regions: string[];
-  ageBrackets: string[];
-  occupationCategories: string[];
-  languages: string[];
-  hometowns: Record<string, string[]>;
-  personalities: string[];
-  relationships: string[];
-}
+import { 
+  FilterOptions, 
+  EMPTY_FILTER_OPTIONS, 
+  Chip,
+  FilterSection, 
+  fetchFilterOptions,
+  toggleArrayValue 
+} from "./filters/FilterComponents";
 
 export interface ProfileFilters {
   regions: string[];
@@ -32,88 +30,6 @@ interface ProfileFilterModalProps {
   onFiltersChange: (filters: ProfileFilters) => void;
 }
 
-function Chip({ 
-  label, 
-  selected, 
-  onClick 
-}: { 
-  label: string; 
-  selected: boolean; 
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
-        "active:scale-95",
-        selected
-          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/25"
-          : "bg-white/10 text-white/80 hover:bg-white/20"
-      )}
-      data-testid={`profile-chip-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-    >
-      {label}
-    </button>
-  );
-}
-
-function FilterSection({ 
-  title, 
-  options, 
-  selected, 
-  onToggle,
-  onClearAll,
-  showAll = false,
-  maxVisible = 6
-}: { 
-  title: string;
-  options: string[];
-  selected: string[];
-  onToggle: (value: string) => void;
-  onClearAll: () => void;
-  showAll?: boolean;
-  maxVisible?: number;
-}) {
-  const [expanded, setExpanded] = useState(showAll);
-  const visibleOptions = expanded ? options : options.slice(0, maxVisible);
-  const hasMore = options.length > maxVisible;
-  const isAllSelected = selected.length === 0;
-
-  return (
-    <div className="space-y-3">
-      <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">{title}</h3>
-      <div className="flex flex-wrap gap-2">
-        <Chip
-          label="All"
-          selected={isAllSelected}
-          onClick={onClearAll}
-        />
-        {visibleOptions.map((option) => (
-          <Chip
-            key={option}
-            label={option}
-            selected={selected.includes(option)}
-            onClick={() => onToggle(option)}
-          />
-        ))}
-        {hasMore && !showAll && (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 px-3 py-2.5 rounded-full text-sm text-white/60 hover:text-white/90 transition-colors"
-          >
-            {expanded ? (
-              <>Less <ChevronUp className="w-4 h-4" /></>
-            ) : (
-              <>+{options.length - maxVisible} <ChevronDown className="w-4 h-4" /></>
-            )}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export function ProfileFilterModal({ 
   isOpen, 
   onClose, 
@@ -121,15 +37,7 @@ export function ProfileFilterModal({
   filters, 
   onFiltersChange 
 }: ProfileFilterModalProps) {
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    regions: [],
-    ageBrackets: [],
-    occupationCategories: [],
-    languages: [],
-    hometowns: {},
-    personalities: [],
-    relationships: [],
-  });
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(EMPTY_FILTER_OPTIONS);
   const [loading, setLoading] = useState(true);
 
   const [localFilters, setLocalFilters] = useState<ProfileFilters>(filters);
@@ -141,27 +49,11 @@ export function ProfileFilterModal({
   }, [isOpen, filters]);
 
   useEffect(() => {
-    const fetchFilters = async () => {
-      try {
-        const response = await fetch(`/api/tg-channel-filters?channel=${channel}`);
-        if (response.ok) {
-          const data = await response.json();
-          setFilterOptions(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch filter options:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFilters();
+    fetchFilterOptions(channel).then(data => {
+      setFilterOptions(data);
+      setLoading(false);
+    });
   }, [channel]);
-
-  const toggleSelection = (current: string[], value: string): string[] => {
-    return current.includes(value) 
-      ? current.filter(v => v !== value)
-      : [...current, value];
-  };
 
   const personalityOptions = useMemo(() => 
     (filterOptions.personalities || []).map(p => PERSONALITY_LABELS[p] || p),
@@ -278,7 +170,7 @@ export function ProfileFilterModal({
                     selected={localFilters.regions}
                     onToggle={(value) => setLocalFilters(prev => ({
                       ...prev,
-                      regions: toggleSelection(prev.regions, value)
+                      regions: toggleArrayValue(prev.regions, value)
                     }))}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, regions: [] }))}
                   />
@@ -289,7 +181,7 @@ export function ProfileFilterModal({
                     selected={localFilters.ageBrackets}
                     onToggle={(value) => setLocalFilters(prev => ({
                       ...prev,
-                      ageBrackets: toggleSelection(prev.ageBrackets, value)
+                      ageBrackets: toggleArrayValue(prev.ageBrackets, value)
                     }))}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, ageBrackets: [] }))}
                     showAll
@@ -301,7 +193,7 @@ export function ProfileFilterModal({
                     selected={localFilters.occupationCategories}
                     onToggle={(value) => setLocalFilters(prev => ({
                       ...prev,
-                      occupationCategories: toggleSelection(prev.occupationCategories, value)
+                      occupationCategories: toggleArrayValue(prev.occupationCategories, value)
                     }))}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, occupationCategories: [] }))}
                   />
@@ -314,7 +206,7 @@ export function ProfileFilterModal({
                       const value = personalityLabelToValue[label] || label;
                       setLocalFilters(prev => ({
                         ...prev,
-                        personalities: toggleSelection(prev.personalities, value)
+                        personalities: toggleArrayValue(prev.personalities, value)
                       }));
                     }}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, personalities: [] }))}
@@ -329,7 +221,7 @@ export function ProfileFilterModal({
                       const value = relationshipLabelToValue[label] || label;
                       setLocalFilters(prev => ({
                         ...prev,
-                        relationships: toggleSelection(prev.relationships, value)
+                        relationships: toggleArrayValue(prev.relationships, value)
                       }));
                     }}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, relationships: [] }))}
