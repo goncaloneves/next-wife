@@ -370,7 +370,8 @@ const Profile = () => {
                   {currentMedia.type === 'video' ? (
                     <video
                       ref={videoRef}
-                      src={currentMedia.url}
+                      src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
+                      crossOrigin="anonymous"
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       onLoadedMetadata={() => {
                         setImageLoaded(true);

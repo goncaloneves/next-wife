@@ -1534,6 +1534,9 @@ app.get('/api/tg-image-proxy', async (req, res) => {
     res.set({
       'Content-Type': contentType,
       'Cache-Control': 'public, max-age=31536000, immutable',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
     });
     res.send(buffer);
 

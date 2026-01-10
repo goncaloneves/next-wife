@@ -790,6 +790,7 @@ export const TelegramChannelFeed = ({
                         <video
                           ref={el => { videoRefs.current[activePost.id] = el; }}
                           src={buildSrc(firstMedia.url, activePost.id)}
+                          crossOrigin="anonymous"
                           muted
                           playsInline
                           autoPlay
@@ -973,6 +974,7 @@ export const TelegramChannelFeed = ({
                             ref={el => { videoRefs.current[post.id] = el; }}
                             key={`video-${post.id}`}
                             src={buildSrc(firstMedia.url, post.id)}
+                            crossOrigin="anonymous"
                             muted
                             playsInline
                             preload="metadata"
