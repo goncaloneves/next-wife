@@ -54,6 +54,31 @@ interface SkipHistoryEntry {
 
 const SKIP_HISTORY_KEY = 'nextwife_skip_history';
 const NAV_FLAG_KEY = 'nextwife_navigating_skip';
+const PROFILE_FILTERS_KEY = 'nextwife_profile_filters';
+
+const getStoredFilters = (): ProfileFilters => {
+  try {
+    const stored = sessionStorage.getItem(PROFILE_FILTERS_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch {}
+  return {
+    regions: [],
+    ageBrackets: [],
+    occupationCategories: [],
+    personalities: [],
+    relationships: [],
+    hasVideo: false,
+    hasMultipleMedia: false,
+  };
+};
+
+const saveFilters = (filters: ProfileFilters) => {
+  try {
+    sessionStorage.setItem(PROFILE_FILTERS_KEY, JSON.stringify(filters));
+  } catch {}
+};
 
 const getSkipHistory = (): SkipHistoryEntry[] => {
   try {
@@ -114,15 +139,11 @@ const Profile = () => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState<ProfileFilters>({
-    regions: [],
-    ageBrackets: [],
-    occupationCategories: [],
-    personalities: [],
-    relationships: [],
-    hasVideo: false,
-    hasMultipleMedia: false,
-  });
+  const [filters, setFilters] = useState<ProfileFilters>(getStoredFilters);
+  
+  useEffect(() => {
+    saveFilters(filters);
+  }, [filters]);
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
