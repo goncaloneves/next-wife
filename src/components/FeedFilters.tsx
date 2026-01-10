@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Flame, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
+import { Flame, ChevronDown, ChevronUp, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
 import { 
@@ -189,17 +189,36 @@ export function FeedFilters({
     <div className="space-y-3 relative" data-testid="feed-filters">
 
 
-      {/* Mobile backdrop to hide content behind filters */}
+      {/* Backdrop when filters are open */}
       {showFilters && (
         <div 
-          className="fixed inset-0 bg-black z-40 md:hidden" 
+          className="fixed inset-0 bg-black md:bg-black/50 z-40" 
           onClick={() => setShowFilters(false)}
         />
       )}
 
       {/* Expanded filter sections - absolute overlay to avoid layout shift */}
       {showFilters && (
-        <div className="fixed md:absolute inset-0 md:inset-auto md:top-0 md:left-0 md:right-0 z-50 mx-0 md:mx-4 bg-black md:bg-black/95 md:backdrop-blur-md md:rounded-2xl md:border md:border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200 flex flex-col md:max-h-[80vh]">
+        <div className="fixed md:absolute inset-0 md:inset-auto md:top-0 md:left-0 md:right-0 z-50 mx-0 md:mx-4 bg-gradient-to-b from-zinc-900 to-black md:bg-black/95 md:backdrop-blur-md md:rounded-2xl md:border md:border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200 flex flex-col md:max-h-[80vh]" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          {/* Mobile Header */}
+          <div className="flex items-center justify-between p-4 border-b border-white/10 md:hidden">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-rose-500 flex items-center justify-center">
+                <SlidersHorizontal className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Filters</h2>
+                <p className="text-xs text-white/50">Find your perfect match</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowFilters(false)}
+              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
+              data-testid="close-filters-header"
+            >
+              <X className="w-5 h-5 text-white/70" />
+            </button>
+          </div>
           <div className="p-4 flex-1 overflow-y-auto min-h-0">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
             {/* Region */}
@@ -331,14 +350,6 @@ export function FeedFilters({
             </Button>
           </div>
         </div>
-      )}
-
-      {/* Backdrop when filters are open */}
-      {showFilters && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40" 
-          onClick={() => setShowFilters(false)}
-        />
       )}
     </div>
   );
