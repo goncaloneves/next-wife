@@ -524,59 +524,97 @@ const Profile = () => {
               </button>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 to-transparent pointer-events-none">
-              <div className="text-white">
-                <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-xl md:text-2xl font-bold drop-shadow-lg">
-                    {profileData.name}
-                  </h1>
-                  <span className="text-lg md:text-xl font-semibold opacity-90">
-                    {profileData.age}
-                  </span>
-                  <BadgeCheck 
-                    className="w-5 h-5 md:w-6 md:h-6 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
-                    style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
-                  />
-                  {post.isHot && (
-                    <Flame 
-                      className="w-5 h-5 md:w-6 md:h-6 drop-shadow-lg flex-shrink-0" 
-                      style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+            <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
+              <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
+                <div className="px-4 pt-16 pb-2">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                      {profileData.name}
+                    </h1>
+                    <span className="text-xl md:text-2xl font-semibold text-white/90">
+                      {profileData.age}
+                    </span>
+                    <BadgeCheck 
+                      className="w-6 h-6 md:w-7 md:h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                      style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                     />
-                  )}
-                </div>
-                <div className="flex flex-col gap-3 text-xs md:text-sm">
-                  <div className="space-y-0.5">
-                    <p className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                      <span className="flex-1">{profileData.hometown?.replace(/\.$/, '')}</span>
-                    </p>
-                    <p className="flex items-start gap-1.5">
-                      <Briefcase className="w-3.5 h-3.5 text-orange-400 flex-shrink-0 mt-0.5" />
-                      <span className="flex-1 line-clamp-2 leading-tight">{profileData.work?.replace(/\.$/, '')}</span>
-                    </p>
+                    {/* Fire indicator for hot profiles */}
+                    {post.isHot && (
+                      <Flame 
+                        className="w-6 h-6 md:w-7 md:h-7 drop-shadow-lg flex-shrink-0" 
+                        style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                      />
+                    )}
                   </div>
-                  {(profileData.personality || profileData.relationship) && (
-                    <div className="flex flex-wrap gap-2">
-                      {profileData.personality && (
-                        <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                          {getPersonalityLabel(profileData.personality)}
-                        </span>
-                      )}
-                      {profileData.relationship && (
-                        <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                          {getRelationshipLabel(profileData.relationship)}
-                        </span>
-                      )}
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 text-white/90">
+                      <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                      <span className="text-sm truncate md:whitespace-normal md:line-clamp-2">{profileData.work?.replace(/\.$/, '')}</span>
                     </div>
-                  )}
+                    <div className="flex items-center gap-3 text-white/90">
+                      <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/90">
+                      <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/90">
+                      <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                      <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
+                    </div>
+
+                    {(profileData.relationship || profileData.personality) && (
+                      <div className="pt-2 mt-2 border-t border-white/[0.08]">
+                        <div className="flex flex-wrap gap-2">
+                          {profileData.relationship && (
+                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                              {getRelationshipLabel(profileData.relationship)}
+                            </span>
+                          )}
+                          {profileData.personality && (
+                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                              {getPersonalityLabel(profileData.personality)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {profileData.about && (
+                      <div 
+                        className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
+                        onClick={() => {
+                          const newExpanded = !aboutExpanded;
+                          setAboutExpanded(newExpanded);
+                          if (newExpanded && contentContainerRef.current) {
+                            setTimeout(() => {
+                              contentContainerRef.current?.scrollTo({ top: contentContainerRef.current.scrollHeight, behavior: 'smooth' });
+                            }, 50);
+                          }
+                        }}
+                        data-testid="button-about-me-toggle"
+                      >
+                        <p className={`flex items-center gap-1 text-xs font-medium text-white/50 uppercase tracking-wide ${aboutExpanded ? 'mb-2' : ''}`}>
+                          About Me
+                          <span className="text-rose-400">{aboutExpanded ? '−' : '+'}</span>
+                        </p>
+                        {aboutExpanded && (
+                          <p className="text-sm text-white/80 leading-relaxed">
+                            {profileData.about}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div 
-              className="absolute bottom-0 left-0 right-0 flex items-center justify-center pt-3 pb-2 px-4 border-t border-white/[0.08] bg-black/80 pointer-events-auto"
-              style={{ paddingBottom: useTelegramSafeAreas ? `max(8px, ${safeArea.bottom}px)` : '8px' }}
-            >
+              
+              <div 
+                className="flex-shrink-0 relative flex items-center justify-center pt-3 pb-2 px-4 border-t border-white/[0.08] bg-black/80 pointer-events-auto"
+                style={{ paddingBottom: useTelegramSafeAreas ? `max(8px, ${safeArea.bottom}px)` : '8px' }}
+              >
                 {canUndo && (
                   <button
                     onClick={undoSkip}
@@ -621,6 +659,7 @@ const Profile = () => {
                     <Heart className="w-9 h-9" />
                   </button>
                 </div>
+              </div>
             </div>
           </motion.article>
         </AnimatePresence>
