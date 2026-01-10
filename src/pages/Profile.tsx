@@ -531,18 +531,18 @@ const Profile = () => {
                     <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg">
                       {profileData.name}
                     </h1>
-                    <span className="inline-flex items-center gap-[5px] ml-[11px]">
+                    <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
                       <span className="text-[1.458rem] font-semibold text-white/90">
                         {profileData.age}
                       </span>
                       <BadgeCheck 
-                        className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                        className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[4px]" 
                         style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                       />
                       {/* Fire indicator for hot profiles */}
                       {post.isHot && (
                         <Flame 
-                          className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0" 
+                          className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[4px]" 
                           style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                         />
                       )}
