@@ -456,13 +456,6 @@ const Profile = () => {
             <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pt-16 pb-2">
-                  {post.isHot && (
-                    <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2">
-                      <span>🔥</span>
-                      <span className="text-xs font-semibold">Hot</span>
-                    </div>
-                  )}
-                  
                   <div className="flex items-center gap-2 mb-3">
                     <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
                       {profileData.name}
@@ -474,6 +467,10 @@ const Profile = () => {
                       className="w-6 h-6 md:w-7 md:h-7 text-[#0099FF] drop-shadow-lg flex-shrink-0" 
                       style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                     />
+                    {/* Fire indicator for hot profiles */}
+                    {post.isHot && (
+                      <span className="text-lg drop-shadow-lg">🔥</span>
+                    )}
                   </div>
 
                   <div className="space-y-2">

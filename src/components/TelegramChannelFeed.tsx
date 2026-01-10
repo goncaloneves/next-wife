@@ -1058,16 +1058,6 @@ export const TelegramChannelFeed = ({
                   {post.profileData && (
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-[background] duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
-                        {/* Hot badge - inline with profile info */}
-                        {post.isHot && (
-                          <div 
-                            className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2"
-                            data-testid={`badge-hot-${post.id}`}
-                          >
-                            <span>🔥</span>
-                            <span className="text-xs font-semibold">Hot</span>
-                          </div>
-                        )}
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-xl md:text-2xl font-bold drop-shadow-lg">
                             {post.profileData.name}
@@ -1082,6 +1072,10 @@ export const TelegramChannelFeed = ({
                               Verified
                             </span>
                           </div>
+                          {/* Fire indicator for hot profiles */}
+                          {post.isHot && (
+                            <span className="text-base drop-shadow-lg" data-testid={`badge-hot-${post.id}`}>🔥</span>
+                          )}
                         </div>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="flex flex-col gap-3 text-xs md:text-sm md:max-h-0 md:opacity-0 md:overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
