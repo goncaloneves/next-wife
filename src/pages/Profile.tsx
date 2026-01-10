@@ -531,7 +531,7 @@ const Profile = () => {
                     <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg">
                       {profileData.name}
                     </h1>
-                    <span className="inline-flex items-center gap-[5px] ml-[9px]">
+                    <span className="inline-flex items-center gap-[5px] ml-[11px]">
                       <span className="text-[1.458rem] font-semibold text-white/90">
                         {profileData.age}
                       </span>
