@@ -418,7 +418,7 @@ const Profile = () => {
                         data-testid="media-next"
                       />
                       
-                      <div className="absolute top-3 left-4 right-4 z-20 flex gap-1 pointer-events-none">
+                      <div className="absolute top-2 left-4 right-4 z-30 flex gap-1 pointer-events-none">
                         {mediaList.map((_, idx) => (
                           <div 
                             key={idx}
