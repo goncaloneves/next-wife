@@ -149,6 +149,7 @@ export function ProfileFilterModal({
                 </div>
               </div>
               <button
+                type="button"
                 onClick={onClose}
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
                 data-testid="close-profile-filters"
@@ -250,6 +251,7 @@ export function ProfileFilterModal({
             <div className="flex-shrink-0 p-4 border-t border-white/10 flex gap-3 pb-8">
               {activeFilterCount > 0 && (
                 <button
+                  type="button"
                   onClick={handleClearAll}
                   className="flex-1 py-3.5 rounded-full border border-white/20 text-white/70 font-medium hover:bg-white/10 transition-colors"
                   data-testid="clear-profile-filters"
@@ -258,6 +260,7 @@ export function ProfileFilterModal({
                 </button>
               )}
               <button
+                type="button"
                 onClick={handleApply}
                 className={cn(
                   "py-3.5 rounded-full font-semibold text-white transition-all",
@@ -286,6 +289,7 @@ export function ProfileFilterButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
         "w-10 h-10 rounded-full flex items-center justify-center transition-all relative",

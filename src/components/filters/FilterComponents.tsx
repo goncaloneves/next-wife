@@ -33,6 +33,7 @@ export interface ChipProps {
 export function Chip({ label, selected, onClick, variant = "default", testIdPrefix = "chip" }: ChipProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
         "flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
@@ -122,6 +123,7 @@ export function FilterSection({
           ))}
           {hasMore && !showAll && (
             <button
+              type="button"
               onClick={() => setExpanded(!expanded)}
               className="flex items-center gap-1 px-3 py-2.5 rounded-full text-sm text-white/60 hover:text-white/90 transition-colors"
               data-testid={`expand-${title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
