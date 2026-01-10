@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Flame, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,9 +9,9 @@ import {
   Chip, 
   FilterSection, 
   fetchFilterOptions, 
-  parseUrlArrayParam,
   toggleArrayValue 
 } from "./filters/FilterComponents";
+import { getStoredFilters, saveFilters } from "@/lib/filterStorage";
 
 interface FeedFiltersProps {
   channel: string;
@@ -29,40 +28,48 @@ export function FeedFilters({
   onShowFiltersChange,
   hideButton = false
 }: FeedFiltersProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(EMPTY_FILTER_OPTIONS);
   
-  const [selectedRegions, setSelectedRegions] = useState<string[]>(() => 
-    parseUrlArrayParam(searchParams.get('regions'))
-  );
-  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>(() => 
-    parseUrlArrayParam(searchParams.get('ages'))
-  );
-  const [selectedOccupations, setSelectedOccupations] = useState<string[]>(() => 
-    parseUrlArrayParam(searchParams.get('jobs'))
-  );
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(() => 
-    parseUrlArrayParam(searchParams.get('langs'))
-  );
-  const [selectedHometowns, setSelectedHometowns] = useState<string[]>(() => 
-    parseUrlArrayParam(searchParams.get('cities'))
-  );
-  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>(() => 
-    parseUrlArrayParam(searchParams.get('personality'))
-  );
-  const [selectedRelationships, setSelectedRelationships] = useState<string[]>(() => 
-    parseUrlArrayParam(searchParams.get('relationship'))
-  );
-  const [hasVideo, setHasVideo] = useState<boolean>(() => 
-    searchParams.get('hasVideo') === 'true'
-  );
-  const [hasMultipleMedia, setHasMultipleMedia] = useState<boolean>(() => 
-    searchParams.get('hasMultipleMedia') === 'true'
-  );
+  const [selectedRegions, setSelectedRegions] = useState<string[]>(() => getStoredFilters().regions);
+  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>(() => getStoredFilters().ageBrackets);
+  const [selectedOccupations, setSelectedOccupations] = useState<string[]>(() => getStoredFilters().occupationCategories);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(() => getStoredFilters().languages);
+  const [selectedHometowns, setSelectedHometowns] = useState<string[]>(() => getStoredFilters().hometowns);
+  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>(() => getStoredFilters().personalities);
+  const [selectedRelationships, setSelectedRelationships] = useState<string[]>(() => getStoredFilters().relationships);
+  const [hasVideo, setHasVideo] = useState<boolean>(() => getStoredFilters().hasVideo);
+  const [hasMultipleMedia, setHasMultipleMedia] = useState<boolean>(() => getStoredFilters().hasMultipleMedia);
   
   const [loading, setLoading] = useState(true);
   const [internalShowFilters, setInternalShowFilters] = useState(false);
+  
+  useEffect(() => {
+    const syncFiltersFromStorage = () => {
+      const stored = getStoredFilters();
+      setSelectedRegions(stored.regions);
+      setSelectedAgeBrackets(stored.ageBrackets);
+      setSelectedOccupations(stored.occupationCategories);
+      setSelectedLanguages(stored.languages);
+      setSelectedHometowns(stored.hometowns);
+      setSelectedPersonalities(stored.personalities);
+      setSelectedRelationships(stored.relationships);
+      setHasVideo(stored.hasVideo);
+      setHasMultipleMedia(stored.hasMultipleMedia);
+    };
+    
+    window.addEventListener('focus', syncFiltersFromStorage);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        syncFiltersFromStorage();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    
+    return () => {
+      window.removeEventListener('focus', syncFiltersFromStorage);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
   
   const showFilters = controlledShowFilters !== undefined ? controlledShowFilters : internalShowFilters;
   const setShowFilters = onShowFiltersChange || setInternalShowFilters;
@@ -115,36 +122,18 @@ export function FeedFilters({
   useEffect(() => {
     if (loading) return;
     
-    const newParams = new URLSearchParams(searchParams);
-    
-    const updateParam = (key: string, values: string[]) => {
-      if (values.length > 0) {
-        newParams.set(key, values.map(v => encodeURIComponent(v)).join(','));
-      } else {
-        newParams.delete(key);
-      }
-    };
-    
-    updateParam('regions', selectedRegions);
-    updateParam('ages', selectedAgeBrackets);
-    updateParam('jobs', selectedOccupations);
-    updateParam('langs', selectedLanguages);
-    updateParam('cities', selectedHometowns);
-    updateParam('personality', selectedPersonalities);
-    updateParam('relationship', selectedRelationships);
-    if (hasVideo) {
-      newParams.set('hasVideo', 'true');
-    } else {
-      newParams.delete('hasVideo');
-    }
-    if (hasMultipleMedia) {
-      newParams.set('hasMultipleMedia', 'true');
-    } else {
-      newParams.delete('hasMultipleMedia');
-    }
-    
-    setSearchParams(newParams, { replace: true });
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading, searchParams, setSearchParams]);
+    saveFilters({
+      regions: selectedRegions,
+      ageBrackets: selectedAgeBrackets,
+      occupationCategories: selectedOccupations,
+      languages: selectedLanguages,
+      hometowns: selectedHometowns,
+      personalities: selectedPersonalities,
+      relationships: selectedRelationships,
+      hasVideo,
+      hasMultipleMedia,
+    });
+  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading]);
 
   const activeFilterCount = useMemo(() => {
     return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length + selectedPersonalities.length + selectedRelationships.length + (hasVideo ? 1 : 0) + (hasMultipleMedia ? 1 : 0);

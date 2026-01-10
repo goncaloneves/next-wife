@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,6 +6,8 @@ import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { FilterButton, SortButtons } from "@/components/FeedFilters";
+import { ProfileFilterModal } from "@/components/ProfileFilterModal";
+import { getStoredFilters, saveFilters, getActiveFilterCount, type SharedFilters } from "@/lib/filterStorage";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
@@ -13,11 +15,43 @@ const Index = () => {
   const location = useLocation();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [activeFilterCount, setActiveFilterCount] = useState(0);
+  const [filters, setFilters] = useState<SharedFilters>(getStoredFilters);
   const [sortBy, setSortByState] = useState<'recent' | 'hot'>(() => {
     const sort = searchParams.get('sort');
     return sort === 'hot' ? 'hot' : 'recent';
   });
+  
+  const activeFilterCount = getActiveFilterCount(filters);
+  
+  useEffect(() => {
+    const syncFiltersFromStorage = () => {
+      const stored = getStoredFilters();
+      setFilters(prev => {
+        if (JSON.stringify(prev) !== JSON.stringify(stored)) {
+          return stored;
+        }
+        return prev;
+      });
+    };
+    
+    window.addEventListener('focus', syncFiltersFromStorage);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        syncFiltersFromStorage();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    
+    return () => {
+      window.removeEventListener('focus', syncFiltersFromStorage);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+  
+  const handleFiltersChange = useCallback((newFilters: SharedFilters) => {
+    setFilters(newFilters);
+    saveFilters(newFilters);
+  }, []);
   
   const setSortBy = (sort: 'recent' | 'hot') => {
     setSortByState(sort);
@@ -356,9 +390,7 @@ const Index = () => {
                 channelUsername="nextwifeai" 
                 layout="grid" 
                 feedSectionRef={feedContentRef}
-                showFilters={showFilters}
-                onShowFiltersChange={setShowFilters}
-                onActiveFilterCountChange={setActiveFilterCount}
+                filters={filters}
                 sortBy={sortBy}
               />
             </div>
@@ -408,6 +440,14 @@ const Index = () => {
           </div>
         </div>
         </footer>
+
+      <ProfileFilterModal
+        isOpen={showFilters}
+        onClose={() => setShowFilters(false)}
+        channel="nextwife_ai"
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+      />
       </div>
     </div>
   );

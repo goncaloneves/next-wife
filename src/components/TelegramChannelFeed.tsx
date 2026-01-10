@@ -6,10 +6,9 @@ import { ArrowUp, BadgeCheck, MapPin, Briefcase, Flame } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FeedFilters } from "./FeedFilters";
 import { formatDistanceToNow } from "date-fns";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
-import { getStoredFilters, saveFilters, type SharedFilters } from "@/lib/filterStorage";
+import { getStoredFilters, type SharedFilters } from "@/lib/filterStorage";
 
 interface ProfileData {
   name: string;
@@ -53,9 +52,7 @@ interface TelegramChannelFeedProps {
   maxPosts?: number;
   layout?: "list" | "grid";
   feedSectionRef?: React.RefObject<HTMLElement | HTMLDivElement>;
-  showFilters?: boolean;
-  onShowFiltersChange?: (show: boolean) => void;
-  onActiveFilterCountChange?: (count: number) => void;
+  filters?: SharedFilters;
   sortBy?: 'recent' | 'hot';
 }
 
@@ -65,9 +62,7 @@ export const TelegramChannelFeed = ({
   maxPosts = 20,
   layout = "list",
   feedSectionRef,
-  showFilters,
-  onShowFiltersChange,
-  onActiveFilterCountChange,
+  filters: externalFilters,
   sortBy = 'recent',
 }: TelegramChannelFeedProps) => {
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
@@ -86,36 +81,8 @@ export const TelegramChannelFeed = ({
   const [skipAnimation, setSkipAnimation] = useState(false);
   const navigate = useNavigate();
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
-  const [filters, setFilters] = useState<SharedFilters>(getStoredFilters);
   
-  useEffect(() => {
-    saveFilters(filters);
-  }, [filters]);
-  
-  useEffect(() => {
-    const syncFiltersFromStorage = () => {
-      const stored = getStoredFilters();
-      setFilters(prev => {
-        if (JSON.stringify(prev) !== JSON.stringify(stored)) {
-          return stored;
-        }
-        return prev;
-      });
-    };
-    
-    window.addEventListener('focus', syncFiltersFromStorage);
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        syncFiltersFromStorage();
-      }
-    });
-    
-    syncFiltersFromStorage();
-    
-    return () => {
-      window.removeEventListener('focus', syncFiltersFromStorage);
-    };
-  }, []);
+  const filters = externalFilters || getStoredFilters();
   const listRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -558,24 +525,7 @@ export const TelegramChannelFeed = ({
     fetchInitialPosts();
   }, [filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, filters.hasVideo, filters.hasMultipleMedia, sortBy, fetchInitialPosts]);
 
-  // Handler for filter changes
-  const handleFiltersChange = useCallback((newFilters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[]; hasVideo: boolean; hasMultipleMedia: boolean }) => {
-    setFilters(newFilters);
-    // Report active filter count to parent (count individual selected values, not categories)
-    if (onActiveFilterCountChange) {
-      const count = newFilters.regions.length + 
-                    newFilters.ageBrackets.length + 
-                    newFilters.occupationCategories.length + 
-                    newFilters.languages.length + 
-                    newFilters.hometowns.length +
-                    newFilters.personalities.length +
-                    newFilters.relationships.length +
-                    (newFilters.hasVideo ? 1 : 0) +
-                    (newFilters.hasMultipleMedia ? 1 : 0);
-      onActiveFilterCountChange(count);
-    }
-  }, [onActiveFilterCountChange]);
-
+  
   // Horizontal scroll handler for mobile carousel
   const handleHorizontalScroll = useCallback((e: Event) => {
     const container = e.target as HTMLDivElement;
@@ -743,14 +693,6 @@ export const TelegramChannelFeed = ({
         )}
 
         <div className="relative">
-        <FeedFilters 
-          channel={channelUsername} 
-          onFiltersChange={handleFiltersChange}
-          showFilters={showFilters}
-          onShowFiltersChange={onShowFiltersChange}
-          hideButton={showFilters !== undefined}
-        />
-        
         {/* Container with min-height to prevent layout collapse during filter changes */}
         <div className="min-h-[50vh]">
         
@@ -1104,13 +1046,6 @@ export const TelegramChannelFeed = ({
         document.body
       )}
 
-      <FeedFilters 
-        channel={channelUsername} 
-        onFiltersChange={handleFiltersChange}
-        showFilters={showFilters}
-        onShowFiltersChange={onShowFiltersChange}
-        hideButton={showFilters !== undefined}
-      />
       <div ref={listRef} onScroll={handleScroll} className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg">
         <div className="space-y-4">
           {allPosts.map((post) => (
