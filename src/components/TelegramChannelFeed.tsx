@@ -949,31 +949,22 @@ export const TelegramChannelFeed = ({
                   {post.profileData && (
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-[background] duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="flex-1 min-w-0 text-2xl font-bold drop-shadow-lg leading-tight">
-                            {post.profileData.name}
-                          </h3>
-                          <span className="shrink-0 self-center flex items-center gap-1.5">
+                        <p className="mb-1 text-2xl font-bold drop-shadow-lg leading-snug">
+                          {post.profileData.name}{' '}
+                          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
                             <span className="text-xl font-semibold opacity-90">
                               {post.profileData.age}
                             </span>
-                            {/* Verified badge like Tinder */}
-                            <span className="relative group/badge">
-                              <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
-                              <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none">
-                                Verified
-                              </span>
-                            </span>
-                            {/* Fire indicator for hot profiles */}
+                            <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg relative top-[3px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
                             {post.isHot && (
                               <Flame 
-                                className="w-5 h-5 drop-shadow-lg" 
+                                className="w-5 h-5 drop-shadow-lg relative top-[3px]" 
                                 style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                                 data-testid={`badge-hot-${post.id}`}
                               />
                             )}
                           </span>
-                        </div>
+                        </p>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="flex flex-col gap-3 text-sm max-h-0 opacity-0 overflow-hidden group-hover:max-h-40 group-hover:opacity-100 transition-all duration-300">
                           <div className="space-y-0.5">
