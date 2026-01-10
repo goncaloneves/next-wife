@@ -898,7 +898,7 @@ export const TelegramChannelFeed = ({
                             }}
                           />
                           {/* Video indicator - circular progress around play icon */}
-                          <div className="absolute top-[11px] right-3 pointer-events-none">
+                          <div className="absolute top-[11px] right-3 pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity duration-300">
                             <svg className="w-7 h-7" viewBox="0 0 36 36">
                               <circle
                                 ref={el => { progressCircleRefs.current[post.id] = el; }}
