@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
+import { ProfileFilterModal, ProfileFilterButton, type ProfileFilters } from "@/components/ProfileFilterModal";
 
 interface ProfileData {
   name: string;
@@ -112,6 +113,16 @@ const Profile = () => {
   const [showTelegramConfirm, setShowTelegramConfirm] = useState(false);
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<ProfileFilters>({
+    regions: [],
+    ageBrackets: [],
+    occupationCategories: [],
+    personalities: [],
+    relationships: [],
+    hasVideo: false,
+    hasMultipleMedia: false,
+  });
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
@@ -245,6 +256,29 @@ const Profile = () => {
   }, [mediaIndex, post?.id, imageLoaded, post]);
 
   
+  const activeFilterCount = useMemo(() => {
+    return filters.regions.length + 
+           filters.ageBrackets.length + 
+           filters.occupationCategories.length + 
+           filters.personalities.length + 
+           filters.relationships.length + 
+           (filters.hasVideo ? 1 : 0) + 
+           (filters.hasMultipleMedia ? 1 : 0);
+  }, [filters]);
+
+  const buildFilterQueryString = useCallback(() => {
+    const params = new URLSearchParams();
+    params.append('channel', 'nextwife_ai');
+    filters.regions.forEach(r => params.append('region', r));
+    filters.ageBrackets.forEach(a => params.append('ageBracket', a));
+    filters.occupationCategories.forEach(o => params.append('occupationCategory', o));
+    filters.personalities.forEach(p => params.append('personality', p));
+    filters.relationships.forEach(r => params.append('relationship', r));
+    if (filters.hasVideo) params.append('hasVideo', 'true');
+    if (filters.hasMultipleMedia) params.append('hasMultipleMedia', 'true');
+    return params.toString();
+  }, [filters]);
+
   useEffect(() => {
     if (!id) return;
     
@@ -256,7 +290,8 @@ const Profile = () => {
       loadedMediaRef.current = new Set();
       
       try {
-        const response = await fetch(`/api/tg-profile/${id}?channel=nextwife_ai`);
+        const queryString = buildFilterQueryString();
+        const response = await fetch(`/api/tg-profile/${id}?${queryString}`);
         if (!response.ok) throw new Error('Profile not found');
         const data = await response.json();
         setPost(data.post || null);
@@ -272,7 +307,7 @@ const Profile = () => {
     };
     
     fetchProfile();
-  }, [id]);
+  }, [id, buildFilterQueryString]);
 
   const goBack = useCallback(() => {
     if (id) {
@@ -582,14 +617,22 @@ const Profile = () => {
               ) : (
                 <div />
               )}
-              <button
-                onClick={(e) => { e.stopPropagation(); handleShare(); }}
-                onPointerDownCapture={(e) => e.stopPropagation()}
-                className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
-                data-testid="button-share"
-              >
-                <Share2 className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2 pointer-events-auto">
+                <div onPointerDownCapture={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
+                  <ProfileFilterButton 
+                    activeCount={activeFilterCount}
+                    onClick={() => setShowFilters(true)}
+                  />
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleShare(); }}
+                  onPointerDownCapture={(e) => e.stopPropagation()}
+                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105"
+                  data-testid="button-share"
+                >
+                  <Share2 className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
@@ -771,6 +814,14 @@ const Profile = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ProfileFilterModal
+        isOpen={showFilters}
+        onClose={() => setShowFilters(false)}
+        channel="nextwife_ai"
+        filters={filters}
+        onFiltersChange={setFilters}
+      />
     </div>
   );
 };

@@ -1116,19 +1116,65 @@ app.get('/api/tg-profile/:id', async (req, res) => {
     
     const row = result.rows[0];
     
+    // Parse filter parameters for next/prev navigation
+    const regions = req.query.region ? (Array.isArray(req.query.region) ? req.query.region : [req.query.region]) : null;
+    const ageBrackets = req.query.ageBracket ? (Array.isArray(req.query.ageBracket) ? req.query.ageBracket : [req.query.ageBracket]) : null;
+    const occupationCategories = req.query.occupationCategory ? (Array.isArray(req.query.occupationCategory) ? req.query.occupationCategory : [req.query.occupationCategory]) : null;
+    const personalities = req.query.personality ? (Array.isArray(req.query.personality) ? req.query.personality : [req.query.personality]) : null;
+    const relationships = req.query.relationship ? (Array.isArray(req.query.relationship) ? req.query.relationship : [req.query.relationship]) : null;
+    const hasVideo = req.query.hasVideo === 'true';
+    const hasMultipleMedia = req.query.hasMultipleMedia === 'true';
+    
+    // Build filter conditions for navigation
+    let filterConditions = '';
+    const filterParams = [channelName, id];
+    let paramIdx = 3;
+    
+    if (regions && regions.length > 0) {
+      filterConditions += ` AND region = ANY($${paramIdx})`;
+      filterParams.push(regions);
+      paramIdx++;
+    }
+    if (ageBrackets && ageBrackets.length > 0) {
+      filterConditions += ` AND age_bracket = ANY($${paramIdx})`;
+      filterParams.push(ageBrackets);
+      paramIdx++;
+    }
+    if (occupationCategories && occupationCategories.length > 0) {
+      filterConditions += ` AND occupation_category = ANY($${paramIdx})`;
+      filterParams.push(occupationCategories);
+      paramIdx++;
+    }
+    if (personalities && personalities.length > 0) {
+      filterConditions += ` AND personality = ANY($${paramIdx})`;
+      filterParams.push(personalities);
+      paramIdx++;
+    }
+    if (relationships && relationships.length > 0) {
+      filterConditions += ` AND relationship = ANY($${paramIdx})`;
+      filterParams.push(relationships);
+      paramIdx++;
+    }
+    if (hasVideo) {
+      filterConditions += ` AND has_video = true`;
+    }
+    if (hasMultipleMedia) {
+      filterConditions += ` AND has_multiple_media = true`;
+    }
+    
     // Get previous profile (newer post - higher ID)
     const prevResult = await pool.query(`
       SELECT id FROM telegram_posts 
-      WHERE channel = $1 AND id > $2 AND deleted_at IS NULL AND media IS NOT NULL AND name IS NOT NULL
+      WHERE channel = $1 AND id > $2 AND deleted_at IS NULL AND media IS NOT NULL AND name IS NOT NULL${filterConditions}
       ORDER BY id ASC LIMIT 1
-    `, [channelName, id]);
+    `, filterParams);
     
     // Get next profile (older post - lower ID)
     const nextResult = await pool.query(`
       SELECT id FROM telegram_posts 
-      WHERE channel = $1 AND id < $2 AND deleted_at IS NULL AND media IS NOT NULL AND name IS NOT NULL
+      WHERE channel = $1 AND id < $2 AND deleted_at IS NULL AND media IS NOT NULL AND name IS NOT NULL${filterConditions}
       ORDER BY id DESC LIMIT 1
-    `, [channelName, id]);
+    `, filterParams);
     
     const post = {
       id: row.id,
