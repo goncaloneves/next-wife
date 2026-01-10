@@ -949,11 +949,11 @@ export const TelegramChannelFeed = ({
                   {post.profileData && (
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-[background] duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
-                        <div className="flex items-baseline flex-wrap gap-x-2 gap-y-0 mb-1">
-                          <h3 className="text-2xl font-bold drop-shadow-lg whitespace-nowrap">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="flex-1 min-w-0 text-2xl font-bold drop-shadow-lg leading-tight">
                             {post.profileData.name}
                           </h3>
-                          <span className="flex items-center gap-1.5">
+                          <span className="shrink-0 self-center flex items-center gap-1.5">
                             <span className="text-xl font-semibold opacity-90">
                               {post.profileData.age}
                             </span>
