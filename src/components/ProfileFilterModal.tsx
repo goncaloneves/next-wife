@@ -121,7 +121,7 @@ export function ProfileFilterModal({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] flex flex-col bg-gradient-to-b from-zinc-900 to-black rounded-t-3xl border-t border-white/10"
+            className="fixed inset-x-0 bottom-0 md:inset-auto md:left-1/2 md:-translate-x-1/2 md:bottom-8 md:max-w-3xl md:w-[90%] z-50 max-h-[90vh] md:max-h-[80vh] flex flex-col bg-gradient-to-b from-zinc-900 to-black rounded-t-3xl md:rounded-2xl border-t md:border border-white/10"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b border-white/10">
@@ -144,7 +144,7 @@ export function ProfileFilterModal({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+            <div className="flex-1 overflow-y-auto p-4 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
