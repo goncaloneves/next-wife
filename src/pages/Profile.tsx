@@ -550,7 +550,7 @@ const Profile = () => {
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pt-16 pb-2">
                   <div className="flex items-baseline mb-3">
-                    <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg">
+                    <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg line-clamp-2">
                       {profileData.name}
                     </h1>
                     <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
