@@ -466,35 +466,49 @@ const Profile = () => {
               
               return (
                 <>
-                  {currentMedia.type === 'video' ? (
-                    <video
-                      ref={videoRef}
-                      src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
-                      className={`absolute inset-0 w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoadedMetadata={() => {
-                        loadedMediaRef.current.add(mediaIndex);
-                        setImageLoaded(true);
-                      }}
-                      onError={() => setImageLoaded(true)}
-                      muted
-                      loop
-                      autoPlay
-                      playsInline
-                      controls={false}
-                    />
-                  ) : (
-                    <img
-                      src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
-                      alt={profileData.name}
-                      className={`absolute inset-0 w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      onLoad={() => {
-                        loadedMediaRef.current.add(mediaIndex);
-                        setImageLoaded(true);
-                      }}
-                      onError={() => setImageLoaded(true)}
-                      draggable={false}
-                    />
-                  )}
+                  {/* Render all media items but only show the current one */}
+                  {mediaList.map((media, idx) => (
+                    media.type === 'video' ? (
+                      <video
+                        key={`video-${idx}`}
+                        ref={idx === mediaIndex ? videoRef : undefined}
+                        src={`/api/tg-image-proxy?u=${encodeURIComponent(media.url)}`}
+                        className={`absolute inset-0 w-full h-full object-cover ${
+                          idx === mediaIndex ? (imageLoaded ? 'opacity-100' : 'opacity-0') : 'hidden'
+                        }`}
+                        onLoadedMetadata={() => {
+                          loadedMediaRef.current.add(idx);
+                          if (idx === mediaIndex) setImageLoaded(true);
+                        }}
+                        onError={() => {
+                          if (idx === mediaIndex) setImageLoaded(true);
+                        }}
+                        muted
+                        loop
+                        autoPlay={idx === mediaIndex}
+                        playsInline
+                        controls={false}
+                        preload="metadata"
+                      />
+                    ) : (
+                      <img
+                        key={`img-${idx}`}
+                        src={`/api/tg-image-proxy?u=${encodeURIComponent(media.url)}`}
+                        alt={profileData.name}
+                        className={`absolute inset-0 w-full h-full object-cover ${
+                          idx === mediaIndex ? (imageLoaded ? 'opacity-100' : 'opacity-0') : 'hidden'
+                        }`}
+                        onLoad={() => {
+                          loadedMediaRef.current.add(idx);
+                          if (idx === mediaIndex) setImageLoaded(true);
+                        }}
+                        onError={() => {
+                          if (idx === mediaIndex) setImageLoaded(true);
+                        }}
+                        draggable={false}
+                      />
+                    )
+                  ))}
                   
                   {hasMultipleMedia ? (
                     <>
