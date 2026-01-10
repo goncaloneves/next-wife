@@ -822,10 +822,37 @@ export const TelegramChannelFeed = ({
                         {activePost.profileData.age}
                       </span>
                       <BadgeCheck className="w-5 h-5 text-[#0099FF]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                      {activePost.isHot && (
+                        <Flame 
+                          className="w-5 h-5 drop-shadow-lg flex-shrink-0" 
+                          style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                        />
+                      )}
                     </div>
-                    <p className="text-sm text-white/80">
-                      {activePost.profileData.nationality} • {activePost.profileData.hometown}
-                    </p>
+                    <div className="flex flex-col gap-1 text-sm">
+                      <p className="flex items-center gap-1.5 text-white/90">
+                        <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                        <span>{activePost.profileData.hometown}</span>
+                      </p>
+                      <p className="flex items-start gap-1.5 text-white/90">
+                        <Briefcase className="w-3.5 h-3.5 text-orange-400 flex-shrink-0 mt-0.5" />
+                        <span className="line-clamp-2 leading-tight">{activePost.profileData.work?.replace(/\.$/, '')}</span>
+                      </p>
+                    </div>
+                    {(activePost.profileData.personality || activePost.profileData.relationship) && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {activePost.profileData.personality && (
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
+                            {getPersonalityLabel(activePost.profileData.personality)}
+                          </span>
+                        )}
+                        {activePost.profileData.relationship && (
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
+                            {getRelationshipLabel(activePost.profileData.relationship)}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
