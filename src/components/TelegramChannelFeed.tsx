@@ -972,8 +972,8 @@ export const TelegramChannelFeed = ({
                             />
                           )}
                         </div>
-                        {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
-                        <div className="flex flex-col gap-3 text-sm max-h-0 opacity-0 overflow-hidden group-hover:max-h-40 group-hover:opacity-100 transition-all duration-300">
+                        {/* Mobile: Always visible | Desktop: Hover to reveal */}
+                        <div className="flex flex-col gap-3 text-sm max-h-40 opacity-100 md:max-h-0 md:opacity-0 overflow-hidden md:group-hover:max-h-40 md:group-hover:opacity-100 transition-all duration-300">
                           <div className="space-y-0.5">
                             <p className="flex items-center gap-1.5">
                               <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
