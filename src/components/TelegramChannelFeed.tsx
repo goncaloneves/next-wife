@@ -1001,6 +1001,12 @@ export const TelegramChannelFeed = ({
                               }, delay);
                             }}
                           />
+                          {/* Video indicator - play icon */}
+                          <div className="absolute top-2 right-2 pointer-events-none">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" fill="white" stroke="rgba(0,0,0,0.25)" strokeWidth="0.75" />
+                            </svg>
+                          </div>
                         </div>
                       );
                     }
@@ -1048,23 +1054,20 @@ export const TelegramChannelFeed = ({
                     </div>
                   </div>
                   
-                  {/* Hot badge - shows on top 8 posts (by clicks, filled with recent) */}
-                  {post.isHot && (
-                    <div 
-                      className="absolute top-3 right-3 z-20 pointer-events-none"
-                      data-testid={`badge-hot-${post.id}`}
-                    >
-                      <div className="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
-                        <span>🔥</span>
-                        <span className="text-xs">Hot</span>
-                      </div>
-                    </div>
-                  )}
-                  
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 md:from-black/90 md:via-black/70 to-transparent transition-[background] duration-300 md:group-hover:from-black/95 md:group-hover:via-black/85 pointer-events-none opacity-100">
                       <div className="text-white">
+                        {/* Hot badge - inline with profile info */}
+                        {post.isHot && (
+                          <div 
+                            className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-2.5 py-1 rounded-full text-sm font-bold shadow-lg mb-2"
+                            data-testid={`badge-hot-${post.id}`}
+                          >
+                            <span>🔥</span>
+                            <span className="text-xs font-semibold">Hot</span>
+                          </div>
+                        )}
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-xl md:text-2xl font-bold drop-shadow-lg">
                             {post.profileData.name}
