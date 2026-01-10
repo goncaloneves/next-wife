@@ -981,7 +981,7 @@ export const TelegramChannelFeed = ({
                                   <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg relative top-[3px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
                                   {post.isHot && (
                                     <Flame 
-                                      className="w-5 h-5 drop-shadow-lg relative top-[2px]" 
+                                      className="w-5 h-5 drop-shadow-lg relative top-[3px]" 
                                       style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                                       data-testid={`badge-hot-${post.id}`}
                                     />
