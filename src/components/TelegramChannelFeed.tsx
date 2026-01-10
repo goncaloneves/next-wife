@@ -1057,7 +1057,7 @@ export const TelegramChannelFeed = ({
                                 transform="rotate(-90 18 18)"
                                 style={{ willChange: 'stroke-dasharray', opacity: 0 }}
                               />
-                              <path d="M15 12v12l9-6z" fill="white" stroke="rgba(0,0,0,0.4)" strokeWidth="1" strokeLinejoin="round" />
+                              <path d="M14 10v16l12-8z" fill="white" stroke="rgba(0,0,0,0.4)" strokeWidth="1" strokeLinejoin="round" />
                             </svg>
                           </div>
                         </div>
