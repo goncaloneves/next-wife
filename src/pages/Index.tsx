@@ -342,7 +342,7 @@ const Index = () => {
         {/* Telegram Channel Feed Section - Scrolls over the fixed background */}
         <section ref={feedContentRef} className="relative py-12 bg-black">
           <div className="container mx-auto px-4">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto relative">
               <div className="relative mb-8">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white">
                   Choose Your Woman 🌻
@@ -362,6 +362,13 @@ const Index = () => {
                   />
                 </div>
               </div>
+              <FeedFilters
+                channel="nextwife_ai"
+                onFiltersChange={handleFiltersChange}
+                showFilters={showFilters}
+                onShowFiltersChange={setShowFilters}
+                hideButton
+              />
               <TelegramChannelFeed 
                 channelUsername="nextwifeai" 
                 layout="grid" 
@@ -415,14 +422,6 @@ const Index = () => {
           </div>
         </div>
         </footer>
-
-      <FeedFilters
-        channel="nextwife_ai"
-        onFiltersChange={handleFiltersChange}
-        showFilters={showFilters}
-        onShowFiltersChange={setShowFilters}
-        hideButton
-      />
       </div>
     </div>
   );
