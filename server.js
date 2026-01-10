@@ -251,8 +251,8 @@ function parseChannelHTML(html, channelName) {
   if (subsMatch) channelInfo.subscribers = subsMatch[1].trim();
   
   const posts = [];
-  // Match entire widget message wrap to capture full content including text after grouped media
-  const postRegex = /<div class="tgme_widget_message_wrap[^"]*"[^>]*>\s*<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<div class="tgme_widget_message_footer/g;
+  // Match entire widget message wrap including footer (which contains the <time> element)
+  const postRegex = /<div class="tgme_widget_message_wrap[^"]*"[^>]*>\s*<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/g;
   let match;
 
   while ((match = postRegex.exec(html)) !== null) {
@@ -326,7 +326,8 @@ function parseChannelHTML(html, channelName) {
 
     if (serviceMessagePatterns.some(pattern => pattern.test(text))) continue;
 
-    const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(postContent);
+    // Extract date from full match (match[0]) since footer with <time> element is cut off from postContent
+    const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(match[0]);
     const date = dateMatch ? dateMatch[1] : new Date().toISOString();
 
     // Extract ALL media URLs (photos and videos) from the post in DOM order
