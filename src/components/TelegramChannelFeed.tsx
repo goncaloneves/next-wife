@@ -780,6 +780,20 @@ export const TelegramChannelFeed = ({
                     trackClick(post.id);
                     setLastViewedId(post.id);
                     sessionStorage.setItem('nextwife_last_viewed', post.id);
+                    sessionStorage.setItem('feedScrollContext', JSON.stringify({
+                      postId: post.id,
+                      scrollY: window.scrollY
+                    }));
+                    sessionStorage.setItem('feedCache', JSON.stringify({
+                      posts: allPosts,
+                      channelInfo,
+                      nextCursor,
+                      hasMore,
+                      filters,
+                      sortBy,
+                      refreshKey,
+                      imageLoadStates
+                    }));
                     navigate('/discover');
                   }}
                   style={skipAnimation ? undefined : { 
