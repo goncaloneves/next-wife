@@ -980,11 +980,12 @@ export const TelegramChannelFeed = ({
                             ref={el => { 
                               videoRefs.current[post.id] = el;
                               if (el) {
+                                const circumference = 75.4;
                                 const updateProgress = () => {
                                   const circle = progressCircleRefs.current[post.id];
                                   if (circle && el.duration > 0) {
                                     const progress = el.currentTime / el.duration;
-                                    circle.style.strokeDasharray = `${progress * 94.2} 94.2`;
+                                    circle.style.strokeDasharray = `${progress * circumference} ${circumference}`;
                                   }
                                   rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
                                 };
@@ -1001,7 +1002,7 @@ export const TelegramChannelFeed = ({
                                 };
                                 el.onended = () => {
                                   const circle = progressCircleRefs.current[post.id];
-                                  if (circle) circle.style.strokeDasharray = '0 94.2';
+                                  if (circle) circle.style.strokeDasharray = `0 ${circumference}`;
                                 };
                               }
                             }}
@@ -1034,20 +1035,28 @@ export const TelegramChannelFeed = ({
                           <div className="absolute top-2 right-2 pointer-events-none">
                             <svg className="w-7 h-7" viewBox="0 0 36 36">
                               <circle
+                                cx="18"
+                                cy="18"
+                                r="12"
+                                fill="rgba(0,0,0,0.4)"
+                                stroke="rgba(255,255,255,0.3)"
+                                strokeWidth="1.5"
+                              />
+                              <circle
                                 ref={el => { progressCircleRefs.current[post.id] = el; }}
                                 cx="18"
                                 cy="18"
-                                r="15"
+                                r="12"
                                 fill="none"
                                 stroke="white"
                                 strokeWidth="2"
                                 strokeLinecap="round"
-                                strokeDasharray="0 94.2"
+                                strokeDasharray="0 75.4"
                                 strokeDashoffset="0.5"
                                 transform="rotate(-90 18 18)"
                                 style={{ willChange: 'stroke-dasharray' }}
                               />
-                              <path d="M15 12v12l9-6z" fill="white" stroke="rgba(0,0,0,0.3)" strokeWidth="0.5" />
+                              <path d="M15 12v12l9-6z" fill="white" />
                             </svg>
                           </div>
                         </div>
