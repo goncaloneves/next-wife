@@ -468,7 +468,7 @@ const Profile = () => {
                     <video
                       ref={videoRef}
                       src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
-                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                      className={`absolute inset-0 w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       onLoadedMetadata={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
                       muted
@@ -481,7 +481,7 @@ const Profile = () => {
                     <img
                       src={`/api/tg-image-proxy?u=${encodeURIComponent(currentMedia.url)}`}
                       alt={profileData.name}
-                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                      className={`absolute inset-0 w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       onLoad={() => setImageLoaded(true)}
                       onError={() => setImageLoaded(true)}
                       draggable={false}
