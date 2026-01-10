@@ -147,6 +147,41 @@ const Profile = () => {
   const advanceToNextMedia = useCallback(() => {
     if (!post) return;
     const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+    
+    if (mediaList.length === 1) {
+      const currentMedia = mediaList[0];
+      const progressBar = progressRefs.current[0];
+      
+      if (currentMedia.type === 'video') {
+        // Single video: restart playback
+        const video = videoRef.current;
+        if (video) {
+          video.currentTime = 0;
+          video.play();
+        }
+        if (progressBar) progressBar.style.transform = 'scaleX(0)';
+      } else {
+        // Single photo: reset progress bar and restart timer
+        if (progressBar) progressBar.style.transform = 'scaleX(0)';
+        photoStartTimeRef.current = performance.now();
+        
+        if (photoTimerRef.current) clearTimeout(photoTimerRef.current);
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        
+        const updatePhotoProgress = () => {
+          const elapsed = performance.now() - photoStartTimeRef.current;
+          const percent = Math.min(elapsed / PHOTO_DURATION_MS, 1);
+          if (progressBar) progressBar.style.transform = `scaleX(${percent})`;
+          if (percent < 1) {
+            rafRef.current = requestAnimationFrame(updatePhotoProgress);
+          }
+        };
+        rafRef.current = requestAnimationFrame(updatePhotoProgress);
+        photoTimerRef.current = setTimeout(() => advanceToNextMedia(), PHOTO_DURATION_MS);
+      }
+      return;
+    }
+    
     setMediaIndex(prev => {
       const next = prev + 1;
       if (next >= mediaList.length) {
