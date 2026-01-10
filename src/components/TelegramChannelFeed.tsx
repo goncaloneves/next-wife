@@ -963,24 +963,14 @@ export const TelegramChannelFeed = ({
                               }, delay);
                             }}
                           />
-                          {!isPlaying && (
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                              <div className="relative w-16 h-16 group/play">
-                                {/* Outer glow */}
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-500/30 to-rose-500/30 blur-xl scale-150" />
-                                {/* Gradient border ring */}
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-400 via-rose-500 to-pink-500 p-[2px]">
-                                  <div className="w-full h-full rounded-full bg-black/60 backdrop-blur-md" />
-                                </div>
-                                {/* Play icon */}
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <svg className="w-7 h-7 text-white ml-1 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                  </svg>
-                                </div>
-                              </div>
+                          {/* Video indicator - top right corner Instagram-style */}
+                          <div className="absolute top-2 right-2 pointer-events-none">
+                            <div className="w-7 h-7 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" />
+                              </svg>
                             </div>
-                          )}
+                          </div>
                         </div>
                       );
                     }
