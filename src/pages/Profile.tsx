@@ -279,15 +279,22 @@ const Profile = () => {
     return params.toString();
   }, [filters]);
 
+  const prevIdRef = useRef<string | undefined>(undefined);
+  
   useEffect(() => {
     if (!id) return;
     
+    const isNewProfile = prevIdRef.current !== id;
+    prevIdRef.current = id;
+    
     const fetchProfile = async () => {
-      setLoading(true);
-      setImageLoaded(false);
-      setAboutExpanded(false);
-      setMediaIndex(0);
-      loadedMediaRef.current = new Set();
+      if (isNewProfile) {
+        setLoading(true);
+        setImageLoaded(false);
+        setAboutExpanded(false);
+        setMediaIndex(0);
+        loadedMediaRef.current = new Set();
+      }
       
       try {
         const queryString = buildFilterQueryString();
@@ -301,7 +308,9 @@ const Profile = () => {
         setPost(null);
         setNextId(null);
       } finally {
-        setLoading(false);
+        if (isNewProfile) {
+          setLoading(false);
+        }
         setIsAnimating(false);
       }
     };
