@@ -251,8 +251,8 @@ function parseChannelHTML(html, channelName) {
   if (subsMatch) channelInfo.subscribers = subsMatch[1].trim();
   
   const posts = [];
-  // Match entire widget message wrap including footer (which contains the <time> element)
-  const postRegex = /<div class="tgme_widget_message_wrap[^"]*"[^>]*>\s*<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/g;
+  // Match widget message up to footer boundary (date extracted from match[0] which includes footer)
+  const postRegex = /<div class="tgme_widget_message_wrap[^"]*"[^>]*>\s*<div class="tgme_widget_message[^"]*"[^>]*data-post="([^"]*)"[^>]*>([\s\S]*?)<div class="tgme_widget_message_footer/g;
   let match;
 
   while ((match = postRegex.exec(html)) !== null) {
@@ -326,8 +326,11 @@ function parseChannelHTML(html, channelName) {
 
     if (serviceMessagePatterns.some(pattern => pattern.test(text))) continue;
 
-    // Extract date from full match (match[0]) since footer with <time> element is cut off from postContent
-    const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(match[0]);
+    // Extract date from footer section which starts right after match[0]
+    // The footer contains <time datetime="..."> within about 400-600 chars
+    const footerStart = match.index + match[0].length;
+    const footerSection = html.substring(footerStart, footerStart + 600);
+    const dateMatch = /<time[^>]*datetime="([^"]*)"/.exec(footerSection);
     const date = dateMatch ? dateMatch[1] : new Date().toISOString();
 
     // Extract ALL media URLs (photos and videos) from the post in DOM order
