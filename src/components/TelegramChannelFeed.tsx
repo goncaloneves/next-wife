@@ -997,6 +997,11 @@ export const TelegramChannelFeed = ({
                                   rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
                                 };
                                 el.onpause = () => {
+                                  const circle = progressCircleRefs.current[post.id];
+                                  if (circle) {
+                                    circle.style.strokeDasharray = `0 ${circumference}`;
+                                    circle.style.opacity = '0';
+                                  }
                                   if (rafRefs.current[post.id]) {
                                     cancelAnimationFrame(rafRefs.current[post.id]);
                                     delete rafRefs.current[post.id];
