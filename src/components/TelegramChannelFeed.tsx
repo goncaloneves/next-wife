@@ -751,85 +751,236 @@ export const TelegramChannelFeed = ({
         {/* Posts grid - show whenever we have posts, even while loading new ones */}
         {postsWithMedia.length > 0 && (
         <div>
-          {/* Mobile: Start Swiping CTA with active profile preview */}
-          {isMobile && activePost && (
-            <div className="flex flex-col items-center gap-6 py-4">
-              <div 
-                className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer"
-                style={{
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3)',
-                }}
-                onClick={() => {
-                  trackClick(activePost.id);
-                  navigate('/discover');
-                }}
-              >
-                {(() => {
-                  const firstMedia = activePost.mediaUrls?.[0];
-                  const isVideo = firstMedia?.type === 'video';
-                  
-                  if (isVideo) {
-                    return (
-                      <div className="w-full h-full relative">
-                        <video
-                          ref={el => { videoRefs.current[activePost.id] = el; }}
-                          src={buildSrc(firstMedia.url, activePost.id)}
-                          muted
-                          loop
-                          playsInline
-                          autoPlay
-                          preload="metadata"
-                          className="w-full h-full object-cover"
-                          onLoadedData={() => {
-                            setImageLoadStates((prev) => ({ ...prev, [activePost.id]: true }));
-                          }}
-                        />
+          {/* Mobile: Single card with Discover button */}
+          {isMobile && activePost && (() => {
+            const post = activePost;
+            const firstMedia = post.mediaUrls?.[0];
+            const isVideo = firstMedia?.type === 'video';
+            const isPlaying = playingVideos.has(post.id);
+            
+            return (
+              <div className="flex flex-col items-center gap-6 py-4">
+                <div
+                  data-post-id={post.id}
+                  className="aspect-[3/4] cursor-pointer overflow-hidden group relative w-full max-w-sm"
+                  onClick={() => {
+                    trackClick(post.id);
+                    navigate('/discover');
+                  }}
+                >
+                  {!imageLoadStates[post.id] && (
+                    <Skeleton className="absolute inset-0 w-full h-full z-10" />
+                  )}
+                  {isVideo ? (
+                    <div 
+                      className="w-full h-full relative"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const video = videoRefs.current[post.id];
+                        if (isPlaying) {
+                          setPlayingVideos(prev => {
+                            const next = new Set(prev);
+                            next.delete(post.id);
+                            return next;
+                          });
+                          if (video) {
+                            video.pause();
+                            video.currentTime = 0;
+                          }
+                        } else {
+                          setPlayingVideos(prev => new Set(prev).add(post.id));
+                          if (video) {
+                            video.currentTime = 0;
+                            video.play().catch(() => {});
+                          }
+                        }
+                      }}
+                    >
+                      <video
+                        ref={el => { 
+                          videoRefs.current[post.id] = el;
+                          if (el) {
+                            const circumference = 75.4;
+                            const updateProgress = () => {
+                              const circle = progressCircleRefs.current[post.id];
+                              if (circle && el.duration > 0) {
+                                const progress = el.currentTime / el.duration;
+                                circle.style.strokeDasharray = `${progress * circumference} ${circumference}`;
+                              }
+                              rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
+                            };
+                            
+                            el.onplay = () => {
+                              const circle = progressCircleRefs.current[post.id];
+                              if (circle) circle.style.opacity = '1';
+                              if (rafRefs.current[post.id]) cancelAnimationFrame(rafRefs.current[post.id]);
+                              rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
+                            };
+                            el.onpause = () => {
+                              const circle = progressCircleRefs.current[post.id];
+                              if (circle) {
+                                circle.style.strokeDasharray = `0 ${circumference}`;
+                                circle.style.opacity = '0';
+                              }
+                              if (rafRefs.current[post.id]) {
+                                cancelAnimationFrame(rafRefs.current[post.id]);
+                                delete rafRefs.current[post.id];
+                              }
+                            };
+                            el.onended = () => {
+                              const circle = progressCircleRefs.current[post.id];
+                              if (circle) {
+                                circle.style.strokeDasharray = `0 ${circumference}`;
+                                circle.style.opacity = '0';
+                              }
+                            };
+                          }
+                        }}
+                        src={buildSrc(firstMedia.url, post.id)}
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        className={`w-full h-full object-cover transition-all duration-300 ${
+                          imageLoadStates[post.id] ? "" : "opacity-0"
+                        }`}
+                        onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
+                        onError={() => {
+                          const currentTries = imageErrors[post.id] || 0;
+                          if (currentTries >= 2) {
+                            setHiddenIds(s => new Set(s).add(post.id));
+                            return;
+                          }
+                          const delay = currentTries === 0 ? 100 : 300;
+                          setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
+                          setTimeout(() => {
+                            setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
+                          }, delay);
+                        }}
+                      />
+                      <div className="absolute top-[11px] right-3 pointer-events-none">
+                        <svg className="w-7 h-7" viewBox="0 0 36 36">
+                          <circle
+                            ref={el => { progressCircleRefs.current[post.id] = el; }}
+                            cx="18"
+                            cy="18"
+                            r="12"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeDasharray="0 75.4"
+                            transform="rotate(-90 18 18)"
+                            style={{ willChange: 'stroke-dasharray', opacity: 0 }}
+                          />
+                          <path d="M14 10v16l12-8z" fill="white" stroke="rgba(0,0,0,0.4)" strokeWidth="1" strokeLinejoin="round" />
+                        </svg>
                       </div>
-                    );
-                  }
-                  
-                  return (
-                    <img
-                      src={buildSrc(activePost.media!, activePost.id)}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  );
-                })()}
-                {activePost.profileData && (
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-2xl font-bold text-white drop-shadow-lg">
-                        {activePost.profileData.name}
-                      </h3>
-                      <span className="text-xl font-semibold text-white/90">
-                        {activePost.profileData.age}
-                      </span>
-                      <BadgeCheck className="w-5 h-5 text-[#0099FF]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
                     </div>
-                    <p className="text-sm text-white/80">
-                      {activePost.profileData.nationality} • {activePost.profileData.hometown}
-                    </p>
+                  ) : (
+                    <img
+                      src={buildSrc(post.media!, post.id)}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      referrerPolicy="no-referrer"
+                      className={`w-full h-full object-cover transition-all duration-300 ${
+                        imageLoadStates[post.id] ? "" : "opacity-0"
+                      }`}
+                      onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
+                      onError={() => {
+                        const currentTries = imageErrors[post.id] || 0;
+                        if (currentTries >= 2) {
+                          setHiddenIds(s => new Set(s).add(post.id));
+                          return;
+                        }
+                        const delay = currentTries === 0 ? 100 : 300;
+                        setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
+                        setTimeout(() => {
+                          setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
+                        }, delay);
+                      }}
+                    />
+                  )}
+                  
+                  <div 
+                    className="absolute top-3 left-3 z-20 pointer-events-none"
+                    data-testid={`badge-date-${post.id}`}
+                  >
+                    <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg">
+                      {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
+                    </div>
                   </div>
-                )}
+                  
+                  {post.profileData && (
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/85 to-transparent pointer-events-none">
+                      <div className="text-white">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-xl font-bold drop-shadow-lg">
+                            {post.profileData.name}
+                          </h3>
+                          <span className="text-lg font-semibold opacity-90">
+                            {post.profileData.age}
+                          </span>
+                          <div className="relative">
+                            <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg flex-shrink-0" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                          </div>
+                          {post.isHot && (
+                            <Flame 
+                              className="w-5 h-5 drop-shadow-lg flex-shrink-0" 
+                              style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                              data-testid={`badge-hot-${post.id}`}
+                            />
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-3 text-xs">
+                          <div className="space-y-0.5">
+                            <p className="flex items-center gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                              <span className="flex-1">{post.profileData.hometown}</span>
+                            </p>
+                            <p className="flex items-start gap-1.5">
+                              <Briefcase className="w-3.5 h-3.5 text-orange-400 flex-shrink-0 mt-0.5" />
+                              <span className="flex-1 line-clamp-2 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
+                            </p>
+                          </div>
+                          {(post.profileData.personality || post.profileData.relationship) && (
+                            <div className="flex flex-wrap gap-2">
+                              {post.profileData.personality && (
+                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                                  {getPersonalityLabel(post.profileData.personality)}
+                                </span>
+                              )}
+                              {post.profileData.relationship && (
+                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                                  {getRelationshipLabel(post.profileData.relationship)}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <Button
+                  size="lg"
+                  className="text-lg px-10 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95"
+                  style={{
+                    background: "var(--gradient-sunset)",
+                    boxShadow: "var(--shadow-warm)",
+                  }}
+                  onClick={() => {
+                    trackClick(post.id);
+                    navigate('/discover');
+                  }}
+                  data-testid="button-start-swiping"
+                >
+                  Discover 💕
+                </Button>
               </div>
-              <Button
-                size="lg"
-                className="text-lg px-10 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95"
-                style={{
-                  background: "var(--gradient-sunset)",
-                  boxShadow: "var(--shadow-warm)",
-                }}
-                onClick={() => {
-                  trackClick(activePost.id);
-                  navigate('/discover');
-                }}
-                data-testid="button-start-swiping"
-              >
-                Discover 💕
-              </Button>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Desktop: Grid */}
           {!isMobile && (
