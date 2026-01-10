@@ -91,6 +91,31 @@ export const TelegramChannelFeed = ({
   useEffect(() => {
     saveFilters(filters);
   }, [filters]);
+  
+  useEffect(() => {
+    const syncFiltersFromStorage = () => {
+      const stored = getStoredFilters();
+      setFilters(prev => {
+        if (JSON.stringify(prev) !== JSON.stringify(stored)) {
+          return stored;
+        }
+        return prev;
+      });
+    };
+    
+    window.addEventListener('focus', syncFiltersFromStorage);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        syncFiltersFromStorage();
+      }
+    });
+    
+    syncFiltersFromStorage();
+    
+    return () => {
+      window.removeEventListener('focus', syncFiltersFromStorage);
+    };
+  }, []);
   const listRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);

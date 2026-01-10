@@ -263,18 +263,40 @@ const Profile = () => {
            (filters.hasMultipleMedia ? 1 : 0);
   }, [filters]);
 
-  const buildFilterQueryString = useCallback(() => {
+  const buildFilterQueryString = useCallback((overrideFilters?: SharedFilters) => {
+    const f = overrideFilters || filters;
     const params = new URLSearchParams();
     params.append('channel', 'nextwife_ai');
-    filters.regions.forEach(r => params.append('region', r));
-    filters.ageBrackets.forEach(a => params.append('ageBracket', a));
-    filters.occupationCategories.forEach(o => params.append('occupationCategory', o));
-    filters.personalities.forEach(p => params.append('personality', p));
-    filters.relationships.forEach(r => params.append('relationship', r));
-    if (filters.hasVideo) params.append('hasVideo', 'true');
-    if (filters.hasMultipleMedia) params.append('hasMultipleMedia', 'true');
+    f.regions.forEach(r => params.append('region', r));
+    f.ageBrackets.forEach(a => params.append('ageBracket', a));
+    f.occupationCategories.forEach(o => params.append('occupationCategory', o));
+    f.personalities.forEach(p => params.append('personality', p));
+    f.relationships.forEach(r => params.append('relationship', r));
+    if (f.hasVideo) params.append('hasVideo', 'true');
+    if (f.hasMultipleMedia) params.append('hasMultipleMedia', 'true');
     return params.toString();
   }, [filters]);
+
+  const handleFiltersChange = useCallback(async (newFilters: SharedFilters) => {
+    setFilters(newFilters);
+    saveFilters(newFilters);
+    
+    try {
+      const queryString = buildFilterQueryString(newFilters);
+      const response = await fetch(`/api/tg-channel-feed?${queryString}&limit=1`);
+      if (!response.ok) return;
+      const data = await response.json();
+      const firstPost = data.posts?.[0];
+      if (firstPost && firstPost.id !== id) {
+        setSkipHistory([]);
+        sessionStorage.removeItem(SKIP_HISTORY_KEY);
+        const viewParam = isAppView ? "?view=app" : "";
+        navigate(`/profile/${firstPost.id}${viewParam}`, { replace: true });
+      }
+    } catch (error) {
+      console.error("Failed to fetch filtered profile:", error);
+    }
+  }, [buildFilterQueryString, id, isAppView, navigate]);
 
   const prevIdRef = useRef<string | undefined>(undefined);
   
@@ -826,7 +848,7 @@ const Profile = () => {
         onClose={() => setShowFilters(false)}
         channel="nextwife_ai"
         filters={filters}
-        onFiltersChange={setFilters}
+        onFiltersChange={handleFiltersChange}
       />
     </div>
   );
