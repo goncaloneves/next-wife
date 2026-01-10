@@ -32,6 +32,7 @@ const Index = () => {
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -78,6 +79,31 @@ const Index = () => {
     }
   }, [location.state]);
 
+  // Pause/play background videos based on hero section visibility
+  useEffect(() => {
+    if (!heroRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          videoRefs.current.forEach((video) => {
+            if (video) {
+              if (entry.isIntersecting) {
+                video.play().catch(() => {});
+              } else {
+                video.pause();
+              }
+            }
+          });
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(heroRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   const features = [
     {
       icon: "🌺",
@@ -118,6 +144,7 @@ const Index = () => {
         <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-30">
           {!isMobile && (
             <video
+              ref={(el) => { videoRefs.current[0] = el; }}
               autoPlay
               muted
               loop
@@ -130,6 +157,7 @@ const Index = () => {
             </video>
           )}
           <video
+            ref={(el) => { videoRefs.current[1] = el; }}
             autoPlay
             muted
             loop
@@ -141,6 +169,7 @@ const Index = () => {
             <source src="/videos/video-3-loop.mp4" type="video/mp4" />
           </video>
           <video
+            ref={(el) => { videoRefs.current[2] = el; }}
             autoPlay
             muted
             loop
@@ -153,6 +182,7 @@ const Index = () => {
           </video>
           {!isMobile && (
             <video
+              ref={(el) => { videoRefs.current[3] = el; }}
               autoPlay
               muted
               loop
