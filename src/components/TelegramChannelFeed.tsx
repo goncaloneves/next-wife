@@ -963,10 +963,10 @@ export const TelegramChannelFeed = ({
                               }, delay);
                             }}
                           />
-                          {/* Video indicator - simple play icon */}
+                          {/* Video indicator - simple play icon with stroke for contrast */}
                           <div className="absolute top-2 right-2 pointer-events-none">
-                            <svg className="w-5 h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M8 5v14l11-7z" />
+                            <svg className="w-5 h-5" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" fill="white" stroke="rgba(0,0,0,0.5)" strokeWidth="1.5" />
                             </svg>
                           </div>
                         </div>
