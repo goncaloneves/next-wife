@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters } from "./FeedFilters";
 import { formatDistanceToNow } from "date-fns";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
+import { useBoomerangVideo } from "@/hooks/useBoomerangVideo";
 
 interface ProfileData {
   name: string;
