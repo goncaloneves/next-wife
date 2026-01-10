@@ -13,8 +13,20 @@ const Discover = () => {
   useTelegram(isAppView);
 
   useEffect(() => {
-    const fetchLatestProfile = async () => {
+    const navigateToProfile = async () => {
       try {
+        // Check if there's a specific post ID saved from clicking on a card
+        const savedPostId = sessionStorage.getItem('nextwife_last_viewed');
+        
+        if (savedPostId) {
+          // Clear it after reading so it doesn't persist
+          sessionStorage.removeItem('nextwife_last_viewed');
+          const queryString = view ? `?view=${view}` : "";
+          navigate(`/profile/${savedPostId}${queryString}`, { replace: true });
+          return;
+        }
+        
+        // Otherwise fetch the latest post
         const response = await fetch("/api/tg-channel-feed?channel=nextwife_ai&limit=1");
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
@@ -32,7 +44,7 @@ const Discover = () => {
       }
     };
 
-    fetchLatestProfile();
+    navigateToProfile();
   }, [navigate, view]);
 
   if (error) {
