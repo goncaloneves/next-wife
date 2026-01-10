@@ -991,6 +991,8 @@ export const TelegramChannelFeed = ({
                                 };
                                 
                                 el.onplay = () => {
+                                  const circle = progressCircleRefs.current[post.id];
+                                  if (circle) circle.style.opacity = '1';
                                   if (rafRefs.current[post.id]) cancelAnimationFrame(rafRefs.current[post.id]);
                                   rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
                                 };
@@ -1002,7 +1004,10 @@ export const TelegramChannelFeed = ({
                                 };
                                 el.onended = () => {
                                   const circle = progressCircleRefs.current[post.id];
-                                  if (circle) circle.style.strokeDasharray = `0 ${circumference}`;
+                                  if (circle) {
+                                    circle.style.strokeDasharray = `0 ${circumference}`;
+                                    circle.style.opacity = '0';
+                                  }
                                 };
                               }
                             }}
@@ -1044,9 +1049,8 @@ export const TelegramChannelFeed = ({
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeDasharray="0 75.4"
-                                strokeDashoffset="0.5"
                                 transform="rotate(-90 18 18)"
-                                style={{ willChange: 'stroke-dasharray' }}
+                                style={{ willChange: 'stroke-dasharray', opacity: 0 }}
                               />
                               <path d="M15 12v12l9-6z" fill="white" stroke="rgba(0,0,0,0.4)" strokeWidth="1" strokeLinejoin="round" />
                             </svg>
