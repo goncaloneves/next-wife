@@ -1049,6 +1049,7 @@ export const TelegramChannelFeed = ({
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeDasharray="0 94.2"
+                                strokeDashoffset="0.5"
                                 transform="rotate(-90 18 18)"
                                 style={{ willChange: 'stroke-dasharray' }}
                               />
