@@ -425,7 +425,7 @@ const Profile = () => {
                             className={`flex-1 h-1.5 rounded-sm transition-all duration-200 ${
                               idx === mediaIndex 
                                 ? 'bg-white' 
-                                : 'bg-white/40'
+                                : 'bg-gray-600/80'
                             }`}
                           />
                         ))}
