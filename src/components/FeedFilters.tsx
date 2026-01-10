@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Flame, ChevronDown, ChevronUp } from "lucide-react";
+import { Flame, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
 import { 
@@ -365,20 +365,21 @@ interface FilterButtonProps {
 export function FilterButton({ isOpen, onClick, activeCount }: FilterButtonProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
-        "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
-        "border-2 border-dashed",
-        isOpen 
-          ? "border-orange-400 text-orange-400 bg-orange-400/10" 
-          : "border-white/30 text-white/70 hover:border-white/50 hover:text-white"
+        "w-10 h-10 rounded-full flex items-center justify-center transition-all relative",
+        activeCount > 0 
+          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30" 
+          : isOpen
+            ? "bg-orange-400/20 text-orange-400"
+            : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
       )}
       data-testid="toggle-filters"
     >
-      {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-      Filters
+      <SlidersHorizontal className="w-5 h-5" />
       {activeCount > 0 && (
-        <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white">
+        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-white text-orange-500 text-xs font-bold flex items-center justify-center px-1">
           {activeCount}
         </span>
       )}
