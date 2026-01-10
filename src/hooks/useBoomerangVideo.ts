@@ -24,7 +24,7 @@ export function useBoomerangVideo() {
     const state: BoomerangState = { 
       direction: 1, 
       rafId: null, 
-      lastTime: performance.now(),
+      lastTime: 0,
       cancelled: false
     };
     statesRef.current.set(id, state);
@@ -39,28 +39,27 @@ export function useBoomerangVideo() {
       
       video.pause();
       video.currentTime = 0;
+      state.lastTime = performance.now();
       
-      const fps = 30;
-      const step = 1 / fps;
+      const playbackSpeed = 1.0;
       
       const animate = (now: number) => {
         if (state.cancelled) return;
         
-        const elapsed = now - state.lastTime;
-        if (elapsed >= 1000 / fps) {
-          state.lastTime = now;
-          
-          const newTime = video.currentTime + (state.direction * step);
-          
-          if (newTime >= video.duration - 0.05) {
-            video.currentTime = video.duration - 0.05;
-            state.direction = -1;
-          } else if (newTime <= 0.05) {
-            video.currentTime = 0.05;
-            state.direction = 1;
-          } else {
-            video.currentTime = newTime;
-          }
+        const deltaMs = Math.min(now - state.lastTime, 100);
+        state.lastTime = now;
+        
+        const deltaSeconds = (deltaMs / 1000) * playbackSpeed;
+        const newTime = video.currentTime + (state.direction * deltaSeconds);
+        
+        if (newTime >= video.duration - 0.02) {
+          video.currentTime = video.duration - 0.02;
+          state.direction = -1;
+        } else if (newTime <= 0.02) {
+          video.currentTime = 0.02;
+          state.direction = 1;
+        } else {
+          video.currentTime = newTime;
         }
         
         state.rafId = requestAnimationFrame(animate);
@@ -135,27 +134,25 @@ export function useSingleBoomerangVideo() {
       video.currentTime = 0;
       lastTimeRef.current = performance.now();
       
-      const fps = 30;
-      const step = 1 / fps;
+      const playbackSpeed = 1.0;
       
       const animate = (now: number) => {
         if (cancelledRef.current) return;
         
-        const elapsed = now - lastTimeRef.current;
-        if (elapsed >= 1000 / fps) {
-          lastTimeRef.current = now;
-          
-          const newTime = video.currentTime + (directionRef.current * step);
-          
-          if (newTime >= video.duration - 0.05) {
-            video.currentTime = video.duration - 0.05;
-            directionRef.current = -1;
-          } else if (newTime <= 0.05) {
-            video.currentTime = 0.05;
-            directionRef.current = 1;
-          } else {
-            video.currentTime = newTime;
-          }
+        const deltaMs = Math.min(now - lastTimeRef.current, 100);
+        lastTimeRef.current = now;
+        
+        const deltaSeconds = (deltaMs / 1000) * playbackSpeed;
+        const newTime = video.currentTime + (directionRef.current * deltaSeconds);
+        
+        if (newTime >= video.duration - 0.02) {
+          video.currentTime = video.duration - 0.02;
+          directionRef.current = -1;
+        } else if (newTime <= 0.02) {
+          video.currentTime = 0.02;
+          directionRef.current = 1;
+        } else {
+          video.currentTime = newTime;
         }
         
         rafIdRef.current = requestAnimationFrame(animate);
