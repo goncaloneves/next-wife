@@ -137,6 +137,7 @@ export function ProfileFilterModal({
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] flex flex-col bg-gradient-to-b from-zinc-900 to-black rounded-t-3xl border-t border-white/10"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b border-white/10">
               <div className="flex items-center gap-3">
