@@ -21,12 +21,18 @@ interface ProfileData {
   relationship?: string | null;
 }
 
+interface MediaItem {
+  type: 'photo' | 'video';
+  url: string;
+}
+
 interface TelegramPost {
   id: string;
   text: string;
   date: string;
   link: string;
   media?: string | null;
+  mediaUrls?: MediaItem[] | null;
   avatar?: string | null;
   botLink?: string | null;
   profileData?: ProfileData | null;
@@ -91,6 +97,8 @@ export const TelegramChannelFeed = ({
   const hasInitializedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
   const [lastViewedId, setLastViewedId] = useState<string | null>(null);
+  const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
+  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -882,39 +890,124 @@ export const TelegramChannelFeed = ({
                   {!imageLoadStates[post.id] && (
                     <Skeleton className="absolute inset-0 w-full h-full z-10" />
                   )}
-                  <img
-                    key={`img-${post.id}-${imageErrors[post.id] || 0}`}
-                    src={buildSrc(post.media!, post.id)}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    referrerPolicy="no-referrer"
-                    className={`w-full h-full object-cover transition-all duration-300 ${
-                      imageLoadStates[post.id] ? "" : "opacity-0"
-                    } ${
-                      isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
-                    } md:group-hover:opacity-100 md:group-hover:scale-105`}
-                    onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
-                    onError={() => {
-                      const currentTries = imageErrors[post.id] || 0;
-                      
-                      if (currentTries >= 2) {
-                        console.log(`Hiding post ${post.id} after 3 failed attempts`);
-                        setHiddenIds(s => new Set(s).add(post.id));
-                        return;
-                      }
-                      
-                      const delay = currentTries === 0 ? 100 : 300;
-                      console.log(`Image load failed for post ${post.id}, attempt ${currentTries + 1}, retrying...`);
-                      
-                      // Reset load state to show skeleton during retry
-                      setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
-                      
-                      setTimeout(() => {
-                        setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
-                      }, delay);
-                    }}
-                  />
+                  {(() => {
+                    const firstMedia = post.mediaUrls?.[0];
+                    const isVideo = firstMedia?.type === 'video';
+                    const isPlaying = playingVideos.has(post.id);
+                    
+                    if (isVideo) {
+                      return (
+                        <div 
+                          className="w-full h-full relative"
+                          onMouseEnter={() => {
+                            if (!isMobile) {
+                              setPlayingVideos(prev => new Set(prev).add(post.id));
+                              videoRefs.current[post.id]?.play();
+                            }
+                          }}
+                          onMouseLeave={() => {
+                            if (!isMobile) {
+                              setPlayingVideos(prev => {
+                                const next = new Set(prev);
+                                next.delete(post.id);
+                                return next;
+                              });
+                              const video = videoRefs.current[post.id];
+                              if (video) {
+                                video.pause();
+                                video.currentTime = 0;
+                              }
+                            }
+                          }}
+                          onClick={(e) => {
+                            if (isMobile) {
+                              e.stopPropagation();
+                              if (isPlaying) {
+                                setPlayingVideos(prev => {
+                                  const next = new Set(prev);
+                                  next.delete(post.id);
+                                  return next;
+                                });
+                                videoRefs.current[post.id]?.pause();
+                              } else {
+                                setPlayingVideos(prev => new Set(prev).add(post.id));
+                                videoRefs.current[post.id]?.play();
+                              }
+                            }
+                          }}
+                        >
+                          <video
+                            ref={el => { videoRefs.current[post.id] = el; }}
+                            key={`video-${post.id}`}
+                            src={buildSrc(firstMedia.url, post.id)}
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata"
+                            className={`w-full h-full object-cover transition-all duration-300 ${
+                              imageLoadStates[post.id] ? "" : "opacity-0"
+                            } ${
+                              isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
+                            } md:group-hover:opacity-100 md:group-hover:scale-105`}
+                            onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
+                            onError={() => {
+                              const currentTries = imageErrors[post.id] || 0;
+                              if (currentTries >= 2) {
+                                setHiddenIds(s => new Set(s).add(post.id));
+                                return;
+                              }
+                              const delay = currentTries === 0 ? 100 : 300;
+                              setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
+                              setTimeout(() => {
+                                setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
+                              }, delay);
+                            }}
+                          />
+                          {!isPlaying && (
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <div className="w-16 h-16 bg-black/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z" />
+                                </svg>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+                    
+                    return (
+                      <img
+                        key={`img-${post.id}-${imageErrors[post.id] || 0}`}
+                        src={buildSrc(post.media!, post.id)}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        referrerPolicy="no-referrer"
+                        className={`w-full h-full object-cover transition-all duration-300 ${
+                          imageLoadStates[post.id] ? "" : "opacity-0"
+                        } ${
+                          isCentered ? "opacity-100 scale-105 md:opacity-70 md:scale-100" : "opacity-70"
+                        } md:group-hover:opacity-100 md:group-hover:scale-105`}
+                        onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
+                        onError={() => {
+                          const currentTries = imageErrors[post.id] || 0;
+                          
+                          if (currentTries >= 2) {
+                            setHiddenIds(s => new Set(s).add(post.id));
+                            return;
+                          }
+                          
+                          const delay = currentTries === 0 ? 100 : 300;
+                          setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
+                          
+                          setTimeout(() => {
+                            setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
+                          }, delay);
+                        }}
+                      />
+                    );
+                  })()}
                   
                   {/* Date badge - shows relative time in top-left */}
                   <div 
