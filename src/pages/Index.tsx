@@ -325,22 +325,11 @@ const Index = () => {
         <section ref={feedContentRef} className="relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
-              <div className="relative mb-8">
+              <div className="mb-8">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white">
                   Choose Your Woman 🌻
                 </h2>
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden sm:flex gap-2">
-                  <SortButtons 
-                    sortBy={sortBy} 
-                    onSortChange={setSortBy} 
-                  />
-                  <FilterButton 
-                    isOpen={showFilters} 
-                    onClick={() => setShowFilters(!showFilters)} 
-                    activeCount={activeFilterCount}
-                  />
-                </div>
-                <div className="flex justify-center gap-2 mt-4 sm:hidden">
+                <div className="flex justify-center gap-2 mt-4">
                   <SortButtons 
                     sortBy={sortBy} 
                     onSortChange={setSortBy} 
