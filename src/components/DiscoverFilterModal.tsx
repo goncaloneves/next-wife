@@ -245,16 +245,16 @@ export function DiscoverFilterButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "w-10 h-10 rounded-full flex items-center justify-center transition-all relative",
+        "p-2 flex items-center justify-center transition-all relative hover:scale-110 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]",
         activeCount > 0 
-          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30" 
-          : "bg-black/40 backdrop-blur-sm text-white/80 hover:bg-black/60"
+          ? "text-orange-400" 
+          : "text-white"
       )}
       data-testid="open-profile-filters"
     >
       <SlidersHorizontal className="w-5 h-5" />
       {activeCount > 0 && (
-        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-white text-orange-500 text-xs font-bold flex items-center justify-center px-1">
+        <span className="absolute -top-1 -right-0.5 min-w-[16px] h-[16px] rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white text-[10px] font-bold flex items-center justify-center px-1 shadow-lg">
           {activeCount}
         </span>
       )}
