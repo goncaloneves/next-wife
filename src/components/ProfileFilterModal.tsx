@@ -121,9 +121,10 @@ export function ProfileFilterModal({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed left-0 right-0 bottom-0 md:left-1/2 md:right-auto md:-translate-x-1/2 md:bottom-8 md:w-[min(90vw,768px)] z-50 max-h-[90vh] md:max-h-[80vh] flex flex-col bg-gradient-to-b from-zinc-900 to-black rounded-t-3xl md:rounded-2xl border-t md:border border-white/10"
+            className="fixed inset-x-0 bottom-0 md:bottom-8 z-50 flex justify-center"
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="w-full md:w-[min(90vw,768px)] max-h-[90vh] md:max-h-[80vh] flex flex-col bg-gradient-to-b from-zinc-900 to-black rounded-t-3xl md:rounded-2xl border-t md:border border-white/10">
             <div className="flex items-center justify-between p-4 border-b border-white/10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 flex items-center justify-center">
@@ -258,6 +259,7 @@ export function ProfileFilterModal({
               >
                 {activeFilterCount > 0 ? `Apply (${activeFilterCount})` : "Show All"}
               </button>
+            </div>
             </div>
           </motion.div>
         </>
