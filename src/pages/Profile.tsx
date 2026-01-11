@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal, ChevronUp } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
@@ -713,114 +713,93 @@ const Profile = () => {
               </div>
             </div>
 
-            <motion.div 
-              className="absolute bottom-0 left-0 right-0 pointer-events-none"
-              animate={{ height: aboutExpanded ? '70%' : '38%' }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
-            </motion.div>
-
-            <div className="absolute bottom-0 left-0 right-0 flex flex-col pointer-events-none">
-              <div className="relative px-4 pb-2 pointer-events-auto bg-black">
-                <motion.button
-                  drag="y"
-                  dragConstraints={{ top: -80, bottom: 80 }}
-                  dragElastic={0.3}
-                  onDrag={(_, info) => {
-                    if (!aboutExpanded && info.offset.y < -40) {
-                      setAboutExpanded(true);
-                    } else if (aboutExpanded && info.offset.y > 40) {
-                      setAboutExpanded(false);
-                    }
-                  }}
-                  onDragEnd={() => {}}
-                  whileDrag={{ scale: 1.1 }}
-                  onClick={() => setAboutExpanded(!aboutExpanded)}
-                  className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-black/80 cursor-grab active:cursor-grabbing z-10"
-                  data-testid="button-info-panel-toggle"
-                >
-                  <ChevronUp className={`w-6 h-6 text-white transition-transform duration-300 ${aboutExpanded ? 'rotate-180' : ''}`} />
-                </motion.button>
-
-                <div className="flex items-baseline mb-3 pt-2">
-                  <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg line-clamp-2">
-                    {profileData.name}
-                  </h1>
-                  <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
-                    <span className="text-[1.458rem] font-semibold text-white/90">
-                      {profileData.age}
-                    </span>
-                    <BadgeCheck 
-                      className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
-                      style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
-                    />
-                    {post.isHot && (
-                      <Flame 
-                        className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
-                        style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+            <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
+              <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
+                <div className="px-4 pt-16 pb-2">
+                  <div className="flex items-baseline mb-3">
+                    <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg line-clamp-2">
+                      {profileData.name}
+                    </h1>
+                    <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
+                      <span className="text-[1.458rem] font-semibold text-white/90">
+                        {profileData.age}
+                      </span>
+                      <BadgeCheck 
+                        className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
+                        style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                       />
+                      {/* Fire indicator for hot profiles */}
+                      {post.isHot && (
+                        <Flame 
+                          className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
+                          style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                        />
+                      )}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 text-white/90">
+                      <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                      <span className="text-sm truncate md:whitespace-normal md:line-clamp-2">{profileData.work?.replace(/\.$/, '')}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/90">
+                      <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/90">
+                      <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/90">
+                      <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                      <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
+                    </div>
+
+                    {(profileData.relationship || profileData.personality) && (
+                      <div className="pt-2 mt-2 border-t border-white/[0.08]">
+                        <div className="flex flex-wrap gap-2">
+                          {profileData.relationship && (
+                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                              {getRelationshipLabel(profileData.relationship)}
+                            </span>
+                          )}
+                          {profileData.personality && (
+                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                              {getPersonalityLabel(profileData.personality)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     )}
-                  </span>
-                </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3 text-white/90">
-                    <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                    <span className="text-sm truncate md:whitespace-normal md:line-clamp-2">{profileData.work?.replace(/\.$/, '')}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-white/90">
-                    <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                    <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
-                  </div>
-                </div>
-
-                <AnimatePresence>
-                  {aboutExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div ref={contentContainerRef} className="space-y-3 pt-4 max-h-[40vh] overflow-y-auto">
-                        <div className="flex items-center gap-3 text-white/90">
-                          <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
-                          <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-white/90">
-                          <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                          <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
-                        </div>
-
-                        {(profileData.relationship || profileData.personality) && (
-                          <div className="flex flex-wrap gap-2">
-                            {profileData.relationship && (
-                              <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                                {getRelationshipLabel(profileData.relationship)}
-                              </span>
-                            )}
-                            {profileData.personality && (
-                              <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                                {getPersonalityLabel(profileData.personality)}
-                              </span>
-                            )}
-                          </div>
-                        )}
-
-                        {profileData.about && (
-                          <div className="pt-2 border-t border-white/[0.08]">
-                            <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
-                            <p className="text-sm text-white/80 leading-relaxed">
-                              {profileData.about}
-                            </p>
-                          </div>
+                    {profileData.about && (
+                      <div 
+                        className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
+                        onClick={() => {
+                          const newExpanded = !aboutExpanded;
+                          setAboutExpanded(newExpanded);
+                          if (newExpanded && contentContainerRef.current) {
+                            setTimeout(() => {
+                              contentContainerRef.current?.scrollTo({ top: contentContainerRef.current.scrollHeight, behavior: 'smooth' });
+                            }, 50);
+                          }
+                        }}
+                        data-testid="button-about-me-toggle"
+                      >
+                        <p className={`flex items-center gap-1 text-xs font-medium text-white/50 uppercase tracking-wide ${aboutExpanded ? 'mb-2' : ''}`}>
+                          About Me
+                          <span className="text-rose-400">{aboutExpanded ? '−' : '+'}</span>
+                        </p>
+                        {aboutExpanded && (
+                          <p className="text-sm text-white/80 leading-relaxed">
+                            {profileData.about}
+                          </p>
                         )}
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    )}
+                  </div>
+                </div>
               </div>
               
               <div 
