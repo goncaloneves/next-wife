@@ -166,17 +166,6 @@ const Profile = () => {
     }
     
     const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
-    
-    // Skip for single media items (no progress bar shown)
-    if (mediaList.length === 1) {
-      return () => {
-        if (rafRef.current) {
-          cancelAnimationFrame(rafRef.current);
-          rafRef.current = null;
-        }
-      };
-    }
-    
     const currentMedia = mediaList[mediaIndex];
     const progressBar = progressRefs.current[mediaIndex];
     
@@ -581,7 +570,8 @@ const Profile = () => {
                     )
                   ))}
                   
-                  {hasMultipleMedia ? (
+                  {/* Navigation tap zones - only for multiple media */}
+                  {hasMultipleMedia && (
                     <>
                       <motion.div 
                         className="absolute left-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
@@ -611,27 +601,34 @@ const Profile = () => {
                         }}
                         data-testid="media-next"
                       />
-                      
-                      <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
-                        {mediaList.map((_, idx) => (
-                          <div 
-                            key={idx}
-                            className="flex-1 h-1 rounded-sm bg-white/30 overflow-hidden"
-                          >
-                            {idx < mediaIndex ? (
-                              <div className="h-full bg-white/90 w-full" />
-                            ) : idx === mediaIndex ? (
-                              <div 
-                                ref={el => progressRefs.current[idx] = el}
-                                className="h-full bg-white/90 origin-left will-change-transform"
-                                style={{ transform: 'scaleX(0)' }}
-                              />
-                            ) : null}
-                          </div>
-                        ))}
-                      </div>
                     </>
-                  ) : null}
+                  )}
+                  
+                  {/* Progress bar - always show, even for single media */}
+                  <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
+                    {mediaList.map((media, idx) => (
+                      <div 
+                        key={idx}
+                        className="flex-1 h-1 rounded-sm bg-white/30 overflow-hidden"
+                      >
+                        {idx < mediaIndex ? (
+                          // Past segments - fully filled
+                          <div className="h-full bg-white/90 w-full" />
+                        ) : idx === mediaIndex ? (
+                          // Current segment - for photos show filled, for videos animate
+                          media.type === 'photo' ? (
+                            <div className="h-full bg-white/90 w-full" />
+                          ) : (
+                            <div 
+                              ref={el => progressRefs.current[idx] = el}
+                              className="h-full bg-white/90 origin-left will-change-transform"
+                              style={{ transform: 'scaleX(0)' }}
+                            />
+                          )
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
                 </>
               );
             })()}
