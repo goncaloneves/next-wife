@@ -26,7 +26,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
   - Disables vertical swipes to prevent accidental closure via `disableVerticalSwipes()`
   - Safe area handling for device notches/home indicators
   - "Meet on Telegram" opens link and closes mini app via `openTelegramLink()` + `close()`
-- **Profile Layout:** Fixed footer with action buttons (skip/heart/undo) that stays in place when About Me expands. About Me section can expand to full image height without scroll.
+- **Profile Layout:** Fixed footer with action buttons (skip/heart/undo) that stays in place. Tinder-style drag-up/down info panel reveals Nationality, Languages, Relationship/Personality tags, and About Me text. Always visible: Name, Age, Work, Hometown. Panel can be expanded by dragging up on the handle or tapping the "More info" button.
 - **Multi-Media Carousel:** Profiles with multiple photos/videos display an Instagram-style carousel with segmented progress bars at the top. Users can tap left/right sides of the image to navigate between media. Media stored as JSONB array [{type: 'photo'|'video', url: string}] in `media_urls` column.
 - **Instagram-style Auto-Advance:** Media carousel auto-advances like Instagram Stories - each photo/video shows for 5 seconds with an animated progress bar, then advances to the next. After the last media item, it loops back to the first. Progress bars show: filled (past), animating (current), dimmed (upcoming).
 - **Video Playback:** Videos play with muted autoplay, no looping - they advance to next media when finished. Progress bar syncs with video playback duration.
