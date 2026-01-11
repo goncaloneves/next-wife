@@ -245,7 +245,7 @@ const Index = () => {
                 onMouseLeave={(e) => e.currentTarget.style.boxShadow = "var(--shadow-warm)"}
                 onClick={() => {
                   if (window.innerWidth < 768) {
-                    setShowFilters(prev => !prev);
+                    window.location.href = '/discover?view=app';
                   } else {
                     feedContentRef.current?.scrollIntoView({ behavior: 'smooth' });
                   }
