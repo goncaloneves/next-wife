@@ -16,7 +16,7 @@ import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, Message
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { ProfileFilterModal, ProfileFilterButton, type ProfileFilters } from "@/components/ProfileFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
-import { useSharedFilters } from "@/hooks/useSharedFilters";
+import { useFilters } from "@/contexts/FilterContext";
 
 interface ProfileData {
   name: string;
@@ -116,7 +116,7 @@ const Profile = () => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
-  const { filters, setFilters, activeFilterCount } = useSharedFilters();
+  const { filters, setFilters, activeFilterCount } = useFilters();
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);

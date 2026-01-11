@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Flame, ChevronDown, ChevronUp, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -7,13 +7,11 @@ import {
   FilterSection, 
   toggleArrayValue 
 } from "./filters/FilterComponents";
-import { saveFilters, type SharedFilters } from "@/lib/filterStorage";
+import { useFilters } from "@/contexts/FilterContext";
 import { useFilterOptions } from "@/hooks/useFilterOptions";
 
 interface FeedFiltersProps {
   channel: string;
-  filters: SharedFilters;
-  onFiltersChange: (filters: SharedFilters) => void;
   showFilters?: boolean;
   onShowFiltersChange?: (show: boolean) => void;
   hideButton?: boolean;
@@ -21,12 +19,11 @@ interface FeedFiltersProps {
 
 export function FeedFilters({ 
   channel, 
-  filters,
-  onFiltersChange,
   showFilters: controlledShowFilters,
   onShowFiltersChange,
   hideButton = false
 }: FeedFiltersProps) {
+  const { filters, setFilters, activeFilterCount } = useFilters();
   const { 
     filterOptions, 
     loading, 
@@ -34,286 +31,266 @@ export function FeedFilters({
     relationshipOptions,
     valuesToLabels,
     labelsToValues,
-    getActiveCount 
   } = useFilterOptions(channel);
   
-  const [selectedRegions, setSelectedRegions] = useState<string[]>(filters.regions);
-  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>(filters.ageBrackets);
-  const [selectedOccupations, setSelectedOccupations] = useState<string[]>(filters.occupationCategories);
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(filters.languages);
-  const [selectedHometowns, setSelectedHometowns] = useState<string[]>(filters.hometowns);
-  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>(filters.personalities);
-  const [selectedRelationships, setSelectedRelationships] = useState<string[]>(filters.relationships);
-  const [hasVideo, setHasVideo] = useState<boolean>(filters.hasVideo);
-  const [hasMultipleMedia, setHasMultipleMedia] = useState<boolean>(filters.hasMultipleMedia);
-  
   const [internalShowFilters, setInternalShowFilters] = useState(false);
-
-  useEffect(() => {
-    setSelectedRegions(filters.regions);
-    setSelectedAgeBrackets(filters.ageBrackets);
-    setSelectedOccupations(filters.occupationCategories);
-    setSelectedLanguages(filters.languages);
-    setSelectedHometowns(filters.hometowns);
-    setSelectedPersonalities(filters.personalities);
-    setSelectedRelationships(filters.relationships);
-    setHasVideo(filters.hasVideo);
-    setHasMultipleMedia(filters.hasMultipleMedia);
-  }, [filters]);
   
   const showFilters = controlledShowFilters !== undefined ? controlledShowFilters : internalShowFilters;
   const setShowFilters = onShowFiltersChange || setInternalShowFilters;
 
   const availableHometowns = useMemo(() => {
     const hometowns = filterOptions.hometowns || {};
-    if (selectedRegions.length === 0) {
+    if (filters.regions.length === 0) {
       return Object.values(hometowns).flat().sort();
     }
-    return selectedRegions.flatMap(region => hometowns[region] || []).sort();
-  }, [selectedRegions, filterOptions.hometowns]);
+    return filters.regions.flatMap(region => hometowns[region] || []).sort();
+  }, [filters.regions, filterOptions.hometowns]);
 
-  useEffect(() => {
-    if (selectedHometowns.length > 0) {
-      const validHometowns = selectedHometowns.filter(h => availableHometowns.includes(h));
-      if (validHometowns.length !== selectedHometowns.length) {
-        setSelectedHometowns(validHometowns);
+  const updateFilter = useCallback(<K extends keyof typeof filters>(key: K, value: (typeof filters)[K]) => {
+    const newFilters = { ...filters, [key]: value };
+    
+    if (key === 'regions') {
+      const validHometowns = filters.hometowns.filter(h => {
+        const hometowns = filterOptions.hometowns || {};
+        const newRegions = value as string[];
+        if (newRegions.length === 0) {
+          return Object.values(hometowns).flat().includes(h);
+        }
+        return newRegions.some(region => (hometowns[region] || []).includes(h));
+      });
+      if (validHometowns.length !== filters.hometowns.length) {
+        newFilters.hometowns = validHometowns;
       }
     }
-  }, [selectedRegions, availableHometowns, selectedHometowns]);
-
-  const notifyFiltersChange = useCallback(() => {
-    // Always send explicit arrays (empty or with values) to ensure state resets properly
-    onFiltersChange({
-      regions: selectedRegions,
-      ageBrackets: selectedAgeBrackets,
-      occupationCategories: selectedOccupations,
-      languages: selectedLanguages,
-      hometowns: selectedHometowns,
-      personalities: selectedPersonalities,
-      relationships: selectedRelationships,
-      hasVideo,
-      hasMultipleMedia,
-    });
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, onFiltersChange]);
-
-  useEffect(() => {
-    if (!loading) {
-      notifyFiltersChange();
-    }
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading, notifyFiltersChange]);
-
-  useEffect(() => {
-    if (loading) return;
     
-    saveFilters({
-      regions: selectedRegions,
-      ageBrackets: selectedAgeBrackets,
-      occupationCategories: selectedOccupations,
-      languages: selectedLanguages,
-      hometowns: selectedHometowns,
-      personalities: selectedPersonalities,
-      relationships: selectedRelationships,
-      hasVideo,
-      hasMultipleMedia,
+    setFilters(newFilters);
+  }, [filters, setFilters, filterOptions.hometowns]);
+
+  const toggleRegion = useCallback((value: string) => {
+    updateFilter('regions', toggleArrayValue(filters.regions, value));
+  }, [filters.regions, updateFilter]);
+
+  const toggleAgeBracket = useCallback((value: string) => {
+    updateFilter('ageBrackets', toggleArrayValue(filters.ageBrackets, value));
+  }, [filters.ageBrackets, updateFilter]);
+
+  const toggleOccupation = useCallback((value: string) => {
+    updateFilter('occupationCategories', toggleArrayValue(filters.occupationCategories, value));
+  }, [filters.occupationCategories, updateFilter]);
+
+  const toggleLanguage = useCallback((value: string) => {
+    updateFilter('languages', toggleArrayValue(filters.languages, value));
+  }, [filters.languages, updateFilter]);
+
+  const toggleHometown = useCallback((value: string) => {
+    updateFilter('hometowns', toggleArrayValue(filters.hometowns, value));
+  }, [filters.hometowns, updateFilter]);
+
+  const togglePersonality = useCallback((label: string) => {
+    const value = labelsToValues.personality(label);
+    if (value) {
+      updateFilter('personalities', toggleArrayValue(filters.personalities, value));
+    }
+  }, [filters.personalities, updateFilter, labelsToValues]);
+
+  const toggleRelationship = useCallback((label: string) => {
+    const value = labelsToValues.relationship(label);
+    if (value) {
+      updateFilter('relationships', toggleArrayValue(filters.relationships, value));
+    }
+  }, [filters.relationships, updateFilter, labelsToValues]);
+
+  const toggleHasVideo = useCallback(() => {
+    updateFilter('hasVideo', !filters.hasVideo);
+  }, [filters.hasVideo, updateFilter]);
+
+  const toggleHasMultipleMedia = useCallback(() => {
+    updateFilter('hasMultipleMedia', !filters.hasMultipleMedia);
+  }, [filters.hasMultipleMedia, updateFilter]);
+
+  const clearAll = useCallback(() => {
+    setFilters({
+      regions: [],
+      ageBrackets: [],
+      occupationCategories: [],
+      languages: [],
+      hometowns: [],
+      personalities: [],
+      relationships: [],
+      hasVideo: false,
+      hasMultipleMedia: false,
     });
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading]);
-
-  const currentFilters = useMemo(() => ({
-    regions: selectedRegions,
-    ageBrackets: selectedAgeBrackets,
-    occupationCategories: selectedOccupations,
-    languages: selectedLanguages,
-    hometowns: selectedHometowns,
-    personalities: selectedPersonalities,
-    relationships: selectedRelationships,
-    hasVideo,
-    hasMultipleMedia,
-  }), [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia]);
-
-  const activeFilterCount = useMemo(() => getActiveCount(currentFilters), [getActiveCount, currentFilters]);
+  }, [setFilters]);
 
   const selectedPersonalityLabels = useMemo(() => 
-    valuesToLabels.personalities(selectedPersonalities),
-    [valuesToLabels, selectedPersonalities]
+    valuesToLabels.personalities(filters.personalities),
+    [valuesToLabels, filters.personalities]
   );
   const selectedRelationshipLabels = useMemo(() => 
-    valuesToLabels.relationships(selectedRelationships),
-    [valuesToLabels, selectedRelationships]
+    valuesToLabels.relationships(filters.relationships),
+    [valuesToLabels, filters.relationships]
   );
 
-  // Return nothing while loading - no skeleton placeholders needed
   if (loading) {
     return null;
   }
   
-  // If using external button and filters are closed, return nothing
   if (hideButton && !showFilters) {
     return null;
   }
 
   return (
     <div className="space-y-3 relative" data-testid="feed-filters">
-
-
-      {/* Backdrop when filters are open */}
       {showFilters && (
         <div 
-          className="fixed inset-0 bg-black md:bg-black/50 z-40" 
+          className="fixed inset-0 bg-black/50 z-40"
           onClick={() => setShowFilters(false)}
         />
       )}
+      
+      {!hideButton && (
+        <div className="flex items-center justify-between gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+            className={cn(
+              "flex items-center gap-2 rounded-full border-white/20 bg-black/50 backdrop-blur-sm text-white hover:bg-white/20 transition-all",
+              showFilters && "ring-2 ring-pink-500/50"
+            )}
+            data-testid="button-toggle-filters"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            <span>Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="bg-gradient-to-r from-pink-500 to-orange-400 text-white text-xs px-2 py-0.5 rounded-full font-medium">
+                {activeFilterCount}
+              </span>
+            )}
+            {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </Button>
+        </div>
+      )}
 
-      {/* Expanded filter sections - fixed centered overlay */}
       {showFilters && (
-        <div className="fixed inset-0 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[min(90vw,960px)] z-50 bg-gradient-to-b from-zinc-900 to-black md:bg-black/95 md:backdrop-blur-md md:rounded-2xl md:border md:border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200 flex flex-col md:max-h-[80vh]" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-          {/* Mobile Header */}
-          <div className="flex items-center justify-between p-4 border-b border-white/10 md:hidden">
+        <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[min(90vw,600px)] bg-gradient-to-b from-zinc-900/95 to-black/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl z-50 overflow-hidden">
+          <div className="flex items-center justify-between p-4 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-rose-500 flex items-center justify-center">
-                <SlidersHorizontal className="w-5 h-5 text-white" />
+              <div className="bg-gradient-to-r from-pink-500 to-orange-400 p-2 rounded-lg">
+                <Flame className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white">Filters</h2>
-                <p className="text-xs text-white/50">Find your perfect match</p>
+                <h3 className="font-semibold text-white">Filters</h3>
+                <p className="text-xs text-white/60">Find your perfect match</p>
               </div>
             </div>
-            <button
-              onClick={() => setShowFilters(false)}
-              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
-              data-testid="close-filters-header"
-            >
-              <X className="w-5 h-5 text-white/70" />
-            </button>
+            <div className="flex items-center gap-2">
+              {activeFilterCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearAll}
+                  className="text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 text-xs"
+                  data-testid="button-clear-filters"
+                >
+                  Clear all
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowFilters(false)}
+                className="text-white/60 hover:text-white hover:bg-white/10"
+                data-testid="button-close-filters"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
-          <div className="p-4 flex-1 overflow-y-auto min-h-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-            {/* Region */}
+
+          <div className="max-h-[60vh] overflow-y-auto p-4 space-y-4">
             <FilterSection
               title="Region"
-              options={filterOptions.regions}
-              selected={selectedRegions}
-              onToggle={(value) => setSelectedRegions(toggleArrayValue(selectedRegions, value))}
-              onClearAll={() => setSelectedRegions([])}
+              options={filterOptions.regions || []}
+              selected={filters.regions}
+              onToggle={toggleRegion}
+              onClearAll={() => updateFilter('regions', [])}
+              testIdPrefix="chip-region"
             />
 
-            {/* Age */}
+            {availableHometowns.length > 0 && (
+              <FilterSection
+                title="Hometown"
+                options={availableHometowns}
+                selected={filters.hometowns}
+                onToggle={toggleHometown}
+                onClearAll={() => updateFilter('hometowns', [])}
+                testIdPrefix="chip-hometown"
+              />
+            )}
+
             <FilterSection
               title="Age"
-              options={filterOptions.ageBrackets}
-              selected={selectedAgeBrackets}
-              onToggle={(value) => setSelectedAgeBrackets(toggleArrayValue(selectedAgeBrackets, value))}
-              onClearAll={() => setSelectedAgeBrackets([])}
-              showAll
+              options={filterOptions.ageBrackets || []}
+              selected={filters.ageBrackets}
+              onToggle={toggleAgeBracket}
+              onClearAll={() => updateFilter('ageBrackets', [])}
+              testIdPrefix="chip-age"
             />
 
-            {/* Language */}
-            <FilterSection
-              title="Language"
-              options={filterOptions.languages}
-              selected={selectedLanguages}
-              onToggle={(value) => setSelectedLanguages(toggleArrayValue(selectedLanguages, value))}
-              onClearAll={() => setSelectedLanguages([])}
-            />
-
-            {/* Occupation */}
             <FilterSection
               title="Occupation"
-              options={filterOptions.occupationCategories}
-              selected={selectedOccupations}
-              onToggle={(value) => setSelectedOccupations(toggleArrayValue(selectedOccupations, value))}
-              onClearAll={() => setSelectedOccupations([])}
+              options={filterOptions.occupationCategories || []}
+              selected={filters.occupationCategories}
+              onToggle={toggleOccupation}
+              onClearAll={() => updateFilter('occupationCategories', [])}
+              testIdPrefix="chip-occupation"
             />
 
-            {/* City - max 4 visible for consistent 3 rows */}
             <FilterSection
-              title={selectedRegions.length > 0 ? `Cities in ${selectedRegions.join(', ')}` : "City"}
-              options={availableHometowns}
-              selected={selectedHometowns}
-              onToggle={(value) => setSelectedHometowns(toggleArrayValue(selectedHometowns, value))}
-              onClearAll={() => setSelectedHometowns([])}
-              emptyMessage="Select a region to see cities"
+              title="Language"
+              options={filterOptions.languages || []}
+              selected={filters.languages}
+              onToggle={toggleLanguage}
+              onClearAll={() => updateFilter('languages', [])}
+              testIdPrefix="chip-language"
             />
 
-            {/* Personality */}
             <FilterSection
               title="Personality"
               options={personalityOptions}
               selected={selectedPersonalityLabels}
-              onToggle={(label) => {
-                const value = labelsToValues.personality(label);
-                setSelectedPersonalities(toggleArrayValue(selectedPersonalities, value));
-              }}
-              onClearAll={() => setSelectedPersonalities([])}
-              showAll
+              onToggle={togglePersonality}
+              onClearAll={() => updateFilter('personalities', [])}
+              testIdPrefix="chip-personality"
             />
 
-            {/* Relationship */}
             <FilterSection
-              title="Relationship"
+              title="Looking For"
               options={relationshipOptions}
               selected={selectedRelationshipLabels}
-              onToggle={(label) => {
-                const value = labelsToValues.relationship(label);
-                setSelectedRelationships(toggleArrayValue(selectedRelationships, value));
-              }}
-              onClearAll={() => setSelectedRelationships([])}
-              showAll
+              onToggle={toggleRelationship}
+              onClearAll={() => updateFilter('relationships', [])}
+              testIdPrefix="chip-relationship"
             />
 
-            {/* Media Type */}
             <div className="space-y-3">
               <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-1">Media</h3>
               <div className="flex flex-wrap gap-2">
                 <Chip
                   label="Has Video"
-                  selected={hasVideo}
-                  onClick={() => setHasVideo(!hasVideo)}
-                  variant="accent"
+                  selected={filters.hasVideo}
+                  onClick={toggleHasVideo}
+                  testIdPrefix="chip-media"
                 />
                 <Chip
                   label="Multiple Photos"
-                  selected={hasMultipleMedia}
-                  onClick={() => setHasMultipleMedia(!hasMultipleMedia)}
-                  variant="accent"
+                  selected={filters.hasMultipleMedia}
+                  onClick={toggleHasMultipleMedia}
+                  testIdPrefix="chip-media"
                 />
               </div>
             </div>
-            </div>
-          </div>
-
-          {/* Footer with Clear all and Close buttons */}
-          <div className="flex-shrink-0 flex justify-center items-center gap-3 pt-4 pb-5 md:py-4 border-t border-white/10">
-            {activeFilterCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setSelectedRegions([]);
-                  setSelectedAgeBrackets([]);
-                  setSelectedOccupations([]);
-                  setSelectedLanguages([]);
-                  setSelectedHometowns([]);
-                  setSelectedPersonalities([]);
-                  setSelectedRelationships([]);
-                  setHasVideo(false);
-                  setHasMultipleMedia(false);
-                }}
-                className="text-orange-400 hover:text-orange-300 hover:bg-orange-400/10 rounded-full px-6"
-                data-testid="clear-all-filters"
-              >
-                Clear all ({activeFilterCount})
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowFilters(false)}
-              className="text-white/50 hover:text-white hover:bg-white/10 rounded-full px-6"
-              data-testid="close-filters"
-            >
-              <ChevronUp className="w-4 h-4 mr-2" />
-              Close
-            </Button>
           </div>
         </div>
       )}
@@ -321,75 +298,30 @@ export function FeedFilters({
   );
 }
 
-// Standalone filter button component for use in title row
 interface FilterButtonProps {
-  isOpen: boolean;
   onClick: () => void;
   activeCount: number;
 }
 
-export function FilterButton({ isOpen, onClick, activeCount }: FilterButtonProps) {
+export function FilterButton({ onClick, activeCount }: FilterButtonProps) {
   return (
-    <button
-      type="button"
+    <Button
+      variant="outline"
+      size="sm"
       onClick={onClick}
       className={cn(
-        "w-10 h-10 rounded-full flex items-center justify-center transition-all relative",
-        activeCount > 0 
-          ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30" 
-          : isOpen
-            ? "bg-orange-400/20 text-orange-400"
-            : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
+        "flex items-center gap-2 rounded-full border-white/20 bg-black/50 backdrop-blur-sm text-white hover:bg-white/20 transition-all",
+        activeCount > 0 && "ring-2 ring-pink-500/50"
       )}
-      data-testid="toggle-filters"
+      data-testid="button-toggle-filters"
     >
-      <SlidersHorizontal className="w-5 h-5" />
+      <SlidersHorizontal className="w-4 h-4" />
+      <span>Filters</span>
       {activeCount > 0 && (
-        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-white text-orange-500 text-xs font-bold flex items-center justify-center px-1">
+        <span className="bg-gradient-to-r from-pink-500 to-orange-400 text-white text-xs px-2 py-0.5 rounded-full font-medium">
           {activeCount}
         </span>
       )}
-    </button>
-  );
-}
-
-// Sort buttons component for Recent/Hot toggle
-interface SortButtonsProps {
-  sortBy: 'recent' | 'hot';
-  onSortChange: (sort: 'recent' | 'hot') => void;
-}
-
-export function SortButtons({ sortBy, onSortChange }: SortButtonsProps) {
-  return (
-    <div className="flex items-center gap-1 p-1 rounded-full bg-white/5 border border-white/10">
-      <button
-        onClick={() => onSortChange('recent')}
-        className={cn(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200",
-          sortBy === 'recent'
-            ? "bg-white/20 text-white"
-            : "text-white/50 hover:text-white/80"
-        )}
-        data-testid="toggle-recent"
-      >
-        ✨ Recent
-      </button>
-      <button
-        onClick={() => onSortChange('hot')}
-        className={cn(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200",
-          sortBy === 'hot'
-            ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white"
-            : "text-white/50 hover:text-white/80"
-        )}
-        data-testid="toggle-hot"
-      >
-        <Flame 
-          className="w-4 h-4" 
-          style={{ fill: sortBy === 'hot' ? '#FFF' : '#FF6B35', stroke: sortBy === 'hot' ? '#FFF' : '#FF4500', strokeWidth: 1.5 }}
-        />
-        Hot
-      </button>
-    </div>
+    </Button>
   );
 }

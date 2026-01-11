@@ -46,6 +46,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media) and `click_count` for conversion tracking.
 - **Background Sync Service:** Regularly fetches posts from Telegram and updates the database, enriching data with derived fields.
 - **Image Proxy:** Proxies Telegram CDN images to prevent CORS issues.
+- **FilterContext Architecture:** Centralized filter state management using React Context (`FilterContext`). Single source of truth for filter state shared between homepage and profile pages. Filter changes sync to localStorage for persistence across page refreshes. FeedFilters component consumes context directly via `useFilters` hook.
 
 ## External Dependencies
 - **Telegram API:** For scraping channel posts and media.

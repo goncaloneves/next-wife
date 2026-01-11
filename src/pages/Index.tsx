@@ -6,13 +6,13 @@ import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { FeedFilters, FilterButton } from "@/components/FeedFilters";
-import { useSharedFilters } from "@/hooks/useSharedFilters";
+import { useFilters } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
-  const { filters, setFilters, activeFilterCount } = useSharedFilters();
+  const { filters, setFilters, activeFilterCount } = useFilters();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   
@@ -318,14 +318,12 @@ const Index = () => {
                 </h2>
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden min-[1100px]:flex gap-2">
                   <FilterButton 
-                    isOpen={showFilters} 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
                   />
                 </div>
                 <div className="flex justify-center gap-2 mt-4 min-[1100px]:hidden">
                   <FilterButton 
-                    isOpen={showFilters} 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
                   />
@@ -333,8 +331,6 @@ const Index = () => {
               </div>
               <FeedFilters
                 channel="nextwife_ai"
-                filters={filters}
-                onFiltersChange={setFilters}
                 showFilters={showFilters}
                 onShowFiltersChange={setShowFilters}
                 hideButton
