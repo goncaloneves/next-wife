@@ -604,31 +604,33 @@ const Profile = () => {
                     </>
                   )}
                   
-                  {/* Progress bar - always show, even for single media */}
-                  <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
-                    {mediaList.map((media, idx) => (
-                      <div 
-                        key={idx}
-                        className="flex-1 h-1 rounded-sm bg-white/30 overflow-hidden"
-                      >
-                        {idx < mediaIndex ? (
-                          // Past segments - fully filled
-                          <div className="h-full bg-white/90 w-full" />
-                        ) : idx === mediaIndex ? (
-                          // Current segment - for photos show filled, for videos animate
-                          media.type === 'photo' ? (
+                  {/* Progress bar - show for multiple media OR single video (not single photo) */}
+                  {(hasMultipleMedia || (mediaList.length === 1 && mediaList[0]?.type === 'video')) && (
+                    <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
+                      {mediaList.map((media, idx) => (
+                        <div 
+                          key={idx}
+                          className="flex-1 h-1 rounded-sm bg-white/30 overflow-hidden"
+                        >
+                          {idx < mediaIndex ? (
+                            // Past segments - fully filled
                             <div className="h-full bg-white/90 w-full" />
-                          ) : (
-                            <div 
-                              ref={el => progressRefs.current[idx] = el}
-                              className="h-full bg-white/90 origin-left will-change-transform"
-                              style={{ transform: 'scaleX(0)' }}
-                            />
-                          )
-                        ) : null}
-                      </div>
-                    ))}
-                  </div>
+                          ) : idx === mediaIndex ? (
+                            // Current segment - for photos show filled, for videos animate
+                            media.type === 'photo' ? (
+                              <div className="h-full bg-white/90 w-full" />
+                            ) : (
+                              <div 
+                                ref={el => progressRefs.current[idx] = el}
+                                className="h-full bg-white/90 origin-left will-change-transform"
+                                style={{ transform: 'scaleX(0)' }}
+                              />
+                            )
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </>
               );
             })()}
