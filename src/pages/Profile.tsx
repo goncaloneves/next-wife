@@ -120,7 +120,6 @@ const Profile = () => {
   const { filters, setFilters, activeFilterCount } = useFilters();
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const tapFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -145,7 +144,6 @@ const Profile = () => {
   useEffect(() => {
     return () => {
       if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
-      if (tapFeedbackTimeoutRef.current) clearTimeout(tapFeedbackTimeoutRef.current);
     };
   }, []);
 
@@ -578,38 +576,36 @@ const Profile = () => {
                     <>
                       <motion.div 
                         className="absolute left-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
+                        onTapStart={() => setTapFeedback('left')}
                         onTap={(e) => { 
                           e.stopPropagation(); 
+                          setTapFeedback(null);
                           if (mediaIndex > 0) {
                             const nextIdx = mediaIndex - 1;
                             if (!loadedMediaRef.current.has(nextIdx)) {
                               setImageLoaded(false);
                             }
                             setMediaIndex(nextIdx);
-                            // Trigger tap feedback
-                            if (tapFeedbackTimeoutRef.current) clearTimeout(tapFeedbackTimeoutRef.current);
-                            setTapFeedback('left');
-                            tapFeedbackTimeoutRef.current = setTimeout(() => setTapFeedback(null), 300);
                           }
                         }}
+                        onTapCancel={() => setTapFeedback(null)}
                         data-testid="media-prev"
                       />
                       <motion.div 
                         className="absolute right-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
+                        onTapStart={() => setTapFeedback('right')}
                         onTap={(e) => { 
                           e.stopPropagation(); 
+                          setTapFeedback(null);
                           if (mediaIndex < mediaList.length - 1) {
                             const nextIdx = mediaIndex + 1;
                             if (!loadedMediaRef.current.has(nextIdx)) {
                               setImageLoaded(false);
                             }
                             setMediaIndex(nextIdx);
-                            // Trigger tap feedback
-                            if (tapFeedbackTimeoutRef.current) clearTimeout(tapFeedbackTimeoutRef.current);
-                            setTapFeedback('right');
-                            tapFeedbackTimeoutRef.current = setTimeout(() => setTapFeedback(null), 300);
                           }
                         }}
+                        onTapCancel={() => setTapFeedback(null)}
                         data-testid="media-next"
                       />
                     </>
@@ -625,8 +621,8 @@ const Profile = () => {
                           background: 'linear-gradient(to right, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 100%)'
                         }}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1, transition: { duration: 0.1, ease: 'easeOut' } }}
-                        exit={{ opacity: 0, transition: { duration: 0.1, ease: 'easeOut' } }}
+                        animate={{ opacity: 1, transition: { duration: 0.05, ease: 'easeOut' } }}
+                        exit={{ opacity: 0, transition: { duration: 0.05, ease: 'easeOut' } }}
                       />
                     )}
                     {tapFeedback === 'right' && (
@@ -637,8 +633,8 @@ const Profile = () => {
                           background: 'linear-gradient(to left, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 100%)'
                         }}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1, transition: { duration: 0.1, ease: 'easeOut' } }}
-                        exit={{ opacity: 0, transition: { duration: 0.1, ease: 'easeOut' } }}
+                        animate={{ opacity: 1, transition: { duration: 0.05, ease: 'easeOut' } }}
+                        exit={{ opacity: 0, transition: { duration: 0.05, ease: 'easeOut' } }}
                       />
                     )}
                   </AnimatePresence>
