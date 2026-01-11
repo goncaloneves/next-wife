@@ -95,7 +95,7 @@ export function DiscoverFilterModal({
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-white">Filters</h2>
-                  <p className="text-xs text-white/50">Find your perfect match</p>
+                  <p className="text-xs text-white/50">Find your perfect woman</p>
                 </div>
               </div>
               <button

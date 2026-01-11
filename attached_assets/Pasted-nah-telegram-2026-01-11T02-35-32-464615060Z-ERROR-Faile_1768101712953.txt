@@ -1,0 +1,32 @@
+nah-telegram 2026-01-11T02:35:32.464615060Z [ERROR] Failed to generate channel girlfriend with media group {
+hannah-telegram 2026-01-11T02:35:32.464665683Z   error: 'timeout of 420000ms exceeded',
+hannah-telegram 2026-01-11T02:35:32.464669462Z   stack: 'AxiosError: timeout of 420000ms exceeded\n' +
+hannah-telegram 2026-01-11T02:35:32.464674955Z     '    at RedirectableRequest.handleRequestTimeout (/app/node_modules/axios/lib/adapters/http.js:675:16)\n' +
+hannah-telegram 2026-01-11T02:35:32.464678433Z     '    at RedirectableRequest.emit (node:events:508:28)\n' +
+hannah-telegram 2026-01-11T02:35:32.464681121Z     '    at Timeout.<anonymous> (/app/node_modules/follow-redirects/index.js:221:12)\n' +
+hannah-telegram 2026-01-11T02:35:32.464683318Z     '    at listOnTimeout (node:internal/timers:605:17)\n' +
+hannah-telegram 2026-01-11T02:35:32.464686054Z     '    at process.processTimers (node:internal/timers:541:7)\n' +
+hannah-telegram 2026-01-11T02:35:32.464688567Z     '    at Axios.request (/app/node_modules/axios/lib/core/Axios.js:45:41)\n' +
+hannah-telegram 2026-01-11T02:35:32.464691167Z     '    at async run (/app/node_modules/@esm2cjs/p-queue/build/esm/index.js:115:36)',
+hannah-telegram 2026-01-11T02:35:32.464704844Z   name: 'channel-posting',
+hannah-telegram 2026-01-11T02:35:32.464707606Z   timestamp: '2026-01-11T02:35:32.464Z'
+hannah-telegram 2026-01-11T02:35:32.464710105Z }
+hannah-telegram 2026-01-11T02:35:32.464877425Z [ERROR] Failed to post to channel {
+hannah-telegram 2026-01-11T02:35:32.464897363Z   error: 'timeout of 420000ms exceeded',
+hannah-telegram 2026-01-11T02:35:32.464900499Z   stack: 'AxiosError: timeout of 420000ms exceeded\n' +
+hannah-telegram 2026-01-11T02:35:32.464902596Z     '    at RedirectableRequest.handleRequestTimeout (/app/node_modules/axios/lib/adapters/http.js:675:16)\n' +
+hannah-telegram 2026-01-11T02:35:32.464904586Z     '    at RedirectableRequest.emit (node:events:508:28)\n' +
+hannah-telegram 2026-01-11T02:35:32.464906504Z     '    at Timeout.<anonymous> (/app/node_modules/follow-redirects/index.js:221:12)\n' +
+hannah-telegram 2026-01-11T02:35:32.464908756Z     '    at listOnTimeout (node:internal/timers:605:17)\n' +
+hannah-telegram 2026-01-11T02:35:32.464910838Z     '    at process.processTimers (node:internal/timers:541:7)\n' +
+hannah-telegram 2026-01-11T02:35:32.464912687Z     '    at Axios.request (/app/node_modules/axios/lib/core/Axios.js:45:41)\n' +
+hannah-telegram 2026-01-11T02:35:32.464914371Z     '    at async run (/app/node_modules/@esm2cjs/p-queue/build/esm/index.js:115:36)',
+hannah-telegram 2026-01-11T02:35:32.464916349Z   channelPublic: '@nextwifeai',
+hannah-telegram 2026-01-11T02:35:32.464917965Z   name: 'channel-posting',
+hannah-telegram 2026-01-11T02:35:32.464919659Z   timestamp: '2026-01-11T02:35:32.464Z'
+hannah-telegram 2026-01-11T02:35:32.464921229Z }
+hannah-telegram 2026-01-11T02:35:32.465117573Z [ERROR] Channel post failed, rescheduling {
+hannah-telegram 2026-01-11T02:35:32.465130061Z   error: 'timeout of 420000ms exceeded',
+hannah-telegram 2026-01-11T02:35:32.465132694Z   name: 'channel-posting',
+hannah-telegram 2026-01-11T02:35:32.465134905Z   timestamp: '2026-01-11T02:35:32.464Z'
+hannah-telegram 2026-01-11T02:35:32.465137525Z }
