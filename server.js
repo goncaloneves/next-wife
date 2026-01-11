@@ -189,12 +189,27 @@ const langCodeToName = {
   "hy": "Armenian", "uz": "Uzbek", "kk": "Kazakh", "ps": "Pashto", "sm": "Samoan", "to": "Tongan"
 };
 
+// Direct nationality-to-language mapping for when nationality IS a language/ethnicity name
+const directLanguageMap = {
+  "Telugu": "Telugu", "Tamil": "Tamil", "Kannada": "Kannada", "Malayalam": "Malayalam",
+  "Marathi": "Marathi", "Gujarati": "Gujarati", "Punjabi": "Punjabi", "Bengali": "Bengali",
+  "Odia": "Odia", "Assamese": "Assamese", "Kashmiri": "Kashmiri", "Sindhi": "Sindhi",
+  "Konkani": "Konkani", "Manipuri": "Manipuri", "Nepali": "Nepali", "Sanskrit": "Sanskrit",
+  "Cantonese": "Cantonese", "Hokkien": "Hokkien", "Hakka": "Hakka", "Teochew": "Teochew"
+};
+
 // Get native language from nationality using countries-list
 // Prefers the first non-English language if available, falls back to English
 function getNativeLanguage(nationality) {
   if (!nationality) return "English";
   
   const normalized = nationality.trim();
+  
+  // Check if the nationality is actually a language/ethnicity name
+  if (directLanguageMap[normalized]) {
+    return directLanguageMap[normalized];
+  }
+  
   let countryCode = demonymToCountryCode[normalized];
   
   if (!countryCode) {
