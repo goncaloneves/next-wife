@@ -141,9 +141,17 @@ export const TelegramChannelFeed = ({
     return `${apiUrl}/api/tg-image-proxy?u=${encodeURIComponent(normalized)}`;
   }, [imageErrors]);
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+  
   const fetchInitialPosts = useCallback(async () => {
-    // Prevent duplicate concurrent fetches
-    if (fetchInFlightRef.current) return;
+    // Abort any previous in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Create new abort controller for this request
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     fetchInFlightRef.current = true;
     
     try {
@@ -167,6 +175,7 @@ export const TelegramChannelFeed = ({
           headers: {
             "Content-Type": "application/json",
           },
+          signal: controller.signal,
         },
       );
 
@@ -199,6 +208,10 @@ export const TelegramChannelFeed = ({
 
       console.log(`Fetched initial ${fetchedPosts.length} posts, nextCursor: ${data.nextBefore}`);
     } catch (err) {
+      // Ignore aborted requests - they're intentional
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
       console.error("Error fetching Telegram posts:", err);
       setError("Unable to load channel posts");
       setLoading(false);
@@ -459,7 +472,6 @@ export const TelegramChannelFeed = ({
 
   // Refetch when filters change (skip initial mount)
   const filtersInitialized = useRef(false);
-  const abortControllerRef = useRef<AbortController | null>(null);
   const prevFiltersRef = useRef<string>('');
     
   useEffect(() => {
@@ -482,11 +494,6 @@ export const TelegramChannelFeed = ({
     
     // Clear last viewed profile so preview shows first result from new filters
     setLastViewedId(null);
-    
-    // Cancel any in-flight request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
     
     // Mark this as a filter change to preserve existing posts visible
     isFilterChangeRef.current = true;
