@@ -699,7 +699,7 @@ export const TelegramChannelFeed = ({
         
         {/* Posts grid - show whenever we have posts, even while loading new ones */}
         {postsWithMedia.length > 0 && (
-        <div className="flex flex-col items-center gap-6 py-4 md:block md:py-0">
+        <div className="flex flex-col items-center gap-6 pb-4 md:block md:py-0">
           <div 
             ref={gridRef}
             className="grid grid-cols-1 md:grid-cols-4 gap-0.5 w-full max-w-sm md:max-w-none"
