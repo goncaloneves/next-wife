@@ -2,16 +2,13 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
 import { 
-  FilterOptions, 
-  EMPTY_FILTER_OPTIONS, 
   Chip,
   FilterSection, 
-  fetchFilterOptions,
   toggleArrayValue 
 } from "./filters/FilterComponents";
 import { type SharedFilters, DEFAULT_FILTERS } from "@/lib/filterStorage";
+import { useFilterOptions } from "@/hooks/useFilterOptions";
 
 export type ProfileFilters = SharedFilters;
 
@@ -30,8 +27,15 @@ export function ProfileFilterModal({
   filters, 
   onFiltersChange 
 }: ProfileFilterModalProps) {
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>(EMPTY_FILTER_OPTIONS);
-  const [loading, setLoading] = useState(true);
+  const { 
+    filterOptions, 
+    loading, 
+    personalityOptions, 
+    relationshipOptions,
+    valuesToLabels,
+    labelsToValues,
+    getActiveCount 
+  } = useFilterOptions(channel);
 
   const [localFilters, setLocalFilters] = useState<ProfileFilters>(filters);
 
@@ -41,58 +45,17 @@ export function ProfileFilterModal({
     }
   }, [isOpen, filters]);
 
-  useEffect(() => {
-    fetchFilterOptions(channel).then(data => {
-      setFilterOptions(data);
-      setLoading(false);
-    });
-  }, [channel]);
-
-  const personalityOptions = useMemo(() => 
-    (filterOptions.personalities || []).map(p => PERSONALITY_LABELS[p] || p),
-    [filterOptions.personalities]
-  );
-  
-  const relationshipOptions = useMemo(() => 
-    (filterOptions.relationships || []).map(r => RELATIONSHIP_TYPE_LABELS[r] || r),
-    [filterOptions.relationships]
-  );
-  
-  const personalityLabelToValue = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const [value, label] of Object.entries(PERSONALITY_LABELS)) {
-      map[label] = value;
-    }
-    return map;
-  }, []);
-  
-  const relationshipLabelToValue = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const [value, label] of Object.entries(RELATIONSHIP_TYPE_LABELS)) {
-      map[label] = value;
-    }
-    return map;
-  }, []);
-  
   const selectedPersonalityLabels = useMemo(() => 
-    localFilters.personalities.map(p => PERSONALITY_LABELS[p] || p),
-    [localFilters.personalities]
+    valuesToLabels.personalities(localFilters.personalities),
+    [valuesToLabels, localFilters.personalities]
   );
   
   const selectedRelationshipLabels = useMemo(() => 
-    localFilters.relationships.map(r => RELATIONSHIP_TYPE_LABELS[r] || r),
-    [localFilters.relationships]
+    valuesToLabels.relationships(localFilters.relationships),
+    [valuesToLabels, localFilters.relationships]
   );
 
-  const activeFilterCount = useMemo(() => {
-    return localFilters.regions.length + 
-           localFilters.ageBrackets.length + 
-           localFilters.occupationCategories.length + 
-           localFilters.personalities.length + 
-           localFilters.relationships.length + 
-           (localFilters.hasVideo ? 1 : 0) + 
-           (localFilters.hasMultipleMedia ? 1 : 0);
-  }, [localFilters]);
+  const activeFilterCount = useMemo(() => getActiveCount(localFilters), [getActiveCount, localFilters]);
 
   const handleApply = useCallback(() => {
     onFiltersChange(localFilters);
@@ -191,7 +154,7 @@ export function ProfileFilterModal({
                     options={personalityOptions}
                     selected={selectedPersonalityLabels}
                     onToggle={(label) => {
-                      const value = personalityLabelToValue[label] || label;
+                      const value = labelsToValues.personality(label);
                       setLocalFilters(prev => ({
                         ...prev,
                         personalities: toggleArrayValue(prev.personalities, value)
@@ -206,7 +169,7 @@ export function ProfileFilterModal({
                     options={relationshipOptions}
                     selected={selectedRelationshipLabels}
                     onToggle={(label) => {
-                      const value = relationshipLabelToValue[label] || label;
+                      const value = labelsToValues.relationship(label);
                       setLocalFilters(prev => ({
                         ...prev,
                         relationships: toggleArrayValue(prev.relationships, value)

@@ -2,16 +2,13 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Flame, ChevronDown, ChevronUp, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
 import { 
-  FilterOptions, 
-  EMPTY_FILTER_OPTIONS, 
   Chip, 
   FilterSection, 
-  fetchFilterOptions, 
   toggleArrayValue 
 } from "./filters/FilterComponents";
 import { getStoredFilters, saveFilters } from "@/lib/filterStorage";
+import { useFilterOptions } from "@/hooks/useFilterOptions";
 
 interface FeedFiltersProps {
   channel: string;
@@ -28,19 +25,27 @@ export function FeedFilters({
   onShowFiltersChange,
   hideButton = false
 }: FeedFiltersProps) {
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>(EMPTY_FILTER_OPTIONS);
+  const { 
+    filterOptions, 
+    loading, 
+    personalityOptions, 
+    relationshipOptions,
+    valuesToLabels,
+    labelsToValues,
+    getActiveCount 
+  } = useFilterOptions(channel);
   
-  const [selectedRegions, setSelectedRegions] = useState<string[]>(() => getStoredFilters().regions);
-  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>(() => getStoredFilters().ageBrackets);
-  const [selectedOccupations, setSelectedOccupations] = useState<string[]>(() => getStoredFilters().occupationCategories);
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(() => getStoredFilters().languages);
-  const [selectedHometowns, setSelectedHometowns] = useState<string[]>(() => getStoredFilters().hometowns);
-  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>(() => getStoredFilters().personalities);
-  const [selectedRelationships, setSelectedRelationships] = useState<string[]>(() => getStoredFilters().relationships);
-  const [hasVideo, setHasVideo] = useState<boolean>(() => getStoredFilters().hasVideo);
-  const [hasMultipleMedia, setHasMultipleMedia] = useState<boolean>(() => getStoredFilters().hasMultipleMedia);
+  const initialFilters = useMemo(() => getStoredFilters(), []);
+  const [selectedRegions, setSelectedRegions] = useState<string[]>(initialFilters.regions);
+  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>(initialFilters.ageBrackets);
+  const [selectedOccupations, setSelectedOccupations] = useState<string[]>(initialFilters.occupationCategories);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(initialFilters.languages);
+  const [selectedHometowns, setSelectedHometowns] = useState<string[]>(initialFilters.hometowns);
+  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>(initialFilters.personalities);
+  const [selectedRelationships, setSelectedRelationships] = useState<string[]>(initialFilters.relationships);
+  const [hasVideo, setHasVideo] = useState<boolean>(initialFilters.hasVideo);
+  const [hasMultipleMedia, setHasMultipleMedia] = useState<boolean>(initialFilters.hasMultipleMedia);
   
-  const [loading, setLoading] = useState(true);
   const [internalShowFilters, setInternalShowFilters] = useState(false);
   
   useEffect(() => {
@@ -73,13 +78,6 @@ export function FeedFilters({
   
   const showFilters = controlledShowFilters !== undefined ? controlledShowFilters : internalShowFilters;
   const setShowFilters = onShowFiltersChange || setInternalShowFilters;
-
-  useEffect(() => {
-    fetchFilterOptions(channel).then(data => {
-      setFilterOptions(data);
-      setLoading(false);
-    });
-  }, [channel]);
 
   const availableHometowns = useMemo(() => {
     const hometowns = filterOptions.hometowns || {};
@@ -135,44 +133,27 @@ export function FeedFilters({
     });
   }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading]);
 
-  const activeFilterCount = useMemo(() => {
-    return selectedRegions.length + selectedAgeBrackets.length + selectedOccupations.length + selectedLanguages.length + selectedHometowns.length + selectedPersonalities.length + selectedRelationships.length + (hasVideo ? 1 : 0) + (hasMultipleMedia ? 1 : 0);
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia]);
+  const currentFilters = useMemo(() => ({
+    regions: selectedRegions,
+    ageBrackets: selectedAgeBrackets,
+    occupationCategories: selectedOccupations,
+    languages: selectedLanguages,
+    hometowns: selectedHometowns,
+    personalities: selectedPersonalities,
+    relationships: selectedRelationships,
+    hasVideo,
+    hasMultipleMedia,
+  }), [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia]);
 
-  // Map personality/relationship values to emoji labels
-  const personalityOptions = useMemo(() => 
-    (filterOptions.personalities || []).map(p => PERSONALITY_LABELS[p] || p),
-    [filterOptions.personalities]
-  );
-  const relationshipOptions = useMemo(() => 
-    (filterOptions.relationships || []).map(r => RELATIONSHIP_TYPE_LABELS[r] || r),
-    [filterOptions.relationships]
-  );
-  
-  // Reverse map for selected values (label -> value)
-  const personalityLabelToValue = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const [value, label] of Object.entries(PERSONALITY_LABELS)) {
-      map[label] = value;
-    }
-    return map;
-  }, []);
-  const relationshipLabelToValue = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const [value, label] of Object.entries(RELATIONSHIP_TYPE_LABELS)) {
-      map[label] = value;
-    }
-    return map;
-  }, []);
-  
-  // Selected labels for display
+  const activeFilterCount = useMemo(() => getActiveCount(currentFilters), [getActiveCount, currentFilters]);
+
   const selectedPersonalityLabels = useMemo(() => 
-    selectedPersonalities.map(p => PERSONALITY_LABELS[p] || p),
-    [selectedPersonalities]
+    valuesToLabels.personalities(selectedPersonalities),
+    [valuesToLabels, selectedPersonalities]
   );
   const selectedRelationshipLabels = useMemo(() => 
-    selectedRelationships.map(r => RELATIONSHIP_TYPE_LABELS[r] || r),
-    [selectedRelationships]
+    valuesToLabels.relationships(selectedRelationships),
+    [valuesToLabels, selectedRelationships]
   );
 
   // Return nothing while loading - no skeleton placeholders needed
@@ -274,7 +255,7 @@ export function FeedFilters({
               options={personalityOptions}
               selected={selectedPersonalityLabels}
               onToggle={(label) => {
-                const value = personalityLabelToValue[label] || label;
+                const value = labelsToValues.personality(label);
                 setSelectedPersonalities(toggleArrayValue(selectedPersonalities, value));
               }}
               onClearAll={() => setSelectedPersonalities([])}
@@ -287,7 +268,7 @@ export function FeedFilters({
               options={relationshipOptions}
               selected={selectedRelationshipLabels}
               onToggle={(label) => {
-                const value = relationshipLabelToValue[label] || label;
+                const value = labelsToValues.relationship(label);
                 setSelectedRelationships(toggleArrayValue(selectedRelationships, value));
               }}
               onClearAll={() => setSelectedRelationships([])}
