@@ -315,7 +315,7 @@ const Index = () => {
       </section>
 
         {/* Telegram Channel Feed Section - Scrolls over the fixed background */}
-        <section ref={feedContentRef} className="relative py-12 bg-black">
+        <section ref={feedContentRef} className="hidden md:block relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto relative">
               <div className="relative mb-8">

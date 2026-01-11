@@ -995,24 +995,6 @@ export const TelegramChannelFeed = ({
             })}
           </div>
           
-          {/* Discover button - mobile only */}
-          {postsWithMedia.length > 0 && (
-            <Button
-              size="lg"
-              className="text-lg px-10 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95 md:hidden"
-              style={{
-                background: "var(--gradient-sunset)",
-                boxShadow: "var(--shadow-warm)",
-              }}
-              onClick={() => {
-                navigate('/discover');
-              }}
-              data-testid="button-start-swiping"
-            >
-              Discover 💕
-            </Button>
-          )}
-
           {/* Loading indicator - desktop only */}
           {hasMore && isLoadingMore && (
             <div className="hidden md:flex items-center justify-center py-8">
