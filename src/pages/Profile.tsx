@@ -639,7 +639,7 @@ const Profile = () => {
                 <button
                   onClick={(e) => { e.stopPropagation(); goBack(); }}
                   onPointerDownCapture={(e) => e.stopPropagation()}
-                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105 pointer-events-auto"
+                  className="bg-black/35 backdrop-blur-md text-white/90 p-2.5 rounded-full border border-white/10 hover:bg-black/50 transition-all shadow-lg hover:scale-105 pointer-events-auto"
                   data-testid="button-back"
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -648,7 +648,7 @@ const Profile = () => {
                 <div />
               )}
               <div 
-                className="flex items-center bg-black/50 backdrop-blur-md rounded-full shadow-lg pointer-events-auto"
+                className="flex items-center bg-black/35 backdrop-blur-md rounded-full shadow-lg border border-white/10 pointer-events-auto"
                 onPointerDownCapture={(e) => e.stopPropagation()} 
                 onClick={(e) => e.stopPropagation()}
               >
@@ -657,7 +657,7 @@ const Profile = () => {
                   className={`relative p-2.5 rounded-l-full transition-all hover:bg-white/10 ${
                     activeFilterCount > 0 
                       ? 'text-orange-400' 
-                      : 'text-white'
+                      : 'text-white/90'
                   }`}
                   data-testid="open-profile-filters"
                 >
@@ -668,10 +668,10 @@ const Profile = () => {
                     </span>
                   )}
                 </button>
-                <div className="w-px h-5 bg-white/20" />
+                <div className="w-px h-5 bg-white/15" />
                 <button
                   onClick={() => handleShare()}
-                  className="p-2.5 rounded-r-full text-white transition-all hover:bg-white/10"
+                  className="p-2.5 rounded-r-full text-white/90 transition-all hover:bg-white/10"
                   data-testid="button-share"
                 >
                   <Share2 className="w-5 h-5" />
