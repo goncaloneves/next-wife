@@ -134,17 +134,6 @@ export function DiscoverFilterModal({
               ) : (
                 <>
                   <FilterSection
-                    title="Region"
-                    options={filterOptions.regions}
-                    selected={localFilters.regions}
-                    onToggle={(value) => setLocalFilters(prev => ({
-                      ...prev,
-                      regions: toggleArrayValue(prev.regions, value)
-                    }))}
-                    onClearAll={() => setLocalFilters(prev => ({ ...prev, regions: [] }))}
-                  />
-
-                  <FilterSection
                     title="Age"
                     options={filterOptions.ageBrackets}
                     selected={localFilters.ageBrackets}
@@ -154,17 +143,6 @@ export function DiscoverFilterModal({
                     }))}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, ageBrackets: [] }))}
                     showAll
-                  />
-
-                  <FilterSection
-                    title="Occupation"
-                    options={filterOptions.occupationCategories}
-                    selected={localFilters.occupationCategories}
-                    onToggle={(value) => setLocalFilters(prev => ({
-                      ...prev,
-                      occupationCategories: toggleArrayValue(prev.occupationCategories, value)
-                    }))}
-                    onClearAll={() => setLocalFilters(prev => ({ ...prev, occupationCategories: [] }))}
                   />
 
                   <FilterSection
@@ -179,14 +157,18 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
-                    title="Hometown"
-                    options={Object.values(filterOptions.hometowns).flat()}
-                    selected={localFilters.hometowns}
-                    onToggle={(value) => setLocalFilters(prev => ({
-                      ...prev,
-                      hometowns: toggleArrayValue(prev.hometowns, value)
-                    }))}
-                    onClearAll={() => setLocalFilters(prev => ({ ...prev, hometowns: [] }))}
+                    title="Relationship"
+                    options={relationshipOptions}
+                    selected={selectedRelationshipLabels}
+                    onToggle={(label) => {
+                      const value = labelsToValues.relationship(label);
+                      setLocalFilters(prev => ({
+                        ...prev,
+                        relationships: toggleArrayValue(prev.relationships, value)
+                      }));
+                    }}
+                    onClearAll={() => setLocalFilters(prev => ({ ...prev, relationships: [] }))}
+                    showAll
                   />
 
                   <FilterSection
@@ -205,18 +187,36 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
-                    title="Relationship"
-                    options={relationshipOptions}
-                    selected={selectedRelationshipLabels}
-                    onToggle={(label) => {
-                      const value = labelsToValues.relationship(label);
-                      setLocalFilters(prev => ({
-                        ...prev,
-                        relationships: toggleArrayValue(prev.relationships, value)
-                      }));
-                    }}
-                    onClearAll={() => setLocalFilters(prev => ({ ...prev, relationships: [] }))}
-                    showAll
+                    title="Occupation"
+                    options={filterOptions.occupationCategories}
+                    selected={localFilters.occupationCategories}
+                    onToggle={(value) => setLocalFilters(prev => ({
+                      ...prev,
+                      occupationCategories: toggleArrayValue(prev.occupationCategories, value)
+                    }))}
+                    onClearAll={() => setLocalFilters(prev => ({ ...prev, occupationCategories: [] }))}
+                  />
+
+                  <FilterSection
+                    title="Region"
+                    options={filterOptions.regions}
+                    selected={localFilters.regions}
+                    onToggle={(value) => setLocalFilters(prev => ({
+                      ...prev,
+                      regions: toggleArrayValue(prev.regions, value)
+                    }))}
+                    onClearAll={() => setLocalFilters(prev => ({ ...prev, regions: [] }))}
+                  />
+
+                  <FilterSection
+                    title="Hometown"
+                    options={Object.values(filterOptions.hometowns).flat()}
+                    selected={localFilters.hometowns}
+                    onToggle={(value) => setLocalFilters(prev => ({
+                      ...prev,
+                      hometowns: toggleArrayValue(prev.hometowns, value)
+                    }))}
+                    onClearAll={() => setLocalFilters(prev => ({ ...prev, hometowns: [] }))}
                   />
 
                   <div className="space-y-3">
