@@ -150,6 +150,28 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
+                    title="Language"
+                    options={filterOptions.languages}
+                    selected={localFilters.languages}
+                    onToggle={(value) => setLocalFilters(prev => ({
+                      ...prev,
+                      languages: toggleArrayValue(prev.languages, value)
+                    }))}
+                    onClearAll={() => setLocalFilters(prev => ({ ...prev, languages: [] }))}
+                  />
+
+                  <FilterSection
+                    title="Hometown"
+                    options={Object.values(filterOptions.hometowns).flat()}
+                    selected={localFilters.hometowns}
+                    onToggle={(value) => setLocalFilters(prev => ({
+                      ...prev,
+                      hometowns: toggleArrayValue(prev.hometowns, value)
+                    }))}
+                    onClearAll={() => setLocalFilters(prev => ({ ...prev, hometowns: [] }))}
+                  />
+
+                  <FilterSection
                     title="Personality"
                     options={personalityOptions}
                     selected={selectedPersonalityLabels}
