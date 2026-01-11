@@ -639,7 +639,7 @@ const Profile = () => {
                 <button
                   onClick={(e) => { e.stopPropagation(); goBack(); }}
                   onPointerDownCapture={(e) => e.stopPropagation()}
-                  className="bg-black/20 backdrop-blur-md text-white/90 p-2.5 rounded-full hover:bg-black/35 transition-all hover:scale-105 pointer-events-auto"
+                  className="text-white p-2 transition-all hover:scale-110 pointer-events-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                   data-testid="button-back"
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -648,30 +648,29 @@ const Profile = () => {
                 <div />
               )}
               <div 
-                className="flex items-center bg-black/20 backdrop-blur-md rounded-full pointer-events-auto"
+                className="flex items-center gap-3 pointer-events-auto"
                 onPointerDownCapture={(e) => e.stopPropagation()} 
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
                   onClick={() => setShowFilters(true)}
-                  className={`relative p-2.5 rounded-l-full transition-all hover:bg-white/10 ${
+                  className={`relative p-2 transition-all hover:scale-110 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${
                     activeFilterCount > 0 
                       ? 'text-orange-400' 
-                      : 'text-white/90'
+                      : 'text-white'
                   }`}
                   data-testid="open-profile-filters"
                 >
                   <SlidersHorizontal className="w-5 h-5" />
                   {activeFilterCount > 0 && (
-                    <span className="absolute -top-1 -right-0.5 min-w-[16px] h-[16px] rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                    <span className="absolute -top-1 -right-0.5 min-w-[16px] h-[16px] rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white text-[10px] font-bold flex items-center justify-center px-1 shadow-lg">
                       {activeFilterCount}
                     </span>
                   )}
                 </button>
-                <div className="w-px h-5 bg-white/15" />
                 <button
                   onClick={() => handleShare()}
-                  className="p-2.5 rounded-r-full text-white/90 transition-all hover:bg-white/10"
+                  className="p-2 text-white transition-all hover:scale-110 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                   data-testid="button-share"
                 >
                   <Share2 className="w-5 h-5" />
