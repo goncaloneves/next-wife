@@ -622,7 +622,7 @@ const Profile = () => {
                         key="tap-left"
                         className="absolute left-0 top-0 w-1/3 h-full pointer-events-none z-5 rounded-l-2xl"
                         style={{
-                          background: 'linear-gradient(to right, rgba(0,0,0,0.35), rgba(0,0,0,0.15), transparent)'
+                          background: 'linear-gradient(to right, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 100%)'
                         }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1, transition: { duration: 0.1, ease: 'easeOut' } }}
@@ -634,7 +634,7 @@ const Profile = () => {
                         key="tap-right"
                         className="absolute right-0 top-0 w-1/3 h-full pointer-events-none z-5 rounded-r-2xl"
                         style={{
-                          background: 'linear-gradient(to left, rgba(0,0,0,0.35), rgba(0,0,0,0.15), transparent)'
+                          background: 'linear-gradient(to left, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 100%)'
                         }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1, transition: { duration: 0.1, ease: 'easeOut' } }}
