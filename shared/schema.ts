@@ -27,10 +27,18 @@ export const telegramPosts = pgTable("telegram_posts", {
   occupationCategory: text("occupation_category"),
   language: text("language"),
   about: text("about"), // Brief explanation of interests
+  personality: text("personality"), // e.g., shy, playful, caring, passionate
+  relationship: text("relationship"), // e.g., stranger, girlfriend, wife
+  
+  // Soft delete for removed posts
+  deletedAt: timestamp("deleted_at"),
   
   // Media flags for filtering
   hasVideo: boolean("has_video").default(false),
   hasMultipleMedia: boolean("has_multiple_media").default(false),
+  
+  // Conversion tracking
+  clickCount: integer("click_count").default(0),
   
   // Timestamps
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
