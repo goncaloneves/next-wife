@@ -699,9 +699,9 @@ export const TelegramChannelFeed = ({
               <p className="text-sm mt-2">Try adjusting your search criteria</p>
               {filterContext && (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   onClick={filterContext.clearFilters}
-                  className="mt-4 border-white/20 text-white/80 hover:bg-white/10 hover:text-white"
+                  className="mt-4 text-white/60 hover:text-white hover:bg-white/10"
                   data-testid="button-clear-filters-empty"
                 >
                   Clear Filters
