@@ -194,13 +194,15 @@ export const TelegramChannelFeed = ({
       setLoading(false);
       setPendingNewCount(0);
       
-      // Only reset refreshKey on initial load, not filter changes
+      // Always reset refreshKey to ensure unique keys for React
+      setRefreshKey(Date.now());
+      setImageLoadStates({});
+      setImageErrors({});
+      setHiddenIds(new Set());
+      
+      // Only reset animation on initial load, not filter changes
       if (!isFilterChangeRef.current) {
-        setRefreshKey(Date.now());
-        setImageLoadStates({});
-        setImageErrors({});
-        setHiddenIds(new Set());
-        setSkipAnimation(false); // Reset animation for fresh loads
+        setSkipAnimation(false);
       }
       isFilterChangeRef.current = false;
       
