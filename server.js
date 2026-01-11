@@ -1642,6 +1642,87 @@ app.post('/api/tg-cleanup', async (req, res) => {
   }
 });
 
+// Dynamic sitemap.xml endpoint
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const baseUrl = 'https://nextwife.ai';
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Get all active profile IDs from database
+    const result = await pool.query(`
+      SELECT id, date 
+      FROM telegram_posts 
+      WHERE channel = 'nextwifeai' 
+        AND deleted_at IS NULL 
+        AND media IS NOT NULL 
+        AND name IS NOT NULL
+      ORDER BY id DESC
+    `);
+    
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/discover</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>`;
+    
+    // Add profile URLs
+    for (const row of result.rows) {
+      const lastmod = row.date ? new Date(row.date).toISOString().split('T')[0] : today;
+      xml += `
+  <url>
+    <loc>${baseUrl}/profile/${row.id}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+    }
+    
+    xml += `
+</urlset>`;
+    
+    res.set('Content-Type', 'application/xml');
+    res.set('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+    res.send(xml);
+    
+  } catch (error) {
+    console.error('Sitemap generation error:', error);
+    res.status(500).send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
+  }
+});
+
+// Dynamic robots.txt endpoint
+app.get('/robots.txt', (req, res) => {
+  const robotsTxt = `User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://nextwife.ai/sitemap.xml
+`;
+  res.set('Content-Type', 'text/plain');
+  res.set('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+  res.send(robotsTxt);
+});
+
 // Image proxy endpoint
 app.get('/api/tg-image-proxy', async (req, res) => {
   try {

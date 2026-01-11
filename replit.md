@@ -41,6 +41,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Automatic Deleted Post Detection:** A background scheduler soft-deletes posts removed from Telegram, and a quick sync mechanism handles instant updates on page load.
 - **Occupation Categories:** Groups 283 job titles into 12 broad categories for simplified filtering.
 - **Silent Error Handling:** API failures are handled silently without displaying error blocks to the user.
+- **Dynamic SEO Files:** Server generates `/sitemap.xml` and `/robots.txt` dynamically. Sitemap includes all active profile URLs with proper lastmod dates for search engine indexing. Cached for 1 hour.
 
 **System Design Choices:**
 - **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media) and `click_count` for conversion tracking.
