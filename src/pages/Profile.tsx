@@ -318,11 +318,12 @@ const Profile = () => {
     if (id) {
       sessionStorage.setItem('nextwife_last_viewed', id);
     }
-    // Save current history so it can be restored when re-entering
-    saveSkipHistory(skipHistory);
-    sessionStorage.setItem(NAV_FLAG_KEY, 'true');
+    // Clear skip history and nav flag when going back to feed
+    // Starting fresh when user returns from feed
+    sessionStorage.removeItem(SKIP_HISTORY_KEY);
+    sessionStorage.removeItem(NAV_FLAG_KEY);
     navigate("/", { state: { restoreScroll: true } });
-  }, [navigate, id, skipHistory]);
+  }, [navigate, id]);
 
   const openTelegram = useCallback(() => {
     setShowTelegramConfirm(true);
