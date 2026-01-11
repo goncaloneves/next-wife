@@ -7,12 +7,13 @@ import {
   FilterSection, 
   toggleArrayValue 
 } from "./filters/FilterComponents";
-import { getStoredFilters, saveFilters } from "@/lib/filterStorage";
+import { saveFilters, type SharedFilters } from "@/lib/filterStorage";
 import { useFilterOptions } from "@/hooks/useFilterOptions";
 
 interface FeedFiltersProps {
   channel: string;
-  onFiltersChange: (filters: { regions: string[]; ageBrackets: string[]; occupationCategories: string[]; languages: string[]; hometowns: string[]; personalities: string[]; relationships: string[]; hasVideo: boolean; hasMultipleMedia: boolean }) => void;
+  filters: SharedFilters;
+  onFiltersChange: (filters: SharedFilters) => void;
   showFilters?: boolean;
   onShowFiltersChange?: (show: boolean) => void;
   hideButton?: boolean;
@@ -20,6 +21,7 @@ interface FeedFiltersProps {
 
 export function FeedFilters({ 
   channel, 
+  filters,
   onFiltersChange,
   showFilters: controlledShowFilters,
   onShowFiltersChange,
@@ -35,46 +37,29 @@ export function FeedFilters({
     getActiveCount 
   } = useFilterOptions(channel);
   
-  const initialFilters = useMemo(() => getStoredFilters(), []);
-  const [selectedRegions, setSelectedRegions] = useState<string[]>(initialFilters.regions);
-  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>(initialFilters.ageBrackets);
-  const [selectedOccupations, setSelectedOccupations] = useState<string[]>(initialFilters.occupationCategories);
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(initialFilters.languages);
-  const [selectedHometowns, setSelectedHometowns] = useState<string[]>(initialFilters.hometowns);
-  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>(initialFilters.personalities);
-  const [selectedRelationships, setSelectedRelationships] = useState<string[]>(initialFilters.relationships);
-  const [hasVideo, setHasVideo] = useState<boolean>(initialFilters.hasVideo);
-  const [hasMultipleMedia, setHasMultipleMedia] = useState<boolean>(initialFilters.hasMultipleMedia);
+  const [selectedRegions, setSelectedRegions] = useState<string[]>(filters.regions);
+  const [selectedAgeBrackets, setSelectedAgeBrackets] = useState<string[]>(filters.ageBrackets);
+  const [selectedOccupations, setSelectedOccupations] = useState<string[]>(filters.occupationCategories);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(filters.languages);
+  const [selectedHometowns, setSelectedHometowns] = useState<string[]>(filters.hometowns);
+  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>(filters.personalities);
+  const [selectedRelationships, setSelectedRelationships] = useState<string[]>(filters.relationships);
+  const [hasVideo, setHasVideo] = useState<boolean>(filters.hasVideo);
+  const [hasMultipleMedia, setHasMultipleMedia] = useState<boolean>(filters.hasMultipleMedia);
   
   const [internalShowFilters, setInternalShowFilters] = useState(false);
-  
+
   useEffect(() => {
-    const syncFiltersFromStorage = () => {
-      const stored = getStoredFilters();
-      setSelectedRegions(stored.regions);
-      setSelectedAgeBrackets(stored.ageBrackets);
-      setSelectedOccupations(stored.occupationCategories);
-      setSelectedLanguages(stored.languages);
-      setSelectedHometowns(stored.hometowns);
-      setSelectedPersonalities(stored.personalities);
-      setSelectedRelationships(stored.relationships);
-      setHasVideo(stored.hasVideo);
-      setHasMultipleMedia(stored.hasMultipleMedia);
-    };
-    
-    window.addEventListener('focus', syncFiltersFromStorage);
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        syncFiltersFromStorage();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-    
-    return () => {
-      window.removeEventListener('focus', syncFiltersFromStorage);
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
-  }, []);
+    setSelectedRegions(filters.regions);
+    setSelectedAgeBrackets(filters.ageBrackets);
+    setSelectedOccupations(filters.occupationCategories);
+    setSelectedLanguages(filters.languages);
+    setSelectedHometowns(filters.hometowns);
+    setSelectedPersonalities(filters.personalities);
+    setSelectedRelationships(filters.relationships);
+    setHasVideo(filters.hasVideo);
+    setHasMultipleMedia(filters.hasMultipleMedia);
+  }, [filters]);
   
   const showFilters = controlledShowFilters !== undefined ? controlledShowFilters : internalShowFilters;
   const setShowFilters = onShowFiltersChange || setInternalShowFilters;

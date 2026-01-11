@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,46 +6,15 @@ import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { FeedFilters, FilterButton } from "@/components/FeedFilters";
-import { getStoredFilters, saveFilters, getActiveFilterCount, type SharedFilters } from "@/lib/filterStorage";
+import { useSharedFilters } from "@/hooks/useSharedFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
+  const { filters, setFilters, activeFilterCount } = useSharedFilters();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState<SharedFilters>(getStoredFilters);
-  const activeFilterCount = getActiveFilterCount(filters);
-  
-  useEffect(() => {
-    const syncFiltersFromStorage = () => {
-      const stored = getStoredFilters();
-      setFilters(prev => {
-        if (JSON.stringify(prev) !== JSON.stringify(stored)) {
-          return stored;
-        }
-        return prev;
-      });
-    };
-    
-    window.addEventListener('focus', syncFiltersFromStorage);
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        syncFiltersFromStorage();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-    
-    return () => {
-      window.removeEventListener('focus', syncFiltersFromStorage);
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
-  }, []);
-  
-  const handleFiltersChange = useCallback((newFilters: SharedFilters) => {
-    setFilters(newFilters);
-    saveFilters(newFilters);
-  }, []);
   
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -364,7 +333,8 @@ const Index = () => {
               </div>
               <FeedFilters
                 channel="nextwife_ai"
-                onFiltersChange={handleFiltersChange}
+                filters={filters}
+                onFiltersChange={setFilters}
                 showFilters={showFilters}
                 onShowFiltersChange={setShowFilters}
                 hideButton
