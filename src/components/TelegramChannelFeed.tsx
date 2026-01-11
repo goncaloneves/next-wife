@@ -98,6 +98,7 @@ export const TelegramChannelFeed = ({
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
   const progressCircleRefs = useRef<Record<string, SVGCircleElement | null>>({});
   const rafRefs = useRef<Record<string, number>>({});
+  const needsVideoRefreshRef = useRef(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -422,9 +423,9 @@ export const TelegramChannelFeed = ({
           setNextCursor(cache.nextCursor);
           setHasMore(cache.hasMore);
           setLoading(false);
-          // Don't restore refreshKey - use new timestamp so videos get fresh keys
-          // This forces video elements to reload their metadata properly
-          setRefreshKey(Date.now());
+          if (cache.refreshKey) setRefreshKey(cache.refreshKey);
+          // Mark that we need to refresh videos after render (they show black after cache restore)
+          needsVideoRefreshRef.current = true;
           // Don't restore imageLoadStates - let images lazy load naturally
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
@@ -455,6 +456,25 @@ export const TelegramChannelFeed = ({
       }, 50);
     };
   }, []);
+
+  // Effect to refresh videos after cache restoration (they show black otherwise)
+  useEffect(() => {
+    if (!needsVideoRefreshRef.current || allPosts.length === 0) return;
+    needsVideoRefreshRef.current = false;
+    
+    // Small delay to let video elements mount
+    const timeoutId = setTimeout(() => {
+      Object.entries(videoRefs.current).forEach(([postId, video]) => {
+        if (video) {
+          // Force reload to repaint first frame - don't touch imageLoadStates
+          // to avoid skeleton flash. Videos will update once loadeddata fires.
+          video.load();
+        }
+      });
+    }, 50);
+    
+    return () => clearTimeout(timeoutId);
+  }, [allPosts]);
 
   // Separate effect for polling - doesn't trigger refetch
   useEffect(() => {
