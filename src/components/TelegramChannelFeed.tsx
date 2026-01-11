@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, BadgeCheck, MapPin, Briefcase, Flame, Images } from "lucide-react";
+import { ArrowUp, BadgeCheck, MapPin, Briefcase, Flame } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -930,22 +930,6 @@ export const TelegramChannelFeed = ({
                       {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
                     </div>
                   </div>
-                  
-                  {/* Media count badge - show when multiple media items exist */}
-                  {/* Position below video indicator if first media is video, otherwise top-right */}
-                  {post.mediaUrls && post.mediaUrls.length > 1 && (
-                    <div 
-                      className={`absolute right-3 z-20 pointer-events-none ${
-                        post.mediaUrls[0]?.type === 'video' ? 'top-12' : 'top-3'
-                      }`}
-                      data-testid={`badge-media-count-${post.id}`}
-                    >
-                      <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg flex items-center gap-1">
-                        <Images className="w-3 h-3" />
-                        <span>{post.mediaUrls.length}</span>
-                      </div>
-                    </div>
-                  )}
                   
                   {/* Tinder-style profile badge - only show if all profile data is present */}
                   {post.profileData && (
