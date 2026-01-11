@@ -186,7 +186,8 @@ const langCodeToName = {
   "sk": "Slovak", "be": "Belarusian", "lt": "Lithuanian", "lv": "Latvian", "et": "Estonian",
   "is": "Icelandic", "lb": "Luxembourgish", "mt": "Maltese", "sq": "Albanian", "mk": "Macedonian",
   "bs": "Bosnian", "sw": "Swahili", "am": "Amharic", "az": "Azerbaijani", "ka": "Georgian",
-  "hy": "Armenian", "uz": "Uzbek", "kk": "Kazakh", "ps": "Pashto", "sm": "Samoan", "to": "Tongan"
+  "hy": "Armenian", "uz": "Uzbek", "kk": "Kazakh", "ps": "Pashto", "sm": "Samoan", "to": "Tongan",
+  "ga": "Irish", "cy": "Welsh", "gd": "Scottish Gaelic"
 };
 
 // Direct nationality-to-language mapping for when nationality IS a language/ethnicity name
@@ -198,45 +199,56 @@ const directLanguageMap = {
   "Cantonese": "Cantonese", "Hokkien": "Hokkien", "Hakka": "Hakka", "Teochew": "Teochew"
 };
 
-// Get native language from nationality using countries-list
+// Extract country from hometown (e.g., "Dublin, Ireland" -> "Ireland")
+function extractCountryFromHometown(hometown) {
+  if (!hometown) return null;
+  const parts = hometown.split(',').map(p => p.trim());
+  // Return the last part which is typically the country
+  return parts.length > 1 ? parts[parts.length - 1] : null;
+}
+
+// Get native language from nationality or hometown country
 // Prefers the first non-English language if available, falls back to English
-function getNativeLanguage(nationality) {
-  if (!nationality) return "English";
+function getNativeLanguage(nationality, hometown) {
+  // Try to find country code from nationality first, then hometown country
+  const sources = [nationality, extractCountryFromHometown(hometown)].filter(Boolean);
   
-  const normalized = nationality.trim();
-  
-  // Check if the nationality is actually a language/ethnicity name
-  if (directLanguageMap[normalized]) {
-    return directLanguageMap[normalized];
-  }
-  
-  let countryCode = demonymToCountryCode[normalized];
-  
-  if (!countryCode) {
-    // Case-insensitive fallback
-    for (const [demonym, code] of Object.entries(demonymToCountryCode)) {
-      if (demonym.toLowerCase() === normalized.toLowerCase()) {
-        countryCode = code;
-        break;
+  for (const source of sources) {
+    const normalized = source.trim();
+    
+    // Check if the source is actually a language/ethnicity name
+    if (directLanguageMap[normalized]) {
+      return directLanguageMap[normalized];
+    }
+    
+    let countryCode = demonymToCountryCode[normalized];
+    
+    if (!countryCode) {
+      // Case-insensitive fallback
+      for (const [demonym, code] of Object.entries(demonymToCountryCode)) {
+        if (demonym.toLowerCase() === normalized.toLowerCase()) {
+          countryCode = code;
+          break;
+        }
+      }
+    }
+    
+    if (countryCode) {
+      const country = countries[countryCode];
+      if (country && country.languages && country.languages.length > 0) {
+        // Prefer first non-English language (for multilingual countries like Nigeria, Singapore)
+        const nonEnglishLang = country.languages.find(code => code !== 'en');
+        if (nonEnglishLang) {
+          return langCodeToName[nonEnglishLang] || nonEnglishLang.toUpperCase();
+        }
+        // If only English is available, continue to next source
+        if (country.languages.includes('en')) {
+          return "English";
+        }
       }
     }
   }
   
-  if (!countryCode) return "English";
-  
-  const country = countries[countryCode];
-  if (!country || !country.languages || country.languages.length === 0) {
-    return "English";
-  }
-  
-  // Prefer first non-English language (for multilingual countries like Nigeria, Singapore)
-  // This ensures we display "English, [Native]" instead of just "English"
-  const nonEnglishLang = country.languages.find(code => code !== 'en');
-  if (nonEnglishLang) {
-    return langCodeToName[nonEnglishLang] || nonEnglishLang.toUpperCase();
-  }
-  
-  // If only English is available, return English
   return "English";
 }
 
@@ -639,7 +651,7 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       const region = post.profileData ? getRegion(post.profileData.nationality) : null;
       const ageBracket = post.profileData ? getAgeBracket(post.profileData.age) : null;
       const occupationCategory = post.profileData ? getOccupationCategory(post.profileData.work) : null;
-      const language = post.profileData ? getNativeLanguage(post.profileData.nationality) : null;
+      const language = post.profileData ? getNativeLanguage(post.profileData.nationality, post.profileData.hometown) : null;
       
       // Calculate media flags
       const hasVideo = post.mediaUrls ? post.mediaUrls.some(m => m.type === 'video') : false;
