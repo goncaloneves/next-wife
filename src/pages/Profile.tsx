@@ -639,7 +639,7 @@ const Profile = () => {
                 <button
                   onClick={(e) => { e.stopPropagation(); goBack(); }}
                   onPointerDownCapture={(e) => e.stopPropagation()}
-                  className="bg-black/35 backdrop-blur-md text-white/90 p-2.5 rounded-full border border-white/10 hover:bg-black/50 transition-all shadow-lg hover:scale-105 pointer-events-auto"
+                  className="bg-black/20 backdrop-blur-md text-white/90 p-2.5 rounded-full border border-white/15 hover:bg-black/35 transition-all shadow-lg hover:scale-105 pointer-events-auto"
                   data-testid="button-back"
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -648,7 +648,7 @@ const Profile = () => {
                 <div />
               )}
               <div 
-                className="flex items-center bg-black/35 backdrop-blur-md rounded-full shadow-lg border border-white/10 pointer-events-auto"
+                className="flex items-center bg-black/20 backdrop-blur-md rounded-full shadow-lg border border-white/15 pointer-events-auto"
                 onPointerDownCapture={(e) => e.stopPropagation()} 
                 onClick={(e) => e.stopPropagation()}
               >
