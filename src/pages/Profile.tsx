@@ -626,7 +626,7 @@ const Profile = () => {
                         }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1, transition: { duration: 0.1, ease: 'easeOut' } }}
-                        exit={{ opacity: 0, transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] } }}
+                        exit={{ opacity: 0, transition: { duration: 0.1, ease: 'easeOut' } }}
                       />
                     )}
                     {tapFeedback === 'right' && (
@@ -638,7 +638,7 @@ const Profile = () => {
                         }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1, transition: { duration: 0.1, ease: 'easeOut' } }}
-                        exit={{ opacity: 0, transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] } }}
+                        exit={{ opacity: 0, transition: { duration: 0.1, ease: 'easeOut' } }}
                       />
                     )}
                   </AnimatePresence>
