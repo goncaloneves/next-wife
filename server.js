@@ -1169,6 +1169,8 @@ app.get('/api/tg-profile/:id', async (req, res) => {
     const regions = req.query.region ? (Array.isArray(req.query.region) ? req.query.region : [req.query.region]) : null;
     const ageBrackets = req.query.ageBracket ? (Array.isArray(req.query.ageBracket) ? req.query.ageBracket : [req.query.ageBracket]) : null;
     const occupationCategories = req.query.occupationCategory ? (Array.isArray(req.query.occupationCategory) ? req.query.occupationCategory : [req.query.occupationCategory]) : null;
+    const languages = req.query.language ? (Array.isArray(req.query.language) ? req.query.language : [req.query.language]) : null;
+    const hometowns = req.query.hometown ? (Array.isArray(req.query.hometown) ? req.query.hometown : [req.query.hometown]) : null;
     const personalities = req.query.personality ? (Array.isArray(req.query.personality) ? req.query.personality : [req.query.personality]) : null;
     const relationships = req.query.relationship ? (Array.isArray(req.query.relationship) ? req.query.relationship : [req.query.relationship]) : null;
     const hasVideo = req.query.hasVideo === 'true';
@@ -1192,6 +1194,16 @@ app.get('/api/tg-profile/:id', async (req, res) => {
     if (occupationCategories && occupationCategories.length > 0) {
       filterConditions += ` AND occupation_category = ANY($${paramIdx})`;
       filterParams.push(occupationCategories);
+      paramIdx++;
+    }
+    if (languages && languages.length > 0) {
+      filterConditions += ` AND language = ANY($${paramIdx})`;
+      filterParams.push(languages);
+      paramIdx++;
+    }
+    if (hometowns && hometowns.length > 0) {
+      filterConditions += ` AND hometown = ANY($${paramIdx})`;
+      filterParams.push(hometowns);
       paramIdx++;
     }
     if (personalities && personalities.length > 0) {
