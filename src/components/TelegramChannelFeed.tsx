@@ -171,8 +171,10 @@ export const TelegramChannelFeed = ({
       if (filters.hasVideo) filterParams.append('hasVideo', 'true');
       if (filters.hasMultipleMedia) filterParams.append('hasMultipleMedia', 'true');
       
+      const url = `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`;
+      
       const response = await fetch(
-        `${apiUrl}/api/tg-channel-feed?${filterParams.toString()}`,
+        url,
         {
           headers: {
             "Content-Type": "application/json",

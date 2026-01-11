@@ -256,6 +256,8 @@ const Profile = () => {
     f.regions.forEach(r => params.append('region', r));
     f.ageBrackets.forEach(a => params.append('ageBracket', a));
     f.occupationCategories.forEach(o => params.append('occupationCategory', o));
+    f.languages.forEach(l => params.append('language', l));
+    f.hometowns.forEach(h => params.append('hometown', h));
     f.personalities.forEach(p => params.append('personality', p));
     f.relationships.forEach(r => params.append('relationship', r));
     if (f.hasVideo) params.append('hasVideo', 'true');
