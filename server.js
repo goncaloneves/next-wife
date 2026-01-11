@@ -16,6 +16,9 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from public folder (for og-image.jpg, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
+
 // ============== DATABASE SETUP ==============
 const { Pool } = pg;
 let db = null;
@@ -1768,6 +1771,138 @@ app.get('/api/tg-image-proxy', async (req, res) => {
     res.status(500).json({ error: 'Failed to proxy image', message: error.message });
   }
 });
+
+// Social crawler detection for dynamic meta tags
+const socialCrawlers = [
+  'facebookexternalhit',
+  'Facebot',
+  'Twitterbot',
+  'LinkedInBot',
+  'WhatsApp',
+  'TelegramBot',
+  'Slackbot',
+  'Discordbot',
+  'Pinterest',
+  'Googlebot',
+  'bingbot',
+  'Baiduspider',
+  'DuckDuckBot',
+];
+
+function isSocialCrawler(userAgent) {
+  if (!userAgent) return false;
+  return socialCrawlers.some(crawler => userAgent.includes(crawler));
+}
+
+// Serve dynamic meta tags for profile pages when accessed by social crawlers
+app.get('/profile/:id', async (req, res, next) => {
+  const userAgent = req.headers['user-agent'] || '';
+  
+  if (!isSocialCrawler(userAgent)) {
+    return next(); // Let the SPA handle it
+  }
+  
+  // If database is not available, fall back to SPA
+  if (!pool) {
+    return next();
+  }
+  
+  try {
+    const profileId = req.params.id;
+    const result = await pool.query(
+      `SELECT * FROM telegram_posts WHERE id = $1 AND channel = 'nextwifeai' AND deleted_at IS NULL`,
+      [profileId]
+    );
+    
+    if (result.rows.length === 0) {
+      return next(); // Profile not found, let SPA handle 404
+    }
+    
+    const post = result.rows[0];
+    const name = post.name || 'AI Girlfriend';
+    const age = post.age || '';
+    const nationality = post.nationality || '';
+    const hometown = post.hometown || '';
+    const work = post.work || '';
+    const about = post.about || '';
+    
+    // Get the first media URL for the image
+    let imageUrl = 'https://nextwife.ai/og-image.jpg';
+    if (post.media_urls && post.media_urls.length > 0) {
+      const firstMedia = post.media_urls.find(m => m.type === 'photo') || post.media_urls[0];
+      if (firstMedia && firstMedia.url) {
+        // Use our proxy to serve the image to avoid CORS issues
+        imageUrl = `https://nextwife.ai/api/tg-image-proxy?u=${encodeURIComponent(firstMedia.url)}`;
+      }
+    } else if (post.media) {
+      imageUrl = `https://nextwife.ai/api/tg-image-proxy?u=${encodeURIComponent(post.media)}`;
+    }
+    
+    const title = `${name}${age ? `, ${age}` : ''} - Next Wife`;
+    const description = about 
+      ? about.substring(0, 200) + (about.length > 200 ? '...' : '')
+      : `${nationality ? nationality + ' ' : ''}${work ? work + '. ' : ''}Meet ${name} on Telegram.`;
+    const profileUrl = `https://nextwife.ai/profile/${profileId}`;
+    
+    // Serve HTML with dynamic meta tags
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="Next Wife">
+  <meta property="og:url" content="${profileUrl}">
+  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:image" content="${imageUrl}">
+  <meta property="og:image:width" content="800">
+  <meta property="og:image:height" content="800">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@nextwife_ai">
+  <meta name="twitter:title" content="${escapeHtml(title)}">
+  <meta name="twitter:description" content="${escapeHtml(description)}">
+  <meta name="twitter:image" content="${imageUrl}">
+  
+  <!-- Redirect to actual page for users -->
+  <meta http-equiv="refresh" content="0;url=${profileUrl}">
+</head>
+<body>
+  <h1>${escapeHtml(name)}</h1>
+  ${age ? `<p>Age: ${age}</p>` : ''}
+  ${nationality ? `<p>Nationality: ${nationality}</p>` : ''}
+  ${hometown ? `<p>From: ${escapeHtml(hometown)}</p>` : ''}
+  ${work ? `<p>Work: ${escapeHtml(work)}</p>` : ''}
+  ${about ? `<p>${escapeHtml(about)}</p>` : ''}
+  <p><a href="${profileUrl}">View Profile on Next Wife</a></p>
+</body>
+</html>`;
+    
+    res.set('Content-Type', 'text/html');
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.send(html);
+    
+  } catch (error) {
+    console.error('Error serving profile meta tags:', error);
+    next(); // Fall back to SPA on error
+  }
+});
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
