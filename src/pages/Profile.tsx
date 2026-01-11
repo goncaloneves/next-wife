@@ -12,9 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
-import { DiscoverFilterModal, DiscoverFilterButton, type DiscoverFilters } from "@/components/DiscoverFilterModal";
+import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
 import { useFilters } from "@/contexts/FilterContext";
 
@@ -647,17 +647,31 @@ const Profile = () => {
               ) : (
                 <div />
               )}
-              <div className="flex items-center gap-2 pointer-events-auto">
-                <div onPointerDownCapture={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
-                  <DiscoverFilterButton 
-                    activeCount={activeFilterCount}
-                    onClick={() => setShowFilters(true)}
-                  />
-                </div>
+              <div 
+                className="flex items-center bg-black/50 backdrop-blur-md rounded-full shadow-lg pointer-events-auto"
+                onPointerDownCapture={(e) => e.stopPropagation()} 
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button
-                  onClick={(e) => { e.stopPropagation(); handleShare(); }}
-                  onPointerDownCapture={(e) => e.stopPropagation()}
-                  className="bg-black/50 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 transition-all shadow-lg hover:scale-105"
+                  onClick={() => setShowFilters(true)}
+                  className={`relative p-2.5 rounded-l-full transition-all hover:bg-white/10 ${
+                    activeFilterCount > 0 
+                      ? 'text-orange-400' 
+                      : 'text-white'
+                  }`}
+                  data-testid="open-profile-filters"
+                >
+                  <SlidersHorizontal className="w-5 h-5" />
+                  {activeFilterCount > 0 && (
+                    <span className="absolute -top-1 -right-0.5 min-w-[16px] h-[16px] rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </button>
+                <div className="w-px h-5 bg-white/20" />
+                <button
+                  onClick={() => handleShare()}
+                  className="p-2.5 rounded-r-full text-white transition-all hover:bg-white/10"
                   data-testid="button-share"
                 >
                   <Share2 className="w-5 h-5" />
