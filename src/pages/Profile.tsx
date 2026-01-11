@@ -15,7 +15,8 @@ import {
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { ProfileFilterModal, ProfileFilterButton, type ProfileFilters } from "@/components/ProfileFilterModal";
-import { getStoredFilters, saveFilters, type SharedFilters } from "@/lib/filterStorage";
+import { type SharedFilters } from "@/lib/filterStorage";
+import { useSharedFilters } from "@/hooks/useSharedFilters";
 
 interface ProfileData {
   name: string;
@@ -115,11 +116,7 @@ const Profile = () => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState<SharedFilters>(getStoredFilters);
-  
-  useEffect(() => {
-    saveFilters(filters);
-  }, [filters]);
+  const { filters, setFilters } = useSharedFilters();
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
@@ -279,7 +276,6 @@ const Profile = () => {
 
   const handleFiltersChange = useCallback(async (newFilters: SharedFilters) => {
     setFilters(newFilters);
-    saveFilters(newFilters);
     
     try {
       const queryString = buildFilterQueryString(newFilters);

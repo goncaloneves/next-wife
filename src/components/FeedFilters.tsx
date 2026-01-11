@@ -7,7 +7,7 @@ import {
   FilterSection, 
   toggleArrayValue 
 } from "./filters/FilterComponents";
-import { saveFilters, type SharedFilters } from "@/lib/filterStorage";
+import { type SharedFilters } from "@/lib/filterStorage";
 import { useFilterOptions } from "@/hooks/useFilterOptions";
 
 interface FeedFiltersProps {
@@ -101,22 +101,6 @@ export function FeedFilters({
       notifyFiltersChange();
     }
   }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading, notifyFiltersChange]);
-
-  useEffect(() => {
-    if (loading) return;
-    
-    saveFilters({
-      regions: selectedRegions,
-      ageBrackets: selectedAgeBrackets,
-      occupationCategories: selectedOccupations,
-      languages: selectedLanguages,
-      hometowns: selectedHometowns,
-      personalities: selectedPersonalities,
-      relationships: selectedRelationships,
-      hasVideo,
-      hasMultipleMedia,
-    });
-  }, [selectedRegions, selectedAgeBrackets, selectedOccupations, selectedLanguages, selectedHometowns, selectedPersonalities, selectedRelationships, hasVideo, hasMultipleMedia, loading]);
 
   const currentFilters = useMemo(() => ({
     regions: selectedRegions,
