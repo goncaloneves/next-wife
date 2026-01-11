@@ -1176,6 +1176,37 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       ORDER BY id DESC LIMIT 1
     `, filterParams);
     
+    // Check if this post is in the global hot set (clicks, high media, or recent)
+    const hotCheckQuery = `
+      WITH clicked_posts AS (
+        SELECT id FROM telegram_posts 
+        WHERE channel = $1 AND deleted_at IS NULL AND COALESCE(click_count, 0) > 0
+        ORDER BY click_count DESC LIMIT 5
+      ),
+      high_media_posts AS (
+        SELECT id FROM telegram_posts
+        WHERE channel = $1 AND deleted_at IS NULL 
+          AND jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) >= 5
+          AND id NOT IN (SELECT id FROM clicked_posts)
+        ORDER BY jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) DESC, date DESC LIMIT 5
+      ),
+      recent_posts AS (
+        SELECT id FROM telegram_posts
+        WHERE channel = $1 AND deleted_at IS NULL 
+          AND id NOT IN (SELECT id FROM clicked_posts)
+          AND id NOT IN (SELECT id FROM high_media_posts)
+        ORDER BY date DESC LIMIT 5
+      ),
+      hot_ids AS (
+        SELECT id FROM clicked_posts
+        UNION SELECT id FROM high_media_posts
+        UNION SELECT id FROM recent_posts
+      )
+      SELECT EXISTS(SELECT 1 FROM hot_ids WHERE id = $2) as is_hot
+    `;
+    const hotResult = await pool.query(hotCheckQuery, [channelName, id]);
+    const isHot = hotResult.rows[0]?.is_hot || false;
+    
     const post = {
       id: row.id,
       text: row.text,
@@ -1196,7 +1227,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
         relationship: row.relationship,
         about: row.about
       } : null,
-      isHot: row.click_count > 0,
+      isHot,
       click_count: row.click_count
     };
     
@@ -1309,29 +1340,40 @@ app.get('/api/tg-channel-feed', async (req, res) => {
       query += ` ORDER BY id::bigint DESC LIMIT $${paramIndex}`;
       params.push(limit);
       
-      // First, get the GLOBAL top 8 hot IDs from entire dataset (ignoring filters)
+      // First, get the GLOBAL hot IDs from entire dataset (ignoring filters)
+      // Hot profiles are determined by: clicks, high media count (5+), or recency
       // This ensures Hot badge is consistent regardless of which filters are applied
-      // Uses row_number to preserve ordering from each CTE
       const globalHotQuery = `
         WITH clicked_posts AS (
           SELECT id, ROW_NUMBER() OVER (ORDER BY click_count DESC) as rn
           FROM telegram_posts 
           WHERE channel = $1 AND deleted_at IS NULL AND COALESCE(click_count, 0) > 0
-          LIMIT 8
+          LIMIT 5
+        ),
+        high_media_posts AS (
+          SELECT id, ROW_NUMBER() OVER (ORDER BY jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) DESC, date DESC) as rn
+          FROM telegram_posts
+          WHERE channel = $1 AND deleted_at IS NULL 
+            AND jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) >= 5
+            AND id NOT IN (SELECT id FROM clicked_posts)
+          LIMIT 5
         ),
         recent_posts AS (
           SELECT id, ROW_NUMBER() OVER (ORDER BY date DESC) as rn
           FROM telegram_posts
           WHERE channel = $1 AND deleted_at IS NULL 
             AND id NOT IN (SELECT id FROM clicked_posts)
-          LIMIT 8
+            AND id NOT IN (SELECT id FROM high_media_posts)
+          LIMIT 5
         ),
         combined AS (
-          SELECT id, 0 as priority, rn FROM clicked_posts
-          UNION ALL
-          SELECT id, 1 as priority, rn FROM recent_posts
+          SELECT id FROM clicked_posts
+          UNION
+          SELECT id FROM high_media_posts
+          UNION
+          SELECT id FROM recent_posts
         )
-        SELECT id FROM combined ORDER BY priority, rn LIMIT 8
+        SELECT id FROM combined
       `;
       const globalHotResult = await pool.query(globalHotQuery, [channelName]);
       const hotPostIds = new Set(globalHotResult.rows.map(r => r.id));
