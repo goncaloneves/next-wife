@@ -322,7 +322,7 @@ const Index = () => {
                     activeCount={activeFilterCount}
                   />
                 </div>
-                <div className="flex justify-center gap-2 mt-4 min-[1100px]:hidden">
+                <div className="hidden md:flex justify-center gap-2 mt-4 min-[1100px]:hidden">
                   <FilterButton 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
