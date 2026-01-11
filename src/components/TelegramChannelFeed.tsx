@@ -98,7 +98,6 @@ export const TelegramChannelFeed = ({
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
   const progressCircleRefs = useRef<Record<string, SVGCircleElement | null>>({});
   const rafRefs = useRef<Record<string, number>>({});
-  const needsVideoRefreshRef = useRef(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -424,9 +423,8 @@ export const TelegramChannelFeed = ({
           setHasMore(cache.hasMore);
           setLoading(false);
           if (cache.refreshKey) setRefreshKey(cache.refreshKey);
-          // Mark that we need to refresh videos after render (they show black after cache restore)
-          needsVideoRefreshRef.current = true;
-          // Don't restore imageLoadStates - let images lazy load naturally
+          // Don't restore imageLoadStates - let media reload naturally with browser cache
+          // Images reload instantly, videos use preload="metadata" for first frame
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
           // Clear cache after successful restoration (delay for StrictMode)
@@ -456,25 +454,6 @@ export const TelegramChannelFeed = ({
       }, 50);
     };
   }, []);
-
-  // Effect to refresh videos after cache restoration (they show black otherwise)
-  useEffect(() => {
-    if (!needsVideoRefreshRef.current || allPosts.length === 0) return;
-    needsVideoRefreshRef.current = false;
-    
-    // Small delay to let video elements mount
-    const timeoutId = setTimeout(() => {
-      Object.entries(videoRefs.current).forEach(([postId, video]) => {
-        if (video) {
-          // Force reload to repaint first frame - don't touch imageLoadStates
-          // to avoid skeleton flash. Videos will update once loadeddata fires.
-          video.load();
-        }
-      });
-    }, 50);
-    
-    return () => clearTimeout(timeoutId);
-  }, [allPosts]);
 
   // Separate effect for polling - doesn't trigger refetch
   useEffect(() => {
@@ -873,8 +852,8 @@ export const TelegramChannelFeed = ({
                             playsInline
                             preload="metadata"
                             className={`w-full h-full object-cover transition-all duration-300 ${
-                              imageLoadStates[post.id] ? "" : "opacity-0"
-                            } opacity-70 group-hover:opacity-100 group-hover:scale-105`}
+                              imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
+                            }`}
                             onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                             onError={() => {
                               const currentTries = imageErrors[post.id] || 0;
@@ -921,8 +900,8 @@ export const TelegramChannelFeed = ({
                         decoding="async"
                         referrerPolicy="no-referrer"
                         className={`w-full h-full object-cover transition-all duration-300 ${
-                          imageLoadStates[post.id] ? "" : "opacity-0"
-                        } opacity-70 group-hover:opacity-100 group-hover:scale-105`}
+                          imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
+                        }`}
                         onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                         onError={() => {
                           const currentTries = imageErrors[post.id] || 0;
