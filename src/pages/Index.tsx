@@ -243,7 +243,13 @@ const Index = () => {
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 6px 30px rgba(198, 58, 75, 0.4), 0 0 50px rgba(232, 115, 85, 0.25)"}
                 onMouseLeave={(e) => e.currentTarget.style.boxShadow = "var(--shadow-warm)"}
-                onClick={() => feedContentRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                  if (window.innerWidth < 768) {
+                    setShowFilters(true);
+                  } else {
+                    feedContentRef.current?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
                 data-testid="button-pick-your-woman"
               >
                 Find Your Woman 🌻
