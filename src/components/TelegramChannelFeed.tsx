@@ -423,8 +423,8 @@ export const TelegramChannelFeed = ({
           setHasMore(cache.hasMore);
           setLoading(false);
           if (cache.refreshKey) setRefreshKey(cache.refreshKey);
-          // Restore imageLoadStates so media appears instantly without skeleton
-          if (cache.imageLoadStates) setImageLoadStates(cache.imageLoadStates);
+          // Don't restore imageLoadStates - let media show skeleton then fade in
+          // CSS fix ensures videos show skeleton (not black) until loaded
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
           // Clear cache after successful restoration (delay for StrictMode)
@@ -762,8 +762,7 @@ export const TelegramChannelFeed = ({
                       nextCursor,
                       hasMore,
                       filters,
-                      refreshKey,
-                      imageLoadStates
+                      refreshKey
                     }));
                     navigate('/discover');
                   }}
