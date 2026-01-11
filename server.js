@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import pg from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { eq, desc, and, inArray, sql } from 'drizzle-orm';
-import { countries } from 'countries-list';
+import { countries, languages } from 'countries-list';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -172,23 +172,12 @@ const demonymToCountryCode = {
   "Papua New Guinea": "PG"
 };
 
-// ISO language code to display name
-const langCodeToName = {
-  "en": "English", "es": "Spanish", "fr": "French", "pt": "Portuguese", "de": "German",
-  "it": "Italian", "ja": "Japanese", "ko": "Korean", "zh": "Mandarin", "ar": "Arabic",
-  "ru": "Russian", "nl": "Dutch", "pl": "Polish", "tr": "Turkish", "th": "Thai",
-  "vi": "Vietnamese", "id": "Indonesian", "ms": "Malay", "el": "Greek", "sv": "Swedish",
-  "cs": "Czech", "hu": "Hungarian", "ro": "Romanian", "uk": "Ukrainian", "hi": "Hindi",
-  "tl": "Filipino", "fa": "Persian", "he": "Hebrew", "da": "Danish", "fi": "Finnish",
-  "no": "Norwegian", "nb": "Norwegian", "nn": "Norwegian", "ur": "Urdu", "bn": "Bengali",
-  "si": "Sinhala", "ne": "Nepali", "mn": "Mongolian", "km": "Khmer", "lo": "Lao",
-  "my": "Burmese", "bg": "Bulgarian", "hr": "Croatian", "sr": "Serbian", "sl": "Slovenian",
-  "sk": "Slovak", "be": "Belarusian", "lt": "Lithuanian", "lv": "Latvian", "et": "Estonian",
-  "is": "Icelandic", "lb": "Luxembourgish", "mt": "Maltese", "sq": "Albanian", "mk": "Macedonian",
-  "bs": "Bosnian", "sw": "Swahili", "am": "Amharic", "az": "Azerbaijani", "ka": "Georgian",
-  "hy": "Armenian", "uz": "Uzbek", "kk": "Kazakh", "ps": "Pashto", "sm": "Samoan", "to": "Tongan",
-  "ga": "Irish", "cy": "Welsh", "gd": "Scottish Gaelic"
-};
+// Helper to get language name from ISO code using countries-list
+function getLanguageName(code) {
+  if (!code) return null;
+  const lang = languages[code];
+  return lang ? lang.name : code.toUpperCase();
+}
 
 // Direct nationality-to-language mapping for when nationality IS a language/ethnicity name
 const directLanguageMap = {
@@ -239,9 +228,9 @@ function getNativeLanguage(nationality, hometown) {
         // Prefer first non-English language (for multilingual countries like Nigeria, Singapore)
         const nonEnglishLang = country.languages.find(code => code !== 'en');
         if (nonEnglishLang) {
-          return langCodeToName[nonEnglishLang] || nonEnglishLang.toUpperCase();
+          return getLanguageName(nonEnglishLang);
         }
-        // If only English is available, continue to next source
+        // If only English is available, return English
         if (country.languages.includes('en')) {
           return "English";
         }
