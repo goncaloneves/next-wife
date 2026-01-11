@@ -422,7 +422,9 @@ export const TelegramChannelFeed = ({
           setNextCursor(cache.nextCursor);
           setHasMore(cache.hasMore);
           setLoading(false);
-          if (cache.refreshKey) setRefreshKey(cache.refreshKey);
+          // Don't restore refreshKey - use new timestamp so videos get fresh keys
+          // This forces video elements to reload their metadata properly
+          setRefreshKey(Date.now());
           // Don't restore imageLoadStates - let images lazy load naturally
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
