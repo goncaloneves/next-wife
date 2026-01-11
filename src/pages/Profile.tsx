@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal, Images, Image } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
@@ -648,6 +648,46 @@ const Profile = () => {
               ) : (
                 <div />
               )}
+              
+              {/* Media count badge - always visible to set user expectations */}
+              {(() => {
+                const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+                const totalMedia = mediaList.length;
+                const hasVideo = mediaList.some(m => m.type === 'video');
+                const videoCount = mediaList.filter(m => m.type === 'video').length;
+                const photoCount = totalMedia - videoCount;
+                
+                // Build label
+                let label = '';
+                if (totalMedia === 1) {
+                  label = hasVideo ? '1 video' : '1 photo';
+                } else if (videoCount > 0 && photoCount > 0) {
+                  label = `${totalMedia} media`;
+                } else if (videoCount > 0) {
+                  label = `${videoCount} videos`;
+                } else {
+                  label = `${photoCount} photos`;
+                }
+                
+                return (
+                  <div 
+                    className="bg-black/50 backdrop-blur-sm text-white/90 px-2.5 py-1 rounded-full text-xs font-medium shadow-lg flex items-center gap-1.5"
+                    data-testid="badge-media-count"
+                  >
+                    {hasVideo ? (
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M8 6v12l10-6z" fill="currentColor" strokeLinejoin="round" />
+                      </svg>
+                    ) : totalMedia > 1 ? (
+                      <Images className="w-3.5 h-3.5" />
+                    ) : (
+                      <Image className="w-3.5 h-3.5" />
+                    )}
+                    <span>{label}</span>
+                  </div>
+                );
+              })()}
+              
               <div 
                 className="flex items-center gap-3 pointer-events-auto"
                 onPointerDownCapture={(e) => e.stopPropagation()} 
