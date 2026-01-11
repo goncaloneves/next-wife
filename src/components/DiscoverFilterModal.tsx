@@ -10,9 +10,9 @@ import {
 import { type SharedFilters, DEFAULT_FILTERS } from "@/lib/filterStorage";
 import { useFilterOptions } from "@/hooks/useFilterOptions";
 
-export type ProfileFilters = SharedFilters;
+export type DiscoverFilters = SharedFilters;
 
-interface ProfileFilterModalProps {
+interface DiscoverFilterModalProps {
   isOpen: boolean;
   onClose: () => void;
   channel: string;
@@ -20,13 +20,13 @@ interface ProfileFilterModalProps {
   onFiltersChange: (filters: SharedFilters) => void;
 }
 
-export function ProfileFilterModal({ 
+export function DiscoverFilterModal({ 
   isOpen, 
   onClose, 
   channel, 
   filters, 
   onFiltersChange 
-}: ProfileFilterModalProps) {
+}: DiscoverFilterModalProps) {
   const { 
     filterOptions, 
     loading, 
@@ -37,7 +37,7 @@ export function ProfileFilterModal({
     getActiveCount 
   } = useFilterOptions(channel);
 
-  const [localFilters, setLocalFilters] = useState<ProfileFilters>(filters);
+  const [localFilters, setLocalFilters] = useState<DiscoverFilters>(filters);
 
   useEffect(() => {
     if (isOpen) {
@@ -231,7 +231,7 @@ export function ProfileFilterModal({
   );
 }
 
-export function ProfileFilterButton({ 
+export function DiscoverFilterButton({ 
   activeCount, 
   onClick 
 }: { 

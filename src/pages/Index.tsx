@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
-import { ProfileFilterModal, ProfileFilterButton } from "@/components/ProfileFilterModal";
+import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
 import { useFilters } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -317,19 +317,19 @@ const Index = () => {
                   Choose Your Woman 🌻
                 </h2>
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden min-[1100px]:flex gap-2">
-                  <ProfileFilterButton 
+                  <DiscoverFilterButton 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
                   />
                 </div>
                 <div className="hidden md:flex justify-center gap-2 mt-4 min-[1100px]:hidden">
-                  <ProfileFilterButton 
+                  <DiscoverFilterButton 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
                   />
                 </div>
               </div>
-              <ProfileFilterModal
+              <DiscoverFilterModal
                 isOpen={showFilters}
                 onClose={() => setShowFilters(false)}
                 channel="nextwife_ai"

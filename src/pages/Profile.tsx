@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
-import { ProfileFilterModal, ProfileFilterButton, type ProfileFilters } from "@/components/ProfileFilterModal";
+import { DiscoverFilterModal, DiscoverFilterButton, type DiscoverFilters } from "@/components/DiscoverFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
 import { useFilters } from "@/contexts/FilterContext";
 
@@ -649,7 +649,7 @@ const Profile = () => {
               )}
               <div className="flex items-center gap-2 pointer-events-auto">
                 <div onPointerDownCapture={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
-                  <ProfileFilterButton 
+                  <DiscoverFilterButton 
                     activeCount={activeFilterCount}
                     onClick={() => setShowFilters(true)}
                   />
@@ -845,7 +845,7 @@ const Profile = () => {
         </DialogContent>
       </Dialog>
 
-      <ProfileFilterModal
+      <DiscoverFilterModal
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}
         channel="nextwife_ai"
