@@ -713,9 +713,37 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none">
-              <div className="px-4 pt-16 pb-2 pointer-events-auto">
-                <div className="flex items-baseline mb-3">
+            <motion.div 
+              className="absolute bottom-0 left-0 right-0 pointer-events-none"
+              animate={{ height: aboutExpanded ? '70%' : '38%' }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+            </motion.div>
+
+            <div className="absolute bottom-0 left-0 right-0 flex flex-col pointer-events-none">
+              <div className="relative px-4 pb-2 pointer-events-auto bg-black">
+                <motion.button
+                  drag="y"
+                  dragConstraints={{ top: -80, bottom: 80 }}
+                  dragElastic={0.3}
+                  onDrag={(_, info) => {
+                    if (!aboutExpanded && info.offset.y < -40) {
+                      setAboutExpanded(true);
+                    } else if (aboutExpanded && info.offset.y > 40) {
+                      setAboutExpanded(false);
+                    }
+                  }}
+                  onDragEnd={() => {}}
+                  whileDrag={{ scale: 1.1 }}
+                  onClick={() => setAboutExpanded(!aboutExpanded)}
+                  className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-black/80 cursor-grab active:cursor-grabbing z-10"
+                  data-testid="button-info-panel-toggle"
+                >
+                  <ChevronUp className={`w-6 h-6 text-white transition-transform duration-300 ${aboutExpanded ? 'rotate-180' : ''}`} />
+                </motion.button>
+
+                <div className="flex items-baseline mb-3 pt-2">
                   <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg line-clamp-2">
                     {profileData.name}
                   </h1>
@@ -747,80 +775,52 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <motion.div
-                  drag="y"
-                  dragConstraints={{ top: -100, bottom: 100 }}
-                  dragElastic={0.3}
-                  onDrag={(_, info) => {
-                    if (!aboutExpanded && info.offset.y < -30) {
-                      setAboutExpanded(true);
-                    } else if (aboutExpanded && info.offset.y > 30) {
-                      setAboutExpanded(false);
-                    }
-                  }}
-                  onDragEnd={() => {}}
-                  whileDrag={{ scale: 1.02 }}
-                  className="mt-3 cursor-grab active:cursor-grabbing"
-                >
-                  <button
-                    onClick={() => setAboutExpanded(!aboutExpanded)}
-                    className="w-full flex flex-col items-center gap-1 py-3 touch-none select-none"
-                    data-testid="button-info-panel-toggle"
-                  >
-                    <div className="w-12 h-1.5 rounded-full bg-white/50" />
-                    <div className="flex items-center gap-1.5 text-white/70 text-sm font-medium mt-1">
-                      <ChevronUp className={`w-5 h-5 transition-transform duration-300 ${aboutExpanded ? 'rotate-180' : ''}`} />
-                      <span>{aboutExpanded ? 'Less info' : 'More info'}</span>
-                    </div>
-                  </button>
-
-                  <AnimatePresence>
-                    {aboutExpanded && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <div ref={contentContainerRef} className="space-y-3 pt-2 max-h-[40vh] overflow-y-auto">
-                          <div className="flex items-center gap-3 text-white/90">
-                            <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
-                            <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
-                          </div>
-                          <div className="flex items-center gap-3 text-white/90">
-                            <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                            <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
-                          </div>
-
-                          {(profileData.relationship || profileData.personality) && (
-                            <div className="flex flex-wrap gap-2">
-                              {profileData.relationship && (
-                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                                  {getRelationshipLabel(profileData.relationship)}
-                                </span>
-                              )}
-                              {profileData.personality && (
-                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                                  {getPersonalityLabel(profileData.personality)}
-                                </span>
-                              )}
-                            </div>
-                          )}
-
-                          {profileData.about && (
-                            <div className="pt-2 border-t border-white/[0.08]">
-                              <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
-                              <p className="text-sm text-white/80 leading-relaxed">
-                                {profileData.about}
-                              </p>
-                            </div>
-                          )}
+                <AnimatePresence>
+                  {aboutExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div ref={contentContainerRef} className="space-y-3 pt-4 max-h-[40vh] overflow-y-auto">
+                        <div className="flex items-center gap-3 text-white/90">
+                          <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
+                          <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                        <div className="flex items-center gap-3 text-white/90">
+                          <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                          <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
+                        </div>
+
+                        {(profileData.relationship || profileData.personality) && (
+                          <div className="flex flex-wrap gap-2">
+                            {profileData.relationship && (
+                              <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                                {getRelationshipLabel(profileData.relationship)}
+                              </span>
+                            )}
+                            {profileData.personality && (
+                              <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                                {getPersonalityLabel(profileData.personality)}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {profileData.about && (
+                          <div className="pt-2 border-t border-white/[0.08]">
+                            <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">About Me</p>
+                            <p className="text-sm text-white/80 leading-relaxed">
+                              {profileData.about}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
               
               <div 
