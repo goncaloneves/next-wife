@@ -116,9 +116,11 @@ const Profile = () => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
+  const [tapFeedback, setTapFeedback] = useState<'left' | 'right' | null>(null);
   const { filters, setFilters, activeFilterCount } = useFilters();
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tapFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -143,6 +145,7 @@ const Profile = () => {
   useEffect(() => {
     return () => {
       if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
+      if (tapFeedbackTimeoutRef.current) clearTimeout(tapFeedbackTimeoutRef.current);
     };
   }, []);
 
@@ -583,6 +586,10 @@ const Profile = () => {
                               setImageLoaded(false);
                             }
                             setMediaIndex(nextIdx);
+                            // Trigger tap feedback
+                            if (tapFeedbackTimeoutRef.current) clearTimeout(tapFeedbackTimeoutRef.current);
+                            setTapFeedback('left');
+                            tapFeedbackTimeoutRef.current = setTimeout(() => setTapFeedback(null), 300);
                           }
                         }}
                         data-testid="media-prev"
@@ -597,12 +604,44 @@ const Profile = () => {
                               setImageLoaded(false);
                             }
                             setMediaIndex(nextIdx);
+                            // Trigger tap feedback
+                            if (tapFeedbackTimeoutRef.current) clearTimeout(tapFeedbackTimeoutRef.current);
+                            setTapFeedback('right');
+                            tapFeedbackTimeoutRef.current = setTimeout(() => setTapFeedback(null), 300);
                           }
                         }}
                         data-testid="media-next"
                       />
                     </>
                   )}
+                  
+                  {/* Tap feedback overlays */}
+                  <AnimatePresence>
+                    {tapFeedback === 'left' && (
+                      <motion.div
+                        key="tap-left"
+                        className="absolute left-0 top-0 w-1/3 h-full pointer-events-none z-5 rounded-l-2xl"
+                        style={{
+                          background: 'linear-gradient(to right, rgba(0,0,0,0.35), rgba(0,0,0,0.15), transparent)'
+                        }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1, transition: { duration: 0.1, ease: 'easeOut' } }}
+                        exit={{ opacity: 0, transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] } }}
+                      />
+                    )}
+                    {tapFeedback === 'right' && (
+                      <motion.div
+                        key="tap-right"
+                        className="absolute right-0 top-0 w-1/3 h-full pointer-events-none z-5 rounded-r-2xl"
+                        style={{
+                          background: 'linear-gradient(to left, rgba(0,0,0,0.35), rgba(0,0,0,0.15), transparent)'
+                        }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1, transition: { duration: 0.1, ease: 'easeOut' } }}
+                        exit={{ opacity: 0, transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] } }}
+                      />
+                    )}
+                  </AnimatePresence>
                   
                   {/* Progress bar - always show for all profiles */}
                   <div className="absolute top-1 left-2 right-2 z-30 flex gap-1 pointer-events-none">
