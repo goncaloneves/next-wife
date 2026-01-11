@@ -297,31 +297,3 @@ export function FeedFilters({
     </div>
   );
 }
-
-interface FilterButtonProps {
-  onClick: () => void;
-  activeCount: number;
-}
-
-export function FilterButton({ onClick, activeCount }: FilterButtonProps) {
-  return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={onClick}
-      className={cn(
-        "flex items-center gap-2 rounded-full border-white/20 bg-black/50 backdrop-blur-sm text-white hover:bg-white/20 transition-all",
-        activeCount > 0 && "ring-2 ring-pink-500/50"
-      )}
-      data-testid="button-toggle-filters"
-    >
-      <SlidersHorizontal className="w-4 h-4" />
-      <span>Filters</span>
-      {activeCount > 0 && (
-        <span className="bg-gradient-to-r from-pink-500 to-orange-400 text-white text-xs px-2 py-0.5 rounded-full font-medium">
-          {activeCount}
-        </span>
-      )}
-    </Button>
-  );
-}

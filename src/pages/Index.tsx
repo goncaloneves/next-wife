@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
-import { FeedFilters, FilterButton } from "@/components/FeedFilters";
+import { FeedFilters } from "@/components/FeedFilters";
+import { ProfileFilterButton } from "@/components/ProfileFilterModal";
 import { useFilters } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -317,13 +318,13 @@ const Index = () => {
                   Choose Your Woman 🌻
                 </h2>
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden min-[1100px]:flex gap-2">
-                  <FilterButton 
+                  <ProfileFilterButton 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
                   />
                 </div>
                 <div className="hidden md:flex justify-center gap-2 mt-4 min-[1100px]:hidden">
-                  <FilterButton 
+                  <ProfileFilterButton 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
                   />
