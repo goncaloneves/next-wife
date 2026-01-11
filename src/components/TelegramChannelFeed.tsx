@@ -423,8 +423,8 @@ export const TelegramChannelFeed = ({
           setHasMore(cache.hasMore);
           setLoading(false);
           if (cache.refreshKey) setRefreshKey(cache.refreshKey);
-          // Don't restore imageLoadStates - let media reload naturally with browser cache
-          // Images reload instantly, videos use preload="metadata" for first frame
+          // Restore imageLoadStates so media appears instantly without skeleton
+          if (cache.imageLoadStates) setImageLoadStates(cache.imageLoadStates);
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
           // Clear cache after successful restoration (delay for StrictMode)
