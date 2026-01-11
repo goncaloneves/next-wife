@@ -116,7 +116,7 @@ const Profile = () => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
-  const { filters, setFilters } = useSharedFilters();
+  const { filters, setFilters, activeFilterCount } = useSharedFilters();
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
@@ -248,17 +248,6 @@ const Profile = () => {
       }
     };
   }, [mediaIndex, post?.id, imageLoaded, post]);
-
-  
-  const activeFilterCount = useMemo(() => {
-    return filters.regions.length + 
-           filters.ageBrackets.length + 
-           filters.occupationCategories.length + 
-           filters.personalities.length + 
-           filters.relationships.length + 
-           (filters.hasVideo ? 1 : 0) + 
-           (filters.hasMultipleMedia ? 1 : 0);
-  }, [filters]);
 
   const buildFilterQueryString = useCallback((overrideFilters?: SharedFilters) => {
     const f = overrideFilters || filters;
