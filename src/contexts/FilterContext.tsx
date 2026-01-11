@@ -54,3 +54,7 @@ export function useFilters(): FilterContextValue {
   }
   return context;
 }
+
+export function useFiltersOptional(): FilterContextValue | null {
+  return useContext(FilterContext);
+}

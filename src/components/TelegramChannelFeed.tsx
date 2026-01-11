@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { getStoredFilters, type SharedFilters } from "@/lib/filterStorage";
+import { useFiltersOptional } from "@/contexts/FilterContext";
 
 interface ProfileData {
   name: string;
@@ -79,6 +80,7 @@ export const TelegramChannelFeed = ({
   const [skipAnimation, setSkipAnimation] = useState(false);
   const navigate = useNavigate();
   const [centeredPostId, setCenteredPostId] = useState<string | null>(null);
+  const filterContext = useFiltersOptional();
   
   const filters = externalFilters || getStoredFilters();
   const listRef = useRef<HTMLDivElement>(null);
@@ -695,6 +697,16 @@ export const TelegramChannelFeed = ({
             <div className="text-center">
               <p className="text-lg">No girlfriends match your filters</p>
               <p className="text-sm mt-2">Try adjusting your search criteria</p>
+              {filterContext && (
+                <Button
+                  variant="outline"
+                  onClick={filterContext.clearFilters}
+                  className="mt-4 border-white/20 text-white/80 hover:bg-white/10 hover:text-white"
+                  data-testid="button-clear-filters-empty"
+                >
+                  Clear Filters
+                </Button>
+              )}
             </div>
           </div>
         )}
