@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,12 +38,22 @@ export function DiscoverFilterModal({
   } = useFilterOptions(channel);
 
   const [localFilters, setLocalFilters] = useState<DiscoverFilters>(filters);
+  const [canScrollMore, setCanScrollMore] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
       setLocalFilters(filters);
+      setCanScrollMore(true);
     }
   }, [isOpen, filters]);
+
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
+    setCanScrollMore(!isAtBottom);
+  }, []);
 
   const selectedPersonalityLabels = useMemo(() => 
     valuesToLabels.personalities(localFilters.personalities),
@@ -109,8 +119,14 @@ export function DiscoverFilterModal({
             </div>
 
             <div className="flex-1 relative overflow-hidden">
-              <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
-              <div className="h-full overflow-y-auto p-4 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
+              {canScrollMore && (
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
+              )}
+              <div 
+                ref={scrollRef}
+                onScroll={handleScroll}
+                className="h-full overflow-y-auto p-4 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6"
+              >
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
