@@ -745,7 +745,7 @@ const Profile = () => {
                       <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
                     </div>
                     {(profileData.relationship || profileData.personality) && (
-                      <div className="flex flex-wrap gap-2 mt-1">
+                      <div className="flex flex-wrap gap-2">
                         {profileData.personality && (
                           <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
                             {getPersonalityLabel(profileData.personality)}
