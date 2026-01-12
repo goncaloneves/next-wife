@@ -778,7 +778,7 @@ const Profile = () => {
                           className={`w-12 h-12 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
                             aboutExpanded
                               ? 'text-white shadow-lg shadow-rose-500/50 opacity-80'
-                              : 'text-white/80 shadow-md shadow-rose-400/30 opacity-60'
+                              : 'text-white/80 shadow-md shadow-rose-400/30 opacity-[0.65]'
                           }`}
                           style={{ background: 'var(--gradient-sunset)' }}
                         >
