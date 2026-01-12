@@ -758,7 +758,7 @@ const Profile = () => {
                       data-testid="button-about-me-toggle"
                     >
                       <div className="flex items-start gap-3">
-                        <span className="text-rose-400 text-4xl leading-none flex-shrink-0 font-light">
+                        <span className="text-rose-400 text-5xl leading-none flex-shrink-0 font-light">
                           {aboutExpanded ? '−' : '+'}
                         </span>
                         <AnimatePresence initial={false}>
