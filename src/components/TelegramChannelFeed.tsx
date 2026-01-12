@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, BadgeCheck, MapPin, Briefcase, Flame } from "lucide-react";
+import { ArrowUp, BadgeCheck, MapPin, Flame } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -963,16 +963,10 @@ export const TelegramChannelFeed = ({
                         </p>
                         {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
                         <div className="flex flex-col gap-3 text-sm max-h-0 opacity-0 overflow-hidden group-hover:max-h-40 group-hover:opacity-100 transition-all duration-300">
-                          <div className="space-y-0.5">
-                            <p className="flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                              <span className="flex-1">{post.profileData.hometown}</span>
-                            </p>
-                            <p className="flex items-start gap-1.5">
-                              <Briefcase className="w-3.5 h-3.5 text-orange-400 flex-shrink-0 mt-0.5" />
-                              <span className="flex-1 line-clamp-2 leading-tight">{post.profileData.work?.replace(/\.$/, '')}</span>
-                            </p>
-                          </div>
+                          <p className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                            <span className="flex-1">{post.profileData.hometown}</span>
+                          </p>
                           {/* Personality & Relationship pills */}
                           {(post.profileData.personality || post.profileData.relationship) && (
                             <div className="flex flex-wrap gap-2">
