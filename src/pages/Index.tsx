@@ -259,7 +259,7 @@ const Index = () => {
                 onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
                 data-testid="button-open-telegram"
               >
-                or scan to open in Telegram →
+                or scan to find on your phone →
               </button>
             </div>
           </div>
