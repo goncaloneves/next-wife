@@ -772,9 +772,15 @@ const Profile = () => {
                       data-testid="button-about-me-toggle"
                     >
                       <div className="flex items-start gap-3">
-                        <span className="text-rose-400 text-5xl leading-none flex-shrink-0 font-light">
-                          {aboutExpanded ? '−' : '+'}
-                        </span>
+                        <div className={`w-10 h-10 rounded-full backdrop-blur-sm border-[2px] flex items-center justify-center transition-all flex-shrink-0 ${
+                          aboutExpanded
+                            ? 'bg-rose-500/30 border-rose-400 text-rose-400 shadow-rose-500/40'
+                            : 'bg-white/10 border-rose-400 text-rose-400 shadow-rose-500/20'
+                        }`}>
+                          <span className="text-2xl leading-none font-light">
+                            {aboutExpanded ? '−' : '+'}
+                          </span>
+                        </div>
                         <AnimatePresence initial={false}>
                           {aboutExpanded && (
                             <motion.div 
