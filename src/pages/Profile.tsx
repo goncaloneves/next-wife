@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal, ArrowBigDown } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
@@ -794,7 +794,7 @@ const Profile = () => {
                             transition={{ duration: 0.1 }}
                             className="flex-shrink-0"
                           >
-                            <ChevronDown className="w-7 h-7 text-rose-400" />
+                            <ArrowBigDown className="w-7 h-7 text-rose-400" />
                           </motion.div>
                           <AnimatePresence initial={false}>
                             {aboutExpanded && (
