@@ -739,7 +739,7 @@ const Profile = () => {
                     </span>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3 text-white/90">
                       <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
                       <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
