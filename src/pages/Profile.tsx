@@ -737,7 +737,7 @@ const Profile = () => {
                           <span className="whitespace-nowrap">
                             {lastName}
                             <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
-                              <span className="text-[1.5rem] font-semibold text-white/90">
+                              <span className="text-[1.5rem] font-semibold text-white opacity-90">
                                 {profileData.age}
                               </span>
                               <BadgeCheck 
@@ -758,7 +758,7 @@ const Profile = () => {
                   </h1>
 
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3 text-white/90">
+                    <div className="flex items-center gap-3 text-white">
                       <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
                       <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
                     </div>
@@ -816,15 +816,15 @@ const Profile = () => {
                               transition={{ duration: 0.1, ease: 'easeInOut' }}
                             >
                               <div className="space-y-2">
-                                <div className="flex items-center gap-3 text-white/90">
+                                <div className="flex items-center gap-3 text-white">
                                   <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
                                   <span className="text-sm">{profileData.work?.replace(/\.$/, '')}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-white/90">
+                                <div className="flex items-center gap-3 text-white">
                                   <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
                                   <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-white/90">
+                                <div className="flex items-center gap-3 text-white">
                                   <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
                                   <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
                                 </div>
