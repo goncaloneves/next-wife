@@ -683,7 +683,7 @@ const Profile = () => {
                 <button
                   onClick={(e) => { e.stopPropagation(); goBack(); }}
                   onPointerDownCapture={(e) => e.stopPropagation()}
-                  className="text-white p-2 transition-all hover:scale-110 pointer-events-auto rounded-full bg-black/40 backdrop-blur-sm"
+                  className="text-white p-2 transition-all hover:scale-110 pointer-events-auto [filter:drop-shadow(0_0_3px_black)_drop-shadow(0_0_3px_black)_drop-shadow(0_0_6px_black)_drop-shadow(0_2px_4px_black)]"
                   data-testid="button-back"
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -692,13 +692,13 @@ const Profile = () => {
                 <div />
               )}
               <div 
-                className="flex items-center gap-2 pointer-events-auto"
+                className="flex items-center gap-3 pointer-events-auto"
                 onPointerDownCapture={(e) => e.stopPropagation()} 
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
                   onClick={() => setShowFilters(true)}
-                  className={`relative p-2 transition-all hover:scale-110 rounded-full bg-black/40 backdrop-blur-sm ${
+                  className={`relative p-2 transition-all hover:scale-110 [filter:drop-shadow(0_0_3px_black)_drop-shadow(0_0_3px_black)_drop-shadow(0_0_6px_black)_drop-shadow(0_2px_4px_black)] ${
                     activeFilterCount > 0 
                       ? 'text-orange-400' 
                       : 'text-white'
@@ -714,7 +714,7 @@ const Profile = () => {
                 </button>
                 <button
                   onClick={() => handleShare()}
-                  className="p-2 text-white transition-all hover:scale-110 rounded-full bg-black/40 backdrop-blur-sm"
+                  className="p-2 text-white transition-all hover:scale-110 [filter:drop-shadow(0_0_3px_black)_drop-shadow(0_0_3px_black)_drop-shadow(0_0_6px_black)_drop-shadow(0_2px_4px_black)]"
                   data-testid="button-share"
                 >
                   <Share2 className="w-5 h-5" />
