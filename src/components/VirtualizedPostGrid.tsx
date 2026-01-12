@@ -259,17 +259,21 @@ export const VirtualizedPostGrid = ({
           />
         )}
         
-        <div 
-          className="absolute top-3 left-3 z-20 pointer-events-none"
-          data-testid={`badge-date-${post.id}`}
-        >
-          <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg">
-            {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
-          </div>
-        </div>
-        
-        {post.profileData && (
-          <ProfileBadge post={post} />
+        {imageLoadStates[post.id] && (
+          <>
+            <div 
+              className="absolute top-3 left-3 z-20 pointer-events-none"
+              data-testid={`badge-date-${post.id}`}
+            >
+              <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg">
+                {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
+              </div>
+            </div>
+            
+            {post.profileData && (
+              <ProfileBadge post={post} />
+            )}
+          </>
         )}
       </div>
     );
