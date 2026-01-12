@@ -70,8 +70,9 @@ interface VirtualizedPostGridProps {
 }
 
 const GAP = 2;
-const MIN_OVERSCAN = 8;
-const LOAD_MORE_THRESHOLD = 8;
+const MIN_OVERSCAN = 20;
+const LOAD_MORE_THRESHOLD = 12;
+const PRELOAD_BUFFER = 10;
 
 function getColumns(width: number): number {
   if (width >= 1280) return 4;
@@ -133,7 +134,7 @@ export const VirtualizedPostGrid = ({
     return () => resizeObserver.disconnect();
   }, []);
 
-  const dynamicOverscan = Math.max(MIN_OVERSCAN, Math.ceil((window.innerHeight / rowHeight) * 2));
+  const dynamicOverscan = Math.max(MIN_OVERSCAN, Math.ceil((window.innerHeight / rowHeight) * 3));
 
   const virtualizer = useWindowVirtualizer({
     count: rowCount,
@@ -142,6 +143,29 @@ export const VirtualizedPostGrid = ({
   });
 
   const virtualItems = virtualizer.getVirtualItems();
+
+  useEffect(() => {
+    if (virtualItems.length === 0) return;
+    
+    const firstRowIndex = virtualItems[0]?.index ?? 0;
+    const lastRowIndex = virtualItems[virtualItems.length - 1]?.index ?? 0;
+    
+    const preloadStart = Math.max(0, firstRowIndex - PRELOAD_BUFFER);
+    const preloadEnd = Math.min(rowCount - 1, lastRowIndex + PRELOAD_BUFFER);
+    
+    for (let rowIdx = preloadStart; rowIdx <= preloadEnd; rowIdx++) {
+      const startIdx = rowIdx * columns;
+      const endIdx = Math.min(startIdx + columns, visiblePosts.length);
+      
+      for (let i = startIdx; i < endIdx; i++) {
+        const post = visiblePosts[i];
+        if (post?.mediaUrls?.[0]?.url && post.mediaUrls[0].type === 'photo') {
+          const img = new Image();
+          img.src = buildSrc(post.mediaUrls[0].url, post.id);
+        }
+      }
+    }
+  }, [virtualItems, columns, visiblePosts, rowCount, buildSrc]);
 
   useEffect(() => {
     if (rowCount === 0) return;
@@ -462,7 +486,7 @@ const ImageCard = ({
       key={`img-${post.id}-${imageErrors[post.id] || 0}`}
       src={buildSrc(post.media, post.id)}
       alt=""
-      loading="lazy"
+      loading="eager"
       decoding="async"
       referrerPolicy="no-referrer"
       className={`w-full h-full object-cover transition-all duration-300 ${
