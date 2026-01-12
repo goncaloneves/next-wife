@@ -5,23 +5,20 @@ interface TelegramQRWidgetProps {
 }
 
 export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
-  const botLink = "https://t.me/nextwifebot?start=now";
+  const discoverLink = "https://nextwife.ai/discover?view=app";
 
   return (
-    <a
-      href={botLink}
-      target="_blank"
-      rel="noopener noreferrer"
+    <div
       className="hidden md:block absolute bottom-6 right-6 bg-white p-3 rounded-2xl shadow-2xl z-20 animate-in fade-in duration-300 hover:scale-110 transition-transform duration-300 cursor-pointer"
       onClick={(e) => e.stopPropagation()}
     >
       <QRCodeSVG 
-        value={botLink} 
+        value={discoverLink} 
         size={80}
         level="M"
         includeMargin={false}
         className="w-14 h-14 lg:w-20 lg:h-20"
       />
-    </a>
+    </div>
   );
 };
