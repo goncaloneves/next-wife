@@ -46,8 +46,7 @@ const Index = () => {
   useEffect(() => {
     const state = location.state as { restoreScroll?: boolean } | null;
     if (state?.restoreScroll) {
-      // Scroll restoration is now handled by VirtualizedPostGrid
-      // Just clear the navigation state
+      // Scroll restoration is handled by TelegramChannelFeed when restoring from cache
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
