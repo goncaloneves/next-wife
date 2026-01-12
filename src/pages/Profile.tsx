@@ -790,7 +790,7 @@ const Profile = () => {
                       >
                         <div className="flex items-center gap-2">
                           <motion.span 
-                            className="text-rose-400 text-2xl leading-none"
+                            className="text-rose-400 text-4xl leading-none"
                             animate={{ rotate: aboutExpanded ? 180 : 0 }}
                             transition={{ duration: 0.1 }}
                           >
