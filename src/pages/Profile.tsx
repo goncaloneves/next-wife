@@ -866,9 +866,10 @@ const Profile = () => {
                     onPointerDownCapture={(e) => e.stopPropagation()}
                     className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] ${
                       isDragging && dragOffset > 30
-                        ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-400 scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
-                        : 'bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
+                        ? 'scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
+                        : 'hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
                     }`}
+                    style={{ background: 'var(--gradient-sunset)' }}
                     data-testid="button-message-telegram"
                   >
                     <Heart className="w-9 h-9" />
