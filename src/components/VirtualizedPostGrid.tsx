@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -107,21 +107,30 @@ export const VirtualizedPostGrid = ({
 }: VirtualizedPostGridProps) => {
   const navigate = useNavigate();
   const listRef = useRef<HTMLDivElement>(null);
-  const [rowHeight, setRowHeight] = useState(320);
-  const [columns, setColumns] = useState(4);
+  const [rowHeight, setRowHeight] = useState<number | null>(null);
+  const [columns, setColumns] = useState<number | null>(null);
+  const [layoutReady, setLayoutReady] = useState(false);
+
+  const effectiveColumns = columns ?? 4;
+  const effectiveRowHeight = rowHeight ?? 320;
 
   const visiblePosts = posts.filter(post => !hiddenIds.has(post.id));
-  const rowCount = Math.ceil(visiblePosts.length / columns);
+  const rowCount = Math.ceil(visiblePosts.length / effectiveColumns);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const calculateDimensions = () => {
       if (listRef.current) {
         const containerWidth = listRef.current.offsetWidth;
         const newColumns = getColumns(containerWidth);
-        setColumns(newColumns);
         const cardWidth = (containerWidth - (GAP * (newColumns - 1))) / newColumns;
         const calculatedHeight = cardWidth * (4 / 3);
+        
+        setColumns(prev => prev !== newColumns ? newColumns : prev);
         setRowHeight(calculatedHeight + GAP);
+        
+        if (!layoutReady) {
+          setLayoutReady(true);
+        }
       }
     };
     
@@ -132,20 +141,20 @@ export const VirtualizedPostGrid = ({
     }
     
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [layoutReady]);
 
-  const dynamicOverscan = Math.max(MIN_OVERSCAN, Math.ceil((window.innerHeight / rowHeight) * 3));
+  const dynamicOverscan = Math.max(MIN_OVERSCAN, Math.ceil((window.innerHeight / effectiveRowHeight) * 3));
 
   const virtualizer = useWindowVirtualizer({
     count: rowCount,
-    estimateSize: () => rowHeight,
+    estimateSize: () => effectiveRowHeight,
     overscan: dynamicOverscan,
   });
 
   const virtualItems = virtualizer.getVirtualItems();
 
   useEffect(() => {
-    if (virtualItems.length === 0) return;
+    if (virtualItems.length === 0 || !layoutReady) return;
     
     const firstRowIndex = virtualItems[0]?.index ?? 0;
     const lastRowIndex = virtualItems[virtualItems.length - 1]?.index ?? 0;
@@ -154,8 +163,8 @@ export const VirtualizedPostGrid = ({
     const preloadEnd = Math.min(rowCount - 1, lastRowIndex + PRELOAD_BUFFER);
     
     for (let rowIdx = preloadStart; rowIdx <= preloadEnd; rowIdx++) {
-      const startIdx = rowIdx * columns;
-      const endIdx = Math.min(startIdx + columns, visiblePosts.length);
+      const startIdx = rowIdx * effectiveColumns;
+      const endIdx = Math.min(startIdx + effectiveColumns, visiblePosts.length);
       
       for (let i = startIdx; i < endIdx; i++) {
         const post = visiblePosts[i];
@@ -165,7 +174,7 @@ export const VirtualizedPostGrid = ({
         }
       }
     }
-  }, [virtualItems, columns, visiblePosts, rowCount, buildSrc]);
+  }, [virtualItems, effectiveColumns, visiblePosts, rowCount, buildSrc, layoutReady]);
 
   useEffect(() => {
     if (rowCount === 0) return;
@@ -279,43 +288,53 @@ export const VirtualizedPostGrid = ({
 
   return (
     <div ref={listRef} className="w-full">
-      <div
-        style={{
-          paddingTop: `${paddingTop}px`,
-          paddingBottom: `${paddingBottom}px`,
-        }}
-      >
-        {virtualItems.map((virtualRow) => {
-          const startIndex = virtualRow.index * columns;
-          const rowPosts = visiblePosts.slice(startIndex, startIndex + columns);
-
-          return (
-            <div
-              key={virtualRow.key}
-              style={{
-                height: `${virtualRow.size}px`,
-              }}
-            >
-              <div 
-                className="gap-0.5 h-full"
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: `repeat(${columns}, 1fr)`,
-                }}
-              >
-                {rowPosts.map((post, colIndex) => 
-                  renderPostCard(post, startIndex + colIndex)
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      {hasMore && isLoadingMore && (
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      {!layoutReady ? (
+        <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(4, 1fr)` }}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="aspect-[3/4]" />
+          ))}
         </div>
+      ) : (
+        <>
+          <div
+            style={{
+              paddingTop: `${paddingTop}px`,
+              paddingBottom: `${paddingBottom}px`,
+            }}
+          >
+            {virtualItems.map((virtualRow) => {
+              const startIndex = virtualRow.index * effectiveColumns;
+              const rowPosts = visiblePosts.slice(startIndex, startIndex + effectiveColumns);
+
+              return (
+                <div
+                  key={virtualRow.key}
+                  style={{
+                    height: `${virtualRow.size}px`,
+                  }}
+                >
+                  <div 
+                    className="gap-0.5 h-full"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${effectiveColumns}, 1fr)`,
+                    }}
+                  >
+                    {rowPosts.map((post, colIndex) => 
+                      renderPostCard(post, startIndex + colIndex)
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          {hasMore && isLoadingMore && (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
