@@ -775,8 +775,8 @@ const Profile = () => {
                         {/* Sunset Gradient Button */}
                         <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
                           aboutExpanded
-                            ? 'bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 text-white shadow-lg shadow-rose-500/50'
-                            : 'bg-gradient-to-br from-orange-400/50 via-rose-400/50 to-pink-500/50 text-white/80 shadow-md shadow-rose-400/30'
+                            ? 'bg-gradient-to-br from-orange-300 via-rose-300 to-pink-300 text-white shadow-lg shadow-rose-300/50'
+                            : 'bg-gradient-to-br from-orange-300/50 via-rose-300/50 to-pink-300/50 text-white/80 shadow-md shadow-rose-300/30'
                         }`}>
                           <span className="text-3xl leading-none font-light">
                             {aboutExpanded ? '−' : '+'}
