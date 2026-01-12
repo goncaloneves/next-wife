@@ -788,16 +788,28 @@ const Profile = () => {
                         }}
                         data-testid="button-about-me-toggle"
                       >
-                        <p className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wide">
-                          About Me
+                        <div className="flex items-center gap-2">
                           <motion.span 
-                            className="text-rose-400 text-lg leading-none"
+                            className="text-rose-400 text-2xl leading-none"
                             animate={{ rotate: aboutExpanded ? 180 : 0 }}
                             transition={{ duration: 0.1 }}
                           >
                             ▾
                           </motion.span>
-                        </p>
+                          <AnimatePresence initial={false}>
+                            {aboutExpanded && (
+                              <motion.span 
+                                className="text-xs font-medium text-white/50 uppercase tracking-wide"
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -10 }}
+                                transition={{ duration: 0.1 }}
+                              >
+                                About Me
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </div>
                         <AnimatePresence initial={false}>
                           {aboutExpanded && (
                             <motion.p 
