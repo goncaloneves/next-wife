@@ -297,17 +297,12 @@ const Index = () => {
         <section ref={feedContentRef} className="hidden md:block relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto relative">
-              <div className="relative mb-8">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex-1" />
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white whitespace-nowrap">
                   Find Your Woman 🌻
                 </h2>
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden min-[1100px]:flex gap-2">
-                  <DiscoverFilterButton 
-                    onClick={() => setShowFilters(!showFilters)} 
-                    activeCount={activeFilterCount}
-                  />
-                </div>
-                <div className="hidden md:flex justify-center gap-2 mt-4 min-[1100px]:hidden">
+                <div className="flex-1 flex justify-end">
                   <DiscoverFilterButton 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
