@@ -719,22 +719,34 @@ const Profile = () => {
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pb-2">
                   <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg mb-1">
-                    <span>{profileData.name}</span>
-                    <span className="inline-flex items-baseline gap-[5px] ml-[11px] whitespace-nowrap">
-                      <span className="text-[1.458rem] font-semibold text-white/90">
-                        {profileData.age}
-                      </span>
-                      <BadgeCheck 
-                        className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
-                        style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
-                      />
-                      {post.isHot && (
-                        <Flame 
-                          className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
-                          style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
-                        />
-                      )}
-                    </span>
+                    {(() => {
+                      const nameParts = profileData.name.split(' ');
+                      const lastName = nameParts.pop() || '';
+                      const firstName = nameParts.join(' ');
+                      return (
+                        <>
+                          {firstName && <span>{firstName} </span>}
+                          <span className="whitespace-nowrap">
+                            {lastName}
+                            <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
+                              <span className="text-[1.458rem] font-semibold text-white/90">
+                                {profileData.age}
+                              </span>
+                              <BadgeCheck 
+                                className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
+                                style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
+                              />
+                              {post.isHot && (
+                                <Flame 
+                                  className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
+                                  style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                                />
+                              )}
+                            </span>
+                          </span>
+                        </>
+                      );
+                    })()}
                   </h1>
 
                   <div className="flex flex-col gap-3">
