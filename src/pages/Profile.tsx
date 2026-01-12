@@ -294,6 +294,7 @@ const Profile = () => {
         setImageLoaded(false);
         setAboutExpanded(false);
         setMediaIndex(0);
+        setTapFeedback(null);
         loadedMediaRef.current = new Set();
       }
       
@@ -581,7 +582,8 @@ const Profile = () => {
                   {hasMultipleMedia && (
                     <>
                       <motion.div 
-                        className="absolute left-0 top-0 w-1/2 h-2/3 z-10 cursor-pointer"
+                        className="absolute left-0 top-0 w-1/2 h-2/3 z-10 cursor-pointer select-none"
+                        style={{ WebkitTapHighlightColor: 'transparent', outline: 'none' }}
                         onTapStart={() => setTapFeedback('left')}
                         onTap={(e) => { 
                           e.stopPropagation(); 
@@ -598,7 +600,8 @@ const Profile = () => {
                         data-testid="media-prev"
                       />
                       <motion.div 
-                        className="absolute right-0 top-0 w-1/2 h-2/3 z-10 cursor-pointer"
+                        className="absolute right-0 top-0 w-1/2 h-2/3 z-10 cursor-pointer select-none"
+                        style={{ WebkitTapHighlightColor: 'transparent', outline: 'none' }}
                         onTapStart={() => setTapFeedback('right')}
                         onTap={(e) => { 
                           e.stopPropagation(); 
