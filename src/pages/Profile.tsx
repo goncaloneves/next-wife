@@ -761,7 +761,7 @@ const Profile = () => {
                         <motion.span
                           animate={{ rotate: aboutExpanded ? 180 : 0 }}
                           transition={{ duration: 0.1 }}
-                          className="text-rose-400 text-5xl leading-none flex-shrink-0"
+                          className="text-rose-400 text-3xl leading-none flex-shrink-0"
                         >
                           ▼
                         </motion.span>
