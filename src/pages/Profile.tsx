@@ -714,9 +714,12 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className={`absolute bottom-0 left-0 right-0 z-10 flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full bg-gradient-to-t from-black via-black to-black/80' : 'max-h-[65%] bg-gradient-to-t from-black via-black/90 to-transparent'}`}>
-              <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
-                <div className="px-4 pt-4 pb-2">
+            <div className={`absolute bottom-0 left-0 right-0 z-10 flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
+              {/* Gradient overlay at top - fades into image */}
+              <div className="h-24 bg-gradient-to-t from-black to-transparent flex-shrink-0" />
+              {/* Solid black content area */}
+              <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto bg-black">
+                <div className="px-4 pb-2">
                   <div className="flex items-baseline mb-1">
                     <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg line-clamp-2">
                       {profileData.name}
