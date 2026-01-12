@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
+import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
 import { useFilters } from "@/contexts/FilterContext";
@@ -11,6 +13,7 @@ const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
   const { filters, setFilters, activeFilterCount } = useFilters();
+  const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   
   const featuresRef = useRef<HTMLDivElement>(null);
@@ -230,27 +233,39 @@ const Index = () => {
               Meet the woman you create and embark on a romantic journey, sharing unique stories from around the globe.
             </p>
 
-            <Button
-              size="lg"
-              className="text-lg px-8 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95"
-              style={{
-                background: "var(--gradient-sunset-muted)",
-                boxShadow: "var(--shadow-warm)",
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 6px 30px rgba(198, 58, 75, 0.4), 0 0 50px rgba(232, 115, 85, 0.25)"}
-              onMouseLeave={(e) => e.currentTarget.style.boxShadow = "var(--shadow-warm)"}
-              onClick={() => {
-                if (window.innerWidth < 768) {
-                  window.location.href = '/discover';
-                } else {
-                  feedContentRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              data-testid="button-pick-your-woman"
-            >
-              Find Your Woman 🌻
-            </Button>
+            <div className="flex flex-col items-center gap-3">
+              <Button
+                size="lg"
+                className="text-lg px-8 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95"
+                style={{
+                  background: "var(--gradient-sunset-muted)",
+                  boxShadow: "var(--shadow-warm)",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 6px 30px rgba(198, 58, 75, 0.4), 0 0 50px rgba(232, 115, 85, 0.25)"}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = "var(--shadow-warm)"}
+                onClick={() => {
+                  if (window.innerWidth < 768) {
+                    window.location.href = '/discover';
+                  } else {
+                    feedContentRef.current?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                data-testid="button-pick-your-woman"
+              >
+                Find Your Woman 🌻
+              </Button>
+              <button
+                className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
+                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
+                data-testid="button-open-nextwife"
+              >
+                or Open Next Wife →
+              </button>
+            </div>
           </div>
+
+          {/* QR Code positioned in bottom right of video section */}
+          {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
         </header>
 
         {/* Features Section - Scrolls over the fixed background */}
