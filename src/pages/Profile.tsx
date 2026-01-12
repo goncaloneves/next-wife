@@ -744,6 +744,20 @@ const Profile = () => {
                       <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
                       <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
                     </div>
+                    {(profileData.relationship || profileData.personality) && (
+                      <div className="flex flex-wrap gap-2">
+                        {profileData.personality && (
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
+                            {getPersonalityLabel(profileData.personality)}
+                          </span>
+                        )}
+                        {profileData.relationship && (
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
+                            {getRelationshipLabel(profileData.relationship)}
+                          </span>
+                        )}
+                      </div>
+                    )}
                     <div 
                       className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
                       onClick={() => {
@@ -783,21 +797,6 @@ const Profile = () => {
                                   <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
                                   <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
                                 </div>
-                                
-                                {(profileData.relationship || profileData.personality) && (
-                                  <div className="flex flex-wrap gap-2 pt-2">
-                                    {profileData.relationship && (
-                                      <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                                        {getRelationshipLabel(profileData.relationship)}
-                                      </span>
-                                    )}
-                                    {profileData.personality && (
-                                      <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                                        {getPersonalityLabel(profileData.personality)}
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
 
                                 {profileData.about && (
                                   <div className="pt-2 mt-2 border-t border-white/[0.08]">
