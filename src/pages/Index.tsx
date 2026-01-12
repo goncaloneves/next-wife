@@ -297,7 +297,7 @@ const Index = () => {
                     <h3 className="text-lg font-bold mb-2 text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-[15px] text-white/80 leading-relaxed">
+                    <p className="text-[15px] text-white/70 leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
