@@ -254,13 +254,12 @@ const Index = () => {
               >
                 Find Your Woman 🌻
               </Button>
-              <button
-                className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
-                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
-                data-testid="button-open-nextwife"
+              <span
+                className="text-white/60 text-sm font-medium"
+                data-testid="text-qr-legend"
               >
-                or Open Next Wife →
-              </button>
+                or scan QR code →
+              </span>
             </div>
           </div>
 
