@@ -125,10 +125,15 @@ const Profile = () => {
   const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number | null>(null);
   const loadedMediaRef = useRef<Set<number>>(new Set());
+  const mediaIndexRef = useRef(mediaIndex);
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
   const dragOpacity = useTransform(x, [-200, -100, 0, 100, 200], [0.3, 0.6, 1, 0.6, 0.3]);
+
+  useEffect(() => {
+    mediaIndexRef.current = mediaIndex;
+  }, [mediaIndex]);
 
   useEffect(() => {
     const isFromNav = sessionStorage.getItem(NAV_FLAG_KEY) === 'true';
@@ -540,10 +545,10 @@ const Profile = () => {
                         }`}
                         onLoadedMetadata={() => {
                           loadedMediaRef.current.add(idx);
-                          if (idx === mediaIndex) setImageLoaded(true);
+                          if (idx === mediaIndexRef.current) setImageLoaded(true);
                         }}
                         onError={() => {
-                          if (idx === mediaIndex) setImageLoaded(true);
+                          if (idx === mediaIndexRef.current) setImageLoaded(true);
                         }}
                         muted
                         loop
@@ -562,10 +567,10 @@ const Profile = () => {
                         }`}
                         onLoad={() => {
                           loadedMediaRef.current.add(idx);
-                          if (idx === mediaIndex) setImageLoaded(true);
+                          if (idx === mediaIndexRef.current) setImageLoaded(true);
                         }}
                         onError={() => {
-                          if (idx === mediaIndex) setImageLoaded(true);
+                          if (idx === mediaIndexRef.current) setImageLoaded(true);
                         }}
                         draggable={false}
                       />
