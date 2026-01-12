@@ -428,6 +428,19 @@ export const TelegramChannelFeed = ({
           // CSS fix ensures videos show skeleton (not black) until loaded
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
+          
+          // Restore scroll position after React renders the cached posts
+          const { scrollY } = JSON.parse(scrollContext);
+          // Use multiple RAFs to ensure virtualizer has rendered content
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                window.scrollTo(0, scrollY);
+                sessionStorage.removeItem('feedScrollContext');
+              });
+            });
+          });
+          
           // Clear cache after successful restoration (delay for StrictMode)
           setTimeout(() => sessionStorage.removeItem('feedCache'), 100);
           restoredFromCache = true;
