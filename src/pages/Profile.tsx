@@ -737,7 +737,7 @@ const Profile = () => {
                           <span className="whitespace-nowrap">
                             {lastName}
                             <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
-                              <span className="text-[1.5rem] font-semibold text-white">
+                              <span className="text-[1.5rem] font-normal text-white">
                                 {profileData.age}
                               </span>
                               <BadgeCheck 
