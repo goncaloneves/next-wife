@@ -46,22 +46,8 @@ const Index = () => {
   useEffect(() => {
     const state = location.state as { restoreScroll?: boolean } | null;
     if (state?.restoreScroll) {
-      const savedContext = sessionStorage.getItem('feedScrollContext');
-      
-      // Double RAF ensures React has committed and layout is stable
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (savedContext) {
-            const { scrollY } = JSON.parse(savedContext);
-            sessionStorage.removeItem('feedScrollContext');
-            window.scrollTo(0, scrollY);
-          } else {
-            // Fallback: scroll to feed section if no saved position
-            feedContentRef.current?.scrollIntoView({ behavior: 'instant' });
-          }
-        });
-      });
-      
+      // Scroll restoration is now handled by VirtualizedPostGrid
+      // Just clear the navigation state
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);

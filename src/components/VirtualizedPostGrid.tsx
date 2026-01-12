@@ -107,6 +107,8 @@ export const VirtualizedPostGrid = ({
   const listRef = useRef<HTMLDivElement>(null);
   const [rowHeight, setRowHeight] = useState(320);
   const [columns, setColumns] = useState(4);
+  const [dimensionsReady, setDimensionsReady] = useState(false);
+  const scrollRestoredRef = useRef(false);
 
   const visiblePosts = posts.filter(post => !hiddenIds.has(post.id));
   const rowCount = Math.ceil(visiblePosts.length / columns);
@@ -120,6 +122,7 @@ export const VirtualizedPostGrid = ({
         const cardWidth = (containerWidth - (GAP * (newColumns - 1))) / newColumns;
         const calculatedHeight = cardWidth * (4 / 3);
         setRowHeight(calculatedHeight + GAP);
+        setDimensionsReady(true);
       }
     };
     
@@ -139,6 +142,46 @@ export const VirtualizedPostGrid = ({
   });
 
   const virtualItems = virtualizer.getVirtualItems();
+
+  // Scroll restoration effect - waits for virtualizer to be ready with calculated dimensions
+  useEffect(() => {
+    if (scrollRestoredRef.current) return;
+    
+    const savedContext = sessionStorage.getItem('feedScrollContext');
+    if (!savedContext) return;
+    
+    // Wait for dimensions to be calculated AND virtualizer to have rows
+    if (!dimensionsReady || virtualItems.length === 0 || virtualizer.getTotalSize() === 0) return;
+    
+    try {
+      const { scrollY, postId } = JSON.parse(savedContext);
+      
+      // Force virtualizer to recalculate
+      virtualizer.measure();
+      
+      // Try to find the anchor post and scroll to its row
+      const anchorIndex = visiblePosts.findIndex(p => p.id === postId);
+      
+      // Double RAF ensures layout is fully stable before scrolling
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          scrollRestoredRef.current = true;
+          sessionStorage.removeItem('feedScrollContext');
+          
+          if (anchorIndex >= 0) {
+            // Calculate which row the anchor post is in
+            const rowIndex = Math.floor(anchorIndex / columns);
+            virtualizer.scrollToIndex(rowIndex, { align: 'start' });
+          } else {
+            // Fallback to saved Y position
+            window.scrollTo(0, scrollY);
+          }
+        });
+      });
+    } catch {
+      // Keep context for retry on next effect run
+    }
+  }, [dimensionsReady, virtualItems.length, virtualizer, columns, visiblePosts]);
 
   useEffect(() => {
     if (rowCount === 0) return;

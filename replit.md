@@ -36,7 +36,8 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Automatic New Post Detection:** Detects new posts and provides a refresh capability.
 - **Content Parsing:** Extracts personality and relationship types from Telegram post text.
 - **Language Display:** Uses `countries-list` to derive and display native languages alongside English.
-- **Scroll Position Restoration:** Caches feed state in `sessionStorage` to restore scroll position upon returning from profile pages.
+- **Scroll Position Restoration:** Caches feed state in `sessionStorage` to restore scroll position upon returning from profile pages. Uses anchor post ID with virtualizer.scrollToIndex for accurate restoration with virtualized lists.
+- **Virtualized Feed Grid:** Uses TanStack Virtual (@tanstack/react-virtual) with window-based virtualization for performance. Only renders ~20-40 visible rows at once, enabling smooth scrolling through 4000+ posts. Uses padding-based approach (paddingTop/paddingBottom) instead of absolute positioning for reliable scroll behavior. Responsive columns: 2 (768-1024px), 3 (1024-1280px), 4 (1280px+). Dynamic row height calculation via ResizeObserver maintains 3:4 aspect ratio.
 - **Conversion Tracking:** Tracks when users click "Meet on Telegram" (the final conversion point) rather than feed clicks. The `click_count` field stores these conversions for future analytics.
 - **Automatic Deleted Post Detection:** A background scheduler soft-deletes posts removed from Telegram, and a quick sync mechanism handles instant updates on page load.
 - **Occupation Categories:** Groups 283 job titles into 12 broad categories for simplified filtering.
