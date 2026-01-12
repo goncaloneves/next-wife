@@ -612,13 +612,14 @@ const Profile = () => {
                     </>
                   )}
                   
-                  {/* Tap zone to toggle About section - covers upper portion above text overlay */}
-                  <motion.div 
-                    className="absolute top-0 left-0 right-0 h-[55%] z-[5] cursor-pointer"
-                    onTap={(e) => { 
+                  {/* Tap zone to toggle About section - covers center area above text overlay */}
+                  <div 
+                    className="absolute top-0 left-1/4 right-1/4 h-[60%] z-[15] cursor-pointer"
+                    onClick={(e) => { 
                       e.stopPropagation();
                       setAboutExpanded(prev => !prev);
                     }}
+                    onPointerDown={(e) => e.stopPropagation()}
                     data-testid="toggle-about"
                   />
                   
