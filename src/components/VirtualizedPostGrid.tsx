@@ -69,9 +69,14 @@ interface VirtualizedPostGridProps {
   buildSrc: (url: string, postId: string) => string;
 }
 
-const COLUMNS = 4;
 const OVERSCAN = 5;
 const GAP = 2;
+
+function getColumns(width: number): number {
+  if (width >= 1280) return 4;
+  if (width >= 1024) return 3;
+  return 2;
+}
 
 export const VirtualizedPostGrid = ({
   posts,
@@ -101,22 +106,25 @@ export const VirtualizedPostGrid = ({
   const navigate = useNavigate();
   const listRef = useRef<HTMLDivElement>(null);
   const [rowHeight, setRowHeight] = useState(320);
+  const [columns, setColumns] = useState(4);
 
   const visiblePosts = posts.filter(post => !hiddenIds.has(post.id));
-  const rowCount = Math.ceil(visiblePosts.length / COLUMNS);
+  const rowCount = Math.ceil(visiblePosts.length / columns);
 
   useEffect(() => {
-    const calculateRowHeight = () => {
+    const calculateDimensions = () => {
       if (listRef.current) {
         const containerWidth = listRef.current.offsetWidth;
-        const cardWidth = (containerWidth - (GAP * (COLUMNS - 1))) / COLUMNS;
+        const newColumns = getColumns(containerWidth);
+        setColumns(newColumns);
+        const cardWidth = (containerWidth - (GAP * (newColumns - 1))) / newColumns;
         const calculatedHeight = cardWidth * (4 / 3);
         setRowHeight(calculatedHeight + GAP);
       }
     };
     
-    calculateRowHeight();
-    const resizeObserver = new ResizeObserver(calculateRowHeight);
+    calculateDimensions();
+    const resizeObserver = new ResizeObserver(calculateDimensions);
     if (listRef.current) {
       resizeObserver.observe(listRef.current);
     }
@@ -128,7 +136,6 @@ export const VirtualizedPostGrid = ({
     count: rowCount,
     estimateSize: () => rowHeight,
     overscan: OVERSCAN,
-    scrollMargin: listRef.current?.offsetTop ?? 0,
   });
 
   const virtualItems = virtualizer.getVirtualItems();
@@ -236,32 +243,39 @@ export const VirtualizedPostGrid = ({
     videoRefs, progressCircleRefs, rafRefs, buildSrc, handleCardClick
   ]);
 
+  const [paddingTop, paddingBottom] = virtualItems.length > 0
+    ? [
+        virtualItems[0].start,
+        virtualizer.getTotalSize() - virtualItems[virtualItems.length - 1].end,
+      ]
+    : [0, 0];
+
   return (
     <div ref={listRef} className="w-full">
       <div
         style={{
-          height: `${virtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
+          paddingTop: `${paddingTop}px`,
+          paddingBottom: `${paddingBottom}px`,
         }}
       >
         {virtualItems.map((virtualRow) => {
-          const startIndex = virtualRow.index * COLUMNS;
-          const rowPosts = visiblePosts.slice(startIndex, startIndex + COLUMNS);
+          const startIndex = virtualRow.index * columns;
+          const rowPosts = visiblePosts.slice(startIndex, startIndex + columns);
 
           return (
             <div
               key={virtualRow.key}
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
                 height: `${virtualRow.size}px`,
-                transform: `translateY(${virtualRow.start - virtualizer.options.scrollMargin}px)`,
               }}
             >
-              <div className="grid grid-cols-4 gap-0.5 h-full">
+              <div 
+                className="gap-0.5 h-full"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: `repeat(${columns}, 1fr)`,
+                }}
+              >
                 {rowPosts.map((post, colIndex) => 
                   renderPostCard(post, startIndex + colIndex)
                 )}
