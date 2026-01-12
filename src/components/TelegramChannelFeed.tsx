@@ -424,8 +424,21 @@ export const TelegramChannelFeed = ({
           setHasMore(cache.hasMore);
           setLoading(false);
           if (cache.refreshKey) setRefreshKey(cache.refreshKey);
-          // Don't restore imageLoadStates - let media show skeleton then fade in
-          // CSS fix ensures videos show skeleton (not black) until loaded
+          
+          // Restore loaded image states to prevent flicker
+          const loadedImagesData = sessionStorage.getItem('feedLoadedImages');
+          if (loadedImagesData) {
+            try {
+              const loadedIds: string[] = JSON.parse(loadedImagesData);
+              const restoredStates: Record<string, boolean> = {};
+              loadedIds.forEach(id => { restoredStates[id] = true; });
+              setImageLoadStates(restoredStates);
+              sessionStorage.removeItem('feedLoadedImages');
+            } catch {
+              // Ignore parse errors
+            }
+          }
+          
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
           
@@ -768,6 +781,8 @@ export const TelegramChannelFeed = ({
                         filters,
                         refreshKey
                       }));
+                      const loadedIds = Object.keys(imageLoadStates).filter(id => imageLoadStates[id]);
+                      sessionStorage.setItem('feedLoadedImages', JSON.stringify(loadedIds));
                       navigate('/discover');
                     }}
                     style={skipAnimation ? undefined : { animationFillMode: "forwards" }}

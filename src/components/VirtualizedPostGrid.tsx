@@ -206,8 +206,10 @@ export const VirtualizedPostGrid = ({
       filters,
       refreshKey
     }));
+    const loadedIds = Object.keys(imageLoadStates).filter(id => imageLoadStates[id]);
+    sessionStorage.setItem('feedLoadedImages', JSON.stringify(loadedIds));
     navigate('/discover');
-  }, [allPosts, channelInfo, nextCursor, hasMore, filters, refreshKey, navigate, setLastViewedId]);
+  }, [allPosts, channelInfo, nextCursor, hasMore, filters, refreshKey, navigate, setLastViewedId, imageLoadStates]);
 
   const renderPostCard = useCallback((post: TelegramPost, index: number) => {
     const firstMedia = post.mediaUrls?.[0];
