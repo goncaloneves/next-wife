@@ -15,10 +15,6 @@ const Index = () => {
   const { filters, setFilters, activeFilterCount } = useFilters();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [isRestoringScroll, setIsRestoringScroll] = useState(() => {
-    const state = (typeof window !== 'undefined' ? window.history.state?.usr : null) as { restoreScroll?: boolean } | null;
-    return !!state?.restoreScroll;
-  });
   
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -52,16 +48,18 @@ const Index = () => {
     if (state?.restoreScroll) {
       const savedContext = sessionStorage.getItem('feedScrollContext');
       
-      if (savedContext) {
-        const { scrollY } = JSON.parse(savedContext);
-        sessionStorage.removeItem('feedScrollContext');
-        window.scrollTo(0, scrollY);
-      } else {
-        feedContentRef.current?.scrollIntoView({ behavior: 'instant' });
-      }
-      
+      // Double RAF ensures React has committed and layout is stable
       requestAnimationFrame(() => {
-        setIsRestoringScroll(false);
+        requestAnimationFrame(() => {
+          if (savedContext) {
+            const { scrollY } = JSON.parse(savedContext);
+            sessionStorage.removeItem('feedScrollContext');
+            window.scrollTo(0, scrollY);
+          } else {
+            // Fallback: scroll to feed section if no saved position
+            feedContentRef.current?.scrollIntoView({ behavior: 'instant' });
+          }
+        });
       });
       
       window.history.replaceState({}, document.title);
@@ -127,7 +125,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen" style={{ visibility: isRestoringScroll ? 'hidden' : 'visible' }}>
+    <div className="min-h-screen">
       {/* Fixed Video Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-30">
