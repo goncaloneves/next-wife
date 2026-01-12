@@ -714,7 +714,8 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className={`absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none pt-16 transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
+            <div className={`absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col pointer-events-none transition-all duration-300 ${aboutExpanded ? 'max-h-full' : 'max-h-[65%]'}`}>
+              <div className="h-16 flex-shrink-0" />
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pb-2">
                   <div className="flex items-baseline mb-1">
