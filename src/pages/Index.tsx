@@ -197,24 +197,18 @@ const Index = () => {
             className="absolute left-8 z-20 flex items-center gap-4"
             style={{ top: 'max(2rem, calc(env(safe-area-inset-top) + 1rem))' }}
           >
-            {/* Logo Profile Button - Left */}
-            <button
-              onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
-              className="hover:scale-110 transition-transform duration-300"
-            >
-              <img
-                src={logo}
-                alt="Next Wife Profile"
-                className="w-12 h-12 rounded-full object-cover shadow-lg cursor-pointer"
-                style={{ boxShadow: "var(--shadow-glow)" }}
-              />
-            </button>
+            {/* Logo - Left */}
+            <img
+              src={logo}
+              alt="Next Wife"
+              className="w-12 h-12 rounded-full object-cover shadow-lg"
+              style={{ boxShadow: "var(--shadow-glow)" }}
+            />
 
             {/* Next Wife Title */}
             <h1
-              className="text-white text-4xl font-bold cursor-pointer hover:opacity-80 transition-opacity duration-300"
+              className="text-white text-4xl font-bold"
               style={{ fontFamily: "var(--font-heading)" }}
-              onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
             >
               Next Wife
             </h1>
