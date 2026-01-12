@@ -238,7 +238,7 @@ const Index = () => {
                 size="lg"
                 className="text-lg px-8 py-6 font-bold transition-all duration-300 hover:brightness-110 active:scale-95"
                 style={{
-                  background: "var(--gradient-sunset)",
+                  background: "var(--gradient-sunset-muted)",
                   boxShadow: "var(--shadow-warm)",
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 6px 30px rgba(198, 58, 75, 0.4), 0 0 50px rgba(232, 115, 85, 0.25)"}
