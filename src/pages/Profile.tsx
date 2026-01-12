@@ -683,7 +683,7 @@ const Profile = () => {
                 <button
                   onClick={(e) => { e.stopPropagation(); goBack(); }}
                   onPointerDownCapture={(e) => e.stopPropagation()}
-                  className="text-white p-2 transition-all hover:scale-110 pointer-events-auto [filter:drop-shadow(0_0_3px_black)_drop-shadow(0_0_3px_black)_drop-shadow(0_0_6px_black)_drop-shadow(0_2px_4px_black)]"
+                  className="text-white p-2 transition-all hover:scale-110 pointer-events-auto [filter:drop-shadow(0_0_2px_black)_drop-shadow(0_0_4px_rgba(0,0,0,0.8))_drop-shadow(0_2px_6px_rgba(0,0,0,0.6))]"
                   data-testid="button-back"
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -698,7 +698,7 @@ const Profile = () => {
               >
                 <button
                   onClick={() => setShowFilters(true)}
-                  className={`relative p-2 transition-all hover:scale-110 [filter:drop-shadow(0_0_3px_black)_drop-shadow(0_0_3px_black)_drop-shadow(0_0_6px_black)_drop-shadow(0_2px_4px_black)] ${
+                  className={`relative p-2 transition-all hover:scale-110 [filter:drop-shadow(0_0_2px_black)_drop-shadow(0_0_4px_rgba(0,0,0,0.8))_drop-shadow(0_2px_6px_rgba(0,0,0,0.6))] ${
                     activeFilterCount > 0 
                       ? 'text-orange-400' 
                       : 'text-white'
@@ -714,7 +714,7 @@ const Profile = () => {
                 </button>
                 <button
                   onClick={() => handleShare()}
-                  className="p-2 text-white transition-all hover:scale-110 [filter:drop-shadow(0_0_3px_black)_drop-shadow(0_0_3px_black)_drop-shadow(0_0_6px_black)_drop-shadow(0_2px_4px_black)]"
+                  className="p-2 text-white transition-all hover:scale-110 [filter:drop-shadow(0_0_2px_black)_drop-shadow(0_0_4px_rgba(0,0,0,0.8))_drop-shadow(0_2px_6px_rgba(0,0,0,0.6))]"
                   data-testid="button-share"
                 >
                   <Share2 className="w-5 h-5" />
