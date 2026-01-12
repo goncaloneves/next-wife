@@ -5,10 +5,13 @@ interface TelegramQRWidgetProps {
 }
 
 export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
-  const discoverLink = "https://nextwife.ai/discover?view=app";
+  const discoverLink = "https://nextwife.ai/discover";
 
   return (
-    <div
+    <a
+      href={discoverLink}
+      target="_blank"
+      rel="noopener noreferrer"
       className="hidden md:block absolute bottom-6 right-6 bg-white p-3 rounded-2xl shadow-2xl z-20 animate-in fade-in duration-300 hover:scale-110 transition-transform duration-300 cursor-pointer"
       onClick={(e) => e.stopPropagation()}
     >
@@ -19,6 +22,6 @@ export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
         includeMargin={false}
         className="w-14 h-14 lg:w-20 lg:h-20"
       />
-    </div>
+    </a>
   );
 };
