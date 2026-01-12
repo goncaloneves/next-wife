@@ -945,7 +945,7 @@ export const TelegramChannelFeed = ({
                                 {firstName && <>{firstName} </>}
                                 <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
                                   <span>{lastName}</span>
-                                  <span className="text-xl font-semibold opacity-90 ml-2">
+                                  <span className="text-[22px] font-semibold opacity-90 ml-2">
                                     {post.profileData.age}
                                   </span>
                                   <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg relative top-[3px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
@@ -971,12 +971,12 @@ export const TelegramChannelFeed = ({
                           {(post.profileData.personality || post.profileData.relationship) && (
                             <div className="flex flex-wrap gap-2">
                               {post.profileData.personality && (
-                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium shadow-sm">
                                   {getPersonalityLabel(post.profileData.personality)}
                                 </span>
                               )}
                               {post.profileData.relationship && (
-                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium shadow-sm">
                                   {getRelationshipLabel(post.profileData.relationship)}
                                 </span>
                               )}

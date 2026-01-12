@@ -737,7 +737,7 @@ const Profile = () => {
                           <span className="whitespace-nowrap">
                             {lastName}
                             <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
-                              <span className="text-[1.458rem] font-semibold text-white/90">
+                              <span className="text-[1.5rem] font-semibold text-white/90">
                                 {profileData.age}
                               </span>
                               <BadgeCheck 
@@ -765,12 +765,12 @@ const Profile = () => {
                     {(profileData.relationship || profileData.personality) && (
                       <div className="flex flex-wrap gap-2">
                         {profileData.personality && (
-                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium text-white shadow-sm">
                             {getPersonalityLabel(profileData.personality)}
                           </span>
                         )}
                         {profileData.relationship && (
-                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm">
+                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium text-white shadow-sm">
                             {getRelationshipLabel(profileData.relationship)}
                           </span>
                         )}
@@ -834,7 +834,7 @@ const Profile = () => {
                                     <span className="text-xs font-medium text-white/50 uppercase tracking-wide block mb-2">
                                       About Me
                                     </span>
-                                    <p className="text-sm text-white/80 leading-relaxed">
+                                    <p className="text-[15px] text-white/80 leading-relaxed">
                                       {profileData.about}
                                     </p>
                                   </div>
