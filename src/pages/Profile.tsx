@@ -775,12 +775,15 @@ const Profile = () => {
                       <div className="flex items-start gap-3">
                         {/* Sunset Gradient Button */}
                         <div 
-                          className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
                             aboutExpanded
-                              ? 'bg-gradient-to-br from-orange-500/80 via-rose-500/80 to-pink-500/80 text-white shadow-lg shadow-rose-500/50'
-                              : 'bg-gradient-to-br from-orange-500/50 via-rose-500/50 to-pink-500/50 text-white/80 shadow-md shadow-rose-400/30'
+                              ? 'text-white shadow-lg shadow-rose-500/50'
+                              : 'text-white/80 shadow-md shadow-rose-400/30'
                           }`}
-                          style={{ transition: 'all 100ms ease-in-out' }}
+                          style={{ 
+                            background: aboutExpanded ? 'var(--gradient-sunset-80)' : 'var(--gradient-sunset-60)',
+                            transition: 'background 100ms ease-in-out'
+                          }}
                         >
                           <span className="text-3xl leading-none font-light">
                             {aboutExpanded ? '−' : '+'}
@@ -869,9 +872,10 @@ const Profile = () => {
                     onPointerDownCapture={(e) => e.stopPropagation()}
                     className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] ${
                       isDragging && dragOffset > 30
-                        ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-400 scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
-                        : 'bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500 hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
+                        ? 'scale-110 shadow-2xl shadow-rose-500/50 border-white/50'
+                        : 'hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/50 shadow-rose-500/30 border-white/30'
                     }`}
+                    style={{ background: 'var(--gradient-sunset)' }}
                     data-testid="button-message-telegram"
                   >
                     <Heart className="w-9 h-9" />
