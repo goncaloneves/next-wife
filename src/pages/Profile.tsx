@@ -790,24 +790,24 @@ const Profile = () => {
                       >
                         <div className="flex items-start gap-3">
                           <Info className="w-6 h-6 text-rose-400 flex-shrink-0 mt-0.5" />
-                          <div className="flex-1">
-                            <AnimatePresence initial={false}>
-                              {aboutExpanded && (
-                                <motion.span 
-                                  className="text-xs font-medium text-white/50 uppercase tracking-wide block mb-2"
-                                  initial={{ opacity: 0, y: -5 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -5 }}
-                                  transition={{ duration: 0.1 }}
-                                >
+                          <AnimatePresence initial={false}>
+                            {aboutExpanded && (
+                              <motion.div 
+                                className="flex-1 overflow-hidden"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.1, ease: 'easeInOut' }}
+                              >
+                                <span className="text-xs font-medium text-white/50 uppercase tracking-wide block mb-2">
                                   About Me
-                                </motion.span>
-                              )}
-                            </AnimatePresence>
-                            <p className="text-sm text-white/80 leading-relaxed">
-                              {profileData.about}
-                            </p>
-                          </div>
+                                </span>
+                                <p className="text-sm text-white/80 leading-relaxed">
+                                  {profileData.about}
+                                </p>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </div>
                     )}
