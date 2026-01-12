@@ -793,7 +793,7 @@ const Profile = () => {
                           <motion.span 
                             className="text-rose-400 text-lg leading-none"
                             animate={{ rotate: aboutExpanded ? 180 : 0 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.1 }}
                           >
                             ▾
                           </motion.span>
@@ -805,7 +805,7 @@ const Profile = () => {
                               initial={{ height: 0, opacity: 0, marginTop: 0 }}
                               animate={{ height: 'auto', opacity: 1, marginTop: 8 }}
                               exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                              transition={{ duration: 0.25, ease: 'easeInOut' }}
+                              transition={{ duration: 0.1, ease: 'easeInOut' }}
                             >
                               {profileData.about}
                             </motion.p>
