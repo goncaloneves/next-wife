@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal, Info } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
@@ -788,41 +788,27 @@ const Profile = () => {
                         }}
                         data-testid="button-about-me-toggle"
                       >
-                        <div className="flex items-center gap-2">
-                          <motion.span 
-                            className="text-rose-400 text-4xl leading-none"
-                            animate={{ rotate: aboutExpanded ? 180 : 0 }}
-                            transition={{ duration: 0.1 }}
-                          >
-                            ▾
-                          </motion.span>
-                          <AnimatePresence initial={false}>
-                            {aboutExpanded && (
-                              <motion.span 
-                                className="text-xs font-medium text-white/50 uppercase tracking-wide"
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -10 }}
-                                transition={{ duration: 0.1 }}
-                              >
-                                About Me
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                        <AnimatePresence initial={false}>
-                          {aboutExpanded && (
-                            <motion.p 
-                              className="text-sm text-white/80 leading-relaxed overflow-hidden"
-                              initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                              animate={{ height: 'auto', opacity: 1, marginTop: 8 }}
-                              exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                              transition={{ duration: 0.1, ease: 'easeInOut' }}
-                            >
+                        <div className="flex items-start gap-3">
+                          <Info className="w-6 h-6 text-rose-400 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <AnimatePresence initial={false}>
+                              {aboutExpanded && (
+                                <motion.span 
+                                  className="text-xs font-medium text-white/50 uppercase tracking-wide block mb-2"
+                                  initial={{ opacity: 0, y: -5 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -5 }}
+                                  transition={{ duration: 0.1 }}
+                                >
+                                  About Me
+                                </motion.span>
+                              )}
+                            </AnimatePresence>
+                            <p className="text-sm text-white/80 leading-relaxed">
                               {profileData.about}
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
