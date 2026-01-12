@@ -10,6 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { getStoredFilters, type SharedFilters } from "@/lib/filterStorage";
 import { useFiltersOptional } from "@/contexts/FilterContext";
+import { VirtualizedPostGrid } from "./VirtualizedPostGrid";
 
 interface ProfileData {
   name: string;
@@ -723,281 +724,116 @@ export const TelegramChannelFeed = ({
         
         {/* Posts grid - show whenever we have posts, even while loading new ones */}
         {postsWithMedia.length > 0 && (
-        <div className="flex flex-col items-center gap-6 pb-4 md:block md:py-0">
-          <div 
-            ref={gridRef}
-            className="grid grid-cols-1 md:grid-cols-4 gap-0.5 w-full max-w-sm md:max-w-none"
-          >
-            {postsWithMedia.map((post, index) => {
-              // Skip rendering if image failed too many times
-              if (hiddenIds.has(post.id)) {
-                return null;
-              }
-              
-              // Use botLink from API if available, otherwise check text for bot mention as fallback
-              const hasBotMention = post.text && post.text.toLowerCase().includes('@nextwifebot');
-              const clickLink = post.botLink || (hasBotMention ? 'https://t.me/nextwifebot?start=now' : post.link);
-              
-              const isCentered = centeredPostId === post.id;
-              
-              return (
-                <div
-                  key={`${post.id}-${refreshKey}`}
-                  data-post-id={post.id}
-                  className={`
-                    aspect-[3/4] cursor-pointer overflow-hidden group relative
-                    ${index === 0 ? '' : 'hidden md:block'}
-                    ${skipAnimation ? 'opacity-100' : 'opacity-0 animate-fade-in'}
-                  `}
-                  onClick={() => {
-                    setLastViewedId(post.id);
-                    sessionStorage.setItem('nextwife_last_viewed', post.id);
-                    sessionStorage.setItem('feedScrollContext', JSON.stringify({
-                      postId: post.id,
-                      scrollY: window.scrollY
-                    }));
-                    sessionStorage.setItem('feedCache', JSON.stringify({
-                      posts: allPosts,
-                      channelInfo,
-                      nextCursor,
-                      hasMore,
-                      filters,
-                      refreshKey
-                    }));
-                    navigate('/discover');
-                  }}
-                  style={skipAnimation ? undefined : { 
-                    animationDelay: `${(index % 20) * 0.05}s`,
-                    animationFillMode: "forwards"
-                  }}
-                >
-                  {!imageLoadStates[post.id] && (
-                    <Skeleton className="absolute inset-0 w-full h-full z-10" />
-                  )}
-                  {(() => {
-                    const firstMedia = post.mediaUrls?.[0];
-                    const isVideo = firstMedia?.type === 'video';
-                    const isPlaying = playingVideos.has(post.id);
-                    
-                    if (isVideo) {
-                      return (
-                        <div 
-                          className="w-full h-full relative"
-                          onMouseEnter={() => {
-                            setPlayingVideos(prev => new Set(prev).add(post.id));
-                            const video = videoRefs.current[post.id];
-                            if (video) {
-                              video.currentTime = 0;
-                              video.play().catch(() => {});
-                            }
-                          }}
-                          onMouseLeave={() => {
-                            setPlayingVideos(prev => {
-                              const next = new Set(prev);
-                              next.delete(post.id);
-                              return next;
-                            });
-                            const video = videoRefs.current[post.id];
-                            if (video) {
-                              video.pause();
-                              video.currentTime = 0;
-                            }
-                          }}
-                        >
-                          <video
-                            ref={el => { 
-                              videoRefs.current[post.id] = el;
-                              if (el) {
-                                const circumference = 75.4;
-                                const updateProgress = () => {
-                                  const circle = progressCircleRefs.current[post.id];
-                                  if (circle && el.duration > 0) {
-                                    const progress = el.currentTime / el.duration;
-                                    circle.style.strokeDasharray = `${progress * circumference} ${circumference}`;
-                                  }
-                                  rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
-                                };
-                                
-                                el.onplay = () => {
-                                  const circle = progressCircleRefs.current[post.id];
-                                  if (circle) circle.style.opacity = '1';
-                                  if (rafRefs.current[post.id]) cancelAnimationFrame(rafRefs.current[post.id]);
-                                  rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
-                                };
-                                el.onpause = () => {
-                                  const circle = progressCircleRefs.current[post.id];
-                                  if (circle) {
-                                    circle.style.strokeDasharray = `0 ${circumference}`;
-                                    circle.style.opacity = '0';
-                                  }
-                                  if (rafRefs.current[post.id]) {
-                                    cancelAnimationFrame(rafRefs.current[post.id]);
-                                    delete rafRefs.current[post.id];
-                                  }
-                                };
-                                el.onended = () => {
-                                  const circle = progressCircleRefs.current[post.id];
-                                  if (circle) {
-                                    circle.style.strokeDasharray = `0 ${circumference}`;
-                                    circle.style.opacity = '0';
-                                  }
-                                };
-                              }
-                            }}
-                            key={`video-${post.id}`}
-                            src={buildSrc(firstMedia.url, post.id)}
-                            muted
-                            loop
-                            playsInline
-                            preload="metadata"
-                            className={`w-full h-full object-cover transition-all duration-300 ${
-                              imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
-                            }`}
-                            onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
-                            onError={() => {
-                              const currentTries = imageErrors[post.id] || 0;
-                              if (currentTries >= 2) {
-                                setHiddenIds(s => new Set(s).add(post.id));
-                                return;
-                              }
-                              const delay = currentTries === 0 ? 100 : 300;
-                              setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
-                              setTimeout(() => {
-                                setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
-                              }, delay);
-                            }}
-                          />
-                          {/* Video indicator - circular progress around play icon */}
-                          <div className="absolute top-[11px] right-3 pointer-events-none opacity-90 group-hover:opacity-100 transition-opacity duration-300">
-                            <svg className="w-7 h-7" viewBox="0 0 36 36">
-                              <circle
-                                ref={el => { progressCircleRefs.current[post.id] = el; }}
-                                cx="18"
-                                cy="18"
-                                r="12"
-                                fill="none"
-                                stroke="white"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeDasharray="0 75.4"
-                                transform="rotate(-90 18 18)"
-                                style={{ willChange: 'stroke-dasharray', opacity: 0 }}
-                              />
-                              <path d="M14 10v16l12-8z" fill="white" stroke="rgba(0,0,0,0.4)" strokeWidth="1" strokeLinejoin="round" />
-                            </svg>
-                          </div>
-                        </div>
-                      );
-                    }
-                    
-                    return (
+          <>
+            {/* Mobile: Show only first post */}
+            <div className="md:hidden flex flex-col items-center gap-6 pb-4">
+              {postsWithMedia.slice(0, 1).map((post) => {
+                if (hiddenIds.has(post.id)) return null;
+                const firstMedia = post.mediaUrls?.[0];
+                const isVideo = firstMedia?.type === 'video';
+                
+                return (
+                  <div
+                    key={`${post.id}-${refreshKey}`}
+                    data-post-id={post.id}
+                    className={`
+                      aspect-[3/4] cursor-pointer overflow-hidden group relative w-full max-w-sm
+                      ${skipAnimation ? 'opacity-100' : 'opacity-0 animate-fade-in'}
+                    `}
+                    onClick={() => {
+                      setLastViewedId(post.id);
+                      sessionStorage.setItem('nextwife_last_viewed', post.id);
+                      sessionStorage.setItem('feedScrollContext', JSON.stringify({
+                        postId: post.id,
+                        scrollY: window.scrollY
+                      }));
+                      sessionStorage.setItem('feedCache', JSON.stringify({
+                        posts: allPosts,
+                        channelInfo,
+                        nextCursor,
+                        hasMore,
+                        filters,
+                        refreshKey
+                      }));
+                      navigate('/discover');
+                    }}
+                    style={skipAnimation ? undefined : { animationFillMode: "forwards" }}
+                  >
+                    {!imageLoadStates[post.id] && (
+                      <Skeleton className="absolute inset-0 w-full h-full z-10" />
+                    )}
+                    {isVideo ? (
+                      <video
+                        src={buildSrc(firstMedia.url, post.id)}
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        className={`w-full h-full object-cover ${imageLoadStates[post.id] ? "opacity-70" : "opacity-0"}`}
+                        onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
+                      />
+                    ) : (
                       <img
-                        key={`img-${post.id}-${imageErrors[post.id] || 0}`}
                         src={buildSrc(post.media!, post.id)}
                         alt=""
                         loading="lazy"
-                        decoding="async"
-                        referrerPolicy="no-referrer"
-                        className={`w-full h-full object-cover transition-all duration-300 ${
-                          imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
-                        }`}
+                        className={`w-full h-full object-cover ${imageLoadStates[post.id] ? "opacity-70" : "opacity-0"}`}
                         onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
-                        onError={() => {
-                          const currentTries = imageErrors[post.id] || 0;
-                          
-                          if (currentTries >= 2) {
-                            setHiddenIds(s => new Set(s).add(post.id));
-                            return;
-                          }
-                          
-                          const delay = currentTries === 0 ? 100 : 300;
-                          setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
-                          
-                          setTimeout(() => {
-                            setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
-                          }, delay);
-                        }}
                       />
-                    );
-                  })()}
-                  
-                  {/* Date badge - shows relative time in top-left */}
-                  <div 
-                    className="absolute top-3 left-3 z-20 pointer-events-none"
-                    data-testid={`badge-date-${post.id}`}
-                  >
-                    <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg">
-                      {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
-                    </div>
-                  </div>
-                  
-                  {/* Tinder-style profile badge - only show if all profile data is present */}
-                  {post.profileData && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-[background] duration-300 group-hover:from-black/95 group-hover:via-black/85 pointer-events-none opacity-100">
-                      <div className="text-white">
-                        <p className="mb-1 text-2xl font-bold drop-shadow-lg leading-snug">
-                          {(() => {
-                            const nameParts = post.profileData.name.split(' ');
-                            const lastName = nameParts.pop() || '';
-                            const firstName = nameParts.join(' ');
-                            return (
-                              <>
-                                {firstName && <>{firstName} </>}
-                                <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
-                                  <span>{lastName}</span>
-                                  <span className="text-[22px] font-normal ml-2">
-                                    {post.profileData.age}
-                                  </span>
-                                  <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg relative top-[3px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
-                                  {post.isHot && (
-                                    <Flame 
-                                      className="w-5 h-5 drop-shadow-lg relative top-[3px]" 
-                                      style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
-                                      data-testid={`badge-hot-${post.id}`}
-                                    />
-                                  )}
-                                </span>
-                              </>
-                            );
-                          })()}
-                        </p>
-                        {/* Mobile/Tablet: Always visible | Desktop: Hover to reveal */}
-                        <div className="flex flex-col gap-3 text-sm max-h-0 opacity-0 overflow-hidden group-hover:max-h-40 group-hover:opacity-100 transition-all duration-300">
-                          <p className="flex items-center gap-1.5">
-                            <MapPin className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                            <span className="flex-1">{post.profileData.hometown}</span>
-                          </p>
-                          {/* Personality & Relationship pills */}
-                          {(post.profileData.personality || post.profileData.relationship) && (
-                            <div className="flex flex-wrap gap-2">
-                              {post.profileData.personality && (
-                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium shadow-sm">
-                                  {getPersonalityLabel(post.profileData.personality)}
-                                </span>
-                              )}
-                              {post.profileData.relationship && (
-                                <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium shadow-sm">
-                                  {getRelationshipLabel(post.profileData.relationship)}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </div>
+                    )}
+                    <div className="absolute top-3 left-3 z-20 pointer-events-none">
+                      <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg">
+                        {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
                       </div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          
-          {/* Loading indicator - desktop only */}
-          {hasMore && isLoadingMore && (
-            <div className="hidden md:flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    {post.profileData && (
+                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/70 to-transparent pointer-events-none">
+                        <div className="text-white">
+                          <p className="mb-1 text-2xl font-bold drop-shadow-lg">
+                            {post.profileData.name} <span className="text-[22px] font-normal ml-2">{post.profileData.age}</span>
+                            <BadgeCheck className="inline w-5 h-5 text-[#0099FF] ml-1 relative top-[-2px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+                          </p>
+                          <p className="flex items-center gap-1.5 text-sm">
+                            <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                            {post.profileData.hometown}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          )}
-        </div>
+            
+            {/* Desktop: Virtualized grid */}
+            <div className="hidden md:block">
+              <VirtualizedPostGrid
+                posts={postsWithMedia}
+                allPosts={allPosts}
+                channelInfo={channelInfo}
+                nextCursor={nextCursor}
+                hasMore={hasMore}
+                filters={filters}
+                refreshKey={refreshKey}
+                skipAnimation={skipAnimation}
+                imageLoadStates={imageLoadStates}
+                setImageLoadStates={setImageLoadStates}
+                imageErrors={imageErrors}
+                setImageErrors={setImageErrors}
+                hiddenIds={hiddenIds}
+                setHiddenIds={setHiddenIds}
+                playingVideos={playingVideos}
+                setPlayingVideos={setPlayingVideos}
+                videoRefs={videoRefs}
+                progressCircleRefs={progressCircleRefs}
+                rafRefs={rafRefs}
+                setLastViewedId={setLastViewedId}
+                onLoadMore={fetchNextPage}
+                isLoadingMore={isLoadingMore}
+                buildSrc={buildSrc}
+              />
+            </div>
+          </>
         )}
         </div>
         </div>
