@@ -741,8 +741,8 @@ const Profile = () => {
 
                   <div className="space-y-2">
                     <div className="flex items-center gap-3 text-white/90">
-                      <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                      <span className="text-sm truncate md:whitespace-normal md:line-clamp-2">{profileData.work?.replace(/\.$/, '')}</span>
+                      <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
                     </div>
                     <div 
                       className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
@@ -776,8 +776,8 @@ const Profile = () => {
                             >
                               <div className="space-y-2">
                                 <div className="flex items-center gap-3 text-white/90">
-                                  <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                                  <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
+                                  <Briefcase className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                                  <span className="text-sm">{profileData.work?.replace(/\.$/, '')}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-white/90">
                                   <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
