@@ -774,11 +774,14 @@ const Profile = () => {
                     >
                       <div className="flex items-start gap-3">
                         {/* Sunset Gradient Button */}
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
-                          aboutExpanded
-                            ? 'bg-gradient-to-br from-orange-500/80 via-rose-500/80 to-pink-500/80 text-white shadow-lg shadow-rose-500/50'
-                            : 'bg-gradient-to-br from-orange-500/50 via-rose-500/50 to-pink-500/50 text-white/80 shadow-md shadow-rose-400/30'
-                        }`}>
+                        <div 
+                          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
+                            aboutExpanded
+                              ? 'text-white shadow-lg shadow-rose-500/50 opacity-80'
+                              : 'text-white/80 shadow-md shadow-rose-400/30 opacity-50'
+                          }`}
+                          style={{ background: 'var(--gradient-sunset)' }}
+                        >
                           <span className="text-3xl leading-none font-light">
                             {aboutExpanded ? '−' : '+'}
                           </span>
