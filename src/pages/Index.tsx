@@ -254,12 +254,13 @@ const Index = () => {
               >
                 Find Your Woman 🌻
               </Button>
-              <span
-                className="text-white/60 text-sm font-medium"
-                data-testid="text-scan-create"
+              <button
+                className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
+                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
+                data-testid="button-create-telegram"
               >
-                or scan to create your own →
-              </span>
+                or create your own in Telegram
+              </button>
             </div>
           </div>
 
