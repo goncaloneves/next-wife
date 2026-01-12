@@ -798,7 +798,7 @@ const Profile = () => {
                               : 'text-white/80 shadow-md shadow-rose-400/30'
                           }`}
                           style={{ 
-                            background: aboutExpanded ? 'var(--gradient-sunset-80)' : 'var(--gradient-sunset-50)',
+                            background: aboutExpanded ? 'var(--gradient-sunset-80)' : 'var(--gradient-sunset-60)',
                             transition: 'background 100ms ease-in-out'
                           }}
                         >
