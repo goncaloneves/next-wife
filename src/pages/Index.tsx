@@ -258,7 +258,7 @@ const Index = () => {
                 className="text-white/60 text-sm font-medium"
                 data-testid="text-qr-legend"
               >
-                or scan QR code →
+                or scan to open in Telegram →
               </span>
             </div>
           </div>
