@@ -780,7 +780,10 @@ const Profile = () => {
                               ? 'text-white shadow-lg shadow-rose-500/50'
                               : 'text-white/80 shadow-md shadow-rose-400/30'
                           }`}
-                          style={{ background: aboutExpanded ? 'var(--gradient-sunset-80)' : 'var(--gradient-sunset-60)' }}
+                          style={{ 
+                            background: aboutExpanded ? 'var(--gradient-sunset-80)' : 'var(--gradient-sunset-60)',
+                            transition: 'background 100ms ease-in-out'
+                          }}
                         >
                           <span className="text-3xl leading-none font-light">
                             {aboutExpanded ? '−' : '+'}
