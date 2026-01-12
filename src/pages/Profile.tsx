@@ -748,75 +748,77 @@ const Profile = () => {
                       <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
                       <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-white/90">
-                      <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
-                      <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-white/90">
-                      <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                      <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
-                    </div>
+                    <div 
+                      className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
+                      onClick={() => {
+                        const newExpanded = !aboutExpanded;
+                        setAboutExpanded(newExpanded);
+                        if (newExpanded && contentContainerRef.current) {
+                          setTimeout(() => {
+                            contentContainerRef.current?.scrollTo({ top: contentContainerRef.current.scrollHeight, behavior: 'smooth' });
+                          }, 50);
+                        }
+                      }}
+                      data-testid="button-about-me-toggle"
+                    >
+                      <div className="flex items-start gap-3">
+                        <motion.div
+                          animate={{ rotate: aboutExpanded ? 180 : 0 }}
+                          transition={{ duration: 0.1 }}
+                          className="flex-shrink-0"
+                        >
+                          <ArrowBigDown className="w-7 h-7 text-rose-400" />
+                        </motion.div>
+                        <AnimatePresence initial={false}>
+                          {aboutExpanded && (
+                            <motion.div 
+                              className="flex-1 overflow-hidden"
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.1, ease: 'easeInOut' }}
+                            >
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-3 text-white/90">
+                                  <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
+                                  <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-white/90">
+                                  <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                                  <span className="text-sm">{getLanguageDisplay(profileData.language)?.replace(/\.$/, '')}</span>
+                                </div>
+                                
+                                {(profileData.relationship || profileData.personality) && (
+                                  <div className="flex flex-wrap gap-2 pt-2">
+                                    {profileData.relationship && (
+                                      <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                                        {getRelationshipLabel(profileData.relationship)}
+                                      </span>
+                                    )}
+                                    {profileData.personality && (
+                                      <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                                        {getPersonalityLabel(profileData.personality)}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
 
-                    {(profileData.relationship || profileData.personality) && (
-                      <div className="pt-2 mt-2 border-t border-white/[0.08]">
-                        <div className="flex flex-wrap gap-2">
-                          {profileData.relationship && (
-                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                              {getRelationshipLabel(profileData.relationship)}
-                            </span>
+                                {profileData.about && (
+                                  <div className="pt-2 mt-2 border-t border-white/[0.08]">
+                                    <span className="text-xs font-medium text-white/50 uppercase tracking-wide block mb-2">
+                                      About Me
+                                    </span>
+                                    <p className="text-sm text-white/80 leading-relaxed">
+                                      {profileData.about}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
                           )}
-                          {profileData.personality && (
-                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium shadow-sm">
-                              {getPersonalityLabel(profileData.personality)}
-                            </span>
-                          )}
-                        </div>
+                        </AnimatePresence>
                       </div>
-                    )}
-
-                    {profileData.about && (
-                      <div 
-                        className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
-                        onClick={() => {
-                          const newExpanded = !aboutExpanded;
-                          setAboutExpanded(newExpanded);
-                          if (newExpanded && contentContainerRef.current) {
-                            setTimeout(() => {
-                              contentContainerRef.current?.scrollTo({ top: contentContainerRef.current.scrollHeight, behavior: 'smooth' });
-                            }, 50);
-                          }
-                        }}
-                        data-testid="button-about-me-toggle"
-                      >
-                        <div className="flex items-start gap-3">
-                          <motion.div
-                            animate={{ rotate: aboutExpanded ? 180 : 0 }}
-                            transition={{ duration: 0.1 }}
-                            className="flex-shrink-0"
-                          >
-                            <ArrowBigDown className="w-7 h-7 text-rose-400" />
-                          </motion.div>
-                          <AnimatePresence initial={false}>
-                            {aboutExpanded && (
-                              <motion.div 
-                                className="flex-1 overflow-hidden"
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.1, ease: 'easeInOut' }}
-                              >
-                                <span className="text-xs font-medium text-white/50 uppercase tracking-wide block mb-2">
-                                  About Me
-                                </span>
-                                <p className="text-sm text-white/80 leading-relaxed">
-                                  {profileData.about}
-                                </p>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               </div>
