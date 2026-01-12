@@ -772,64 +772,15 @@ const Profile = () => {
                       data-testid="button-about-me-toggle"
                     >
                       <div className="flex items-start gap-3">
-                        {/* 4 button styles for comparison */}
-                        <div className="flex gap-2 flex-shrink-0">
-                          {/* Style 1: Frosted Glass */}
-                          <div className={`w-10 h-10 rounded-full backdrop-blur-md border flex items-center justify-center transition-all ${
-                            aboutExpanded
-                              ? 'bg-white/30 border-rose-300 text-amber-400 shadow-lg shadow-white/20'
-                              : 'bg-white/20 border-rose-200/50 text-rose-300 shadow-md'
-                          }`}>
-                            <span className="text-2xl leading-none font-light">
-                              {aboutExpanded ? '−' : '+'}
-                            </span>
-                          </div>
-                          
-                          {/* Style 2: Sunset Gradient */}
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                            aboutExpanded
-                              ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-500 text-white shadow-lg shadow-rose-500/50'
-                              : 'bg-gradient-to-br from-orange-300/60 via-rose-300/60 to-pink-400/60 text-white/90 shadow-md shadow-rose-400/30'
-                          }`}>
-                            <span className="text-2xl leading-none font-light">
-                              {aboutExpanded ? '−' : '+'}
-                            </span>
-                          </div>
-                          
-                          {/* Style 3: Dark Metallic */}
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all border-2 ${
-                            aboutExpanded
-                              ? 'bg-zinc-700 border-rose-400 text-white shadow-lg shadow-black/50 ring-1 ring-white/20'
-                              : 'bg-zinc-800/90 border-rose-400/50 text-rose-400 shadow-md ring-1 ring-white/10'
-                          }`} style={{ boxShadow: aboutExpanded ? 'inset 0 -2px 4px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.1)' : 'inset 0 -1px 2px rgba(0,0,0,0.2)' }}>
-                            <span className="text-2xl leading-none font-light">
-                              {aboutExpanded ? '−' : '+'}
-                            </span>
-                          </div>
-                          
-                          {/* Style 4: Glowing Ring */}
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all relative ${
-                            aboutExpanded
-                              ? 'bg-zinc-900 text-white scale-105'
-                              : 'bg-zinc-900/80 text-rose-300'
-                          }`} style={{ 
-                            background: aboutExpanded ? 'linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%)' : 'rgba(20,20,20,0.9)',
-                            boxShadow: aboutExpanded 
-                              ? '0 0 12px rgba(251,113,133,0.6), 0 0 24px rgba(251,146,60,0.3)' 
-                              : '0 0 6px rgba(251,113,133,0.3)'
-                          }}>
-                            <div className="absolute inset-0 rounded-full" style={{
-                              background: `conic-gradient(from ${aboutExpanded ? '45deg' : '0deg'}, #f97316, #f43f5e, #ec4899, #f97316)`,
-                              padding: '2px',
-                              WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                              WebkitMaskComposite: 'xor',
-                              maskComposite: 'exclude',
-                              transition: 'all 0.3s ease'
-                            }} />
-                            <span className="text-2xl leading-none font-light z-10">
-                              {aboutExpanded ? '−' : '+'}
-                            </span>
-                          </div>
+                        {/* Sunset Gradient Button */}
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
+                          aboutExpanded
+                            ? 'bg-gradient-to-br from-orange-400 via-rose-400 to-pink-500 text-white shadow-lg shadow-rose-500/50'
+                            : 'bg-gradient-to-br from-orange-300/60 via-rose-300/60 to-pink-400/60 text-white/90 shadow-md shadow-rose-400/30'
+                        }`}>
+                          <span className="text-3xl leading-none font-light">
+                            {aboutExpanded ? '−' : '+'}
+                          </span>
                         </div>
                         <AnimatePresence initial={false}>
                           {aboutExpanded && (
