@@ -69,8 +69,9 @@ interface VirtualizedPostGridProps {
   buildSrc: (url: string, postId: string) => string;
 }
 
-const OVERSCAN = 5;
 const GAP = 2;
+const MIN_OVERSCAN = 8;
+const LOAD_MORE_THRESHOLD = 8;
 
 function getColumns(width: number): number {
   if (width >= 1280) return 4;
@@ -132,10 +133,12 @@ export const VirtualizedPostGrid = ({
     return () => resizeObserver.disconnect();
   }, []);
 
+  const dynamicOverscan = Math.max(MIN_OVERSCAN, Math.ceil((window.innerHeight / rowHeight) * 2));
+
   const virtualizer = useWindowVirtualizer({
     count: rowCount,
     estimateSize: () => rowHeight,
-    overscan: OVERSCAN,
+    overscan: dynamicOverscan,
   });
 
   const virtualItems = virtualizer.getVirtualItems();
@@ -150,7 +153,7 @@ export const VirtualizedPostGrid = ({
       return;
     }
     
-    if (lastItem && lastItem.index >= rowCount - 3 && hasMore && !isLoadingMore) {
+    if (lastItem && lastItem.index >= rowCount - LOAD_MORE_THRESHOLD && hasMore && !isLoadingMore) {
       onLoadMore();
     }
   }, [virtualItems, rowCount, hasMore, isLoadingMore, onLoadMore]);
