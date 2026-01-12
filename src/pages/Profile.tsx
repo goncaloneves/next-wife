@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal, Info } from "lucide-react";
+import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
@@ -789,7 +789,13 @@ const Profile = () => {
                         data-testid="button-about-me-toggle"
                       >
                         <div className="flex items-start gap-3">
-                          <Info className="w-6 h-6 text-rose-400 flex-shrink-0 mt-0.5" />
+                          <motion.div
+                            animate={{ rotate: aboutExpanded ? 180 : 0 }}
+                            transition={{ duration: 0.1 }}
+                            className="flex-shrink-0"
+                          >
+                            <ChevronDown className="w-7 h-7 text-rose-400" />
+                          </motion.div>
                           <AnimatePresence initial={false}>
                             {aboutExpanded && (
                               <motion.div 
