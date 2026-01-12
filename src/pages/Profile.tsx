@@ -573,7 +573,7 @@ const Profile = () => {
                   ))}
                   
                   {/* Navigation tap zones - only for multiple media */}
-                  {hasMultipleMedia && (
+                  {hasMultipleMedia ? (
                     <>
                       <motion.div 
                         className="absolute left-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
@@ -591,6 +591,15 @@ const Profile = () => {
                         }}
                         onTapCancel={() => setTapFeedback(null)}
                         data-testid="media-prev"
+                      />
+                      {/* Center tap zone to toggle About section */}
+                      <motion.div 
+                        className="absolute left-1/3 right-1/3 top-0 h-2/3 z-10 cursor-pointer"
+                        onTap={(e) => { 
+                          e.stopPropagation();
+                          setAboutExpanded(prev => !prev);
+                        }}
+                        data-testid="toggle-about"
                       />
                       <motion.div 
                         className="absolute right-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
@@ -610,18 +619,19 @@ const Profile = () => {
                         data-testid="media-next"
                       />
                     </>
+                  ) : (
+                    /* Single media - full tap zone to toggle About */
+                    <motion.div 
+                      className="absolute inset-0 z-10 cursor-pointer"
+                      style={{ top: 0, bottom: '35%' }}
+                      onTap={(e) => { 
+                        e.stopPropagation();
+                        setAboutExpanded(prev => !prev);
+                      }}
+                      data-testid="toggle-about"
+                    />
                   )}
                   
-                  {/* Tap zone to toggle About section - covers center area above text overlay */}
-                  <div 
-                    className="absolute top-0 left-1/4 right-1/4 h-[60%] z-[15] cursor-pointer"
-                    onClick={(e) => { 
-                      e.stopPropagation();
-                      setAboutExpanded(prev => !prev);
-                    }}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    data-testid="toggle-about"
-                  />
                   
                   {/* Tap feedback overlays */}
                   <AnimatePresence>
