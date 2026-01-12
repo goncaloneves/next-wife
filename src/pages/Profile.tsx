@@ -763,7 +763,7 @@ const Profile = () => {
                           transition={{ duration: 0.1 }}
                           className="flex-shrink-0"
                         >
-                          <ArrowBigDown className="w-7 h-7 text-rose-400" />
+                          <ArrowBigDown className="w-9 h-9 text-rose-400" />
                         </motion.div>
                         <AnimatePresence initial={false}>
                           {aboutExpanded && (
