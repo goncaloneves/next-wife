@@ -573,7 +573,7 @@ const Profile = () => {
                   ))}
                   
                   {/* Navigation tap zones - only for multiple media */}
-                  {hasMultipleMedia && (
+                  {hasMultipleMedia ? (
                     <>
                       <motion.div 
                         className="absolute left-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
@@ -591,6 +591,15 @@ const Profile = () => {
                         }}
                         onTapCancel={() => setTapFeedback(null)}
                         data-testid="media-prev"
+                      />
+                      {/* Center tap zone to toggle About section */}
+                      <motion.div 
+                        className="absolute left-1/3 right-1/3 top-0 h-2/3 z-10 cursor-pointer"
+                        onTap={(e) => { 
+                          e.stopPropagation();
+                          setAboutExpanded(prev => !prev);
+                        }}
+                        data-testid="toggle-about"
                       />
                       <motion.div 
                         className="absolute right-0 top-0 w-1/3 h-2/3 z-10 cursor-pointer"
@@ -610,6 +619,17 @@ const Profile = () => {
                         data-testid="media-next"
                       />
                     </>
+                  ) : (
+                    /* Single media - full tap zone to toggle About */
+                    <motion.div 
+                      className="absolute inset-0 z-10 cursor-pointer"
+                      style={{ top: 0, bottom: '35%' }}
+                      onTap={(e) => { 
+                        e.stopPropagation();
+                        setAboutExpanded(prev => !prev);
+                      }}
+                      data-testid="toggle-about"
+                    />
                   )}
                   
                   
@@ -776,15 +796,41 @@ const Profile = () => {
 
                     {profileData.about && (
                       <div 
-                        className="pt-2 mt-2 border-t border-white/[0.08]"
-                        data-testid="about-me-section"
+                        className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
+                        onClick={() => {
+                          const newExpanded = !aboutExpanded;
+                          setAboutExpanded(newExpanded);
+                          if (newExpanded && contentContainerRef.current) {
+                            setTimeout(() => {
+                              contentContainerRef.current?.scrollTo({ top: contentContainerRef.current.scrollHeight, behavior: 'smooth' });
+                            }, 50);
+                          }
+                        }}
+                        data-testid="button-about-me-toggle"
                       >
-                        <p className="text-xs font-medium text-white/50 uppercase tracking-wide mb-2">
+                        <p className="flex items-center gap-2 text-xs font-medium text-white/50 uppercase tracking-wide">
                           About Me
+                          <motion.span 
+                            className="text-rose-400 text-lg leading-none"
+                            animate={{ rotate: aboutExpanded ? 180 : 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            ▾
+                          </motion.span>
                         </p>
-                        <p className="text-sm text-white/80 leading-relaxed">
-                          {profileData.about}
-                        </p>
+                        <AnimatePresence initial={false}>
+                          {aboutExpanded && (
+                            <motion.p 
+                              className="text-sm text-white/80 leading-relaxed overflow-hidden"
+                              initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                              animate={{ height: 'auto', opacity: 1, marginTop: 8 }}
+                              exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                              transition={{ duration: 0.25, ease: 'easeInOut' }}
+                            >
+                              {profileData.about}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
                       </div>
                     )}
                   </div>
