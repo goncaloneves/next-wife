@@ -5,7 +5,7 @@ interface TelegramQRWidgetProps {
 }
 
 export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
-  const discoverLink = "https://nextwife.ai/discover";
+  const qrCodeUrl = "https://nextwife.ai/discover?view=app";
 
   return (
     <a
@@ -14,7 +14,7 @@ export const TelegramQRWidget = ({ onClose }: TelegramQRWidgetProps) => {
       onClick={(e) => e.stopPropagation()}
     >
       <QRCodeSVG 
-        value={discoverLink} 
+        value={qrCodeUrl} 
         size={80}
         level="M"
         includeMargin={false}
