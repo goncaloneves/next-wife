@@ -718,11 +718,9 @@ const Profile = () => {
               <div className="h-16 flex-shrink-0" />
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pb-2">
-                  <div className="flex items-baseline mb-1">
-                    <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg line-clamp-2">
-                      {profileData.name}
-                    </h1>
-                    <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
+                  <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg mb-1">
+                    <span>{profileData.name}</span>
+                    <span className="inline-flex items-baseline gap-[5px] ml-[11px] whitespace-nowrap">
                       <span className="text-[1.458rem] font-semibold text-white/90">
                         {profileData.age}
                       </span>
@@ -730,7 +728,6 @@ const Profile = () => {
                         className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
                         style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                       />
-                      {/* Fire indicator for hot profiles */}
                       {post.isHot && (
                         <Flame 
                           className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
@@ -738,7 +735,7 @@ const Profile = () => {
                         />
                       )}
                     </span>
-                  </div>
+                  </h1>
 
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3 text-white/90">
