@@ -47,9 +47,10 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Social Media Previews:** Dynamic Open Graph and Twitter Card meta tags for profile pages. When social crawlers (Facebook, Twitter, LinkedIn, WhatsApp, Discord, etc.) access a profile URL, they receive custom HTML with the woman's photo, name, age, and description for rich link previews.
 
 **System Design Choices:**
-- **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media) and `click_count` for conversion tracking.
+- **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media), `click_count` for conversion tracking, and `photo_file_ids` for high-resolution media access.
 - **Background Sync Service:** Regularly fetches posts from Telegram and updates the database, enriching data with derived fields.
 - **Image Proxy:** Proxies Telegram CDN images to prevent CORS issues.
+- **High-Resolution Media (Bot API):** Telegram Bot API integration for fetching full-resolution photos/videos. A scheduler polls for new channel posts using `getUpdates` and stores file IDs. The `/api/tg-highres-image?file_id=XXX` endpoint streams high-res images from Bot API. Note: Only NEW posts (after bot was added as channel admin) have file IDs; existing posts use preview images.
 - **FilterContext Architecture:** Centralized filter state management using React Context (`FilterContext`). Single source of truth for filter state shared between homepage and profile pages. Filter changes sync to localStorage for persistence across page refreshes. Both pages use `DiscoverFilterModal` for consistent filter UI.
 
 ## External Dependencies
