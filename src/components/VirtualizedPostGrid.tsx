@@ -563,6 +563,31 @@ const ImageCard = ({
 }: ImageCardProps) => {
   if (!post.media) return null;
 
+  const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    if (img.naturalWidth === 0 || img.naturalHeight === 0) {
+      handleError();
+      return;
+    }
+    setImageLoadStates((prev) => ({ ...prev, [post.id]: true }));
+  };
+
+  const handleError = () => {
+    const currentTries = imageErrors[post.id] || 0;
+    
+    if (currentTries >= 2) {
+      setHiddenIds(s => new Set(s).add(post.id));
+      return;
+    }
+    
+    const delay = currentTries === 0 ? 100 : 300;
+    setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
+    
+    setTimeout(() => {
+      setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
+    }, delay);
+  };
+
   return (
     <img
       key={`img-${post.id}-${imageErrors[post.id] || 0}`}
@@ -574,22 +599,8 @@ const ImageCard = ({
       className={`w-full h-full object-cover transition-all duration-300 ${
         imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
       }`}
-      onLoad={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
-      onError={() => {
-        const currentTries = imageErrors[post.id] || 0;
-        
-        if (currentTries >= 2) {
-          setHiddenIds(s => new Set(s).add(post.id));
-          return;
-        }
-        
-        const delay = currentTries === 0 ? 100 : 300;
-        setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
-        
-        setTimeout(() => {
-          setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
-        }, delay);
-      }}
+      onLoad={handleLoad}
+      onError={handleError}
     />
   );
 };
