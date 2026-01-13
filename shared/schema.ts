@@ -11,6 +11,7 @@ export const telegramPosts = pgTable("telegram_posts", {
   link: text("link"),
   media: text("media"),
   mediaUrls: jsonb("media_urls"), // Array of {type: 'photo'|'video', url: string}
+  photoFileIds: jsonb("photo_file_ids"), // Array of Telegram file IDs for high-res photos
   avatar: text("avatar"),
   botLink: text("bot_link"),
   

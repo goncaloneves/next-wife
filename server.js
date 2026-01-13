@@ -24,6 +24,31 @@ const { Pool } = pg;
 let db = null;
 let pool = null;
 
+// ============== TELEGRAM BOT API CONFIG ==============
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+
+async function telegramApiCall(method, params = {}) {
+  if (!TELEGRAM_BOT_TOKEN) {
+    throw new Error('TELEGRAM_BOT_TOKEN not configured');
+  }
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${method}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  });
+  const data = await response.json();
+  if (!data.ok) {
+    throw new Error(`Telegram API error: ${data.description}`);
+  }
+  return data.result;
+}
+
+async function getHighResImageUrl(fileId) {
+  const file = await telegramApiCall('getFile', { file_id: fileId });
+  return `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${file.file_path}`;
+}
+
 // Nationality to Region mapping
 const nationalityToRegion = {
   "Japanese": "Asian", "Korean": "Asian", "Chinese": "Asian", "Thai": "Asian",
@@ -983,6 +1008,64 @@ async function detectDeletedPosts(channel = 'nextwife_ai') {
   }
 }
 
+// ============== TELEGRAM BOT API UPDATES ==============
+let lastUpdateId = 0;
+
+async function pollBotUpdates() {
+  if (!TELEGRAM_BOT_TOKEN || !db) return;
+  
+  try {
+    const updates = await telegramApiCall('getUpdates', {
+      offset: lastUpdateId + 1,
+      allowed_updates: ['channel_post'],
+      timeout: 0,
+    });
+    
+    if (!updates || updates.length === 0) return;
+    
+    console.log(`📥 Received ${updates.length} Bot API updates`);
+    
+    for (const update of updates) {
+      lastUpdateId = Math.max(lastUpdateId, update.update_id);
+      
+      const post = update.channel_post;
+      if (!post) continue;
+      
+      const chatId = post.chat?.id;
+      const messageId = post.message_id;
+      
+      if (!messageId) continue;
+      
+      const fileIds = [];
+      
+      if (post.photo && post.photo.length > 0) {
+        const bestPhoto = post.photo[post.photo.length - 1];
+        fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
+      }
+      
+      if (post.video) {
+        fileIds.push({ type: 'video', file_id: post.video.file_id });
+      }
+      
+      if (fileIds.length > 0) {
+        try {
+          await pool.query(
+            `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
+            [JSON.stringify(fileIds), String(messageId)]
+          );
+          console.log(`  ✅ Stored file IDs for post ${messageId}`);
+        } catch (err) {
+          console.log(`  ⚠️ Could not update post ${messageId}: ${err.message}`);
+        }
+      }
+    }
+  } catch (error) {
+    if (!error.message?.includes('not configured')) {
+      console.error('Bot API poll error:', error.message);
+    }
+  }
+}
+
 // ============== BACKGROUND SCHEDULER ==============
 // Runs deleted post detection automatically, independent of page visits
 const SCHEDULER_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
@@ -997,6 +1080,9 @@ async function runScheduledSync() {
   try {
     // Reset throttle to allow sync regardless of last run
     syncState.lastRun = 0;
+    
+    // Poll Bot API for new updates with file IDs
+    await pollBotUpdates();
     
     const result = await detectDeletedPosts('nextwifeai');
     console.log(`⏰ Scheduled sync complete:`, result);
@@ -1116,7 +1202,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
     
     // First check if post exists (with or without enriched data)
     let result = await pool.query(`
-      SELECT id, text, date, link, media, media_urls, avatar, bot_link as "botLink", 
+      SELECT id, text, date, link, media, media_urls, photo_file_ids, avatar, bot_link as "botLink", 
              name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
       FROM telegram_posts 
       WHERE channel = $1 AND id = $2 AND deleted_at IS NULL AND media IS NOT NULL
@@ -1336,7 +1422,7 @@ app.get('/api/tg-channel-feed', async (req, res) => {
     // Always use database when available (for isHot calculation and better performance)
     if (db) {
       let query = `
-        SELECT id, text, date, link, media, media_urls, avatar, bot_link as "botLink", 
+        SELECT id, text, date, link, media, media_urls, photo_file_ids, avatar, bot_link as "botLink", 
                name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, click_count, personality, relationship, about
         FROM telegram_posts 
         WHERE channel = $1 AND media IS NOT NULL AND name IS NOT NULL AND deleted_at IS NULL
@@ -1724,6 +1810,41 @@ Sitemap: https://nextwife.ai/sitemap.xml
   res.set('Content-Type', 'text/plain');
   res.set('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
   res.send(robotsTxt);
+});
+
+// High-resolution image proxy endpoint (uses Bot API)
+app.get('/api/tg-highres-image', async (req, res) => {
+  try {
+    const fileId = req.query.file_id;
+    if (!fileId) {
+      return res.status(400).json({ error: 'Missing file_id parameter' });
+    }
+    
+    if (!TELEGRAM_BOT_TOKEN) {
+      return res.status(503).json({ error: 'High-res images not available' });
+    }
+    
+    const imageUrl = await getHighResImageUrl(fileId);
+    const imageResponse = await fetch(imageUrl);
+    
+    if (!imageResponse.ok) {
+      return res.status(502).json({ error: 'Failed to fetch high-res image' });
+    }
+    
+    const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
+    const buffer = await imageResponse.buffer();
+    
+    res.set({
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=86400', // 24 hour cache (URLs expire after ~1 hour but we refetch)
+      'Access-Control-Allow-Origin': '*',
+    });
+    res.send(buffer);
+    
+  } catch (error) {
+    console.error('Error fetching high-res image:', error);
+    res.status(500).json({ error: 'Failed to fetch high-res image', message: error.message });
+  }
 });
 
 // Image proxy endpoint
