@@ -55,8 +55,16 @@ async function getHighResImageUrl(fileId) {
 function buildMediaArray(mediaUrls, photoFileIds) {
   if (!mediaUrls || !Array.isArray(mediaUrls)) return [];
   
+  // Parse photoFileIds if it's a string (from JSON)
+  let fileIdsArray = photoFileIds;
+  if (typeof photoFileIds === 'string') {
+    try { fileIdsArray = JSON.parse(photoFileIds); } catch (e) { fileIdsArray = null; }
+  }
+  
   return mediaUrls.map((item, index) => {
-    const fileId = photoFileIds && photoFileIds[index];
+    // Extract file_id - can be string or object {type, file_id}
+    const fileIdEntry = fileIdsArray && fileIdsArray[index];
+    const fileId = typeof fileIdEntry === 'object' ? fileIdEntry?.file_id : fileIdEntry;
     const isVideo = item.type === 'video' || item.url?.includes('.mp4');
     
     if (isVideo) {
@@ -1067,40 +1075,87 @@ async function pollBotUpdates() {
     
     console.log(`📥 Received ${updates.length} Bot API updates`);
     
+    // Group updates by media_group_id (for albums) or by message_id (for singles)
+    const mediaGroups = new Map(); // media_group_id -> { leadId, items: [{messageId, type, fileId}] }
+    const singlePosts = []; // posts without media_group_id
+    
     for (const update of updates) {
       lastUpdateId = Math.max(lastUpdateId, update.update_id);
       
       const post = update.channel_post;
-      if (!post) continue;
+      if (!post || !post.message_id) continue;
       
-      const chatId = post.chat?.id;
       const messageId = post.message_id;
+      const mediaGroupId = post.media_group_id;
       
-      if (!messageId) continue;
-      
-      const fileIds = [];
-      
+      let fileInfo = null;
       if (post.photo && post.photo.length > 0) {
         const bestPhoto = post.photo[post.photo.length - 1];
-        fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
+        fileInfo = { type: 'photo', file_id: bestPhoto.file_id };
+      } else if (post.video) {
+        fileInfo = { type: 'video', file_id: post.video.file_id };
       }
       
-      if (post.video) {
-        fileIds.push({ type: 'video', file_id: post.video.file_id });
-      }
+      if (!fileInfo) continue;
       
-      if (fileIds.length > 0) {
-        try {
-          await pool.query(
-            `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
-            [JSON.stringify(fileIds), String(messageId)]
-          );
-          console.log(`  ✅ Stored file IDs for post ${messageId}`);
-        } catch (err) {
-          console.log(`  ⚠️ Could not update post ${messageId}: ${err.message}`);
+      if (mediaGroupId) {
+        // Part of a media album
+        if (!mediaGroups.has(mediaGroupId)) {
+          mediaGroups.set(mediaGroupId, { leadId: messageId, items: [] });
         }
+        const group = mediaGroups.get(mediaGroupId);
+        group.leadId = Math.min(group.leadId, messageId); // Lead is the lowest ID
+        group.items.push({ messageId, ...fileInfo });
+      } else {
+        // Single media post
+        singlePosts.push({ messageId, fileIds: [fileInfo] });
       }
     }
+    
+    // Process media groups - sort items by messageId to match media_urls order
+    for (const [groupId, group] of mediaGroups) {
+      group.items.sort((a, b) => a.messageId - b.messageId);
+      const fileIds = group.items.map(item => ({ type: item.type, file_id: item.file_id }));
+      
+      try {
+        const result = await pool.query(
+          `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2 RETURNING id`,
+          [JSON.stringify(fileIds), String(group.leadId)]
+        );
+        if (result.rowCount > 0) {
+          console.log(`  ✅ Stored ${fileIds.length} file IDs for album post ${group.leadId}`);
+        } else {
+          // Try other message IDs in the group (in case the lead ID differs from what we have)
+          for (const item of group.items) {
+            const altResult = await pool.query(
+              `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2 RETURNING id`,
+              [JSON.stringify(fileIds), String(item.messageId)]
+            );
+            if (altResult.rowCount > 0) {
+              console.log(`  ✅ Stored ${fileIds.length} file IDs for album post ${item.messageId} (alt)`);
+              break;
+            }
+          }
+        }
+      } catch (err) {
+        console.log(`  ⚠️ Could not update album post ${group.leadId}: ${err.message}`);
+      }
+    }
+    
+    // Process single posts
+    for (const { messageId, fileIds } of singlePosts) {
+      try {
+        await pool.query(
+          `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
+          [JSON.stringify(fileIds), String(messageId)]
+        );
+        console.log(`  ✅ Stored file IDs for single post ${messageId}`);
+      } catch (err) {
+        console.log(`  ⚠️ Could not update post ${messageId}: ${err.message}`);
+      }
+    }
+    
+    console.log(`📥 Processed ${mediaGroups.size} albums, ${singlePosts.length} singles`);
   } catch (error) {
     if (!error.message?.includes('not configured')) {
       console.error('Bot API poll error:', error.message);
@@ -1689,6 +1744,10 @@ app.post('/api/tg-sync', async (req, res) => {
   try {
     const channel = req.query.channel || 'nextwife_ai';
     const pages = parseInt(req.query.pages || '10');
+    
+    // Poll Bot API for new updates with file IDs first
+    await pollBotUpdates();
+    
     const synced = await backgroundSync(channel, pages);
     res.json({ success: true, synced });
   } catch (error) {
