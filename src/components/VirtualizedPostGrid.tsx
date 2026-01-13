@@ -121,6 +121,15 @@ export const VirtualizedPostGrid = ({
     const calculateDimensions = () => {
       if (listRef.current) {
         const containerWidth = listRef.current.offsetWidth;
+        
+        // Bail out if container has no width yet (e.g., during navigation)
+        // This prevents negative row heights that collapse the grid
+        if (containerWidth <= 0) {
+          // Schedule a re-measure on next frame
+          requestAnimationFrame(calculateDimensions);
+          return;
+        }
+        
         const newColumns = getColumns(containerWidth);
         const cardWidth = (containerWidth - (GAP * (newColumns - 1))) / newColumns;
         const calculatedHeight = cardWidth * (4 / 3);
