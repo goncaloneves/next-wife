@@ -28,12 +28,20 @@ interface MediaItem {
   url: string;
 }
 
+interface UnifiedMediaItem {
+  type: 'photo' | 'video';
+  url: string;
+  previewUrl?: string | null;
+  quality: 'high' | 'preview' | 'direct';
+}
+
 interface TelegramPost {
   id: string;
   text: string;
   date: string;
   link: string;
   media?: string | null;
+  mediaItems?: UnifiedMediaItem[] | null;
   mediaUrls?: MediaItem[] | null;
   avatar?: string | null;
   botLink?: string | null;

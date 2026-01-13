@@ -23,12 +23,20 @@ interface MediaItem {
   url: string;
 }
 
+interface UnifiedMediaItem {
+  type: 'photo' | 'video';
+  url: string;
+  previewUrl?: string | null;
+  quality: 'high' | 'preview' | 'direct';
+}
+
 interface TelegramPost {
   id: string;
   text: string;
   date: string;
   link: string;
   media?: string | null;
+  mediaItems?: UnifiedMediaItem[] | null;
   mediaUrls?: MediaItem[] | null;
   avatar?: string | null;
   botLink?: string | null;
@@ -213,9 +221,10 @@ export const VirtualizedPostGrid = ({
       
       for (let i = startIdx; i < endIdx; i++) {
         const post = visiblePosts[i];
-        if (post?.mediaUrls?.[0]?.url && post.mediaUrls[0].type === 'photo') {
+        const firstMedia = post?.mediaItems?.[0];
+        if (firstMedia?.type === 'photo' && firstMedia.url) {
           const img = new Image();
-          img.src = buildSrc(post.mediaUrls[0].url, post.id);
+          img.src = firstMedia.url;
         }
       }
     }
@@ -269,8 +278,9 @@ export const VirtualizedPostGrid = ({
   }, [allPosts, channelInfo, nextCursor, hasMore, filters, refreshKey, navigate, setLastViewedId, imageLoadStates, rowHeight, columns, onProfileOverlay]);
 
   const renderPostCard = useCallback((post: TelegramPost, index: number) => {
-    const firstMedia = post.mediaUrls?.[0];
-    const isVideo = firstMedia?.type === 'video';
+    const firstMediaItem = post.mediaItems?.[0];
+    const firstMediaLegacy = post.mediaUrls?.[0];
+    const isVideo = firstMediaItem?.type === 'video' || firstMediaLegacy?.type === 'video';
 
     return (
       <div
@@ -293,7 +303,6 @@ export const VirtualizedPostGrid = ({
         {isVideo ? (
           <VideoCard
             post={post}
-            firstMedia={firstMedia}
             imageLoadStates={imageLoadStates}
             setImageLoadStates={setImageLoadStates}
             imageErrors={imageErrors}
@@ -405,7 +414,6 @@ export const VirtualizedPostGrid = ({
 
 interface VideoCardProps {
   post: TelegramPost;
-  firstMedia: MediaItem;
   imageLoadStates: Record<string, boolean>;
   setImageLoadStates: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   imageErrors: Record<string, number>;
@@ -421,7 +429,6 @@ interface VideoCardProps {
 
 const VideoCard = ({
   post,
-  firstMedia,
   imageLoadStates,
   setImageLoadStates,
   imageErrors,
@@ -435,6 +442,27 @@ const VideoCard = ({
   buildSrc,
 }: VideoCardProps) => {
   const circumference = 75.4;
+  
+  const getVideoSrc = () => {
+    const firstMedia = post.mediaItems?.[0];
+    const firstMediaLegacy = post.mediaUrls?.[0];
+    const tries = imageErrors[post.id] || 0;
+    
+    if (firstMedia) {
+      if (tries === 0) {
+        return firstMedia.url;
+      } else if (firstMedia.previewUrl) {
+        return firstMedia.previewUrl;
+      }
+      return firstMedia.url;
+    }
+    
+    if (firstMediaLegacy) {
+      return buildSrc(firstMediaLegacy.url, post.id);
+    }
+    
+    return '';
+  };
 
   return (
     <div 
@@ -498,7 +526,7 @@ const VideoCard = ({
             };
           }
         }}
-        src={buildSrc(firstMedia.url, post.id)}
+        src={getVideoSrc()}
         muted
         loop
         playsInline
@@ -561,7 +589,7 @@ const ImageCard = ({
   setHiddenIds,
   buildSrc,
 }: ImageCardProps) => {
-  if (!post.media) return null;
+  if (!post.media && !post.mediaItems?.length) return null;
 
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
@@ -588,10 +616,28 @@ const ImageCard = ({
     }, delay);
   };
 
+  const getImageSrc = () => {
+    const firstMedia = post.mediaItems?.[0];
+    const tries = imageErrors[post.id] || 0;
+    
+    if (firstMedia) {
+      if (tries === 0) {
+        return firstMedia.url;
+      } else if (tries === 1 && firstMedia.previewUrl) {
+        return firstMedia.previewUrl;
+      } else if (firstMedia.previewUrl) {
+        return firstMedia.previewUrl;
+      }
+      return firstMedia.url;
+    }
+    
+    return buildSrc(post.media!, post.id);
+  };
+
   return (
     <img
       key={`img-${post.id}-${imageErrors[post.id] || 0}`}
-      src={buildSrc(post.media, post.id)}
+      src={getImageSrc()}
       alt=""
       loading="eager"
       decoding="async"
