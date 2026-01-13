@@ -16,7 +16,6 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Responsive Design:** Features a horizontal scroll carousel for mobile/tablet (90vw width, snap-scroll) and a grid view for desktop (4 columns with hover interactions).
 - **Filter UI:** Redesigned filters from dropdowns to horizontal scrollable chips with gradient styling and multi-select capabilities. An active filter count badge is displayed.
 - **Dark Theme:** Supports a dark theme for consistent user experience.
-- **Brand Messaging:** Primary CTA is "Discover Women" for the feed section and hero button. Filter modal uses "Discover your perfect woman" subtitle.
 
 **Technical Implementations & Feature Specifications:**
 - **Real-time Feed & Filtering:** Displays Telegram channel posts with filtering capabilities by Region, Age bracket, Occupation Category, Personality, Relationship, and Media type (Has Video, Multiple Photos). Filters are multi-selectable.

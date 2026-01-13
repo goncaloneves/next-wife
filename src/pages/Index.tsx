@@ -238,7 +238,7 @@ const Index = () => {
                 }}
                 data-testid="button-pick-your-woman"
               >
-                Discover Women 🌻
+                Find Your Woman 🌻
               </Button>
               <button
                 className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
@@ -307,7 +307,7 @@ const Index = () => {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex-1" />
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white whitespace-nowrap">
-                  Discover Women 🌻
+                  Find Your Woman 🌻
                 </h2>
                 <div className="flex-1 flex justify-end">
                   <DiscoverFilterButton 
