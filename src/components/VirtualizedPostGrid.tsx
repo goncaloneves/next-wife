@@ -67,6 +67,7 @@ interface VirtualizedPostGridProps {
   onLoadMore: () => void;
   isLoadingMore: boolean;
   buildSrc: (url: string, postId: string) => string;
+  onProfileOverlay?: (postId: string) => void;
 }
 
 const GAP = 2;
@@ -104,6 +105,7 @@ export const VirtualizedPostGrid = ({
   onLoadMore,
   isLoadingMore,
   buildSrc,
+  onProfileOverlay,
 }: VirtualizedPostGridProps) => {
   const navigate = useNavigate();
   const listRef = useRef<HTMLDivElement>(null);
@@ -237,6 +239,14 @@ export const VirtualizedPostGrid = ({
   const handleCardClick = useCallback((post: TelegramPost) => {
     setLastViewedId(post.id);
     sessionStorage.setItem('nextwife_last_viewed', post.id);
+    
+    // If overlay callback is provided (desktop), use overlay instead of navigation
+    if (onProfileOverlay) {
+      onProfileOverlay(post.id);
+      return;
+    }
+    
+    // Otherwise, navigate (mobile fallback or direct access)
     sessionStorage.setItem('feedScrollContext', JSON.stringify({
       postId: post.id,
       scrollY: window.scrollY
@@ -256,7 +266,7 @@ export const VirtualizedPostGrid = ({
       sessionStorage.setItem('feedGridDimensions', JSON.stringify({ rowHeight, columns }));
     }
     navigate('/discover');
-  }, [allPosts, channelInfo, nextCursor, hasMore, filters, refreshKey, navigate, setLastViewedId, imageLoadStates, rowHeight, columns]);
+  }, [allPosts, channelInfo, nextCursor, hasMore, filters, refreshKey, navigate, setLastViewedId, imageLoadStates, rowHeight, columns, onProfileOverlay]);
 
   const renderPostCard = useCallback((post: TelegramPost, index: number) => {
     const firstMedia = post.mediaUrls?.[0];

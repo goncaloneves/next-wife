@@ -92,8 +92,16 @@ const cardVariants = {
   }),
 };
 
-const Profile = () => {
-  const { id } = useParams<{ id: string }>();
+interface ProfileProps {
+  profileId?: string;
+  onClose?: () => void;
+  isOverlay?: boolean;
+  onProfileChange?: (newId: string) => void;
+}
+
+const Profile = ({ profileId: propProfileId, onClose, isOverlay = false, onProfileChange }: ProfileProps = {}) => {
+  const { id: paramId } = useParams<{ id: string }>();
+  const id = propProfileId || paramId;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
@@ -272,8 +280,12 @@ const Profile = () => {
       if (firstPost && firstPost.id !== id) {
         setSkipHistory([]);
         sessionStorage.removeItem(SKIP_HISTORY_KEY);
-        const viewParam = isAppView ? "?view=app" : "";
-        navigate(`/profile/${firstPost.id}${viewParam}`, { replace: true });
+        if (onProfileChange) {
+          onProfileChange(firstPost.id);
+        } else {
+          const viewParam = isAppView ? "?view=app" : "";
+          navigate(`/profile/${firstPost.id}${viewParam}`, { replace: true });
+        }
       }
     } catch (error) {
       console.error("Failed to fetch filtered profile:", error);
@@ -328,8 +340,13 @@ const Profile = () => {
     // Starting fresh when user returns from feed
     sessionStorage.removeItem(SKIP_HISTORY_KEY);
     sessionStorage.removeItem(NAV_FLAG_KEY);
-    navigate("/", { state: { restoreScroll: true } });
-  }, [navigate, id]);
+    
+    if (onClose) {
+      onClose();
+    } else {
+      navigate("/", { state: { restoreScroll: true } });
+    }
+  }, [navigate, id, onClose]);
 
   const openTelegram = useCallback(() => {
     setShowTelegramConfirm(true);
@@ -376,9 +393,13 @@ const Profile = () => {
     sessionStorage.setItem(NAV_FLAG_KEY, 'true');
     setDirection(1);
     setIsAnimating(true);
-    const viewParam = isAppView ? "?view=app" : "";
-    navigate(`/profile/${lastSkipped.profileId}${viewParam}`, { replace: true });
-  }, [skipHistory, navigate, isAnimating, isAppView]);
+    if (onProfileChange) {
+      onProfileChange(lastSkipped.profileId);
+    } else {
+      const viewParam = isAppView ? "?view=app" : "";
+      navigate(`/profile/${lastSkipped.profileId}${viewParam}`, { replace: true });
+    }
+  }, [skipHistory, navigate, isAnimating, isAppView, onProfileChange]);
 
   const skipProfile = useCallback(() => {
     if (!id || !nextId || isAnimating) return;
@@ -389,9 +410,13 @@ const Profile = () => {
     sessionStorage.setItem(NAV_FLAG_KEY, 'true');
     setDirection(-1);
     setIsAnimating(true);
-    const viewParam = isAppView ? "?view=app" : "";
-    navigate(`/profile/${nextId}${viewParam}`, { replace: true });
-  }, [id, nextId, skipHistory, navigate, isAnimating, isAppView]);
+    if (onProfileChange) {
+      onProfileChange(nextId);
+    } else {
+      const viewParam = isAppView ? "?view=app" : "";
+      navigate(`/profile/${nextId}${viewParam}`, { replace: true });
+    }
+  }, [id, nextId, skipHistory, navigate, isAnimating, isAppView, onProfileChange]);
 
   const flashAction = useCallback((action: 'undo' | 'skip') => {
     if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);

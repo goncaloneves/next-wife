@@ -55,6 +55,7 @@ interface TelegramChannelFeedProps {
   layout?: "list" | "grid";
   feedSectionRef?: React.RefObject<HTMLElement | HTMLDivElement>;
   filters?: SharedFilters;
+  onProfileOverlay?: (postId: string) => void;
 }
 
 export const TelegramChannelFeed = ({
@@ -64,6 +65,7 @@ export const TelegramChannelFeed = ({
   layout = "list",
   feedSectionRef,
   filters: externalFilters,
+  onProfileOverlay,
 }: TelegramChannelFeedProps) => {
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
@@ -861,6 +863,7 @@ export const TelegramChannelFeed = ({
                 onLoadMore={fetchNextPage}
                 isLoadingMore={isLoadingMore}
                 buildSrc={buildSrc}
+                onProfileOverlay={onProfileOverlay}
               />
             </div>
           </>

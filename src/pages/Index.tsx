@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
 import { useFilters } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import Profile from "@/pages/Profile";
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,12 +16,53 @@ const Index = () => {
   const { filters, setFilters, activeFilterCount } = useFilters();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [overlayProfileId, setOverlayProfileId] = useState<string | null>(null);
   
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const isMobile = useIsMobile();
+  
+  // Handle opening profile overlay (desktop only)
+  // Use history state for back button support, but keep same URL to avoid React Router desync
+  const handleProfileOverlay = useCallback((postId: string) => {
+    setOverlayProfileId(postId);
+    // Push history entry with overlay state (URL stays the same)
+    window.history.pushState({ profileOverlay: postId }, '');
+  }, []);
+  
+  // Handle closing profile overlay via close button
+  const handleCloseOverlay = useCallback(() => {
+    setOverlayProfileId(null);
+    // Replace current state to clear overlay, then go back to remove the entry
+    window.history.replaceState({}, '');
+    window.history.back();
+  }, []);
+  
+  // Handle profile change within overlay (skip/undo)
+  const handleProfileChange = useCallback((newId: string) => {
+    setOverlayProfileId(newId);
+    // Replace current history state with new profile (no new history entry)
+    window.history.replaceState({ profileOverlay: newId }, '');
+  }, []);
+  
+  // Listen for browser back button to close overlay
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // If overlay is open and we navigated away from an overlay state
+      if (overlayProfileId && !event.state?.profileOverlay) {
+        setOverlayProfileId(null);
+      }
+      // If we navigated to an overlay state (forward button)
+      else if (!overlayProfileId && event.state?.profileOverlay) {
+        setOverlayProfileId(event.state.profileOverlay);
+      }
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [overlayProfileId]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -321,6 +363,7 @@ const Index = () => {
                 layout="grid" 
                 feedSectionRef={feedContentRef}
                 filters={filters}
+                onProfileOverlay={handleProfileOverlay}
               />
             </div>
           </div>
@@ -370,6 +413,18 @@ const Index = () => {
         </div>
         </footer>
       </div>
+      
+      {/* Profile Overlay (desktop only) */}
+      {overlayProfileId && (
+        <div className="fixed inset-0 z-50 bg-black">
+          <Profile 
+            profileId={overlayProfileId} 
+            onClose={handleCloseOverlay}
+            isOverlay={true}
+            onProfileChange={handleProfileChange}
+          />
+        </div>
+      )}
     </div>
   );
 };
