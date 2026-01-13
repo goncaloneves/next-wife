@@ -559,7 +559,11 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
               </div>
             )}
             {(() => {
-              const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+              const mediaList = post.mediaItems && post.mediaItems.length > 0 
+                ? post.mediaItems 
+                : post.mediaUrls && post.mediaUrls.length > 0 
+                  ? post.mediaUrls.map(m => ({ type: m.type, url: `/api/tg-image-proxy?u=${encodeURIComponent(m.url)}`, previewUrl: null, quality: 'preview' as const }))
+                  : [{ type: 'photo' as const, url: `/api/tg-image-proxy?u=${encodeURIComponent(post.media)}`, previewUrl: null, quality: 'preview' as const }];
               const currentMedia = mediaList[mediaIndex] || mediaList[0];
               const hasMultipleMedia = mediaList.length > 1;
               
@@ -571,7 +575,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                       <video
                         key={`video-${idx}`}
                         ref={idx === mediaIndex ? videoRef : undefined}
-                        src={`/api/tg-image-proxy?u=${encodeURIComponent(media.url)}`}
+                        src={media.url}
                         className={`absolute inset-0 w-full h-full object-cover ${
                           idx === mediaIndex ? (imageLoaded ? 'opacity-100' : 'opacity-0') : 'hidden'
                         }`}
@@ -592,7 +596,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                     ) : (
                       <img
                         key={`img-${idx}`}
-                        src={`/api/tg-image-proxy?u=${encodeURIComponent(media.url)}`}
+                        src={media.url}
                         alt={profileData.name}
                         className={`absolute inset-0 w-full h-full object-cover ${
                           idx === mediaIndex ? (imageLoaded ? 'opacity-100' : 'opacity-0') : 'hidden'
@@ -601,8 +605,12 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                           loadedMediaRef.current.add(idx);
                           if (idx === mediaIndexRef.current) setImageLoaded(true);
                         }}
-                        onError={() => {
-                          if (idx === mediaIndexRef.current) setImageLoaded(true);
+                        onError={(e) => {
+                          if (media.previewUrl && (e.target as HTMLImageElement).src !== media.previewUrl) {
+                            (e.target as HTMLImageElement).src = media.previewUrl;
+                          } else {
+                            if (idx === mediaIndexRef.current) setImageLoaded(true);
+                          }
                         }}
                         draggable={false}
                       />
