@@ -107,9 +107,36 @@ export const VirtualizedPostGrid = ({
 }: VirtualizedPostGridProps) => {
   const navigate = useNavigate();
   const listRef = useRef<HTMLDivElement>(null);
-  const [rowHeight, setRowHeight] = useState<number | null>(null);
-  const [columns, setColumns] = useState<number | null>(null);
-  const [layoutReady, setLayoutReady] = useState(false);
+  
+  // Initialize with cached dimensions for instant restoration
+  const [rowHeight, setRowHeight] = useState<number | null>(() => {
+    try {
+      const cached = sessionStorage.getItem('feedGridDimensions');
+      if (cached) {
+        const { rowHeight: cachedHeight } = JSON.parse(cached);
+        return cachedHeight ?? null;
+      }
+    } catch {}
+    return null;
+  });
+  const [columns, setColumns] = useState<number | null>(() => {
+    try {
+      const cached = sessionStorage.getItem('feedGridDimensions');
+      if (cached) {
+        const { columns: cachedCols } = JSON.parse(cached);
+        return cachedCols ?? null;
+      }
+    } catch {}
+    return null;
+  });
+  const [layoutReady, setLayoutReady] = useState(() => {
+    // If we have cached dimensions, we can be ready immediately
+    try {
+      const cached = sessionStorage.getItem('feedGridDimensions');
+      return cached !== null;
+    } catch {}
+    return false;
+  });
 
   const effectiveColumns = columns ?? 4;
   const effectiveRowHeight = rowHeight ?? 320;
@@ -159,6 +186,13 @@ export const VirtualizedPostGrid = ({
     estimateSize: () => effectiveRowHeight,
     overscan: dynamicOverscan,
   });
+
+  // Re-measure virtualizer when row height changes to sync internal state
+  useEffect(() => {
+    if (rowHeight !== null && layoutReady) {
+      virtualizer.measure();
+    }
+  }, [rowHeight, layoutReady, virtualizer]);
 
   const virtualItems = virtualizer.getVirtualItems();
 
@@ -217,8 +251,12 @@ export const VirtualizedPostGrid = ({
     }));
     const loadedIds = Object.keys(imageLoadStates).filter(id => imageLoadStates[id]);
     sessionStorage.setItem('feedLoadedImages', JSON.stringify(loadedIds));
+    // Save grid dimensions for instant restoration
+    if (rowHeight !== null && columns !== null) {
+      sessionStorage.setItem('feedGridDimensions', JSON.stringify({ rowHeight, columns }));
+    }
     navigate('/discover');
-  }, [allPosts, channelInfo, nextCursor, hasMore, filters, refreshKey, navigate, setLastViewedId, imageLoadStates]);
+  }, [allPosts, channelInfo, nextCursor, hasMore, filters, refreshKey, navigate, setLastViewedId, imageLoadStates, rowHeight, columns]);
 
   const renderPostCard = useCallback((post: TelegramPost, index: number) => {
     const firstMedia = post.mediaUrls?.[0];

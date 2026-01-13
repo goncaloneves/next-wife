@@ -450,6 +450,8 @@ export const TelegramChannelFeed = ({
               requestAnimationFrame(() => {
                 window.scrollTo(0, scrollY);
                 sessionStorage.removeItem('feedScrollContext');
+                // Clean up grid dimensions after successful restoration
+                sessionStorage.removeItem('feedGridDimensions');
               });
             });
           });
