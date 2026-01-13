@@ -548,24 +548,26 @@ const VideoCard = ({
           }, delay);
         }}
       />
-      <div className="absolute top-[11px] right-3 pointer-events-none opacity-90 group-hover:opacity-100 transition-opacity duration-300">
-        <svg className="w-7 h-7" viewBox="0 0 36 36">
-          <circle
-            ref={el => { progressCircleRefs.current[post.id] = el; }}
-            cx="18"
-            cy="18"
-            r="12"
-            fill="none"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray="0 75.4"
-            transform="rotate(-90 18 18)"
-            style={{ willChange: 'stroke-dasharray', opacity: 0 }}
-          />
-          <path d="M14 10v16l12-8z" fill="white" stroke="rgba(0,0,0,0.4)" strokeWidth="1" strokeLinejoin="round" />
-        </svg>
-      </div>
+      {imageLoadStates[post.id] && (
+        <div className="absolute top-[11px] right-3 pointer-events-none opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+          <svg className="w-7 h-7" viewBox="0 0 36 36">
+            <circle
+              ref={el => { progressCircleRefs.current[post.id] = el; }}
+              cx="18"
+              cy="18"
+              r="12"
+              fill="none"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray="0 75.4"
+              transform="rotate(-90 18 18)"
+              style={{ willChange: 'stroke-dasharray', opacity: 0 }}
+            />
+            <path d="M14 10v16l12-8z" fill="white" stroke="rgba(0,0,0,0.4)" strokeWidth="1" strokeLinejoin="round" />
+          </svg>
+        </div>
+      )}
     </div>
   );
 };
