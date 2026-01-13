@@ -79,7 +79,7 @@ interface VirtualizedPostGridProps {
 }
 
 const GAP = 2;
-const MIN_OVERSCAN = 5;
+const MIN_OVERSCAN = 8;
 const LOAD_MORE_THRESHOLD = 12;
 const PRELOAD_BUFFER = 10;
 
