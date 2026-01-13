@@ -1915,10 +1915,55 @@ Sitemap: https://nextwife.ai/sitemap.xml
   res.send(robotsTxt);
 });
 
-// High-resolution image proxy endpoint (uses Bot API)
+// High-resolution image URL cache (45 minutes TTL)
+const highResUrlCache = new Map(); // file_id -> { url, expiresAt }
+const HIGHRES_CACHE_TTL_MS = 45 * 60 * 1000; // 45 minutes
+const HIGHRES_CACHE_MAX_SIZE = 5000; // Max entries before cleanup
+let lastCacheCleanup = Date.now();
+
+function cleanupExpiredCacheEntries() {
+  const now = Date.now();
+  // Only cleanup every 5 minutes to avoid overhead
+  if (now - lastCacheCleanup < 5 * 60 * 1000) return;
+  lastCacheCleanup = now;
+  
+  let removed = 0;
+  for (const [key, value] of highResUrlCache) {
+    if (value.expiresAt < now) {
+      highResUrlCache.delete(key);
+      removed++;
+    }
+  }
+  if (removed > 0) {
+    console.log(`Cleaned up ${removed} expired high-res URL cache entries`);
+  }
+}
+
+async function getCachedHighResUrl(fileId, forceRefresh = false) {
+  // Periodic cleanup to prevent memory leaks
+  if (highResUrlCache.size > HIGHRES_CACHE_MAX_SIZE) {
+    cleanupExpiredCacheEntries();
+  }
+  
+  const cached = highResUrlCache.get(fileId);
+  const now = Date.now();
+  
+  if (!forceRefresh && cached && cached.expiresAt > now) {
+    return cached.url;
+  }
+  
+  // Fetch fresh URL from Bot API
+  const url = await getHighResImageUrl(fileId);
+  highResUrlCache.set(fileId, { url, expiresAt: now + HIGHRES_CACHE_TTL_MS });
+  return url;
+}
+
+// High-resolution image proxy endpoint (uses Bot API with 45-min cache)
 app.get('/api/tg-highres-image', async (req, res) => {
   try {
     const fileId = req.query.file_id;
+    const forceRefresh = req.query.refresh === 'true';
+    
     if (!fileId) {
       return res.status(400).json({ error: 'Missing file_id parameter' });
     }
@@ -1927,10 +1972,25 @@ app.get('/api/tg-highres-image', async (req, res) => {
       return res.status(503).json({ error: 'High-res images not available' });
     }
     
-    const imageUrl = await getHighResImageUrl(fileId);
+    const imageUrl = await getCachedHighResUrl(fileId, forceRefresh);
     const imageResponse = await fetch(imageUrl);
     
     if (!imageResponse.ok) {
+      // URL might have expired, try refreshing cache
+      if (!forceRefresh) {
+        const freshUrl = await getCachedHighResUrl(fileId, true);
+        const retryResponse = await fetch(freshUrl);
+        if (retryResponse.ok) {
+          const contentType = retryResponse.headers.get('content-type') || 'image/jpeg';
+          const buffer = await retryResponse.buffer();
+          res.set({
+            'Content-Type': contentType,
+            'Cache-Control': 'public, max-age=2700', // 45 min browser cache
+            'Access-Control-Allow-Origin': '*',
+          });
+          return res.send(buffer);
+        }
+      }
       return res.status(502).json({ error: 'Failed to fetch high-res image' });
     }
     
@@ -1939,7 +1999,7 @@ app.get('/api/tg-highres-image', async (req, res) => {
     
     res.set({
       'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=86400', // 24 hour cache (URLs expire after ~1 hour but we refetch)
+      'Cache-Control': 'public, max-age=2700', // 45 min browser cache
       'Access-Control-Allow-Origin': '*',
     });
     res.send(buffer);
