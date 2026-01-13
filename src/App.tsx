@@ -1,10 +1,10 @@
-import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { FilterProvider } from "@/contexts/FilterContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Discover from "./pages/Discover";
@@ -14,6 +14,36 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function AppRoutes() {
+  const location = useLocation();
+  const isMobile = useIsMobile();
+  
+  const state = location.state as { backgroundLocation?: Location; isOverlay?: boolean } | null;
+  const backgroundLocation = state?.backgroundLocation;
+  const isOverlay = state?.isOverlay && !isMobile;
+
+  return (
+    <>
+      <Routes location={isOverlay && backgroundLocation ? backgroundLocation : location}>
+        <Route path="/" element={<Index />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/discover" element={<Discover />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+
+      {isOverlay && location.pathname.startsWith('/profile/') && (
+        <div className="fixed inset-0 z-50 bg-black">
+          <Routes location={location}>
+            <Route path="/profile/:id" element={<Profile isOverlay={true} />} />
+          </Routes>
+        </div>
+      )}
+    </>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <FilterProvider>
@@ -21,15 +51,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/profile/:id" element={<Profile />} />
-            <Route path="/discover" element={<Discover />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppRoutes />
         </BrowserRouter>
       </TooltipProvider>
     </FilterProvider>

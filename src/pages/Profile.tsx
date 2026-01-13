@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -93,19 +93,20 @@ const cardVariants = {
 };
 
 interface ProfileProps {
-  profileId?: string;
-  onClose?: () => void;
   isOverlay?: boolean;
-  onProfileChange?: (newId: string) => void;
 }
 
-const Profile = ({ profileId: propProfileId, onClose, isOverlay = false, onProfileChange }: ProfileProps = {}) => {
-  const { id: paramId } = useParams<{ id: string }>();
-  const id = propProfileId || paramId;
+const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
   const isAppView = searchParams.get("view") === "app";
+  
+  const state = location.state as { backgroundLocation?: Location; isOverlay?: boolean } | null;
+  const isOverlay = propIsOverlay || (state?.isOverlay && !isMobile);
+  const backgroundLocation = state?.backgroundLocation;
   const { isTelegramApp, safeArea } = useTelegram(isAppView);
   
   const useTelegramSafeAreas = isAppView && isTelegramApp;
@@ -280,17 +281,16 @@ const Profile = ({ profileId: propProfileId, onClose, isOverlay = false, onProfi
       if (firstPost && firstPost.id !== id) {
         setSkipHistory([]);
         sessionStorage.removeItem(SKIP_HISTORY_KEY);
-        if (onProfileChange) {
-          onProfileChange(firstPost.id);
-        } else {
-          const viewParam = isAppView ? "?view=app" : "";
-          navigate(`/profile/${firstPost.id}${viewParam}`, { replace: true });
-        }
+        const viewParam = isAppView ? "?view=app" : "";
+        navigate(`/profile/${firstPost.id}${viewParam}`, { 
+          replace: true,
+          state: isOverlay ? { backgroundLocation, isOverlay: true } : undefined
+        });
       }
     } catch (error) {
       console.error("Failed to fetch filtered profile:", error);
     }
-  }, [buildFilterQueryString, id, isAppView, navigate]);
+  }, [buildFilterQueryString, id, isAppView, navigate, isOverlay, backgroundLocation]);
 
   const prevIdRef = useRef<string | undefined>(undefined);
   
@@ -336,17 +336,15 @@ const Profile = ({ profileId: propProfileId, onClose, isOverlay = false, onProfi
     if (id) {
       sessionStorage.setItem('nextwife_last_viewed', id);
     }
-    // Clear skip history and nav flag when going back to feed
-    // Starting fresh when user returns from feed
     sessionStorage.removeItem(SKIP_HISTORY_KEY);
     sessionStorage.removeItem(NAV_FLAG_KEY);
     
-    if (onClose) {
-      onClose();
+    if (isOverlay) {
+      navigate(-1);
     } else {
       navigate("/", { state: { restoreScroll: true } });
     }
-  }, [navigate, id, onClose]);
+  }, [navigate, id, isOverlay]);
 
   const openTelegram = useCallback(() => {
     setShowTelegramConfirm(true);
@@ -393,13 +391,13 @@ const Profile = ({ profileId: propProfileId, onClose, isOverlay = false, onProfi
     sessionStorage.setItem(NAV_FLAG_KEY, 'true');
     setDirection(1);
     setIsAnimating(true);
-    if (onProfileChange) {
-      onProfileChange(lastSkipped.profileId);
-    } else {
-      const viewParam = isAppView ? "?view=app" : "";
-      navigate(`/profile/${lastSkipped.profileId}${viewParam}`, { replace: true });
-    }
-  }, [skipHistory, navigate, isAnimating, isAppView, onProfileChange]);
+    
+    const viewParam = isAppView ? "?view=app" : "";
+    navigate(`/profile/${lastSkipped.profileId}${viewParam}`, { 
+      replace: true,
+      state: isOverlay ? { backgroundLocation, isOverlay: true } : undefined
+    });
+  }, [skipHistory, navigate, isAnimating, isAppView, isOverlay, backgroundLocation]);
 
   const skipProfile = useCallback(() => {
     if (!id || !nextId || isAnimating) return;
@@ -410,13 +408,13 @@ const Profile = ({ profileId: propProfileId, onClose, isOverlay = false, onProfi
     sessionStorage.setItem(NAV_FLAG_KEY, 'true');
     setDirection(-1);
     setIsAnimating(true);
-    if (onProfileChange) {
-      onProfileChange(nextId);
-    } else {
-      const viewParam = isAppView ? "?view=app" : "";
-      navigate(`/profile/${nextId}${viewParam}`, { replace: true });
-    }
-  }, [id, nextId, skipHistory, navigate, isAnimating, isAppView, onProfileChange]);
+    
+    const viewParam = isAppView ? "?view=app" : "";
+    navigate(`/profile/${nextId}${viewParam}`, { 
+      replace: true,
+      state: isOverlay ? { backgroundLocation, isOverlay: true } : undefined
+    });
+  }, [id, nextId, skipHistory, navigate, isAnimating, isAppView, isOverlay, backgroundLocation]);
 
   const flashAction = useCallback((action: 'undo' | 'skip') => {
     if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
