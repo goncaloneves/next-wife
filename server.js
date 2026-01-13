@@ -1061,6 +1061,52 @@ async function detectDeletedPosts(channel = 'nextwife_ai') {
 // ============== TELEGRAM BOT API UPDATES ==============
 let lastUpdateId = 0;
 
+// Parse profile data from caption text (same logic as scraper)
+function parseProfileFromCaption(caption) {
+  if (!caption) return null;
+  
+  const nameMatch = caption.match(/Name:\s*([^\n]+)/i);
+  const ageMatch = caption.match(/Age:\s*(\d+)/i);
+  const nationalityMatch = caption.match(/Nationality:\s*([^\n]+)/i);
+  const hometownMatch = caption.match(/Hometown:\s*([^\n]+)/i);
+  const workMatch = caption.match(/Work:\s*([^\n]+)/i);
+  const personalityMatch = caption.match(/Personality:\s*([^\n]+)/i);
+  const relationshipMatch = caption.match(/Relationship:\s*([^\n]+)/i);
+  const aboutMatch = caption.match(/About:\s*([^\n]+(?:\n(?!Meet me|Name:|Age:|Nationality:|Hometown:|Work:|Personality:|Relationship:)[^\n]+)*)/i);
+  
+  if (nameMatch && ageMatch && nationalityMatch && hometownMatch && workMatch) {
+    const cleanName = nameMatch[1].trim().replace(/\s*\(\d+\)\s*$/, '');
+    return {
+      name: cleanName,
+      age: parseInt(ageMatch[1]),
+      nationality: nationalityMatch[1].trim(),
+      hometown: hometownMatch[1].trim(),
+      work: workMatch[1].trim(),
+      personality: personalityMatch ? personalityMatch[1].trim().toLowerCase() : null,
+      relationship: relationshipMatch ? relationshipMatch[1].trim().toLowerCase() : 'girlfriend',
+      about: aboutMatch ? aboutMatch[1].trim() : null
+    };
+  }
+  return null;
+}
+
+// Extract bot link from caption entities
+function extractBotLink(caption, entities) {
+  if (!entities) return null;
+  for (const entity of entities) {
+    if (entity.type === 'text_link' && entity.url?.toLowerCase().includes('nextwifebot')) {
+      return entity.url;
+    }
+    if (entity.type === 'mention') {
+      const mention = caption.substring(entity.offset, entity.offset + entity.length);
+      if (mention.toLowerCase().includes('nextwifebot')) {
+        return `https://t.me/${mention.replace('@', '')}`;
+      }
+    }
+  }
+  return null;
+}
+
 async function pollBotUpdates() {
   if (!TELEGRAM_BOT_TOKEN || !db) return;
   
@@ -1076,7 +1122,7 @@ async function pollBotUpdates() {
     console.log(`📥 Received ${updates.length} Bot API updates`);
     
     // Group updates by media_group_id (for albums) or by message_id (for singles)
-    const mediaGroups = new Map(); // media_group_id -> { leadId, items: [{messageId, type, fileId}] }
+    const mediaGroups = new Map(); // media_group_id -> { leadId, caption, entities, date, items: [...] }
     const singlePosts = []; // posts without media_group_id
     
     for (const update of updates) {
@@ -1087,6 +1133,9 @@ async function pollBotUpdates() {
       
       const messageId = post.message_id;
       const mediaGroupId = post.media_group_id;
+      const caption = post.caption || '';
+      const entities = post.caption_entities || [];
+      const date = post.date ? new Date(post.date * 1000).toISOString() : new Date().toISOString();
       
       let fileInfo = null;
       if (post.photo && post.photo.length > 0) {
@@ -1101,61 +1150,134 @@ async function pollBotUpdates() {
       if (mediaGroupId) {
         // Part of a media album
         if (!mediaGroups.has(mediaGroupId)) {
-          mediaGroups.set(mediaGroupId, { leadId: messageId, items: [] });
+          mediaGroups.set(mediaGroupId, { leadId: messageId, caption, entities, date, items: [] });
         }
         const group = mediaGroups.get(mediaGroupId);
-        group.leadId = Math.min(group.leadId, messageId); // Lead is the lowest ID
+        group.leadId = Math.min(group.leadId, messageId);
+        // Capture caption from the message that has it (usually first in album)
+        if (caption && !group.caption) {
+          group.caption = caption;
+          group.entities = entities;
+        }
         group.items.push({ messageId, ...fileInfo });
       } else {
         // Single media post
-        singlePosts.push({ messageId, fileIds: [fileInfo] });
+        singlePosts.push({ messageId, caption, entities, date, fileIds: [fileInfo] });
       }
     }
     
-    // Process media groups - sort items by messageId to match media_urls order
+    const channelName = 'nextwifeai';
+    let createdCount = 0;
+    let updatedCount = 0;
+    
+    // Process media groups - sort items by messageId to match order
     for (const [groupId, group] of mediaGroups) {
       group.items.sort((a, b) => a.messageId - b.messageId);
       const fileIds = group.items.map(item => ({ type: item.type, file_id: item.file_id }));
+      const postId = String(group.leadId);
       
-      try {
-        const result = await pool.query(
-          `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2 RETURNING id`,
-          [JSON.stringify(fileIds), String(group.leadId)]
+      // Check if post exists
+      const existing = await pool.query(`SELECT id FROM telegram_posts WHERE id = $1`, [postId]);
+      
+      if (existing.rowCount > 0) {
+        // Update existing post with file IDs
+        await pool.query(
+          `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
+          [JSON.stringify(fileIds), postId]
         );
-        if (result.rowCount > 0) {
-          console.log(`  ✅ Stored ${fileIds.length} file IDs for album post ${group.leadId}`);
-        } else {
-          // Try other message IDs in the group (in case the lead ID differs from what we have)
-          for (const item of group.items) {
-            const altResult = await pool.query(
-              `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2 RETURNING id`,
-              [JSON.stringify(fileIds), String(item.messageId)]
-            );
-            if (altResult.rowCount > 0) {
-              console.log(`  ✅ Stored ${fileIds.length} file IDs for album post ${item.messageId} (alt)`);
-              break;
-            }
-          }
-        }
-      } catch (err) {
-        console.log(`  ⚠️ Could not update album post ${group.leadId}: ${err.message}`);
+        updatedCount++;
+      } else {
+        // Create new post from Bot API data (always create, even without profile data)
+        const profileData = parseProfileFromCaption(group.caption);
+        const botLink = extractBotLink(group.caption, group.entities);
+        const hasVideo = fileIds.some(f => f.type === 'video');
+        const hasMultipleMedia = fileIds.length > 1;
+        const mediaUrls = fileIds.map(f => ({ type: f.type, url: '' }));
+        
+        // Only compute derived fields if profile data exists
+        const region = profileData ? getRegion(profileData.nationality) : null;
+        const ageBracket = profileData ? getAgeBracket(profileData.age) : null;
+        const occupationCategory = profileData ? getOccupationCategory(profileData.work) : null;
+        const language = profileData ? getNativeLanguage(profileData.nationality, profileData.hometown) : null;
+        
+        await pool.query(`
+          INSERT INTO telegram_posts (
+            id, channel, text, date, link, media, media_urls, bot_link,
+            name, age, nationality, hometown, work, region, age_bracket, 
+            occupation_category, language, has_video, has_multiple_media,
+            personality, relationship, about, photo_file_ids, created_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, NOW())
+        `, [
+          postId, channelName, group.caption, group.date,
+          `https://t.me/${channelName}/${postId}`,
+          '',
+          JSON.stringify(mediaUrls),
+          botLink,
+          profileData?.name || null, profileData?.age || null, profileData?.nationality || null,
+          profileData?.hometown || null, profileData?.work || null,
+          region, ageBracket, occupationCategory, language,
+          hasVideo, hasMultipleMedia,
+          profileData?.personality || null, profileData?.relationship || null, profileData?.about || null,
+          JSON.stringify(fileIds)
+        ]);
+        createdCount++;
+        console.log(`  ✅ Created album post ${postId} with ${fileIds.length} file IDs${profileData ? '' : ' (no profile)'}`);
       }
     }
     
     // Process single posts
-    for (const { messageId, fileIds } of singlePosts) {
-      try {
+    for (const { messageId, caption, entities, date, fileIds } of singlePosts) {
+      const postId = String(messageId);
+      
+      // Check if post exists
+      const existing = await pool.query(`SELECT id FROM telegram_posts WHERE id = $1`, [postId]);
+      
+      if (existing.rowCount > 0) {
+        // Update existing post with file IDs
         await pool.query(
           `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
-          [JSON.stringify(fileIds), String(messageId)]
+          [JSON.stringify(fileIds), postId]
         );
-        console.log(`  ✅ Stored file IDs for single post ${messageId}`);
-      } catch (err) {
-        console.log(`  ⚠️ Could not update post ${messageId}: ${err.message}`);
+        updatedCount++;
+      } else {
+        // Create new post from Bot API data (always create, even without profile data)
+        const profileData = parseProfileFromCaption(caption);
+        const botLink = extractBotLink(caption, entities);
+        const hasVideo = fileIds.some(f => f.type === 'video');
+        const hasMultipleMedia = fileIds.length > 1;
+        const mediaUrls = fileIds.map(f => ({ type: f.type, url: '' }));
+        
+        const region = profileData ? getRegion(profileData.nationality) : null;
+        const ageBracket = profileData ? getAgeBracket(profileData.age) : null;
+        const occupationCategory = profileData ? getOccupationCategory(profileData.work) : null;
+        const language = profileData ? getNativeLanguage(profileData.nationality, profileData.hometown) : null;
+        
+        await pool.query(`
+          INSERT INTO telegram_posts (
+            id, channel, text, date, link, media, media_urls, bot_link,
+            name, age, nationality, hometown, work, region, age_bracket, 
+            occupation_category, language, has_video, has_multiple_media,
+            personality, relationship, about, photo_file_ids, created_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, NOW())
+        `, [
+          postId, channelName, caption, date,
+          `https://t.me/${channelName}/${postId}`,
+          '',
+          JSON.stringify(mediaUrls),
+          botLink,
+          profileData?.name || null, profileData?.age || null, profileData?.nationality || null,
+          profileData?.hometown || null, profileData?.work || null,
+          region, ageBracket, occupationCategory, language,
+          hasVideo, hasMultipleMedia,
+          profileData?.personality || null, profileData?.relationship || null, profileData?.about || null,
+          JSON.stringify(fileIds)
+        ]);
+        createdCount++;
+        console.log(`  ✅ Created single post ${postId} with file IDs${profileData ? '' : ' (no profile)'}`);
       }
     }
     
-    console.log(`📥 Processed ${mediaGroups.size} albums, ${singlePosts.length} singles`);
+    console.log(`📥 Bot API: created ${createdCount}, updated ${updatedCount} posts`);
   } catch (error) {
     if (!error.message?.includes('not configured')) {
       console.error('Bot API poll error:', error.message);
