@@ -427,19 +427,9 @@ export const TelegramChannelFeed = ({
           setLoading(false);
           if (cache.refreshKey) setRefreshKey(cache.refreshKey);
           
-          // Restore loaded image states to prevent flicker
-          const loadedImagesData = sessionStorage.getItem('feedLoadedImages');
-          if (loadedImagesData) {
-            try {
-              const loadedIds: string[] = JSON.parse(loadedImagesData);
-              const restoredStates: Record<string, boolean> = {};
-              loadedIds.forEach(id => { restoredStates[id] = true; });
-              setImageLoadStates(restoredStates);
-              sessionStorage.removeItem('feedLoadedImages');
-            } catch {
-              // Ignore parse errors
-            }
-          }
+          // Don't restore imageLoadStates from cache - let images trigger their own onLoad
+          // This prevents showing black cards when browser cache is cleared
+          sessionStorage.removeItem('feedLoadedImages');
           
           setSkipAnimation(true);
           topFingerprintRef.current = fingerprint(cache.posts);
