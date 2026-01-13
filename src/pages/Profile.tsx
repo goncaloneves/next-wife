@@ -134,6 +134,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
   const [tapFeedback, setTapFeedback] = useState<'left' | 'right' | null>(null);
+  const [showPlayOverlay, setShowPlayOverlay] = useState(false);
   const { filters, setFilters, activeFilterCount } = useFilters();
   
   const actionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -167,6 +168,21 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     return () => {
       if (actionTimeoutRef.current) clearTimeout(actionTimeoutRef.current);
     };
+  }, []);
+
+  useEffect(() => {
+    setShowPlayOverlay(false);
+  }, [post?.id, mediaIndex]);
+
+  const handleVideoPlay = useCallback(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.play().then(() => {
+        setShowPlayOverlay(false);
+      }).catch(() => {
+        setShowPlayOverlay(true);
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -579,9 +595,16 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                         className={`absolute inset-0 w-full h-full object-cover ${
                           idx === mediaIndex ? (imageLoaded ? 'opacity-100' : 'opacity-0') : 'hidden'
                         }`}
+                        style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
                         onLoadedMetadata={() => {
                           loadedMediaRef.current.add(idx);
                           if (idx === mediaIndexRef.current) setImageLoaded(true);
+                        }}
+                        onCanPlay={(e) => {
+                          if (idx === mediaIndexRef.current) {
+                            const video = e.currentTarget;
+                            video.play().catch(() => setShowPlayOverlay(true));
+                          }
                         }}
                         onError={() => {
                           if (idx === mediaIndexRef.current) setImageLoaded(true);
@@ -591,7 +614,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                         autoPlay={idx === mediaIndex}
                         playsInline
                         controls={false}
-                        preload="metadata"
+                        preload="auto"
                       />
                     ) : (
                       <img
@@ -616,6 +639,24 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                       />
                     )
                   ))}
+                  
+                  {/* Tap to play overlay for Safari */}
+                  {showPlayOverlay && currentMedia?.type === 'video' && (
+                    <div 
+                      className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleVideoPlay();
+                      }}
+                      data-testid="video-play-overlay"
+                    >
+                      <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                        <svg className="w-8 h-8 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                   
                   {/* Navigation tap zones - only for multiple media */}
                   {hasMultipleMedia && (
