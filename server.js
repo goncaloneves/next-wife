@@ -49,6 +49,34 @@ async function getHighResImageUrl(fileId) {
   return `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${file.file_path}`;
 }
 
+// Build unified media array with best available URLs
+// Prefers high-res Bot API when file_ids exist, falls back to preview images
+function buildMediaArray(mediaUrls, photoFileIds) {
+  if (!mediaUrls || !Array.isArray(mediaUrls)) return [];
+  
+  return mediaUrls.map((item, index) => {
+    const fileId = photoFileIds && photoFileIds[index];
+    
+    if (fileId && TELEGRAM_BOT_TOKEN) {
+      // High-res available via Bot API
+      return {
+        type: item.type || 'photo',
+        url: `/api/tg-highres-image?file_id=${encodeURIComponent(fileId)}`,
+        previewUrl: `/api/tg-image-proxy?u=${encodeURIComponent(item.url)}`,
+        quality: 'high'
+      };
+    } else {
+      // Fallback to preview image from scraper
+      return {
+        type: item.type || 'photo',
+        url: `/api/tg-image-proxy?u=${encodeURIComponent(item.url)}`,
+        previewUrl: null,
+        quality: 'preview'
+      };
+    }
+  });
+}
+
 // Nationality to Region mapping
 const nationalityToRegion = {
   "Japanese": "Asian", "Korean": "Asian", "Chinese": "Asian", "Thai": "Asian",
@@ -1362,7 +1390,7 @@ app.get('/api/tg-profile/:id', async (req, res) => {
       text: row.text,
       date: row.date,
       link: row.link,
-      media: row.media,
+      media: buildMediaArray(row.media_urls, row.photo_file_ids),
       mediaUrls: row.media_urls,
       avatar: row.avatar,
       botLink: row.botLink,
@@ -1535,7 +1563,7 @@ app.get('/api/tg-channel-feed', async (req, res) => {
         text: row.text,
         date: row.date,
         link: row.link,
-        media: row.media,
+        media: buildMediaArray(row.media_urls, row.photo_file_ids),
         mediaUrls: row.media_urls,
         avatar: row.avatar,
         botLink: row.botLink,
