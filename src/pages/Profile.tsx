@@ -35,6 +35,13 @@ interface MediaItem {
   url: string;
 }
 
+interface UnifiedMediaItem {
+  type: 'photo' | 'video';
+  url: string;
+  previewUrl?: string | null;
+  quality: 'high' | 'preview' | 'direct';
+}
+
 interface Post {
   id: string;
   text: string;
@@ -42,6 +49,7 @@ interface Post {
   link: string;
   media: string;
   mediaUrls?: MediaItem[] | null;
+  mediaItems?: UnifiedMediaItem[] | null;
   avatar: string;
   botLink?: string;
   profileData?: ProfileData;
