@@ -798,7 +798,7 @@ export const TelegramChannelFeed = ({
                         muted
                         loop
                         playsInline
-                        preload="metadata"
+                        preload="auto"
                         className={`w-full h-full object-cover ${imageLoadStates[post.id] ? "opacity-70" : "opacity-0"}`}
                         onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
                       />

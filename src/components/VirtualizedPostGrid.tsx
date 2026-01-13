@@ -492,7 +492,7 @@ const VideoCard = ({
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
         className={`w-full h-full object-cover transition-all duration-300 ${
           imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
         }`}
