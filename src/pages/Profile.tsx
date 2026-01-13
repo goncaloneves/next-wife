@@ -497,7 +497,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
         {isAppView ? (
           <Button 
-            onClick={() => navigate("/discover?view=app", { replace: true })} 
+            onClick={() => navigate("/find?view=app", { replace: true })} 
             className="bg-gradient-to-r from-orange-500 to-rose-500 text-white border-0"
           >
             Find Someone New

@@ -27,7 +27,7 @@ function AppRoutes() {
       <Routes location={isOverlay && backgroundLocation ? backgroundLocation : location}>
         <Route path="/" element={<Index />} />
         <Route path="/profile/:id" element={<Profile />} />
-        <Route path="/discover" element={<Discover />} />
+        <Route path="/find" element={<Discover />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="*" element={<NotFound />} />

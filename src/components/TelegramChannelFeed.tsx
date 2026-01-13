@@ -785,7 +785,7 @@ export const TelegramChannelFeed = ({
                       }));
                       const loadedIds = Object.keys(imageLoadStates).filter(id => imageLoadStates[id]);
                       sessionStorage.setItem('feedLoadedImages', JSON.stringify(loadedIds));
-                      navigate('/discover');
+                      navigate('/find');
                     }}
                     style={skipAnimation ? undefined : { animationFillMode: "forwards" }}
                   >

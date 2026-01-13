@@ -274,7 +274,7 @@ export const VirtualizedPostGrid = ({
     if (rowHeight !== null && columns !== null) {
       sessionStorage.setItem('feedGridDimensions', JSON.stringify({ rowHeight, columns }));
     }
-    navigate('/discover');
+    navigate('/find');
   }, [allPosts, channelInfo, nextCursor, hasMore, filters, refreshKey, navigate, setLastViewedId, imageLoadStates, rowHeight, columns, onProfileOverlay]);
 
   const renderPostCard = useCallback((post: TelegramPost, index: number) => {

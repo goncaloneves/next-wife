@@ -20,7 +20,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 **Technical Implementations & Feature Specifications:**
 - **Real-time Feed & Filtering:** Displays Telegram channel posts with filtering capabilities by Region, Age bracket, Occupation Category, Personality, Relationship, and Media type (Has Video, Multiple Photos). Filters are multi-selectable.
 - **Dedicated Profile Pages:** Individual profile pages (`/profile/:id`) with shareable URLs, displaying full details and a "Message on Telegram" CTA.
-- **Bot Entry Point:** Special `/discover` URL for Telegram bot integration that opens the latest profile in full Tinder-style profile view with swipe navigation. Use `/discover?view=app` to disable all exit navigation for embedded mini app mode.
+- **Bot Entry Point:** Special `/find` URL for Telegram bot integration that opens the latest profile in full Tinder-style profile view with swipe navigation. Use `/find?view=app` to disable all exit navigation for embedded mini app mode.
 - **Telegram Mini App Support:** Integrated with Telegram WebApp SDK (only when `view=app`):
   - Auto-expands to full screen on load via `expand()` + retry logic
   - Disables vertical swipes to prevent accidental closure via `disableVerticalSwipes()`
