@@ -51,6 +51,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Background Sync Service:** Regularly fetches posts from Telegram and updates the database, enriching data with derived fields.
 - **Image Proxy:** Proxies Telegram CDN images to prevent CORS issues.
 - **High-Resolution Media (Bot API):** Telegram Bot API integration for fetching full-resolution photos/videos. A scheduler polls for new channel posts using `getUpdates` and stores file IDs. The `/api/tg-highres-image?file_id=XXX` endpoint streams high-res images from Bot API. Note: Only NEW posts (after bot was added as channel admin) have file IDs; existing posts use preview images.
+- **Unified Media Array (mediaItems):** Server returns a `mediaItems` array with ready-to-use URLs. Each item has `{type, url, previewUrl, quality}`. Quality values: `high` (Bot API high-res), `preview` (proxy), `direct` (CDN for videos). Videos are NOT proxied - served directly from Telegram CDN. Frontend uses mediaItems as the canonical source; legacy `media`/`mediaUrls` preserved for backward compatibility.
 - **FilterContext Architecture:** Centralized filter state management using React Context (`FilterContext`). Single source of truth for filter state shared between homepage and profile pages. Filter changes sync to localStorage for persistence across page refreshes. Both pages use `DiscoverFilterModal` for consistent filter UI.
 
 ## External Dependencies
