@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, BadgeCheck, MapPin, Flame } from "lucide-react";
+import { BadgeCheck, MapPin, Flame } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -83,7 +82,6 @@ export const TelegramChannelFeed = ({
   const [error, setError] = useState<string | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isNearTop, setIsNearTop] = useState(true);
-  const [pendingNewCount, setPendingNewCount] = useState(0);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [refreshKey, setRefreshKey] = useState(Date.now());
@@ -350,6 +348,11 @@ export const TelegramChannelFeed = ({
         // Branch 1: New post IDs detected (genuine new posts)
         if (hasNewPostIds) {
           console.log('[checkForNewPosts] Branch: NEW IDs detected');
+          
+          // Find truly new posts (not already in current list)
+          const existingIds = new Set(currentPosts.map(p => p.id));
+          const newPosts = fetchedPosts.filter((p: TelegramPost) => !existingIds.has(p.id));
+          
           if (currentNearTop) {
             // User is near top: refresh everything including images
             console.log('[checkForNewPosts] -> Refreshing with NEW IDs (changing refreshKey)');
@@ -357,19 +360,18 @@ export const TelegramChannelFeed = ({
             setAllPosts(fetchedPosts);
             setNextCursor(data.nextBefore);
             setHasMore(data.hasMore);
-            setPendingNewCount(0);
-            setRefreshKey(Date.now()); // ONLY change refreshKey for NEW posts
+            setRefreshKey(Date.now());
             setImageLoadStates({});
             setImageErrors({});
             setHiddenIds(new Set());
             topFingerprintRef.current = newFp;
           } else {
-            // User scrolled down: show "new posts" button
-            const newCount = fetchedPosts.findIndex((p: TelegramPost) =>
-              currentPosts.some((existing) => existing.id === p.id),
-            );
-            console.log('[checkForNewPosts] -> Showing new posts button');
-            setPendingNewCount(newCount > 0 ? newCount : 1);
+            // User scrolled down: silently prepend new posts without changing scroll position
+            console.log('[checkForNewPosts] -> Silently prepending', newPosts.length, 'new posts');
+            if (newPosts.length > 0) {
+              setAllPosts(prev => [...newPosts, ...prev]);
+              topFingerprintRef.current = newFp;
+            }
           }
           return;
         }
@@ -377,21 +379,14 @@ export const TelegramChannelFeed = ({
         // Branch 2: Content changed but same IDs (edited posts)
         if (fpChanged) {
           console.log('[checkForNewPosts] Branch: Content CHANGED (same IDs)');
-          if (currentNearTop) {
-            // Update content but DON'T reload images
-            console.log('[checkForNewPosts] -> Updating content ONLY (NOT changing refreshKey)');
-            setLastViewedId(null);
-            setAllPosts(fetchedPosts);
-            setNextCursor(data.nextBefore);
-            setHasMore(data.hasMore);
-            setPendingNewCount(0);
-            // DO NOT call setRefreshKey - prevents image blinking
-            // DO NOT reset imageLoadStates - keeps existing images
-            topFingerprintRef.current = newFp;
-          } else {
-            console.log('[checkForNewPosts] -> Showing update button');
-            setPendingNewCount(1);
-          }
+          // Silently update content without changing scroll position
+          console.log('[checkForNewPosts] -> Updating content silently');
+          setAllPosts(fetchedPosts);
+          setNextCursor(data.nextBefore);
+          setHasMore(data.hasMore);
+          // DO NOT call setRefreshKey - prevents image blinking
+          // DO NOT reset imageLoadStates - keeps existing images
+          topFingerprintRef.current = newFp;
           return;
         }
 
@@ -582,13 +577,6 @@ export const TelegramChannelFeed = ({
         nearTop = feedRect.top <= 200 && feedRect.top >= -100;
       }
       
-      // If user scrolls back to top AND there are pending new posts, auto-refresh
-      if (nearTop && pendingNewCount > 0) {
-        setLastViewedId(null);
-        fetchInitialPosts();
-        setPendingNewCount(0);
-      }
-      
       setIsNearTop(nearTop);
 
       const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
@@ -602,13 +590,6 @@ export const TelegramChannelFeed = ({
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
       const nearTop = scrollTop < 100;
       
-      // If user scrolls back to top AND there are pending new posts, auto-refresh
-      if (nearTop && pendingNewCount > 0) {
-        setLastViewedId(null);
-        fetchInitialPosts();
-        setPendingNewCount(0);
-      }
-      
       setIsNearTop(nearTop);
 
       const nearBottom = scrollHeight - scrollTop - clientHeight < 500;
@@ -616,7 +597,7 @@ export const TelegramChannelFeed = ({
         fetchNextPage();
       }
     }
-  }, [layout, hasMore, isLoadingMore, fetchNextPage, pendingNewCount, fetchInitialPosts]);
+  }, [layout, hasMore, isLoadingMore, fetchNextPage]);
 
   // Scroll listeners for grid layout
   useEffect(() => {
@@ -669,22 +650,6 @@ export const TelegramChannelFeed = ({
     return () => observer.disconnect();
   }, [layout, allPosts.length]);
 
-  const handleNewPostsClick = () => {
-    if (layout === "grid") {
-      const feedElement = feedSectionRef?.current ?? document.querySelector('section.relative.py-12.bg-black');
-      if (feedElement) {
-        const rect = (feedElement as HTMLElement).getBoundingClientRect();
-        const y = window.scrollY + rect.top - 80;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    } else if (listRef.current) {
-      listRef.current.scrollTo({ top: 0, behavior: "smooth" });
-    }
-    // Do not fetch here; nearTop logic will refresh and clear the badge.
-  };
-
   const postsWithMedia = allPosts.filter((post) => post.media);
   const activePost = useMemo(() => 
     (lastViewedId && postsWithMedia.find(p => p.id === lastViewedId)) || postsWithMedia[0],
@@ -701,21 +666,6 @@ export const TelegramChannelFeed = ({
   if (layout === "grid") {
     return (
       <>
-        {pendingNewCount > 0 && !isNearTop && !hideNotifications && createPortal(
-          <Button
-            onClick={handleNewPostsClick}
-            className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] text-lg px-8 py-6 font-bold transition-all duration-300 animate-in fade-in slide-in-from-top-4"
-            size="lg"
-            style={{
-              background: "var(--gradient-sunset)",
-              boxShadow: "var(--shadow-warm)",
-            }}
-          >
-            <ArrowUp className="w-5 h-5 mr-2" />
-            {pendingNewCount} new {pendingNewCount === 1 ? "post" : "posts"} 🌻
-          </Button>,
-          document.body
-        )}
 
         <div className="relative">
         {/* Container with min-height to prevent layout collapse during filter changes */}
@@ -879,18 +829,6 @@ export const TelegramChannelFeed = ({
 
   return (
     <div className="relative">
-      {pendingNewCount > 0 && createPortal(
-        <Button
-          onClick={handleNewPostsClick}
-          className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] shadow-xl animate-in fade-in slide-in-from-top-4"
-          size="sm"
-        >
-          <ArrowUp className="w-4 h-4 mr-2" />
-          {pendingNewCount} new {pendingNewCount === 1 ? "post" : "posts"}
-        </Button>,
-        document.body
-      )}
-
       <div ref={listRef} onScroll={handleScroll} className="h-[70vh] max-h-[700px] overflow-y-auto rounded-lg">
         <div className="space-y-4">
           {allPosts.map((post) => (
