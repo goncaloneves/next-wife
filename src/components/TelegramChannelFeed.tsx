@@ -487,7 +487,10 @@ export const TelegramChannelFeed = ({
   }, []);
 
   // Separate effect for polling - doesn't trigger refetch
+  // Pause polling when profile overlay is active (hideNotifications=true)
   useEffect(() => {
+    if (hideNotifications) return;
+    
     const pollInterval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         checkForNewPosts();
@@ -506,7 +509,7 @@ export const TelegramChannelFeed = ({
       clearInterval(pollInterval);
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [refreshInterval, checkForNewPosts]);
+  }, [refreshInterval, checkForNewPosts, hideNotifications]);
 
   // Refetch when filters change (skip initial mount)
   const filtersInitialized = useRef(false);
