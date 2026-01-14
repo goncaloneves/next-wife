@@ -329,6 +329,7 @@ const Index = () => {
                 feedSectionRef={feedContentRef}
                 filters={filters}
                 onProfileOverlay={handleProfileOverlay}
+                hideNotifications={location.pathname.startsWith('/profile/')}
               />
             </div>
           </div>

@@ -64,6 +64,7 @@ interface TelegramChannelFeedProps {
   feedSectionRef?: React.RefObject<HTMLElement | HTMLDivElement>;
   filters?: SharedFilters;
   onProfileOverlay?: (postId: string) => void;
+  hideNotifications?: boolean;
 }
 
 export const TelegramChannelFeed = ({
@@ -74,6 +75,7 @@ export const TelegramChannelFeed = ({
   feedSectionRef,
   filters: externalFilters,
   onProfileOverlay,
+  hideNotifications = false,
 }: TelegramChannelFeedProps) => {
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
@@ -696,7 +698,7 @@ export const TelegramChannelFeed = ({
   if (layout === "grid") {
     return (
       <>
-        {pendingNewCount > 0 && !isNearTop && createPortal(
+        {pendingNewCount > 0 && !isNearTop && !hideNotifications && createPortal(
           <Button
             onClick={handleNewPostsClick}
             className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] text-lg px-8 py-6 font-bold transition-all duration-300 animate-in fade-in slide-in-from-top-4"
