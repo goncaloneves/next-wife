@@ -207,7 +207,6 @@ export const TelegramChannelFeed = ({
       setHasMore(data.hasMore);
       setError(null);
       setLoading(false);
-      setPendingNewCount(0);
       
       // Always reset refreshKey to ensure unique keys for React
       setRefreshKey(Date.now());
