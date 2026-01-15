@@ -576,11 +576,11 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
               </div>
             )}
             
-            {/* Warm sunset glow overlay for right swipe (like) */}
+            {/* Warm sunset glow overlay for right swipe (like) - covers entire card */}
             <motion.div 
-              className="absolute inset-0 pointer-events-none z-[5]"
+              className="absolute inset-0 pointer-events-none z-[50]"
               style={{ 
-                background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.6) 0%, rgba(255, 154, 139, 0.5) 30%, rgba(255, 87, 87, 0.4) 60%, rgba(255, 69, 0, 0.3) 100%)',
+                background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.5) 0%, rgba(255, 154, 139, 0.4) 30%, rgba(255, 87, 87, 0.35) 60%, rgba(255, 69, 0, 0.25) 100%)',
                 opacity: rightSwipeGlow,
               }}
             />
