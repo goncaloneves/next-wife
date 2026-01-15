@@ -116,11 +116,9 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   const isOverlay = propIsOverlay || (state?.isOverlay && !isMobile);
   const backgroundLocation = state?.backgroundLocation;
   
-  // Always check for Telegram SDK - detect mini app via SDK, not URL param
-  const { isTelegramApp, safeArea } = useTelegram(true);
+  const { isTelegramApp, safeArea } = useTelegram(isAppView);
   
-  // Use SDK detection for behavior, URL param for navigation preservation
-  const useTelegramSafeAreas = isTelegramApp;
+  const useTelegramSafeAreas = isAppView && isTelegramApp;
   
   const [post, setPost] = useState<Post | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
