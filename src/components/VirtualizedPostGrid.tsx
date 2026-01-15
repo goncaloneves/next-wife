@@ -472,7 +472,16 @@ const VideoCard = ({
         const video = videoRefs.current[post.id];
         if (video) {
           video.currentTime = 0;
-          video.play().catch(() => {});
+          // Only play if video is ready, otherwise wait for it
+          if (video.readyState >= 3) {
+            video.play().catch(() => {});
+          } else {
+            const playWhenReady = () => {
+              video.play().catch(() => {});
+              video.removeEventListener('canplay', playWhenReady);
+            };
+            video.addEventListener('canplay', playWhenReady);
+          }
         }
       }}
       onMouseLeave={() => {
@@ -485,6 +494,8 @@ const VideoCard = ({
         if (video) {
           video.pause();
           video.currentTime = 0;
+          // Clean up any pending canplay listener
+          video.oncanplay = null;
         }
       }}
     >
