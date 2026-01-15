@@ -1133,6 +1133,9 @@ async function pollBotUpdates() {
       const isEdit = !!update.edited_channel_post;
       if (!post || !post.message_id) continue;
       
+      // Detailed logging for debugging
+      console.log(`  📨 Update ${update.update_id}: ${isEdit ? 'EDIT' : 'NEW'} msg_id=${post.message_id} media_group=${post.media_group_id || 'none'} has_photo=${!!post.photo} has_video=${!!post.video}`);
+      
       const messageId = post.message_id;
       const mediaGroupId = post.media_group_id;
       const caption = post.caption || '';
