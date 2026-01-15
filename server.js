@@ -61,6 +61,12 @@ function buildMediaArray(mediaUrls, photoFileIds) {
     try { fileIdsArray = JSON.parse(photoFileIds); } catch (e) { fileIdsArray = null; }
   }
   
+  // Safety check: ignore file_ids if count doesn't match media_urls count
+  // This prevents wrong image mapping when photos are deleted from albums
+  if (fileIdsArray && Array.isArray(fileIdsArray) && fileIdsArray.length !== mediaUrls.length) {
+    fileIdsArray = null;
+  }
+  
   return mediaUrls.map((item, index) => {
     // Extract file_id - can be string or object {type, file_id}
     const fileIdEntry = fileIdsArray && fileIdsArray[index];

@@ -60,3 +60,10 @@ export const insertTelegramPostSchema = createInsertSchema(telegramPosts).omit({
 // Types
 export type TelegramPost = typeof telegramPosts.$inferSelect;
 export type InsertTelegramPost = z.infer<typeof insertTelegramPostSchema>;
+
+// Bot state table for persistent configuration
+export const botState = pgTable("bot_state", {
+  key: text("key").primaryKey(),
+  value: text("value"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
