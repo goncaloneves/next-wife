@@ -474,8 +474,13 @@ const VideoCard = ({
         setPlayingVideos(prev => new Set(prev).add(post.id));
         const video = localVideoRef.current;
         if (video) {
+          // Reset and play - handle edge cases from fast scrolling
+          video.pause();
           video.currentTime = 0;
-          video.play().catch(() => {});
+          // Small delay to ensure video is ready after virtualization recycle
+          requestAnimationFrame(() => {
+            video.play().catch(() => {});
+          });
         }
       }}
       onMouseLeave={() => {
