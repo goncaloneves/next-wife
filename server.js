@@ -67,7 +67,7 @@ function buildMediaArray(mediaUrls, photoFileIds) {
     fileIdsArray = null;
   }
   
-  return mediaUrls.map((item, index) => {
+  const result = mediaUrls.map((item, index) => {
     // Extract file_id - can be string or object {type, file_id}
     const fileIdEntry = fileIdsArray && fileIdsArray[index];
     const fileId = typeof fileIdEntry === 'object' ? fileIdEntry?.file_id : fileIdEntry;
@@ -103,6 +103,11 @@ function buildMediaArray(mediaUrls, photoFileIds) {
       };
     }
   });
+  
+  // Sort videos first, preserving relative order of photos
+  const videos = result.filter(item => item.type === 'video');
+  const photos = result.filter(item => item.type === 'photo');
+  return [...videos, ...photos];
 }
 
 // Nationality to Region mapping
