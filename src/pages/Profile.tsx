@@ -115,9 +115,12 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   const state = location.state as { backgroundLocation?: Location; isOverlay?: boolean } | null;
   const isOverlay = propIsOverlay || (state?.isOverlay && !isMobile);
   const backgroundLocation = state?.backgroundLocation;
-  const { isTelegramApp, safeArea } = useTelegram(isAppView);
   
-  const useTelegramSafeAreas = isAppView && isTelegramApp;
+  // Always check for Telegram SDK - detect mini app via SDK, not URL param
+  const { isTelegramApp, safeArea } = useTelegram(true);
+  
+  // Use SDK detection for behavior, URL param for navigation preservation
+  const useTelegramSafeAreas = isTelegramApp;
   
   const [post, setPost] = useState<Post | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
@@ -385,8 +388,8 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   }, []);
 
   const openTelegram = useCallback(() => {
-    // In Telegram Mini App, skip popup and go directly to Telegram
-    if (isAppView) {
+    // In Telegram Mini App (detected via SDK), skip popup and go directly to Telegram
+    if (isTelegramApp) {
       const url = post?.botLink || post?.link;
       if (url) {
         if (post?.id) {
@@ -397,7 +400,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     } else {
       setShowTelegramConfirm(true);
     }
-  }, [isAppView, post, trackConversion]);
+  }, [isTelegramApp, post, trackConversion]);
 
   const confirmOpenTelegram = useCallback(() => {
     const url = post?.botLink || post?.link;
@@ -406,14 +409,14 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       if (post?.id) {
         trackConversion(post.id);
       }
-      if (isAppView) {
+      if (isTelegramApp) {
         openTelegramLinkAndClose(url);
       } else {
         window.open(url, "_blank", "noopener,noreferrer");
       }
     }
     setShowTelegramConfirm(false);
-  }, [post, isAppView, trackConversion]);
+  }, [post, isTelegramApp, trackConversion]);
 
   const undoSkip = useCallback(() => {
     if (skipHistory.length === 0 || isAnimating) return;
