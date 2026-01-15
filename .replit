@@ -9,7 +9,7 @@ packages = ["supabase-cli", "imagemagick", "unzip"]
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["npm", "run", "start:prod"]
+run = ["npm", "run", "start"]
 build = ["npm", "run", "build"]
 
 [workflows]
