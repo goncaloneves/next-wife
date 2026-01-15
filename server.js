@@ -1438,6 +1438,108 @@ async function backfillFileIds(limit = 50) {
   return { success: successCount, errors: errorCount, total: posts.length };
 }
 
+// ============== AUTO-FIX FILE ID MISMATCHES ==============
+// Automatically fixes posts where file_id count doesn't match media_urls count
+async function autoFixFileIdMismatches() {
+  if (!TELEGRAM_BOT_TOKEN || !db) return { fixed: 0, backfilled: 0 };
+  
+  const channelName = 'nextwifeai';
+  const channelChatId = '@nextwife_ai';
+  
+  // Find posts with mismatched counts (file_ids > 0 but != media_urls count)
+  const mismatchResult = await pool.query(`
+    SELECT id, 
+           jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) as file_count,
+           jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) as media_count
+    FROM telegram_posts 
+    WHERE deleted_at IS NULL
+      AND channel = $1
+      AND jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) > 0
+      AND jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) != jsonb_array_length(COALESCE(media_urls, '[]'::jsonb))
+  `, [channelName]);
+  
+  // Clear file_ids for mismatched posts (they'll use preview images)
+  if (mismatchResult.rows.length > 0) {
+    const mismatchedIds = mismatchResult.rows.map(r => r.id);
+    await pool.query(
+      `UPDATE telegram_posts SET photo_file_ids = NULL, updated_at = NOW() WHERE id = ANY($1)`,
+      [mismatchedIds]
+    );
+    console.log(`🔧 Auto-fixed ${mismatchedIds.length} posts with mismatched file_ids: ${mismatchedIds.join(', ')}`);
+  }
+  
+  // Check if backfill_chat_id is configured for auto-backfill
+  const chatIdResult = await pool.query(
+    `SELECT value FROM bot_state WHERE key = 'backfill_chat_id'`
+  );
+  
+  let backfilledCount = 0;
+  
+  if (chatIdResult.rows.length > 0) {
+    const destinationChatId = parseInt(chatIdResult.rows[0].value);
+    
+    // Find posts without file_ids (limited batch per sync)
+    const missingResult = await pool.query(`
+      SELECT id
+      FROM telegram_posts 
+      WHERE deleted_at IS NULL
+        AND channel = $1
+        AND jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) = 0
+        AND jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) > 0
+      ORDER BY id::int DESC
+      LIMIT 10
+    `, [channelName]);
+    
+    // Backfill missing file_ids
+    for (const post of missingResult.rows) {
+      try {
+        const forwarded = await telegramApiCall('forwardMessage', {
+          chat_id: destinationChatId,
+          from_chat_id: channelChatId,
+          message_id: parseInt(post.id)
+        });
+        
+        const fileIds = [];
+        if (forwarded.photo && forwarded.photo.length > 0) {
+          const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
+          fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
+        } else if (forwarded.video) {
+          fileIds.push({ type: 'video', file_id: forwarded.video.file_id });
+        }
+        
+        if (fileIds.length > 0) {
+          await pool.query(
+            `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
+            [JSON.stringify(fileIds), post.id]
+          );
+          backfilledCount++;
+        }
+        
+        // Delete forwarded message
+        try {
+          await telegramApiCall('deleteMessage', {
+            chat_id: destinationChatId,
+            message_id: forwarded.message_id
+          });
+        } catch (e) { /* ignore */ }
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } catch (error) {
+        if (error.message.includes('429')) {
+          console.log('  ⏳ Rate limited during auto-backfill, stopping');
+          break;
+        }
+      }
+    }
+    
+    if (backfilledCount > 0) {
+      console.log(`📷 Auto-backfilled ${backfilledCount} posts with file_ids`);
+    }
+  }
+  
+  return { fixed: mismatchResult.rows.length, backfilled: backfilledCount };
+}
+
 // ============== BACKGROUND SCHEDULER ==============
 // Runs deleted post detection automatically, independent of page visits
 const SCHEDULER_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
@@ -1456,8 +1558,11 @@ async function runScheduledSync() {
     // Poll Bot API for new updates with file IDs
     await pollBotUpdates();
     
+    // Auto-fix file_id mismatches and backfill missing ones
+    const fixResult = await autoFixFileIdMismatches();
+    
     const result = await detectDeletedPosts('nextwifeai');
-    console.log(`⏰ Scheduled sync complete:`, result);
+    console.log(`⏰ Scheduled sync complete:`, { ...result, fileIdFixes: fixResult });
   } catch (error) {
     console.error('⏰ Scheduled sync error:', error.message);
   } finally {
