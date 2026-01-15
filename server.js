@@ -1502,7 +1502,7 @@ async function autoFixFileIdMismatches() {
       -- Prioritize mismatches over missing
       CASE WHEN jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) > 0 THEN 0 ELSE 1 END,
       id::int DESC
-    LIMIT 10
+    LIMIT 30
   `, [channelName]);
   
   if (postsToFix.rows.length === 0) {
