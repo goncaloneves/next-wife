@@ -806,57 +806,72 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
               <div className="h-16 flex-shrink-0" />
               <div ref={contentContainerRef} className="flex-1 overflow-y-auto min-h-0 pointer-events-auto">
                 <div className="px-4 pb-2">
-                  <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg mb-1">
-                    {(() => {
-                      const nameParts = profileData.name.split(' ');
-                      const lastName = nameParts.pop() || '';
-                      const firstName = nameParts.join(' ');
-                      return (
-                        <>
-                          {firstName && <span>{firstName} </span>}
-                          <span className="whitespace-nowrap">
-                            {lastName}
-                            <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
-                              <span className="text-[1.5rem] font-normal text-white">
-                                {profileData.age}
-                              </span>
-                              <BadgeCheck 
-                                className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
-                                style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
-                              />
-                              {post.isHot && (
-                                <Flame 
-                                  className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
-                                  style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                  <div 
+                    className="cursor-pointer"
+                    onClick={() => {
+                      const newExpanded = !aboutExpanded;
+                      setAboutExpanded(newExpanded);
+                      if (newExpanded && contentContainerRef.current) {
+                        setTimeout(() => {
+                          contentContainerRef.current?.scrollTo({ top: contentContainerRef.current.scrollHeight, behavior: 'smooth' });
+                        }, 50);
+                      }
+                    }}
+                    data-testid="profile-info-toggle"
+                  >
+                    <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg mb-1">
+                      {(() => {
+                        const nameParts = profileData.name.split(' ');
+                        const lastName = nameParts.pop() || '';
+                        const firstName = nameParts.join(' ');
+                        return (
+                          <>
+                            {firstName && <span>{firstName} </span>}
+                            <span className="whitespace-nowrap">
+                              {lastName}
+                              <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
+                                <span className="text-[1.5rem] font-normal text-white">
+                                  {profileData.age}
+                                </span>
+                                <BadgeCheck 
+                                  className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
+                                  style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                                 />
-                              )}
+                                {post.isHot && (
+                                  <Flame 
+                                    className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
+                                    style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                                  />
+                                )}
+                              </span>
                             </span>
-                          </span>
-                        </>
-                      );
-                    })()}
-                  </h1>
+                          </>
+                        );
+                      })()}
+                    </h1>
 
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3 text-white">
-                      <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                      <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
-                    </div>
-                    {(profileData.relationship || profileData.personality) && (
-                      <div className="flex flex-wrap gap-2">
-                        {profileData.personality && (
-                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium text-white shadow-sm">
-                            {getPersonalityLabel(profileData.personality)}
-                          </span>
-                        )}
-                        {profileData.relationship && (
-                          <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium text-white shadow-sm">
-                            {getRelationshipLabel(profileData.relationship)}
-                          </span>
-                        )}
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-3 text-white">
+                        <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                        <span className="text-sm">{profileData.hometown?.replace(/\.$/, '')}</span>
                       </div>
-                    )}
-                    <div 
+                      {(profileData.relationship || profileData.personality) && (
+                        <div className="flex flex-wrap gap-2">
+                          {profileData.personality && (
+                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium text-white shadow-sm">
+                              {getPersonalityLabel(profileData.personality)}
+                            </span>
+                          )}
+                          {profileData.relationship && (
+                            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-[13px] font-medium text-white shadow-sm">
+                              {getRelationshipLabel(profileData.relationship)}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div 
                       className="pt-2 mt-2 border-t border-white/[0.08] cursor-pointer"
                       onClick={() => {
                         const newExpanded = !aboutExpanded;
@@ -925,7 +940,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                         </AnimatePresence>
                       </div>
                     </div>
-                  </div>
                 </div>
               </div>
               
