@@ -1339,6 +1339,105 @@ async function pollBotUpdates() {
   }
 }
 
+// ============== BACKFILL FILE IDS ==============
+// Backfills file_ids for posts that were created before Bot API tracking
+// Uses forwardMessage to copy posts and extract file_ids
+async function backfillFileIds(limit = 50) {
+  if (!TELEGRAM_BOT_TOKEN || !db) {
+    return { error: 'Bot token or database not configured' };
+  }
+  
+  const channelName = 'nextwifeai';
+  const channelChatId = '@nextwife_ai';
+  
+  // Get admin chat_id from bot_state (needed as destination for forwarding)
+  const chatIdResult = await pool.query(
+    `SELECT value FROM bot_state WHERE key = 'backfill_chat_id'`
+  );
+  
+  if (chatIdResult.rows.length === 0) {
+    return { 
+      error: 'No backfill_chat_id configured. Send /start to @NextWifeBot and note your chat_id, then call POST /api/tg-set-backfill-chat with {"chat_id": YOUR_CHAT_ID}'
+    };
+  }
+  
+  const destinationChatId = parseInt(chatIdResult.rows[0].value);
+  
+  // Get posts without file_ids
+  const postsResult = await pool.query(`
+    SELECT id, jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) as media_count
+    FROM telegram_posts 
+    WHERE deleted_at IS NULL
+      AND channel = $1
+      AND jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) = 0
+      AND jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) > 0
+    ORDER BY id::int DESC
+    LIMIT $2
+  `, [channelName, limit]);
+  
+  const posts = postsResult.rows;
+  console.log(`🔄 Backfilling file_ids for ${posts.length} posts...`);
+  
+  let successCount = 0;
+  let errorCount = 0;
+  
+  for (const post of posts) {
+    try {
+      // Forward the message from channel to destination chat
+      const forwarded = await telegramApiCall('forwardMessage', {
+        chat_id: destinationChatId,
+        from_chat_id: channelChatId,
+        message_id: parseInt(post.id)
+      });
+      
+      // Extract file_ids from forwarded message
+      const fileIds = [];
+      if (forwarded.photo && forwarded.photo.length > 0) {
+        const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
+        fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
+      } else if (forwarded.video) {
+        fileIds.push({ type: 'video', file_id: forwarded.video.file_id });
+      }
+      
+      if (fileIds.length > 0) {
+        // Update database with file_ids
+        await pool.query(
+          `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
+          [JSON.stringify(fileIds), post.id]
+        );
+        successCount++;
+        console.log(`  ✅ Post ${post.id}: ${fileIds.length} file_id(s)`);
+      }
+      
+      // Delete the forwarded message to clean up
+      try {
+        await telegramApiCall('deleteMessage', {
+          chat_id: destinationChatId,
+          message_id: forwarded.message_id
+        });
+      } catch (e) {
+        // Ignore delete errors
+      }
+      
+      // Rate limit: 1 request per second
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+    } catch (error) {
+      errorCount++;
+      console.log(`  ❌ Post ${post.id}: ${error.message}`);
+      
+      // If rate limited, wait longer
+      if (error.message.includes('429') || error.message.includes('Too Many Requests')) {
+        console.log('  ⏳ Rate limited, waiting 30 seconds...');
+        await new Promise(resolve => setTimeout(resolve, 30000));
+      }
+    }
+  }
+  
+  console.log(`✅ Backfill complete: ${successCount} success, ${errorCount} errors`);
+  return { success: successCount, errors: errorCount, total: posts.length };
+}
+
 // ============== BACKGROUND SCHEDULER ==============
 // Runs deleted post detection automatically, independent of page visits
 const SCHEDULER_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
@@ -1459,6 +1558,40 @@ app.get('/api/tg-channel-filters', async (req, res) => {
   } catch (error) {
     console.error('Error fetching filters:', error);
     res.status(500).json({ error: 'Failed to fetch filters' });
+  }
+});
+
+// Set backfill chat_id for file_id extraction
+app.post('/api/tg-set-backfill-chat', async (req, res) => {
+  try {
+    const { chat_id } = req.body;
+    if (!chat_id) {
+      return res.status(400).json({ error: 'chat_id is required' });
+    }
+    
+    await pool.query(
+      `INSERT INTO bot_state (key, value, updated_at) 
+       VALUES ('backfill_chat_id', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [String(chat_id)]
+    );
+    
+    res.json({ success: true, chat_id });
+  } catch (error) {
+    console.error('Error setting backfill chat_id:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Trigger file_id backfill for posts missing high-res images
+app.post('/api/tg-backfill-file-ids', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 50;
+    const result = await backfillFileIds(limit);
+    res.json(result);
+  } catch (error) {
+    console.error('Error running backfill:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
