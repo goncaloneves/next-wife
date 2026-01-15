@@ -22,6 +22,11 @@ interface TelegramWebApp {
   viewportHeight?: number;
   viewportStableHeight?: number;
   isExpanded?: boolean;
+  initData?: string;
+  initDataUnsafe?: {
+    user?: object;
+  };
+  platform?: string;
 }
 
 export function openTelegramLinkAndClose(url: string) {
@@ -58,7 +63,15 @@ export function useTelegram(enabled: boolean = true) {
     
     const tg = window.Telegram?.WebApp;
     
-    if (tg) {
+    // Only consider it a real Telegram Mini App if initData exists or platform is not "unknown"
+    // This prevents false positives when the SDK is loaded but we're in a regular browser
+    const isRealTelegramApp = tg && (
+      (tg.initData && tg.initData.length > 0) || 
+      tg.initDataUnsafe?.user ||
+      (tg.platform && tg.platform !== 'unknown')
+    );
+    
+    if (tg && isRealTelegramApp) {
       setIsTelegramApp(true);
       
       tg.expand();
