@@ -1439,105 +1439,117 @@ async function backfillFileIds(limit = 50) {
 }
 
 // ============== AUTO-FIX FILE ID MISMATCHES ==============
-// Automatically fixes posts where file_id count doesn't match media_urls count
+// Automatically re-fetches file_ids when count doesn't match media_urls
+// Uses forwardMessage to get fresh high-res file_ids from the channel
 async function autoFixFileIdMismatches() {
   if (!TELEGRAM_BOT_TOKEN || !db) return { fixed: 0, backfilled: 0 };
   
   const channelName = 'nextwifeai';
   const channelChatId = '@nextwife_ai';
   
-  // Find posts with mismatched counts (file_ids > 0 but != media_urls count)
-  const mismatchResult = await pool.query(`
+  // Check if backfill_chat_id is configured (REQUIRED for this to work)
+  const chatIdResult = await pool.query(
+    `SELECT value FROM bot_state WHERE key = 'backfill_chat_id'`
+  );
+  
+  if (chatIdResult.rows.length === 0) {
+    return { fixed: 0, backfilled: 0, error: 'No backfill_chat_id configured' };
+  }
+  
+  const destinationChatId = parseInt(chatIdResult.rows[0].value);
+  let fixedCount = 0;
+  let backfilledCount = 0;
+  
+  // Find posts with mismatched counts OR missing file_ids (prioritize mismatches)
+  const postsToFix = await pool.query(`
     SELECT id, 
            jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) as file_count,
            jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) as media_count
     FROM telegram_posts 
     WHERE deleted_at IS NULL
       AND channel = $1
-      AND jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) > 0
-      AND jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) != jsonb_array_length(COALESCE(media_urls, '[]'::jsonb))
+      AND jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) > 0
+      AND (
+        -- Mismatched counts (wrong file_ids)
+        (jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) > 0 
+         AND jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) != jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)))
+        OR
+        -- Missing file_ids
+        jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) = 0
+      )
+    ORDER BY 
+      -- Prioritize mismatches over missing
+      CASE WHEN jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) > 0 THEN 0 ELSE 1 END,
+      id::int DESC
+    LIMIT 10
   `, [channelName]);
   
-  // Clear file_ids for mismatched posts (they'll use preview images)
-  if (mismatchResult.rows.length > 0) {
-    const mismatchedIds = mismatchResult.rows.map(r => r.id);
-    await pool.query(
-      `UPDATE telegram_posts SET photo_file_ids = NULL, updated_at = NOW() WHERE id = ANY($1)`,
-      [mismatchedIds]
-    );
-    console.log(`🔧 Auto-fixed ${mismatchedIds.length} posts with mismatched file_ids: ${mismatchedIds.join(', ')}`);
+  if (postsToFix.rows.length === 0) {
+    return { fixed: 0, backfilled: 0 };
   }
   
-  // Check if backfill_chat_id is configured for auto-backfill
-  const chatIdResult = await pool.query(
-    `SELECT value FROM bot_state WHERE key = 'backfill_chat_id'`
-  );
+  console.log(`🔧 Re-fetching file_ids for ${postsToFix.rows.length} posts...`);
   
-  let backfilledCount = 0;
-  
-  if (chatIdResult.rows.length > 0) {
-    const destinationChatId = parseInt(chatIdResult.rows[0].value);
+  for (const post of postsToFix.rows) {
+    const isMismatch = post.file_count > 0 && post.file_count !== post.media_count;
     
-    // Find posts without file_ids (limited batch per sync)
-    const missingResult = await pool.query(`
-      SELECT id
-      FROM telegram_posts 
-      WHERE deleted_at IS NULL
-        AND channel = $1
-        AND jsonb_array_length(COALESCE(photo_file_ids, '[]'::jsonb)) = 0
-        AND jsonb_array_length(COALESCE(media_urls, '[]'::jsonb)) > 0
-      ORDER BY id::int DESC
-      LIMIT 10
-    `, [channelName]);
-    
-    // Backfill missing file_ids
-    for (const post of missingResult.rows) {
-      try {
-        const forwarded = await telegramApiCall('forwardMessage', {
-          chat_id: destinationChatId,
-          from_chat_id: channelChatId,
-          message_id: parseInt(post.id)
-        });
+    try {
+      // Forward the message to extract file_id
+      const forwarded = await telegramApiCall('forwardMessage', {
+        chat_id: destinationChatId,
+        from_chat_id: channelChatId,
+        message_id: parseInt(post.id)
+      });
+      
+      const fileIds = [];
+      if (forwarded.photo && forwarded.photo.length > 0) {
+        const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
+        fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
+      } else if (forwarded.video) {
+        fileIds.push({ type: 'video', file_id: forwarded.video.file_id });
+      }
+      
+      if (fileIds.length > 0) {
+        await pool.query(
+          `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
+          [JSON.stringify(fileIds), post.id]
+        );
         
-        const fileIds = [];
-        if (forwarded.photo && forwarded.photo.length > 0) {
-          const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
-          fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
-        } else if (forwarded.video) {
-          fileIds.push({ type: 'video', file_id: forwarded.video.file_id });
-        }
-        
-        if (fileIds.length > 0) {
-          await pool.query(
-            `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
-            [JSON.stringify(fileIds), post.id]
-          );
+        if (isMismatch) {
+          fixedCount++;
+          console.log(`  ✅ Fixed mismatch for post ${post.id} (was ${post.file_count}, now ${fileIds.length})`);
+        } else {
           backfilledCount++;
-        }
-        
-        // Delete forwarded message
-        try {
-          await telegramApiCall('deleteMessage', {
-            chat_id: destinationChatId,
-            message_id: forwarded.message_id
-          });
-        } catch (e) { /* ignore */ }
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      } catch (error) {
-        if (error.message.includes('429')) {
-          console.log('  ⏳ Rate limited during auto-backfill, stopping');
-          break;
+          console.log(`  ✅ Backfilled post ${post.id} with ${fileIds.length} file_id(s)`);
         }
       }
-    }
-    
-    if (backfilledCount > 0) {
-      console.log(`📷 Auto-backfilled ${backfilledCount} posts with file_ids`);
+      
+      // Delete forwarded message to keep chat clean
+      try {
+        await telegramApiCall('deleteMessage', {
+          chat_id: destinationChatId,
+          message_id: forwarded.message_id
+        });
+      } catch (e) { /* ignore */ }
+      
+      // Rate limit: 1 request per second
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+    } catch (error) {
+      console.log(`  ❌ Post ${post.id}: ${error.message}`);
+      
+      if (error.message.includes('429') || error.message.includes('Too Many Requests')) {
+        console.log('  ⏳ Rate limited, stopping auto-fix');
+        break;
+      }
     }
   }
   
-  return { fixed: mismatchResult.rows.length, backfilled: backfilledCount };
+  if (fixedCount > 0 || backfilledCount > 0) {
+    console.log(`📷 Auto-fix complete: ${fixedCount} mismatches fixed, ${backfilledCount} backfilled`);
+  }
+  
+  return { fixed: fixedCount, backfilled: backfilledCount };
 }
 
 // ============== BACKGROUND SCHEDULER ==============
