@@ -1419,6 +1419,16 @@ async function backfillFileIds(limit = 50) {
             message_id: messageId
           });
           
+          // SAFETY CHECK: If message has caption/text (after first), it's a NEW post - stop!
+          if (i > 0 && (forwarded.caption || forwarded.text)) {
+            console.log(`    ⚠️ Message ${messageId} has caption - it's a new post, stopping album collection`);
+            // Delete this wrong message and break
+            try {
+              await telegramApiCall('deleteMessage', { chat_id: destinationChatId, message_id: forwarded.message_id });
+            } catch (e) { /* ignore */ }
+            break;
+          }
+          
           // Extract file_id from forwarded message
           if (forwarded.photo && forwarded.photo.length > 0) {
             const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
@@ -1548,6 +1558,16 @@ async function autoFixFileIdMismatches() {
             from_chat_id: channelChatId,
             message_id: messageId
           });
+          
+          // SAFETY CHECK: If message has caption/text (after first), it's a NEW post - stop!
+          if (i > 0 && (forwarded.caption || forwarded.text)) {
+            console.log(`    ⚠️ Message ${messageId} has caption - it's a new post, stopping album collection`);
+            // Delete this wrong message and break
+            try {
+              await telegramApiCall('deleteMessage', { chat_id: destinationChatId, message_id: forwarded.message_id });
+            } catch (e) { /* ignore */ }
+            break;
+          }
           
           if (forwarded.photo && forwarded.photo.length > 0) {
             const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
