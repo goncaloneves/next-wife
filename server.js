@@ -1369,7 +1369,7 @@ async function backfillFileIds(limit = 50) {
   }
   
   const channelName = 'nextwifeai';
-  const channelChatId = '@nextwife_ai';
+  const channelChatId = -1003200945701; // Numeric ID required for forwardMessage
   
   // Get admin chat_id from bot_state (needed as destination for forwarding)
   const chatIdResult = await pool.query(
@@ -1466,7 +1466,7 @@ async function autoFixFileIdMismatches() {
   if (!TELEGRAM_BOT_TOKEN || !db) return { fixed: 0, backfilled: 0 };
   
   const channelName = 'nextwifeai';
-  const channelChatId = '@nextwife_ai';
+  const channelChatId = -1003200945701; // Numeric ID required for forwardMessage
   
   // Check if backfill_chat_id is configured (REQUIRED for this to work)
   const chatIdResult = await pool.query(
