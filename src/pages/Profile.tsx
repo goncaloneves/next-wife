@@ -371,10 +371,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     }
   }, [navigate, id, isOverlay]);
 
-  const openTelegram = useCallback(() => {
-    setShowTelegramConfirm(true);
-  }, []);
-
   const trackConversion = useCallback(async (postId: string) => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || '';
@@ -387,6 +383,21 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       console.error('Failed to track conversion:', err);
     }
   }, []);
+
+  const openTelegram = useCallback(() => {
+    // In Telegram Mini App, skip popup and go directly to Telegram
+    if (isAppView) {
+      const url = post?.botLink || post?.link;
+      if (url) {
+        if (post?.id) {
+          trackConversion(post.id);
+        }
+        openTelegramLinkAndClose(url);
+      }
+    } else {
+      setShowTelegramConfirm(true);
+    }
+  }, [isAppView, post, trackConversion]);
 
   const confirmOpenTelegram = useCallback(() => {
     const url = post?.botLink || post?.link;
