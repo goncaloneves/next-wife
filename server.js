@@ -1362,14 +1362,14 @@ async function pollBotUpdates() {
 
 // ============== BACKFILL FILE IDS ==============
 // Backfills file_ids for posts that were created before Bot API tracking
-// Uses forwardMessage to copy posts and extract file_ids
+// Uses copyMessage to copy posts and extract file_ids (cleaner than forwardMessage)
 async function backfillFileIds(limit = 50) {
   if (!TELEGRAM_BOT_TOKEN || !db) {
     return { error: 'Bot token or database not configured' };
   }
   
   const channelName = 'nextwifeai';
-  const channelChatId = -1003200945701; // Numeric ID required for forwardMessage
+  const channelChatId = -1003200945701; // Numeric ID required for copyMessage
   
   // Get admin chat_id from bot_state (needed as destination for forwarding)
   const chatIdResult = await pool.query(
