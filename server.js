@@ -330,6 +330,8 @@ async function initDatabase() {
     pool = new Pool({ connectionString: process.env.DATABASE_URL });
     db = drizzle(pool);
     console.log('✅ Database connected');
+    // Load bot state after database connection
+    await loadLastUpdateId();
     return true;
   } catch (error) {
     console.error('❌ Database connection failed:', error.message);
@@ -1061,6 +1063,37 @@ async function detectDeletedPosts(channel = 'nextwife_ai') {
 // ============== TELEGRAM BOT API UPDATES ==============
 let lastUpdateId = 0;
 
+// Load lastUpdateId from database on startup
+async function loadLastUpdateId() {
+  if (!pool) return;
+  try {
+    const result = await pool.query(
+      `SELECT value FROM bot_state WHERE key = 'last_update_id'`
+    );
+    if (result.rows.length > 0) {
+      lastUpdateId = parseInt(result.rows[0].value) || 0;
+      console.log(`📌 Loaded lastUpdateId from DB: ${lastUpdateId}`);
+    }
+  } catch (error) {
+    console.error('Failed to load lastUpdateId:', error.message);
+  }
+}
+
+// Save lastUpdateId to database
+async function saveLastUpdateId() {
+  if (!pool || lastUpdateId === 0) return;
+  try {
+    await pool.query(
+      `INSERT INTO bot_state (key, value, updated_at) 
+       VALUES ('last_update_id', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [String(lastUpdateId)]
+    );
+  } catch (error) {
+    console.error('Failed to save lastUpdateId:', error.message);
+  }
+}
+
 // Parse profile data from caption text (same logic as scraper)
 function parseProfileFromCaption(caption) {
   if (!caption) return null;
@@ -1290,6 +1323,9 @@ async function pollBotUpdates() {
     }
     
     console.log(`📥 Bot API: created ${createdCount}, updated ${updatedCount} posts`);
+    
+    // Persist lastUpdateId to database so it survives restarts
+    await saveLastUpdateId();
   } catch (error) {
     if (!error.message?.includes('not configured')) {
       console.error('Bot API poll error:', error.message);
