@@ -1152,11 +1152,32 @@ async function pollBotUpdates() {
   try {
     const updates = await telegramApiCall('getUpdates', {
       offset: lastUpdateId + 1,
-      allowed_updates: ['channel_post', 'edited_channel_post'],
+      allowed_updates: ['channel_post', 'edited_channel_post', 'message'],
       timeout: 0,
     });
     
     if (!updates || updates.length === 0) return;
+    
+    // Handle private messages first (for chat_id discovery)
+    for (const update of updates) {
+      if (update.message && update.message.chat && update.message.chat.type === 'private') {
+        const chatId = update.message.chat.id;
+        const firstName = update.message.from?.first_name || 'User';
+        console.log(`📩 Private message from ${firstName} (chat_id: ${chatId})`);
+        
+        // Reply with their chat_id
+        try {
+          await telegramApiCall('sendMessage', {
+            chat_id: chatId,
+            text: `Hi ${firstName}! Your chat_id is: \`${chatId}\`\n\nUse this to configure auto-backfill.`,
+            parse_mode: 'Markdown'
+          });
+        } catch (e) { /* ignore send errors */ }
+        
+        // Update lastUpdateId to consume this message
+        lastUpdateId = Math.max(lastUpdateId, update.update_id);
+      }
+    }
     
     console.log(`📥 Received ${updates.length} Bot API updates`);
     
