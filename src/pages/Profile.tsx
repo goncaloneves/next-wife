@@ -147,7 +147,8 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
-  const dragOpacity = useTransform(x, [-200, -100, 0, 100, 200], [0.3, 0.6, 1, 0.6, 0.3]);
+  const dragOpacity = useTransform(x, [-200, -100, 0, 100, 200], [0.3, 0.6, 1, 1, 1]);
+  const rightSwipeGlow = useTransform(x, [0, 50, 150, 250], [0, 0, 0.4, 0.7]);
 
   useEffect(() => {
     mediaIndexRef.current = mediaIndex;
@@ -574,6 +575,16 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500" />
               </div>
             )}
+            
+            {/* Warm sunset glow overlay for right swipe (like) */}
+            <motion.div 
+              className="absolute inset-0 pointer-events-none z-[5]"
+              style={{ 
+                background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.6) 0%, rgba(255, 154, 139, 0.5) 30%, rgba(255, 87, 87, 0.4) 60%, rgba(255, 69, 0, 0.3) 100%)',
+                opacity: rightSwipeGlow,
+              }}
+            />
+            
             {(() => {
               const mediaList = post.mediaItems && post.mediaItems.length > 0 
                 ? post.mediaItems 
