@@ -147,7 +147,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   
   const x = useMotionValue(0);
   const dragRotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
-  const dragOpacity = useTransform(x, [-200, -100, 0, 100, 200], [0.3, 0.6, 1, 1, 1]);
+  const dragOpacity = useTransform(x, [-200, -100, 0, 100, 200], [0.3, 0.6, 1, 0.6, 0.3]);
   const rightSwipeGlow = useTransform(x, [0, 50, 150, 250], [0, 0, 0.4, 0.7]);
 
   useEffect(() => {
