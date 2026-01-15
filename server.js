@@ -1404,44 +1404,63 @@ async function backfillFileIds(limit = 50) {
   
   for (const post of posts) {
     try {
-      // Forward the message from channel to destination chat
-      const forwarded = await telegramApiCall('forwardMessage', {
-        chat_id: destinationChatId,
-        from_chat_id: channelChatId,
-        message_id: parseInt(post.id)
-      });
-      
-      // Extract file_ids from forwarded message
       const fileIds = [];
-      if (forwarded.photo && forwarded.photo.length > 0) {
-        const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
-        fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
-      } else if (forwarded.video) {
-        fileIds.push({ type: 'video', file_id: forwarded.video.file_id });
+      const messagesToDelete = [];
+      const mediaCount = parseInt(post.media_count) || 1;
+      
+      // For albums, forward all consecutive messages (each photo is a separate message)
+      for (let i = 0; i < mediaCount; i++) {
+        const messageId = parseInt(post.id) + i;
+        
+        try {
+          const forwarded = await telegramApiCall('forwardMessage', {
+            chat_id: destinationChatId,
+            from_chat_id: channelChatId,
+            message_id: messageId
+          });
+          
+          // Extract file_id from forwarded message
+          if (forwarded.photo && forwarded.photo.length > 0) {
+            const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
+            fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
+          } else if (forwarded.video) {
+            fileIds.push({ type: 'video', file_id: forwarded.video.file_id });
+          }
+          
+          messagesToDelete.push(forwarded.message_id);
+          
+          // Rate limit between album items
+          if (i < mediaCount - 1) {
+            await new Promise(resolve => setTimeout(resolve, 350));
+          }
+        } catch (e) {
+          // Message might be deleted or not exist
+          console.log(`    ⚠️ Message ${messageId}: ${e.message}`);
+        }
       }
       
       if (fileIds.length > 0) {
-        // Update database with file_ids
+        // Update database with all file_ids
         await pool.query(
           `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
           [JSON.stringify(fileIds), post.id]
         );
         successCount++;
-        console.log(`  ✅ Post ${post.id}: ${fileIds.length} file_id(s)`);
+        console.log(`  ✅ Post ${post.id}: ${fileIds.length}/${mediaCount} file_id(s)`);
       }
       
-      // Delete the forwarded message to clean up
-      try {
-        await telegramApiCall('deleteMessage', {
-          chat_id: destinationChatId,
-          message_id: forwarded.message_id
-        });
-      } catch (e) {
-        // Ignore delete errors
+      // Delete all forwarded messages to clean up
+      for (const msgId of messagesToDelete) {
+        try {
+          await telegramApiCall('deleteMessage', {
+            chat_id: destinationChatId,
+            message_id: msgId
+          });
+        } catch (e) { /* ignore */ }
       }
       
-      // Rate limit: 1 request per second
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Rate limit between posts
+      await new Promise(resolve => setTimeout(resolve, 500));
       
     } catch (error) {
       errorCount++;
@@ -1513,21 +1532,39 @@ async function autoFixFileIdMismatches() {
   
   for (const post of postsToFix.rows) {
     const isMismatch = post.file_count > 0 && post.file_count !== post.media_count;
+    const mediaCount = parseInt(post.media_count) || 1;
     
     try {
-      // Forward the message to extract file_id
-      const forwarded = await telegramApiCall('forwardMessage', {
-        chat_id: destinationChatId,
-        from_chat_id: channelChatId,
-        message_id: parseInt(post.id)
-      });
-      
       const fileIds = [];
-      if (forwarded.photo && forwarded.photo.length > 0) {
-        const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
-        fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
-      } else if (forwarded.video) {
-        fileIds.push({ type: 'video', file_id: forwarded.video.file_id });
+      const messagesToDelete = [];
+      
+      // For albums, forward all consecutive messages (each photo is a separate message)
+      for (let i = 0; i < mediaCount; i++) {
+        const messageId = parseInt(post.id) + i;
+        
+        try {
+          const forwarded = await telegramApiCall('forwardMessage', {
+            chat_id: destinationChatId,
+            from_chat_id: channelChatId,
+            message_id: messageId
+          });
+          
+          if (forwarded.photo && forwarded.photo.length > 0) {
+            const bestPhoto = forwarded.photo[forwarded.photo.length - 1];
+            fileIds.push({ type: 'photo', file_id: bestPhoto.file_id });
+          } else if (forwarded.video) {
+            fileIds.push({ type: 'video', file_id: forwarded.video.file_id });
+          }
+          
+          messagesToDelete.push(forwarded.message_id);
+          
+          // Rate limit between album items
+          if (i < mediaCount - 1) {
+            await new Promise(resolve => setTimeout(resolve, 350));
+          }
+        } catch (e) {
+          console.log(`    ⚠️ Message ${messageId}: ${e.message}`);
+        }
       }
       
       if (fileIds.length > 0) {
@@ -1538,23 +1575,25 @@ async function autoFixFileIdMismatches() {
         
         if (isMismatch) {
           fixedCount++;
-          console.log(`  ✅ Fixed mismatch for post ${post.id} (was ${post.file_count}, now ${fileIds.length})`);
+          console.log(`  ✅ Fixed mismatch for post ${post.id} (was ${post.file_count}, now ${fileIds.length}/${mediaCount})`);
         } else {
           backfilledCount++;
-          console.log(`  ✅ Backfilled post ${post.id} with ${fileIds.length} file_id(s)`);
+          console.log(`  ✅ Backfilled post ${post.id} with ${fileIds.length}/${mediaCount} file_id(s)`);
         }
       }
       
-      // Delete forwarded message to keep chat clean
-      try {
-        await telegramApiCall('deleteMessage', {
-          chat_id: destinationChatId,
-          message_id: forwarded.message_id
-        });
-      } catch (e) { /* ignore */ }
+      // Delete all forwarded messages to keep chat clean
+      for (const msgId of messagesToDelete) {
+        try {
+          await telegramApiCall('deleteMessage', {
+            chat_id: destinationChatId,
+            message_id: msgId
+          });
+        } catch (e) { /* ignore */ }
+      }
       
-      // Rate limit: 1 request per second
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Rate limit between posts
+      await new Promise(resolve => setTimeout(resolve, 500));
       
     } catch (error) {
       console.log(`  ❌ Post ${post.id}: ${error.message}`);
