@@ -442,6 +442,9 @@ const VideoCard = ({
   buildSrc,
 }: VideoCardProps) => {
   const circumference = 75.4;
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const localCircleRef = useRef<SVGCircleElement>(null);
+  const localRafRef = useRef<number | null>(null);
   
   const getVideoSrc = () => {
     const firstMedia = post.mediaItems?.[0];
@@ -469,7 +472,7 @@ const VideoCard = ({
       className="w-full h-full relative"
       onMouseEnter={() => {
         setPlayingVideos(prev => new Set(prev).add(post.id));
-        const video = videoRefs.current[post.id];
+        const video = localVideoRef.current;
         if (video) {
           video.currentTime = 0;
           video.play().catch(() => {});
@@ -481,7 +484,7 @@ const VideoCard = ({
           next.delete(post.id);
           return next;
         });
-        const video = videoRefs.current[post.id];
+        const video = localVideoRef.current;
         if (video) {
           video.pause();
           video.currentTime = 0;
@@ -489,41 +492,38 @@ const VideoCard = ({
       }}
     >
       <video
-        ref={el => { 
-          videoRefs.current[post.id] = el;
-          if (el) {
-            el.onplay = () => {
-              const circle = progressCircleRefs.current[post.id];
-              if (circle) circle.style.opacity = '1';
-              if (rafRefs.current[post.id]) cancelAnimationFrame(rafRefs.current[post.id]);
-              const updateProgress = () => {
-                const circle = progressCircleRefs.current[post.id];
-                if (circle && el.duration > 0) {
-                  const progress = el.currentTime / el.duration;
-                  circle.style.strokeDasharray = `${progress * circumference} ${circumference}`;
-                }
-                rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
-              };
-              rafRefs.current[post.id] = requestAnimationFrame(updateProgress);
-            };
-            el.onpause = () => {
-              const circle = progressCircleRefs.current[post.id];
-              if (circle) {
-                circle.style.strokeDasharray = `0 ${circumference}`;
-                circle.style.opacity = '0';
-              }
-              if (rafRefs.current[post.id]) {
-                cancelAnimationFrame(rafRefs.current[post.id]);
-                delete rafRefs.current[post.id];
-              }
-            };
-            el.onended = () => {
-              const circle = progressCircleRefs.current[post.id];
-              if (circle) {
-                circle.style.strokeDasharray = `0 ${circumference}`;
-                circle.style.opacity = '0';
-              }
-            };
+        ref={localVideoRef}
+        onPlay={() => {
+          const circle = localCircleRef.current;
+          if (circle) circle.style.opacity = '1';
+          if (localRafRef.current) cancelAnimationFrame(localRafRef.current);
+          const video = localVideoRef.current;
+          const updateProgress = () => {
+            const circle = localCircleRef.current;
+            if (circle && video && video.duration > 0) {
+              const progress = video.currentTime / video.duration;
+              circle.style.strokeDasharray = `${progress * circumference} ${circumference}`;
+            }
+            localRafRef.current = requestAnimationFrame(updateProgress);
+          };
+          localRafRef.current = requestAnimationFrame(updateProgress);
+        }}
+        onPause={() => {
+          const circle = localCircleRef.current;
+          if (circle) {
+            circle.style.strokeDasharray = `0 ${circumference}`;
+            circle.style.opacity = '0';
+          }
+          if (localRafRef.current) {
+            cancelAnimationFrame(localRafRef.current);
+            localRafRef.current = null;
+          }
+        }}
+        onEnded={() => {
+          const circle = localCircleRef.current;
+          if (circle) {
+            circle.style.strokeDasharray = `0 ${circumference}`;
+            circle.style.opacity = '0';
           }
         }}
         src={getVideoSrc()}
@@ -552,7 +552,7 @@ const VideoCard = ({
         <div className="absolute top-[11px] right-3 pointer-events-none opacity-90 group-hover:opacity-100 transition-opacity duration-300">
           <svg className="w-7 h-7" viewBox="0 0 36 36">
             <circle
-              ref={el => { progressCircleRefs.current[post.id] = el; }}
+              ref={localCircleRef}
               cx="18"
               cy="18"
               r="12"
