@@ -1113,7 +1113,7 @@ async function pollBotUpdates() {
   try {
     const updates = await telegramApiCall('getUpdates', {
       offset: lastUpdateId + 1,
-      allowed_updates: ['channel_post'],
+      allowed_updates: ['channel_post', 'edited_channel_post'],
       timeout: 0,
     });
     
@@ -1122,13 +1122,15 @@ async function pollBotUpdates() {
     console.log(`📥 Received ${updates.length} Bot API updates`);
     
     // Group updates by media_group_id (for albums) or by message_id (for singles)
-    const mediaGroups = new Map(); // media_group_id -> { leadId, caption, entities, date, items: [...] }
+    const mediaGroups = new Map(); // media_group_id -> { leadId, caption, entities, date, items: [...], isEdit }
     const singlePosts = []; // posts without media_group_id
     
     for (const update of updates) {
       lastUpdateId = Math.max(lastUpdateId, update.update_id);
       
-      const post = update.channel_post;
+      // Handle both new posts and edited posts
+      const post = update.channel_post || update.edited_channel_post;
+      const isEdit = !!update.edited_channel_post;
       if (!post || !post.message_id) continue;
       
       const messageId = post.message_id;
@@ -1150,10 +1152,11 @@ async function pollBotUpdates() {
       if (mediaGroupId) {
         // Part of a media album
         if (!mediaGroups.has(mediaGroupId)) {
-          mediaGroups.set(mediaGroupId, { leadId: messageId, caption, entities, date, items: [] });
+          mediaGroups.set(mediaGroupId, { leadId: messageId, caption, entities, date, items: [], isEdit });
         }
         const group = mediaGroups.get(mediaGroupId);
         group.leadId = Math.min(group.leadId, messageId);
+        group.isEdit = group.isEdit || isEdit; // Mark as edit if any item is an edit
         // Capture caption from the message that has it (usually first in album)
         if (caption && !group.caption) {
           group.caption = caption;
@@ -1162,7 +1165,7 @@ async function pollBotUpdates() {
         group.items.push({ messageId, ...fileInfo });
       } else {
         // Single media post
-        singlePosts.push({ messageId, caption, entities, date, fileIds: [fileInfo] });
+        singlePosts.push({ messageId, caption, entities, date, fileIds: [fileInfo], isEdit });
       }
     }
     
@@ -1180,12 +1183,15 @@ async function pollBotUpdates() {
       const existing = await pool.query(`SELECT id FROM telegram_posts WHERE id = $1`, [postId]);
       
       if (existing.rowCount > 0) {
-        // Update existing post with file IDs
+        // Update existing post with file IDs (handles both new posts and edited posts)
         await pool.query(
           `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
           [JSON.stringify(fileIds), postId]
         );
         updatedCount++;
+        if (group.isEdit) {
+          console.log(`  ✏️ Updated album post ${postId} file IDs (${fileIds.length} items) from edit`);
+        }
       } else {
         // Create new post from Bot API data (always create, even without profile data)
         const profileData = parseProfileFromCaption(group.caption);
@@ -1226,19 +1232,22 @@ async function pollBotUpdates() {
     }
     
     // Process single posts
-    for (const { messageId, caption, entities, date, fileIds } of singlePosts) {
+    for (const { messageId, caption, entities, date, fileIds, isEdit } of singlePosts) {
       const postId = String(messageId);
       
       // Check if post exists
       const existing = await pool.query(`SELECT id FROM telegram_posts WHERE id = $1`, [postId]);
       
       if (existing.rowCount > 0) {
-        // Update existing post with file IDs
+        // Update existing post with file IDs (handles both new posts and edited posts)
         await pool.query(
           `UPDATE telegram_posts SET photo_file_ids = $1, updated_at = NOW() WHERE id = $2`,
           [JSON.stringify(fileIds), postId]
         );
         updatedCount++;
+        if (isEdit) {
+          console.log(`  ✏️ Updated single post ${postId} file IDs (${fileIds.length} items) from edit`);
+        }
       } else {
         // Create new post from Bot API data (always create, even without profile data)
         const profileData = parseProfileFromCaption(caption);
