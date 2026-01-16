@@ -7,6 +7,7 @@ import logo from "@/assets/next-wife-logo-sunset.jpeg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
+import { LanguagePicker } from "@/components/LanguagePicker";
 import { useFilters } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -293,7 +294,8 @@ const Index = () => {
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white whitespace-nowrap">
                   {t('home.findYourWoman')}
                 </h2>
-                <div className="flex-1 flex justify-end">
+                <div className="flex-1 flex justify-end items-center gap-1">
+                  <LanguagePicker />
                   <DiscoverFilterButton 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}

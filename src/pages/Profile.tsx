@@ -16,6 +16,7 @@ import {
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay, getNationalityDisplay } from "@/lib/girlfriends/profile-formatter";
 import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
+import { LanguagePicker } from "@/components/LanguagePicker";
 import { type SharedFilters } from "@/lib/filterStorage";
 import { useFilters } from "@/contexts/FilterContext";
 
@@ -801,10 +802,11 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                 <div />
               )}
               <div 
-                className="flex items-center gap-3 pointer-events-auto"
+                className="flex items-center gap-2 pointer-events-auto"
                 onPointerDownCapture={(e) => e.stopPropagation()} 
                 onClick={(e) => e.stopPropagation()}
               >
+                <LanguagePicker />
                 <button
                   onClick={() => setShowFilters(true)}
                   className={`relative p-2 transition-all hover:scale-110 [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.5))_drop-shadow(0_0_3px_rgba(0,0,0,0.3))_drop-shadow(0_2px_4px_rgba(0,0,0,0.25))] ${
