@@ -63,8 +63,8 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: urlLang ? [] : ['localStorage', 'navigator', 'htmlTag'],
-      caches: urlLang ? [] : ['localStorage'],
+      order: urlLang ? [] : ['navigator', 'htmlTag'],
+      caches: [],
     },
   });
 
