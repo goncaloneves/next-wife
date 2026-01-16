@@ -1,0 +1,36 @@
+ 📨 Update 273555354: NEW msg_id=6189 media_group=14148301747356564 has_photo=true has_video=false
+[0]   ✅ Created album post 6187 with 3 file IDs
+[0] 📥 Bot API: created 1, updated 0 posts
+[0] 🔧 Re-fetching file_ids for 30 posts...
+[0]     ⚠️ Message 6185: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 6182 (was 3, now 3/4)
+[0]     ⚠️ Message 6148: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 6147 (was 3, now 3/4)
+[0]     ⚠️ Message 6045: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 6044 (was 2, now 2/3)
+[0]     ⚠️ Message 6022: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 6021 (was 1, now 1/2)
+[0]     ⚠️ Message 5994: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 5992 (was 2, now 2/3)
+[0]     ⚠️ Message 5959: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 5958 (was 1, now 1/2)
+[0]     ⚠️ Message 5909: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 5906 (was 3, now 3/4)
+[0]     ⚠️ Message 5215: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 5212 (was 4, now 4/5)
+[0]     ⚠️ Message 5143: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 5140 (was 3, now 3/4)
+[0]     ⚠️ Message 5117: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Fixed mismatch for post 5116 (was 3, now 3/4)
+[0]     ⚠️ Message 4381: Telegram API error: Bad Request: message to forward not found
+[0]     ⚠️ Message 4380: Telegram API error: Bad Request: message to forward not found
+[0]     ⚠️ Message 4355: Telegram API error: Bad Request: message to forward not found
+[0]     ⚠️ Message 4319: Telegram API error: Bad Request: message to forward not found
+[0]   ✅ Backfilled post 4040 with 1/1 file_id(s)
+[0]   ✅ Backfilled post 4039 with 1/1 file_id(s)
+[0]   ✅ Backfilled post 4038 with 1/1 file_id(s)
+[0]   ✅ Backfilled post 4037 with 1/1 file_id(s)
+[0]   ✅ Backfilled post 4036 with 1/1 file_id(s)
+[0]   ✅ Backfilled post 4035 with 1/1 file_id(s)
+[0]   ✅ Backfilled post 4034 with 1/1 file_id(s)
+[0]   ✅ Backfilled post 4033 with 1/1 file_id(s)
