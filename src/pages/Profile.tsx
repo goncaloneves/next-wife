@@ -806,7 +806,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                 onPointerDownCapture={(e) => e.stopPropagation()} 
                 onClick={(e) => e.stopPropagation()}
               >
-                <LanguagePicker />
                 <button
                   onClick={() => setShowFilters(true)}
                   className={`relative p-2 transition-all hover:scale-110 [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.5))_drop-shadow(0_0_3px_rgba(0,0,0,0.3))_drop-shadow(0_2px_4px_rgba(0,0,0,0.25))] ${
@@ -830,6 +829,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                 >
                   <Share2 className="w-5 h-5" />
                 </button>
+                <LanguagePicker />
               </div>
             </div>
 
