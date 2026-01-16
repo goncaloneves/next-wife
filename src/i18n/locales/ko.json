@@ -94,16 +94,16 @@
     "applyCount": "적용 ({{count}})"
   },
   "personality": {
-    "shy": "🙈 수줍음",
-    "playful": "🤭 장난스러움",
-    "caring": "💕 다정함",
-    "passionate": "🔥 열정적",
-    "submissive": "🌸 순종적",
-    "dominant": "😈 지배적"
+    "shy": "🙈 수줍은",
+    "playful": "🤭 장난스러운",
+    "caring": "💕 다정한",
+    "passionate": "🔥 열정적인",
+    "submissive": "🌸 순종적인",
+    "dominant": "😈 지배적인"
   },
   "relationship": {
     "stranger": "👋 낯선 사람",
-    "classmate": "📚 같은 반 친구",
+    "classmate": "📚 반 친구",
     "coworker": "💼 직장 동료",
     "bestFriend": "💛 베스트 프렌드",
     "girlfriend": "💕 여자친구",
