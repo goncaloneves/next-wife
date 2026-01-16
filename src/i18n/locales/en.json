@@ -306,5 +306,12 @@
   },
   "channelHeader": {
     "viewChannel": "View Channel"
+  },
+  "language": {
+    "english": "English",
+    "englishWithNative": "English, {{language}}"
+  },
+  "qrWidget": {
+    "scanToMeet": "Scan to meet"
   }
 }

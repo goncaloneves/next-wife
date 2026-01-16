@@ -38,7 +38,7 @@ export function getRelationshipLabel(relationship: string | null): string | null
 }
 
 export function getLanguageDisplay(nativeLanguage: string | null): string {
-  if (!nativeLanguage) return 'English';
-  if (nativeLanguage.toLowerCase() === 'english') return 'English';
-  return `English, ${nativeLanguage}`;
+  if (!nativeLanguage) return i18n.t('language.english');
+  if (nativeLanguage.toLowerCase() === 'english') return i18n.t('language.english');
+  return i18n.t('language.englishWithNative', { language: nativeLanguage });
 }
