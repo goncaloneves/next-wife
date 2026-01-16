@@ -44,6 +44,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
+    load: 'languageOnly',
     debug: false,
     interpolation: {
       escapeValue: false,
