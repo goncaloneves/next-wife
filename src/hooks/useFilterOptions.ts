@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { PERSONALITY_LABELS, RELATIONSHIP_TYPE_LABELS } from "@/lib/girlfriends/profile-formatter";
 import { 
   FilterOptions, 
@@ -6,14 +7,6 @@ import {
   fetchFilterOptions 
 } from "@/components/filters/FilterComponents";
 import { SharedFilters, getActiveFilterCount } from "@/lib/filterStorage";
-
-const PERSONALITY_LABEL_TO_VALUE: Record<string, string> = Object.fromEntries(
-  Object.entries(PERSONALITY_LABELS).map(([value, label]) => [label, value])
-);
-
-const RELATIONSHIP_LABEL_TO_VALUE: Record<string, string> = Object.fromEntries(
-  Object.entries(RELATIONSHIP_TYPE_LABELS).map(([value, label]) => [label, value])
-);
 
 export interface UseFilterOptionsResult {
   filterOptions: FilterOptions;
@@ -32,6 +25,7 @@ export interface UseFilterOptionsResult {
 }
 
 export function useFilterOptions(channel: string): UseFilterOptionsResult {
+  const { t } = useTranslation();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(EMPTY_FILTER_OPTIONS);
   const [loading, setLoading] = useState(true);
 
@@ -43,24 +37,52 @@ export function useFilterOptions(channel: string): UseFilterOptionsResult {
   }, [channel]);
 
   const personalityOptions = useMemo(() => 
-    (filterOptions.personalities || []).map(p => PERSONALITY_LABELS[p] || p),
-    [filterOptions.personalities]
+    (filterOptions.personalities || []).map(p => {
+      const key = PERSONALITY_LABELS[p];
+      return key ? t(key) : p;
+    }),
+    [filterOptions.personalities, t]
   );
 
   const relationshipOptions = useMemo(() => 
-    (filterOptions.relationships || []).map(r => RELATIONSHIP_TYPE_LABELS[r] || r),
-    [filterOptions.relationships]
+    (filterOptions.relationships || []).map(r => {
+      const key = RELATIONSHIP_TYPE_LABELS[r];
+      return key ? t(key) : r;
+    }),
+    [filterOptions.relationships, t]
   );
 
+  const personalityLabelToValue = useMemo(() => {
+    const map: Record<string, string> = {};
+    Object.entries(PERSONALITY_LABELS).forEach(([value, key]) => {
+      map[t(key)] = value;
+    });
+    return map;
+  }, [t]);
+
+  const relationshipLabelToValue = useMemo(() => {
+    const map: Record<string, string> = {};
+    Object.entries(RELATIONSHIP_TYPE_LABELS).forEach(([value, key]) => {
+      map[t(key)] = value;
+    });
+    return map;
+  }, [t]);
+
   const valuesToLabels = useMemo(() => ({
-    personalities: (values: string[]) => values.map(p => PERSONALITY_LABELS[p] || p),
-    relationships: (values: string[]) => values.map(r => RELATIONSHIP_TYPE_LABELS[r] || r),
-  }), []);
+    personalities: (values: string[]) => values.map(p => {
+      const key = PERSONALITY_LABELS[p];
+      return key ? t(key) : p;
+    }),
+    relationships: (values: string[]) => values.map(r => {
+      const key = RELATIONSHIP_TYPE_LABELS[r];
+      return key ? t(key) : r;
+    }),
+  }), [t]);
 
   const labelsToValues = useMemo(() => ({
-    personality: (label: string) => PERSONALITY_LABEL_TO_VALUE[label] || label,
-    relationship: (label: string) => RELATIONSHIP_LABEL_TO_VALUE[label] || label,
-  }), []);
+    personality: (label: string) => personalityLabelToValue[label] || label,
+    relationship: (label: string) => relationshipLabelToValue[label] || label,
+  }), [personalityLabelToValue, relationshipLabelToValue]);
 
   return {
     filterOptions,
