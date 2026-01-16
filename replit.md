@@ -68,9 +68,11 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **i18next + react-i18next:** Internationalization framework with browser language detection.
 
 ## Internationalization (i18n)
-The application uses i18next for internationalization support:
-- **Configuration:** `src/i18n/index.ts` - Sets up i18next with browser language detection
-- **Translations:** `src/i18n/locales/en.json` - English translation file with all user-facing strings
-- **Key Structure:** Translations are organized by domain (common, navigation, home, profile, filters, terms, privacy, etc.)
+The application uses i18next for internationalization with 12 supported languages:
+- **Configuration:** `src/i18n/index.ts` - Sets up i18next with browser language detection and RTL support
+- **Languages:** English (en), Portuguese (pt), Spanish (es), French (fr), German (de), Italian (it), Russian (ru), Ukrainian (uk), Arabic (ar), Korean (ko), Malay (ms), Dutch (nl)
+- **Translation Files:** `src/i18n/locales/*.json` - Each language has 350+ translation keys
+- **Key Structure:** Translations organized by domain (common, navigation, home, profile, filters, terms, privacy, etc.)
 - **Dynamic Values:** Use interpolation syntax like `{{name}}` for dynamic content
-- **Adding Languages:** Create new locale files (e.g., `es.json`, `fr.json`) following the same structure as `en.json`
+- **RTL Support:** Arabic (ar) automatically sets document direction to right-to-left, with language code normalization (handles ar-SA, ar-EG variants)
+- **Adding Languages:** Create new locale files following the same structure as `en.json`
