@@ -77,7 +77,8 @@ The application uses i18next for internationalization with 12 supported language
 - **Dynamic Values:** Use interpolation syntax like `{{name}}` for dynamic content
 - **RTL Support:** Arabic (ar) automatically sets document direction to right-to-left, with language code normalization (handles ar-SA, ar-EG variants)
 - **URL Parameter Override:** Use `?lang=en` or `?lang=fr` etc. to force a specific language. Invalid values fall back to English.
-- **Language Detection Priority:** 1) URL `?lang=` parameter, 2) Browser language (navigator), 3) Fallback to English
+- **Language Persistence:** User's language choice is stored in localStorage (`nextwife-language` key) and persists across sessions.
+- **Language Detection Priority:** 1) URL `?lang=` parameter (also saves to localStorage), 2) Stored localStorage value, 3) Browser language (navigator), 4) Fallback to English
 - **Language Code Normalization:** Uses `load: 'languageOnly'` so `en-US` → `en`, `fr-FR` → `fr`, `pt-BR` → `pt`, etc.
 - **Language Picker UI:** Globe icon in header opens language selection. Homepage uses a dropdown, profile pages use a bottom sheet modal (same style/animation as filter modal). 12 languages displayed in native names with semibold font for consistent weight across scripts. Globe only highlights when dropdown/modal is open.
 - **Localized Relative Times:** Post timestamps ("about 1 hour ago") are translated using date-fns locales (`src/lib/dateLocale.ts`). All 12 languages supported with automatic locale detection based on current i18n language.
