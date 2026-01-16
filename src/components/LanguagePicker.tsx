@@ -27,6 +27,7 @@ export function LanguagePicker() {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const currentLanguage = i18n.language?.split('-')[0] || 'en';
+  const isNonEnglish = currentLanguage !== 'en';
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -82,7 +83,7 @@ export function LanguagePicker() {
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "p-2 flex items-center justify-center transition-all hover:scale-110 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]",
-          isOpen ? "text-orange-400" : "text-white"
+          isOpen || isNonEnglish ? "text-orange-400" : "text-white"
         )}
         data-testid="language-picker-button"
         aria-label="Select language"
