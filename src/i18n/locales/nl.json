@@ -1,0 +1,343 @@
+{
+  "common": {
+    "backToHome": "← Terug naar Home",
+    "support": "Ondersteuning",
+    "madeWith": "Gemaakt met 💖",
+    "loading": "Laden...",
+    "error": "Fout",
+    "retry": "Opnieuw proberen",
+    "close": "Sluiten",
+    "all": "Alle",
+    "showLess": "Minder tonen",
+    "more": "meer",
+    "apply": "Toepassen",
+    "clearAll": "Alles wissen",
+    "showAll": "Alles tonen",
+    "note": "Opmerking",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "morePages": "Meer pagina's"
+  },
+  "navigation": {
+    "termsAndConditions": "Algemene Voorwaarden",
+    "privacyPolicy": "Privacybeleid",
+    "viewChannel": "Bekijk Kanaal"
+  },
+  "home": {
+    "title": "Next Wife",
+    "heroTitle": "Creëer je vrouw op Telegram",
+    "heroSubtitle": "Ontmoet de vrouw die je creëert en begin aan een romantische reis, waarin je unieke verhalen van over de hele wereld deelt.",
+    "findYourWoman": "Vind Jouw Vrouw 🌻",
+    "orCreateOnTelegram": "of maak je eigen op Telegram",
+    "yourGirlfriendExperience": "Jouw Vriendin Ervaring ✨",
+    "features": {
+      "authenticDailyLife": {
+        "title": "Authentiek Dagelijks Leven",
+        "description": "Ervaar oprechte momenten en authentieke interacties in haar dagelijks leven"
+      },
+      "discoverNewRelationships": {
+        "title": "Ontdek Nieuwe Relaties",
+        "description": "Creëer meerdere unieke vriendinnen en verken verschillende connecties"
+      },
+      "romanticMoments": {
+        "title": "Romantische Momenten",
+        "description": "Ontdek intieme gesprekken en bouw betekenisvolle connecties op"
+      },
+      "photoVoiceVideo": {
+        "title": "Foto, Stem & Video",
+        "description": "Communiceer met foto's, spraakberichten en video's voor diepere connecties"
+      },
+      "secretStories": {
+        "title": "Geheime Verhalen",
+        "description": "Ontdek verborgen verlangens en exclusieve intieme momenten"
+      },
+      "earnTelegramStars": {
+        "title": "Verdien Telegram Sterren",
+        "description": "Verdien 20% levenslange commissie met ons affiliateprogramma"
+      }
+    }
+  },
+  "discover": {
+    "noProfilesAvailable": "Geen profielen beschikbaar",
+    "browseAllProfiles": "Alle Profielen Bekijken"
+  },
+  "profile": {
+    "profileNotFound": "Profiel niet gevonden",
+    "findSomeoneNew": "Iemand Nieuws Vinden",
+    "aboutMe": "Over Mij",
+    "readyToMeet": "Klaar om {{name}} te ontmoeten?",
+    "waitingForYou": "Ze wacht op je op Telegram.",
+    "meetOnTelegram": "Ontmoeten op Telegram",
+    "keyboardHints": {
+      "back": "Terug",
+      "skip": "Overslaan",
+      "meet": "Ontmoeten"
+    },
+    "share": {
+      "title": "Ontmoet {{name}} op Next Wife",
+      "text": "Bekijk {{name}}, {{age}} uit {{hometown}}"
+    }
+  },
+  "filters": {
+    "title": "Filters",
+    "subtitle": "Vind jouw perfecte vrouw",
+    "age": "Leeftijd",
+    "language": "Taal",
+    "relationship": "Relatie",
+    "personality": "Persoonlijkheid",
+    "occupation": "Beroep",
+    "region": "Regio",
+    "hometown": "Woonplaats",
+    "media": "Media",
+    "hasVideo": "Heeft Video",
+    "multiplePhotos": "Meerdere Foto's",
+    "applyCount": "Toepassen ({{count}})"
+  },
+  "personality": {
+    "shy": "🙈 Verlegen",
+    "playful": "🤭 Speels",
+    "caring": "💕 Zorgzaam",
+    "passionate": "🔥 Gepassioneerd",
+    "submissive": "🌸 Onderdanig",
+    "dominant": "😈 Dominant"
+  },
+  "relationship": {
+    "stranger": "👋 Vreemde",
+    "classmate": "📚 Klasgenoot",
+    "coworker": "💼 Collega",
+    "bestFriend": "💛 Beste Vriendin",
+    "girlfriend": "💕 Vriendin",
+    "wife": "💍 Vrouw"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Oeps! Pagina niet gevonden",
+    "returnHome": "Terug naar Home"
+  },
+  "terms": {
+    "title": "Algemene Voorwaarden",
+    "lastUpdated": "Laatst bijgewerkt: {{date}}",
+    "sections": {
+      "acceptanceOfTerms": {
+        "title": "1. Aanvaarding van Voorwaarden",
+        "content": "Door toegang te krijgen tot en gebruik te maken van Next Wife (\"de Dienst\"), accepteert u en stemt u ermee in gebonden te zijn aan deze Algemene Voorwaarden. De Dienst wordt geleverd via Telegram en stelt gebruikers in staat om te communiceren met AI-gegenereerde virtuele gezellinnen."
+      },
+      "ageRequirement": {
+        "title": "2. Leeftijdsvereiste",
+        "content": "U moet minimaal 18 jaar oud zijn om deze Dienst te gebruiken. Door Next Wife te gebruiken, bevestigt u dat u meerderjarig bent in uw rechtsgebied. De Dienst bevat inhoud voor volwassenen en is uitsluitend bedoeld voor een volwassen publiek."
+      },
+      "serviceDescription": {
+        "title": "3. Beschrijving van de Dienst",
+        "intro": "Next Wife is een AI-aangedreven virtuele gezellindienst die opereert via Telegram. De Dienst biedt:",
+        "items": {
+          "textConversations": "Tekstgesprekken met AI-gezellinnen",
+          "photoMediaInteractions": "Foto- en media-interacties",
+          "voiceVideoContent": "Stem- en videocontent",
+          "personalizedExperiences": "Gepersonaliseerde relatie-ervaringen"
+        },
+        "disclaimer": "Alle interacties worden gegenereerd door kunstmatige intelligentie en betrekken geen echte mensen."
+      },
+      "userConduct": {
+        "title": "4. Gebruikersgedrag",
+        "intro": "U stemt ermee in om niet:",
+        "items": {
+          "illegalPurposes": "De Dienst te gebruiken voor illegale doeleinden",
+          "reverseEngineer": "Te proberen de Dienst te reverse-engineeren of te hacken",
+          "shareCredentials": "Uw accountgegevens te delen met anderen",
+          "harass": "Andere gebruikers of de Dienst te lastigvallen, misbruiken of schaden",
+          "illegalContent": "De Dienst te gebruiken om illegale inhoud te genereren, verspreiden of opvragen"
+        }
+      },
+      "intellectualProperty": {
+        "title": "5. Intellectueel Eigendom",
+        "content": "Alle inhoud gegenereerd door de Dienst, inclusief tekst, afbeeldingen en video's, blijft eigendom van Next Wife. Gebruikers krijgen een beperkte, niet-exclusieve licentie om de inhoud uitsluitend voor persoonlijke, niet-commerciële doeleinden te gebruiken."
+      },
+      "privacyAndData": {
+        "title": "6. Privacy en Gegevens",
+        "content": "Uw gebruik van de Dienst wordt ook beheerst door ons Privacybeleid. Wij verzamelen en verwerken gegevens zoals beschreven in ons Privacybeleid om de Dienst te leveren en te verbeteren."
+      },
+      "disclaimerOfWarranties": {
+        "title": "7. Afwijzing van Garanties",
+        "intro": "De Dienst wordt geleverd \"zoals hij is\" zonder enige garanties. Next Wife garandeert niet:",
+        "items": {
+          "uninterruptedService": "Ononderbroken of foutloze dienstverlening",
+          "accuracyOfContent": "Nauwkeurigheid van AI-gegenereerde inhoud",
+          "meetRequirements": "Dat de Dienst aan uw specifieke vereisten zal voldoen"
+        },
+        "disclaimer": "Next Wife is uitsluitend een entertainmentdienst. AI-gezellinnen zijn geen vervanging voor echte menselijke relaties, therapie of professioneel advies."
+      },
+      "limitationOfLiability": {
+        "title": "8. Beperking van Aansprakelijkheid",
+        "content": "Next Wife is niet aansprakelijk voor enige indirecte, incidentele, speciale, gevolgschade of punitieve schade als gevolg van uw gebruik of onvermogen om de Dienst te gebruiken."
+      },
+      "subscriptionAndPayment": {
+        "title": "9. Abonnement en Betaling",
+        "content": "Sommige functies kunnen een betaald abonnement vereisen. Alle betalingen worden verwerkt via het betalingssysteem van Telegram. Restitutiebeleid is onderworpen aan de servicevoorwaarden van Telegram."
+      },
+      "termination": {
+        "title": "10. Beëindiging",
+        "content": "Wij behouden ons het recht voor om uw toegang tot de Dienst op elk moment zonder voorafgaande kennisgeving op te schorten of te beëindigen, voor gedrag dat naar onze mening deze Voorwaarden schendt of schadelijk is voor andere gebruikers of de Dienst."
+      },
+      "changesToTerms": {
+        "title": "11. Wijzigingen in Voorwaarden",
+        "content": "Wij kunnen deze Voorwaarden van tijd tot tijd bijwerken. Voortgezet gebruik van de Dienst na wijzigingen vormt acceptatie van de nieuwe Voorwaarden."
+      },
+      "contact": {
+        "title": "12. Contact",
+        "content": "Voor vragen over deze Voorwaarden kunt u contact met ons opnemen via ons supportkanaal:"
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacybeleid",
+    "lastUpdated": "Laatst bijgewerkt: {{date}}",
+    "sections": {
+      "introduction": {
+        "title": "1. Inleiding",
+        "content": "Next Wife (\"wij\", \"ons\" of \"onze\") zet zich in voor de bescherming van uw privacy. Dit Privacybeleid legt uit hoe wij uw informatie verzamelen, gebruiken, openbaar maken en beschermen wanneer u onze AI-gezellindienst via Telegram gebruikt."
+      },
+      "informationWeCollect": {
+        "title": "2. Informatie die Wij Verzamelen",
+        "informationYouProvide": {
+          "title": "2.1 Informatie die U Verstrekt",
+          "items": {
+            "telegramId": "Telegram gebruikers-ID en gebruikersnaam",
+            "messages": "Berichten en gesprekken met AI-gezellinnen",
+            "photos": "Foto's en media die u deelt",
+            "preferences": "Voorkeuren en aanpassingskeuzes",
+            "paymentInfo": "Betalingsinformatie (verwerkt via Telegram)"
+          }
+        },
+        "automaticallyCollected": {
+          "title": "2.2 Automatisch Verzamelde Informatie",
+          "items": {
+            "usageData": "Gebruiksgegevens en interactiepatronen",
+            "deviceInfo": "Apparaatinformatie en IP-adressen",
+            "sessionData": "Sessietijdstempels en -duur",
+            "technicalData": "Technische gegevens voor serviceverbetering"
+          }
+        }
+      },
+      "howWeUseInfo": {
+        "title": "3. Hoe Wij Uw Informatie Gebruiken",
+        "intro": "Wij gebruiken verzamelde informatie om:",
+        "items": {
+          "providePersonalize": "AI-gezellin-ervaringen te leveren en te personaliseren",
+          "maintainContext": "Gesprekscontext te behouden voor betere antwoorden",
+          "processPayments": "Betalingen te verwerken en abonnementen te beheren",
+          "communicateUpdates": "Service-updates en functies te communiceren",
+          "ensureSecurity": "Servicebeveiliging te waarborgen en misbruik te voorkomen",
+          "complyLegal": "Te voldoen aan wettelijke verplichtingen"
+        }
+      },
+      "messagePrivacy": {
+        "title": "4. Berichtgebruik en Privacy",
+        "intro": "Wij loggen uw gespreksberichten NIET. Uw gesprekken worden uitsluitend gebruikt voor:",
+        "usedFor": {
+          "contextualResponses": "Het bieden van contextuele antwoorden tijdens actieve gesprekken",
+          "maintainingContext": "Het behouden van gesprekscontext voor continuïteit",
+          "personalizing": "Het personaliseren van uw AI-gezellin-ervaring"
+        },
+        "notUsedIntro": "Uw privégesprekken worden NIET:",
+        "notUsedFor": {
+          "logged": "Gelogd voor monitoring of beoordeling",
+          "usedForTraining": "Gebruikt voor AI-training of modelverbetering",
+          "sharedWithThirdParties": "Gedeeld met derden",
+          "accessibleToEmployees": "Toegankelijk voor werknemers of beheerders"
+        }
+      },
+      "dataStorageSecurity": {
+        "title": "5. Gegevensopslag en Beveiliging",
+        "intro": "Wij implementeren industriestandaard beveiligingsmaatregelen om uw gegevens te beschermen:",
+        "items": {
+          "encryptedTransmission": "Versleutelde gegevensoverdracht (HTTPS/TLS)",
+          "secureStorage": "Beveiligde cloudopslaginfrastructuur",
+          "regularAudits": "Regelmatige beveiligingsaudits en updates",
+          "limitedAccess": "Beperkte werknemerstoegang tot gebruikersgegevens"
+        },
+        "disclaimer": "Echter, geen enkele verzendmethode via internet is 100% veilig. Hoewel wij ernaar streven uw gegevens te beschermen, kunnen wij geen absolute beveiliging garanderen."
+      },
+      "dataRetention": {
+        "title": "6. Gegevensbewaring",
+        "intro": "Wij bewaren minimale gegevens die nodig zijn om de Dienst te leveren en te voldoen aan wettelijke verplichtingen:",
+        "items": {
+          "accountInfo": "Accountinformatie (Telegram gebruikers-ID, voorkeuren)",
+          "paymentHistory": "Betalings- en abonnementsgeschiedenis",
+          "usageStats": "Gebruiksstatistieken (geanonimiseerd)"
+        },
+        "disclaimer": "Gespreksberichten worden NIET gelogd. Ze worden verwerkt om gepersonaliseerde AI-gezellin-ervaringen te bieden."
+      },
+      "privacyRights": {
+        "title": "7. Uw Privacyrechten",
+        "intro": "Afhankelijk van uw locatie heeft u mogelijk het recht om:",
+        "items": {
+          "accessData": "Toegang te krijgen tot uw persoonlijke gegevens",
+          "requestDeletion": "Verwijdering van gegevens aan te vragen",
+          "correctInfo": "Onjuiste informatie te corrigeren",
+          "objectProcessing": "Bezwaar te maken tegen bepaalde gegevensverwerking",
+          "dataPortability": "Gegevensportabiliteit"
+        },
+        "contact": "Om deze rechten uit te oefenen, neem contact met ons op via ons supportkanaal:"
+      },
+      "childrensPrivacy": {
+        "title": "8. Privacy van Kinderen",
+        "content": "Onze Dienst is niet bedoeld voor gebruikers onder de 18 jaar. Wij verzamelen niet bewust persoonlijke informatie van minderjarigen. Als u denkt dat een minderjarige ons persoonlijke informatie heeft verstrekt, neem dan onmiddellijk contact met ons op."
+      },
+      "internationalTransfers": {
+        "title": "9. Internationale Gegevensoverdrachten",
+        "content": "Uw gegevens kunnen worden overgedragen naar en verwerkt in landen anders dan uw eigen land. Door gebruik te maken van onze Dienst stemt u in met dergelijke overdrachten. Wij zorgen ervoor dat passende waarborgen aanwezig zijn voor internationale gegevensoverdrachten."
+      },
+      "cookiesTracking": {
+        "title": "10. Cookies en Tracking",
+        "content": "Onze website gebruikt minimale cookies voor essentiële functionaliteit. Wij gebruiken geen uitgebreide tracking- of advertentiecookies."
+      },
+      "changesToPolicy": {
+        "title": "12. Wijzigingen in dit Privacybeleid",
+        "content": "Wij kunnen dit Privacybeleid van tijd tot tijd bijwerken. Wij zullen u op de hoogte stellen van significante wijzigingen via de Dienst of Telegram. Uw voortgezet gebruik na wijzigingen vormt acceptatie van het bijgewerkte beleid."
+      },
+      "contactUs": {
+        "title": "13. Contact Opnemen",
+        "intro": "Als u vragen heeft over dit Privacybeleid of uw privacyrechten wilt uitoefenen, neem dan contact met ons op:",
+        "supportChannel": "Supportkanaal:"
+      }
+    },
+    "note": "Opmerking: Next Wife is een AI-aangedreven entertainmentdienst. Alle gezellinnen zijn kunstmatige intelligentie en geen echte mensen. Wij prioriteren uw privacy en gegevensbeveiliging terwijl wij een boeiende ervaring bieden."
+  },
+  "feed": {
+    "noPostsFound": "Geen berichten gevonden",
+    "loadingMore": "Meer laden...",
+    "endOfFeed": "Geen berichten meer",
+    "noMatchingFilters": "Geen vriendin komt overeen met uw filters",
+    "tryAdjustingFilters": "Probeer uw zoekcriteria aan te passen",
+    "loadingGirlfriends": "Vriendinnen laden..."
+  },
+  "channelHeader": {
+    "viewChannel": "Bekijk Kanaal"
+  },
+  "language": {
+    "english": "Engels",
+    "englishWithNative": "Engels, {{language}}"
+  },
+  "qrWidget": {
+    "scanToMeet": "Scan om te ontmoeten"
+  },
+  "postCard": {
+    "channel": "Kanaal",
+    "viewOnTelegram": "Bekijk op Telegram",
+    "postMedia": "Berichtmedia",
+    "postMediaFullscreen": "Media op volledig scherm",
+    "close": "Sluiten",
+    "more": "meer"
+  },
+  "accessibility": {
+    "toggleSidebar": "Zijbalk Wisselen",
+    "pagination": "paginering",
+    "goToPreviousPage": "Ga naar vorige pagina",
+    "goToNextPage": "Ga naar volgende pagina",
+    "breadcrumb": "kruimelpad",
+    "morePages": "Meer pagina's",
+    "more": "Meer",
+    "previousSlide": "Vorige dia",
+    "nextSlide": "Volgende dia"
+  }
+}

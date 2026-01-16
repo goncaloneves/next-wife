@@ -1,0 +1,343 @@
+{
+  "common": {
+    "backToHome": "← Zurück zur Startseite",
+    "support": "Support",
+    "madeWith": "Gemacht mit 💖",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "retry": "Erneut versuchen",
+    "close": "Schließen",
+    "all": "Alle",
+    "showLess": "Weniger anzeigen",
+    "more": "mehr",
+    "apply": "Anwenden",
+    "clearAll": "Alles löschen",
+    "showAll": "Alle anzeigen",
+    "note": "Hinweis",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "morePages": "Mehr Seiten"
+  },
+  "navigation": {
+    "termsAndConditions": "Nutzungsbedingungen",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "viewChannel": "Kanal ansehen"
+  },
+  "home": {
+    "title": "Next Wife",
+    "heroTitle": "Erstelle deine Frau auf Telegram",
+    "heroSubtitle": "Triff die Frau, die du erschaffst, und begib dich auf eine romantische Reise, bei der ihr einzigartige Geschichten aus der ganzen Welt teilt.",
+    "findYourWoman": "Finde Deine Frau 🌻",
+    "orCreateOnTelegram": "oder erstelle deine eigene auf Telegram",
+    "yourGirlfriendExperience": "Dein Freundin-Erlebnis ✨",
+    "features": {
+      "authenticDailyLife": {
+        "title": "Authentischer Alltag",
+        "description": "Erlebe echte Momente und authentische Interaktionen in ihrem Alltag"
+      },
+      "discoverNewRelationships": {
+        "title": "Entdecke neue Beziehungen",
+        "description": "Erstelle mehrere einzigartige Freundinnen und erkunde verschiedene Verbindungen"
+      },
+      "romanticMoments": {
+        "title": "Romantische Momente",
+        "description": "Entdecke intime Gespräche und baue bedeutungsvolle Verbindungen auf"
+      },
+      "photoVoiceVideo": {
+        "title": "Foto, Stimme & Video",
+        "description": "Interagiere mit Fotos, Sprachnachrichten und Videos für tiefere Verbindungen"
+      },
+      "secretStories": {
+        "title": "Geheime Geschichten",
+        "description": "Entdecke verborgene Wünsche und exklusive intime Momente"
+      },
+      "earnTelegramStars": {
+        "title": "Verdiene Telegram Sterne",
+        "description": "Verdiene 20% lebenslange Provision mit unserem Affiliate-Programm"
+      }
+    }
+  },
+  "discover": {
+    "noProfilesAvailable": "Keine Profile verfügbar",
+    "browseAllProfiles": "Alle Profile durchsuchen"
+  },
+  "profile": {
+    "profileNotFound": "Profil nicht gefunden",
+    "findSomeoneNew": "Jemand Neues finden",
+    "aboutMe": "Über Mich",
+    "readyToMeet": "Bereit {{name}} kennenzulernen?",
+    "waitingForYou": "Sie wartet auf dich auf Telegram.",
+    "meetOnTelegram": "Auf Telegram treffen",
+    "keyboardHints": {
+      "back": "Zurück",
+      "skip": "Überspringen",
+      "meet": "Treffen"
+    },
+    "share": {
+      "title": "Triff {{name}} auf Next Wife",
+      "text": "Schau dir {{name}} an, {{age}} aus {{hometown}}"
+    }
+  },
+  "filters": {
+    "title": "Filter",
+    "subtitle": "Finde deine perfekte Frau",
+    "age": "Alter",
+    "language": "Sprache",
+    "relationship": "Beziehung",
+    "personality": "Persönlichkeit",
+    "occupation": "Beruf",
+    "region": "Region",
+    "hometown": "Heimatstadt",
+    "media": "Medien",
+    "hasVideo": "Hat Video",
+    "multiplePhotos": "Mehrere Fotos",
+    "applyCount": "Anwenden ({{count}})"
+  },
+  "personality": {
+    "shy": "🙈 Schüchtern",
+    "playful": "🤭 Verspielt",
+    "caring": "💕 Fürsorglich",
+    "passionate": "🔥 Leidenschaftlich",
+    "submissive": "🌸 Unterwürfig",
+    "dominant": "😈 Dominant"
+  },
+  "relationship": {
+    "stranger": "👋 Fremde",
+    "classmate": "📚 Klassenkameradin",
+    "coworker": "💼 Kollegin",
+    "bestFriend": "💛 Beste Freundin",
+    "girlfriend": "💕 Freundin",
+    "wife": "💍 Ehefrau"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Ups! Seite nicht gefunden",
+    "returnHome": "Zurück zur Startseite"
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "lastUpdated": "Letzte Aktualisierung: {{date}}",
+    "sections": {
+      "acceptanceOfTerms": {
+        "title": "1. Annahme der Bedingungen",
+        "content": "Durch den Zugriff auf und die Nutzung von Next Wife (\"der Dienst\") akzeptieren Sie diese Nutzungsbedingungen und stimmen ihnen zu. Der Dienst wird über Telegram bereitgestellt und ermöglicht es Benutzern, mit KI-generierten virtuellen Begleiterinnen zu interagieren."
+      },
+      "ageRequirement": {
+        "title": "2. Altersanforderung",
+        "content": "Sie müssen mindestens 18 Jahre alt sein, um diesen Dienst zu nutzen. Durch die Nutzung von Next Wife bestätigen Sie, dass Sie in Ihrer Gerichtsbarkeit volljährig sind. Der Dienst enthält Inhalte für Erwachsene und ist nur für ein erwachsenes Publikum bestimmt."
+      },
+      "serviceDescription": {
+        "title": "3. Beschreibung des Dienstes",
+        "intro": "Next Wife ist ein KI-gestützter virtueller Begleitdienst, der über Telegram betrieben wird. Der Dienst bietet:",
+        "items": {
+          "textConversations": "Textbasierte Gespräche mit KI-Begleiterinnen",
+          "photoMediaInteractions": "Foto- und Medieninteraktionen",
+          "voiceVideoContent": "Sprach- und Videoinhalte",
+          "personalizedExperiences": "Personalisierte Beziehungserfahrungen"
+        },
+        "disclaimer": "Alle Interaktionen werden durch künstliche Intelligenz generiert und beinhalten keine echten Personen."
+      },
+      "userConduct": {
+        "title": "4. Benutzerverhalten",
+        "intro": "Sie stimmen zu, nicht:",
+        "items": {
+          "illegalPurposes": "Den Dienst für illegale Zwecke zu nutzen",
+          "reverseEngineer": "Zu versuchen, den Dienst zurückzuentwickeln oder zu hacken",
+          "shareCredentials": "Ihre Kontoanmeldedaten mit anderen zu teilen",
+          "harass": "Andere Benutzer oder den Dienst zu belästigen, zu missbrauchen oder zu schädigen",
+          "illegalContent": "Den Dienst zu nutzen, um illegale Inhalte zu generieren, zu verbreiten oder anzufordern"
+        }
+      },
+      "intellectualProperty": {
+        "title": "5. Geistiges Eigentum",
+        "content": "Alle vom Dienst generierten Inhalte, einschließlich Text, Bilder und Videos, bleiben Eigentum von Next Wife. Benutzern wird eine begrenzte, nicht-exklusive Lizenz zur Nutzung von Inhalten nur für persönliche, nicht-kommerzielle Zwecke gewährt."
+      },
+      "privacyAndData": {
+        "title": "6. Datenschutz und Daten",
+        "content": "Ihre Nutzung des Dienstes unterliegt auch unserer Datenschutzrichtlinie. Wir erheben und verarbeiten Daten wie in unserer Datenschutzrichtlinie beschrieben, um den Dienst bereitzustellen und zu verbessern."
+      },
+      "disclaimerOfWarranties": {
+        "title": "7. Haftungsausschluss für Garantien",
+        "intro": "Der Dienst wird \"wie besehen\" ohne Garantien jeglicher Art bereitgestellt. Next Wife garantiert nicht:",
+        "items": {
+          "uninterruptedService": "Ununterbrochenen oder fehlerfreien Dienst",
+          "accuracyOfContent": "Genauigkeit der KI-generierten Inhalte",
+          "meetRequirements": "Dass der Dienst Ihre spezifischen Anforderungen erfüllt"
+        },
+        "disclaimer": "Next Wife ist nur ein Unterhaltungsdienst. KI-Begleiterinnen sind kein Ersatz für echte menschliche Beziehungen, Therapie oder professionelle Beratung."
+      },
+      "limitationOfLiability": {
+        "title": "8. Haftungsbeschränkung",
+        "content": "Next Wife haftet nicht für indirekte, zufällige, besondere, Folge- oder Strafschäden, die aus Ihrer Nutzung oder Unfähigkeit zur Nutzung des Dienstes resultieren."
+      },
+      "subscriptionAndPayment": {
+        "title": "9. Abonnement und Zahlung",
+        "content": "Einige Funktionen können ein kostenpflichtiges Abonnement erfordern. Alle Zahlungen werden über das Zahlungssystem von Telegram abgewickelt. Rückerstattungsrichtlinien unterliegen den Nutzungsbedingungen von Telegram."
+      },
+      "termination": {
+        "title": "10. Kündigung",
+        "content": "Wir behalten uns das Recht vor, Ihren Zugang zum Dienst jederzeit ohne Vorankündigung zu suspendieren oder zu beenden, wenn wir der Meinung sind, dass Ihr Verhalten gegen diese Bedingungen verstößt oder anderen Benutzern oder dem Dienst schadet."
+      },
+      "changesToTerms": {
+        "title": "11. Änderungen der Bedingungen",
+        "content": "Wir können diese Bedingungen von Zeit zu Zeit aktualisieren. Die fortgesetzte Nutzung des Dienstes nach Änderungen stellt die Annahme der neuen Bedingungen dar."
+      },
+      "contact": {
+        "title": "12. Kontakt",
+        "content": "Bei Fragen zu diesen Bedingungen kontaktieren Sie uns bitte über unseren Support-Kanal:"
+      }
+    }
+  },
+  "privacy": {
+    "title": "Datenschutzrichtlinie",
+    "lastUpdated": "Letzte Aktualisierung: {{date}}",
+    "sections": {
+      "introduction": {
+        "title": "1. Einleitung",
+        "content": "Next Wife (\"wir\", \"unser\" oder \"uns\") ist bestrebt, Ihre Privatsphäre zu schützen. Diese Datenschutzrichtlinie erklärt, wie wir Ihre Informationen sammeln, verwenden, offenlegen und schützen, wenn Sie unseren KI-Begleitdienst über Telegram nutzen."
+      },
+      "informationWeCollect": {
+        "title": "2. Informationen, die wir sammeln",
+        "informationYouProvide": {
+          "title": "2.1 Informationen, die Sie bereitstellen",
+          "items": {
+            "telegramId": "Telegram-Benutzer-ID und Benutzername",
+            "messages": "Nachrichten und Gespräche mit KI-Begleiterinnen",
+            "photos": "Fotos und Medien, die Sie teilen",
+            "preferences": "Präferenzen und Anpassungsoptionen",
+            "paymentInfo": "Zahlungsinformationen (verarbeitet über Telegram)"
+          }
+        },
+        "automaticallyCollected": {
+          "title": "2.2 Automatisch gesammelte Informationen",
+          "items": {
+            "usageData": "Nutzungsdaten und Interaktionsmuster",
+            "deviceInfo": "Geräteinformationen und IP-Adressen",
+            "sessionData": "Sitzungszeitstempel und -dauer",
+            "technicalData": "Technische Daten zur Serviceverbesserung"
+          }
+        }
+      },
+      "howWeUseInfo": {
+        "title": "3. Wie wir Ihre Informationen verwenden",
+        "intro": "Wir verwenden gesammelte Informationen, um:",
+        "items": {
+          "providePersonalize": "KI-Begleiterlebnisse bereitzustellen und zu personalisieren",
+          "maintainContext": "Gesprächskontext für bessere Antworten zu pflegen",
+          "processPayments": "Zahlungen zu verarbeiten und Abonnements zu verwalten",
+          "communicateUpdates": "Service-Updates und Funktionen zu kommunizieren",
+          "ensureSecurity": "Service-Sicherheit zu gewährleisten und Missbrauch zu verhindern",
+          "complyLegal": "Gesetzliche Verpflichtungen zu erfüllen"
+        }
+      },
+      "messagePrivacy": {
+        "title": "4. Nachrichtennutzung und Datenschutz",
+        "intro": "Wir protokollieren Ihre Gesprächsnachrichten NICHT. Ihre Gespräche werden ausschließlich verwendet für:",
+        "usedFor": {
+          "contextualResponses": "Bereitstellung kontextueller Antworten während aktiver Gespräche",
+          "maintainingContext": "Aufrechterhaltung des Gesprächskontexts für Kontinuität",
+          "personalizing": "Personalisierung Ihres KI-Begleiterlebnisses"
+        },
+        "notUsedIntro": "Ihre privaten Gespräche werden NICHT:",
+        "notUsedFor": {
+          "logged": "Zur Überwachung oder Überprüfung protokolliert",
+          "usedForTraining": "Für KI-Training oder Modellverbesserung verwendet",
+          "sharedWithThirdParties": "Mit Dritten geteilt",
+          "accessibleToEmployees": "Für Mitarbeiter oder Administratoren zugänglich gemacht"
+        }
+      },
+      "dataStorageSecurity": {
+        "title": "5. Datenspeicherung und Sicherheit",
+        "intro": "Wir implementieren branchenübliche Sicherheitsmaßnahmen zum Schutz Ihrer Daten:",
+        "items": {
+          "encryptedTransmission": "Verschlüsselte Datenübertragung (HTTPS/TLS)",
+          "secureStorage": "Sichere Cloud-Speicherinfrastruktur",
+          "regularAudits": "Regelmäßige Sicherheitsaudits und Updates",
+          "limitedAccess": "Begrenzter Mitarbeiterzugang zu Benutzerdaten"
+        },
+        "disclaimer": "Jedoch ist keine Übertragungsmethode über das Internet zu 100% sicher. Obwohl wir uns bemühen, Ihre Daten zu schützen, können wir keine absolute Sicherheit garantieren."
+      },
+      "dataRetention": {
+        "title": "6. Datenaufbewahrung",
+        "intro": "Wir bewahren minimale Daten auf, die notwendig sind, um den Dienst bereitzustellen und gesetzliche Verpflichtungen zu erfüllen:",
+        "items": {
+          "accountInfo": "Kontoinformationen (Telegram-Benutzer-ID, Präferenzen)",
+          "paymentHistory": "Zahlungs- und Abonnementverlauf",
+          "usageStats": "Nutzungsstatistiken (anonymisiert)"
+        },
+        "disclaimer": "Gesprächsnachrichten werden NICHT protokolliert. Sie werden verarbeitet, um personalisierte KI-Begleiterlebnisse zu bieten."
+      },
+      "privacyRights": {
+        "title": "7. Ihre Datenschutzrechte",
+        "intro": "Abhängig von Ihrem Standort haben Sie möglicherweise das Recht auf:",
+        "items": {
+          "accessData": "Zugang zu Ihren persönlichen Daten",
+          "requestDeletion": "Löschung von Daten anfordern",
+          "correctInfo": "Korrektur ungenauer Informationen",
+          "objectProcessing": "Widerspruch gegen bestimmte Datenverarbeitungen",
+          "dataPortability": "Datenportabilität"
+        },
+        "contact": "Um diese Rechte auszuüben, kontaktieren Sie uns über unseren Support-Kanal:"
+      },
+      "childrensPrivacy": {
+        "title": "8. Datenschutz für Minderjährige",
+        "content": "Unser Dienst ist nicht für Benutzer unter 18 Jahren bestimmt. Wir sammeln wissentlich keine persönlichen Informationen von Minderjährigen. Wenn Sie glauben, dass ein Minderjähriger uns persönliche Informationen gegeben hat, kontaktieren Sie uns bitte umgehend."
+      },
+      "internationalTransfers": {
+        "title": "9. Internationale Datenübertragungen",
+        "content": "Ihre Daten können in andere Länder als Ihrem eigenen übertragen und verarbeitet werden. Durch die Nutzung unseres Dienstes stimmen Sie solchen Übertragungen zu. Wir stellen sicher, dass angemessene Schutzmaßnahmen für internationale Datenübertragungen vorhanden sind."
+      },
+      "cookiesTracking": {
+        "title": "10. Cookies und Tracking",
+        "content": "Unsere Website verwendet minimale Cookies für wesentliche Funktionalität. Wir verwenden keine umfangreichen Tracking- oder Werbe-Cookies."
+      },
+      "changesToPolicy": {
+        "title": "12. Änderungen dieser Datenschutzrichtlinie",
+        "content": "Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Wir werden Sie über wesentliche Änderungen über den Dienst oder Telegram informieren. Ihre fortgesetzte Nutzung nach Änderungen stellt die Annahme der aktualisierten Richtlinie dar."
+      },
+      "contactUs": {
+        "title": "13. Kontaktieren Sie uns",
+        "intro": "Wenn Sie Fragen zu dieser Datenschutzrichtlinie haben oder Ihre Datenschutzrechte ausüben möchten, kontaktieren Sie uns:",
+        "supportChannel": "Support-Kanal:"
+      }
+    },
+    "note": "Hinweis: Next Wife ist ein KI-gestützter Unterhaltungsdienst. Alle Begleiterinnen sind künstliche Intelligenz und keine echten Personen. Wir priorisieren Ihre Privatsphäre und Datensicherheit, während wir ein ansprechendes Erlebnis bieten."
+  },
+  "feed": {
+    "noPostsFound": "Keine Beiträge gefunden",
+    "loadingMore": "Mehr laden...",
+    "endOfFeed": "Keine weiteren Beiträge",
+    "noMatchingFilters": "Keine Freundin entspricht Ihren Filtern",
+    "tryAdjustingFilters": "Versuchen Sie, Ihre Suchkriterien anzupassen",
+    "loadingGirlfriends": "Freundinnen werden geladen..."
+  },
+  "channelHeader": {
+    "viewChannel": "Kanal ansehen"
+  },
+  "language": {
+    "english": "Englisch",
+    "englishWithNative": "Englisch, {{language}}"
+  },
+  "qrWidget": {
+    "scanToMeet": "Scannen zum Treffen"
+  },
+  "postCard": {
+    "channel": "Kanal",
+    "viewOnTelegram": "Auf Telegram ansehen",
+    "postMedia": "Beitragsmedien",
+    "postMediaFullscreen": "Medien im Vollbildmodus",
+    "close": "Schließen",
+    "more": "mehr"
+  },
+  "accessibility": {
+    "toggleSidebar": "Seitenleiste umschalten",
+    "pagination": "Seitennummerierung",
+    "goToPreviousPage": "Zur vorherigen Seite",
+    "goToNextPage": "Zur nächsten Seite",
+    "breadcrumb": "Breadcrumb-Navigation",
+    "morePages": "Mehr Seiten",
+    "more": "Mehr",
+    "previousSlide": "Vorherige Folie",
+    "nextSlide": "Nächste Folie"
+  }
+}

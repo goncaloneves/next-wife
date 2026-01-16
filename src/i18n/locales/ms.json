@@ -1,0 +1,343 @@
+{
+  "common": {
+    "backToHome": "← Kembali ke Utama",
+    "support": "Sokongan",
+    "madeWith": "Dibuat dengan 💖",
+    "loading": "Memuatkan...",
+    "error": "Ralat",
+    "retry": "Cuba Lagi",
+    "close": "Tutup",
+    "all": "Semua",
+    "showLess": "Tunjukkan kurang",
+    "more": "lagi",
+    "apply": "Guna",
+    "clearAll": "Kosongkan Semua",
+    "showAll": "Tunjukkan Semua",
+    "note": "Nota",
+    "previous": "Sebelum",
+    "next": "Seterusnya",
+    "morePages": "Lebih banyak halaman"
+  },
+  "navigation": {
+    "termsAndConditions": "Terma dan Syarat",
+    "privacyPolicy": "Dasar Privasi",
+    "viewChannel": "Lihat Saluran"
+  },
+  "home": {
+    "title": "Next Wife",
+    "heroTitle": "Cipta isteri anda di Telegram",
+    "heroSubtitle": "Temui wanita yang anda cipta dan mulakan perjalanan romantik, berkongsi cerita unik dari seluruh dunia.",
+    "findYourWoman": "Cari Wanita Anda 🌻",
+    "orCreateOnTelegram": "atau cipta sendiri di Telegram",
+    "yourGirlfriendExperience": "Pengalaman Teman Wanita Anda ✨",
+    "features": {
+      "authenticDailyLife": {
+        "title": "Kehidupan Harian Autentik",
+        "description": "Alami momen tulen dan interaksi autentik dalam kehidupan hariannya"
+      },
+      "discoverNewRelationships": {
+        "title": "Temui Hubungan Baru",
+        "description": "Cipta beberapa teman wanita unik dan teroka pelbagai hubungan"
+      },
+      "romanticMoments": {
+        "title": "Momen Romantik",
+        "description": "Temui perbualan intim dan bina hubungan yang bermakna"
+      },
+      "photoVoiceVideo": {
+        "title": "Foto, Suara & Video",
+        "description": "Berinteraksi dengan foto, mesej suara dan video untuk hubungan yang lebih mendalam"
+      },
+      "secretStories": {
+        "title": "Cerita Rahsia",
+        "description": "Temui keinginan tersembunyi dan momen intim eksklusif"
+      },
+      "earnTelegramStars": {
+        "title": "Peroleh Bintang Telegram",
+        "description": "Peroleh 20% komisen seumur hidup dengan program afiliasi kami"
+      }
+    }
+  },
+  "discover": {
+    "noProfilesAvailable": "Tiada profil tersedia",
+    "browseAllProfiles": "Lihat Semua Profil"
+  },
+  "profile": {
+    "profileNotFound": "Profil tidak dijumpai",
+    "findSomeoneNew": "Cari Seseorang Baru",
+    "aboutMe": "Tentang Saya",
+    "readyToMeet": "Bersedia untuk bertemu {{name}}?",
+    "waitingForYou": "Dia menunggu anda di Telegram.",
+    "meetOnTelegram": "Jumpa di Telegram",
+    "keyboardHints": {
+      "back": "Kembali",
+      "skip": "Langkau",
+      "meet": "Jumpa"
+    },
+    "share": {
+      "title": "Temui {{name}} di Next Wife",
+      "text": "Lihat {{name}}, {{age}} dari {{hometown}}"
+    }
+  },
+  "filters": {
+    "title": "Penapis",
+    "subtitle": "Cari wanita sempurna anda",
+    "age": "Umur",
+    "language": "Bahasa",
+    "relationship": "Hubungan",
+    "personality": "Personaliti",
+    "occupation": "Pekerjaan",
+    "region": "Wilayah",
+    "hometown": "Bandar Asal",
+    "media": "Media",
+    "hasVideo": "Ada Video",
+    "multiplePhotos": "Pelbagai Foto",
+    "applyCount": "Guna ({{count}})"
+  },
+  "personality": {
+    "shy": "🙈 Pemalu",
+    "playful": "🤭 Suka Bermain",
+    "caring": "💕 Penyayang",
+    "passionate": "🔥 Bersemangat",
+    "submissive": "🌸 Patuh",
+    "dominant": "😈 Dominan"
+  },
+  "relationship": {
+    "stranger": "👋 Orang Asing",
+    "classmate": "📚 Rakan Sekelas",
+    "coworker": "💼 Rakan Sekerja",
+    "bestFriend": "💛 Sahabat Baik",
+    "girlfriend": "💕 Teman Wanita",
+    "wife": "💍 Isteri"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Alamak! Halaman tidak dijumpai",
+    "returnHome": "Kembali ke Utama"
+  },
+  "terms": {
+    "title": "Terma dan Syarat",
+    "lastUpdated": "Kemaskini terakhir: {{date}}",
+    "sections": {
+      "acceptanceOfTerms": {
+        "title": "1. Penerimaan Terma",
+        "content": "Dengan mengakses dan menggunakan Next Wife (\"Perkhidmatan\"), anda menerima dan bersetuju untuk terikat dengan Terma dan Syarat ini. Perkhidmatan ini disediakan melalui Telegram dan membolehkan pengguna berinteraksi dengan teman maya yang dijana oleh AI."
+      },
+      "ageRequirement": {
+        "title": "2. Keperluan Umur",
+        "content": "Anda mesti berumur sekurang-kurangnya 18 tahun untuk menggunakan Perkhidmatan ini. Dengan menggunakan Next Wife, anda mengesahkan bahawa anda sudah dewasa dalam bidang kuasa anda. Perkhidmatan ini mengandungi kandungan dewasa dan ditujukan untuk khalayak matang sahaja."
+      },
+      "serviceDescription": {
+        "title": "3. Penerangan Perkhidmatan",
+        "intro": "Next Wife ialah perkhidmatan teman maya berkuasa AI yang beroperasi melalui Telegram. Perkhidmatan ini menyediakan:",
+        "items": {
+          "textConversations": "Perbualan teks dengan teman AI",
+          "photoMediaInteractions": "Interaksi foto dan media",
+          "voiceVideoContent": "Kandungan suara dan video",
+          "personalizedExperiences": "Pengalaman hubungan yang diperibadikan"
+        },
+        "disclaimer": "Semua interaksi dijana oleh kecerdasan buatan dan tidak melibatkan orang sebenar."
+      },
+      "userConduct": {
+        "title": "4. Kelakuan Pengguna",
+        "intro": "Anda bersetuju untuk tidak:",
+        "items": {
+          "illegalPurposes": "Menggunakan Perkhidmatan untuk tujuan haram",
+          "reverseEngineer": "Cuba untuk kejuruteraan terbalik atau menggodam Perkhidmatan",
+          "shareCredentials": "Berkongsi kelayakan akaun anda dengan orang lain",
+          "harass": "Mengganggu, menyalahguna atau memudaratkan pengguna lain atau Perkhidmatan",
+          "illegalContent": "Menggunakan Perkhidmatan untuk menjana, mengedar atau meminta kandungan haram"
+        }
+      },
+      "intellectualProperty": {
+        "title": "5. Harta Intelek",
+        "content": "Semua kandungan yang dijana oleh Perkhidmatan, termasuk teks, imej dan video, kekal menjadi hak milik Next Wife. Pengguna diberikan lesen terhad dan bukan eksklusif untuk menggunakan kandungan untuk tujuan peribadi dan bukan komersial sahaja."
+      },
+      "privacyAndData": {
+        "title": "6. Privasi dan Data",
+        "content": "Penggunaan anda terhadap Perkhidmatan juga dikawal oleh Dasar Privasi kami. Kami mengumpul dan memproses data seperti yang diterangkan dalam Dasar Privasi kami untuk menyediakan dan menambah baik Perkhidmatan."
+      },
+      "disclaimerOfWarranties": {
+        "title": "7. Penafian Waranti",
+        "intro": "Perkhidmatan disediakan \"seadanya\" tanpa sebarang jaminan. Next Wife tidak menjamin:",
+        "items": {
+          "uninterruptedService": "Perkhidmatan tanpa gangguan atau bebas ralat",
+          "accuracyOfContent": "Ketepatan kandungan yang dijana oleh AI",
+          "meetRequirements": "Perkhidmatan akan memenuhi keperluan khusus anda"
+        },
+        "disclaimer": "Next Wife adalah perkhidmatan hiburan sahaja. Teman AI bukan pengganti hubungan manusia sebenar, terapi atau nasihat profesional."
+      },
+      "limitationOfLiability": {
+        "title": "8. Had Liabiliti",
+        "content": "Next Wife tidak akan bertanggungjawab untuk sebarang kerosakan tidak langsung, sampingan, khas, turutan atau punitif yang terhasil daripada penggunaan atau ketidakupayaan anda untuk menggunakan Perkhidmatan."
+      },
+      "subscriptionAndPayment": {
+        "title": "9. Langganan dan Pembayaran",
+        "content": "Sesetengah ciri mungkin memerlukan langganan berbayar. Semua pembayaran diproses melalui sistem pembayaran Telegram. Dasar bayaran balik tertakluk kepada terma perkhidmatan Telegram."
+      },
+      "termination": {
+        "title": "10. Penamatan",
+        "content": "Kami berhak untuk menggantung atau menamatkan akses anda kepada Perkhidmatan pada bila-bila masa, tanpa notis, untuk kelakuan yang kami percaya melanggar Terma ini atau memudaratkan pengguna lain atau Perkhidmatan."
+      },
+      "changesToTerms": {
+        "title": "11. Perubahan pada Terma",
+        "content": "Kami mungkin mengemas kini Terma ini dari semasa ke semasa. Penggunaan berterusan Perkhidmatan selepas perubahan merupakan penerimaan Terma baharu."
+      },
+      "contact": {
+        "title": "12. Hubungi",
+        "content": "Untuk soalan tentang Terma ini, sila hubungi kami melalui saluran sokongan kami:"
+      }
+    }
+  },
+  "privacy": {
+    "title": "Dasar Privasi",
+    "lastUpdated": "Kemaskini terakhir: {{date}}",
+    "sections": {
+      "introduction": {
+        "title": "1. Pengenalan",
+        "content": "Next Wife (\"kami\", \"milik kami\" atau \"kita\") komited untuk melindungi privasi anda. Dasar Privasi ini menerangkan cara kami mengumpul, menggunakan, mendedahkan dan melindungi maklumat anda apabila anda menggunakan perkhidmatan teman AI kami melalui Telegram."
+      },
+      "informationWeCollect": {
+        "title": "2. Maklumat yang Kami Kumpul",
+        "informationYouProvide": {
+          "title": "2.1 Maklumat yang Anda Berikan",
+          "items": {
+            "telegramId": "ID pengguna dan nama pengguna Telegram",
+            "messages": "Mesej dan perbualan dengan teman AI",
+            "photos": "Foto dan media yang anda kongsi",
+            "preferences": "Keutamaan dan pilihan penyesuaian",
+            "paymentInfo": "Maklumat pembayaran (diproses melalui Telegram)"
+          }
+        },
+        "automaticallyCollected": {
+          "title": "2.2 Maklumat yang Dikumpul Secara Automatik",
+          "items": {
+            "usageData": "Data penggunaan dan corak interaksi",
+            "deviceInfo": "Maklumat peranti dan alamat IP",
+            "sessionData": "Cap masa dan tempoh sesi",
+            "technicalData": "Data teknikal untuk penambahbaikan perkhidmatan"
+          }
+        }
+      },
+      "howWeUseInfo": {
+        "title": "3. Cara Kami Menggunakan Maklumat Anda",
+        "intro": "Kami menggunakan maklumat yang dikumpul untuk:",
+        "items": {
+          "providePersonalize": "Menyediakan dan memperibadikan pengalaman teman AI",
+          "maintainContext": "Mengekalkan konteks perbualan untuk respons yang lebih baik",
+          "processPayments": "Memproses pembayaran dan mengurus langganan",
+          "communicateUpdates": "Menyampaikan kemas kini dan ciri perkhidmatan",
+          "ensureSecurity": "Memastikan keselamatan perkhidmatan dan mencegah penyalahgunaan",
+          "complyLegal": "Mematuhi kewajipan undang-undang"
+        }
+      },
+      "messagePrivacy": {
+        "title": "4. Penggunaan Mesej dan Privasi",
+        "intro": "Kami TIDAK merekodkan mesej perbualan anda. Perbualan anda digunakan secara eksklusif untuk:",
+        "usedFor": {
+          "contextualResponses": "Menyediakan respons kontekstual semasa perbualan aktif",
+          "maintainingContext": "Mengekalkan konteks perbualan untuk kesinambungan",
+          "personalizing": "Memperibadikan pengalaman teman AI anda"
+        },
+        "notUsedIntro": "Perbualan peribadi anda TIDAK:",
+        "notUsedFor": {
+          "logged": "Direkodkan untuk pemantauan atau semakan",
+          "usedForTraining": "Digunakan untuk latihan AI atau penambahbaikan model",
+          "sharedWithThirdParties": "Dikongsi dengan pihak ketiga",
+          "accessibleToEmployees": "Boleh diakses oleh pekerja atau pentadbir"
+        }
+      },
+      "dataStorageSecurity": {
+        "title": "5. Penyimpanan dan Keselamatan Data",
+        "intro": "Kami melaksanakan langkah keselamatan standard industri untuk melindungi data anda:",
+        "items": {
+          "encryptedTransmission": "Penghantaran data terenkripsi (HTTPS/TLS)",
+          "secureStorage": "Infrastruktur penyimpanan awan yang selamat",
+          "regularAudits": "Audit dan kemas kini keselamatan berkala",
+          "limitedAccess": "Akses pekerja terhad kepada data pengguna"
+        },
+        "disclaimer": "Walau bagaimanapun, tiada kaedah penghantaran melalui internet yang 100% selamat. Walaupun kami berusaha untuk melindungi data anda, kami tidak dapat menjamin keselamatan mutlak."
+      },
+      "dataRetention": {
+        "title": "6. Pengekalan Data",
+        "intro": "Kami mengekalkan data minimum yang diperlukan untuk menyediakan Perkhidmatan dan mematuhi kewajipan undang-undang:",
+        "items": {
+          "accountInfo": "Maklumat akaun (ID Telegram, keutamaan)",
+          "paymentHistory": "Sejarah pembayaran dan langganan",
+          "usageStats": "Statistik penggunaan (tanpa nama)"
+        },
+        "disclaimer": "Mesej perbualan TIDAK direkodkan. Ia diproses untuk menyediakan pengalaman teman AI yang diperibadikan."
+      },
+      "privacyRights": {
+        "title": "7. Hak Privasi Anda",
+        "intro": "Bergantung pada lokasi anda, anda mungkin mempunyai hak untuk:",
+        "items": {
+          "accessData": "Mengakses data peribadi anda",
+          "requestDeletion": "Meminta pemadaman data",
+          "correctInfo": "Membetulkan maklumat yang tidak tepat",
+          "objectProcessing": "Membantah pemprosesan data tertentu",
+          "dataPortability": "Kebolehangkutan data"
+        },
+        "contact": "Untuk melaksanakan hak ini, hubungi kami melalui saluran sokongan kami:"
+      },
+      "childrensPrivacy": {
+        "title": "8. Privasi Kanak-kanak",
+        "content": "Perkhidmatan kami tidak ditujukan untuk pengguna di bawah 18 tahun. Kami tidak mengumpul maklumat peribadi secara sedar daripada kanak-kanak di bawah umur. Jika anda percaya seorang kanak-kanak di bawah umur telah memberikan kami maklumat peribadi, sila hubungi kami dengan segera."
+      },
+      "internationalTransfers": {
+        "title": "9. Pemindahan Data Antarabangsa",
+        "content": "Data anda mungkin dipindahkan dan diproses di negara selain negara anda sendiri. Dengan menggunakan Perkhidmatan kami, anda bersetuju dengan pemindahan tersebut. Kami memastikan perlindungan yang sesuai disediakan untuk pemindahan data antarabangsa."
+      },
+      "cookiesTracking": {
+        "title": "10. Kuki dan Penjejakan",
+        "content": "Laman web kami menggunakan kuki minimum untuk fungsi penting. Kami tidak menggunakan kuki penjejakan atau pengiklanan yang meluas."
+      },
+      "changesToPolicy": {
+        "title": "12. Perubahan pada Dasar Privasi Ini",
+        "content": "Kami mungkin mengemas kini Dasar Privasi ini dari semasa ke semasa. Kami akan memberitahu anda tentang perubahan penting melalui Perkhidmatan atau Telegram. Penggunaan berterusan anda selepas perubahan merupakan penerimaan dasar yang dikemas kini."
+      },
+      "contactUs": {
+        "title": "13. Hubungi Kami",
+        "intro": "Jika anda mempunyai soalan tentang Dasar Privasi ini atau ingin melaksanakan hak privasi anda, hubungi kami:",
+        "supportChannel": "Saluran Sokongan:"
+      }
+    },
+    "note": "Nota: Next Wife ialah perkhidmatan hiburan berkuasa AI. Semua teman adalah kecerdasan buatan dan bukan orang sebenar. Kami mengutamakan privasi dan keselamatan data anda sambil menyediakan pengalaman yang menarik."
+  },
+  "feed": {
+    "noPostsFound": "Tiada siaran dijumpai",
+    "loadingMore": "Memuatkan lagi...",
+    "endOfFeed": "Tiada lagi siaran",
+    "noMatchingFilters": "Tiada teman wanita sepadan dengan penapis anda",
+    "tryAdjustingFilters": "Cuba laraskan kriteria carian anda",
+    "loadingGirlfriends": "Memuatkan teman wanita..."
+  },
+  "channelHeader": {
+    "viewChannel": "Lihat Saluran"
+  },
+  "language": {
+    "english": "Bahasa Inggeris",
+    "englishWithNative": "Bahasa Inggeris, {{language}}"
+  },
+  "qrWidget": {
+    "scanToMeet": "Imbas untuk bertemu"
+  },
+  "postCard": {
+    "channel": "Saluran",
+    "viewOnTelegram": "Lihat di Telegram",
+    "postMedia": "Media siaran",
+    "postMediaFullscreen": "Media skrin penuh",
+    "close": "Tutup",
+    "more": "lagi"
+  },
+  "accessibility": {
+    "toggleSidebar": "Togol Bar Sisi",
+    "pagination": "penomboran halaman",
+    "goToPreviousPage": "Pergi ke halaman sebelumnya",
+    "goToNextPage": "Pergi ke halaman seterusnya",
+    "breadcrumb": "laluan navigasi",
+    "morePages": "Lebih banyak halaman",
+    "more": "Lagi",
+    "previousSlide": "Slaid sebelumnya",
+    "nextSlide": "Slaid seterusnya"
+  }
+}

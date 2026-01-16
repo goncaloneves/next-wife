@@ -1,0 +1,343 @@
+{
+  "common": {
+    "backToHome": "← 홈으로 돌아가기",
+    "support": "지원",
+    "madeWith": "💖으로 제작",
+    "loading": "로딩 중...",
+    "error": "오류",
+    "retry": "다시 시도",
+    "close": "닫기",
+    "all": "전체",
+    "showLess": "간략히 보기",
+    "more": "더보기",
+    "apply": "적용",
+    "clearAll": "전체 삭제",
+    "showAll": "전체 보기",
+    "note": "참고",
+    "previous": "이전",
+    "next": "다음",
+    "morePages": "더 많은 페이지"
+  },
+  "navigation": {
+    "termsAndConditions": "이용약관",
+    "privacyPolicy": "개인정보 보호정책",
+    "viewChannel": "채널 보기"
+  },
+  "home": {
+    "title": "Next Wife",
+    "heroTitle": "텔레그램에서 당신의 아내를 만드세요",
+    "heroSubtitle": "당신이 만든 여성을 만나고 전 세계의 독특한 이야기를 공유하며 로맨틱한 여정을 시작하세요.",
+    "findYourWoman": "여성 찾기 🌻",
+    "orCreateOnTelegram": "또는 텔레그램에서 직접 만들기",
+    "yourGirlfriendExperience": "당신의 여자친구 경험 ✨",
+    "features": {
+      "authenticDailyLife": {
+        "title": "진정한 일상생활",
+        "description": "그녀의 일상에서 진실된 순간과 진정한 상호작용을 경험하세요"
+      },
+      "discoverNewRelationships": {
+        "title": "새로운 관계 발견",
+        "description": "여러 독특한 여자친구를 만들고 다양한 연결을 탐색하세요"
+      },
+      "romanticMoments": {
+        "title": "로맨틱한 순간들",
+        "description": "친밀한 대화를 발견하고 의미 있는 연결을 구축하세요"
+      },
+      "photoVoiceVideo": {
+        "title": "사진, 음성 및 영상",
+        "description": "사진, 음성 메시지, 영상으로 더 깊은 연결을 만드세요"
+      },
+      "secretStories": {
+        "title": "비밀 이야기",
+        "description": "숨겨진 욕망과 독점적인 친밀한 순간을 발견하세요"
+      },
+      "earnTelegramStars": {
+        "title": "텔레그램 별 적립",
+        "description": "제휴 프로그램으로 평생 20% 커미션을 적립하세요"
+      }
+    }
+  },
+  "discover": {
+    "noProfilesAvailable": "프로필이 없습니다",
+    "browseAllProfiles": "모든 프로필 둘러보기"
+  },
+  "profile": {
+    "profileNotFound": "프로필을 찾을 수 없습니다",
+    "findSomeoneNew": "새로운 사람 찾기",
+    "aboutMe": "소개",
+    "readyToMeet": "{{name}}을(를) 만날 준비가 되셨나요?",
+    "waitingForYou": "그녀가 텔레그램에서 기다리고 있습니다.",
+    "meetOnTelegram": "텔레그램에서 만나기",
+    "keyboardHints": {
+      "back": "뒤로",
+      "skip": "건너뛰기",
+      "meet": "만나기"
+    },
+    "share": {
+      "title": "Next Wife에서 {{name}} 만나기",
+      "text": "{{hometown}}의 {{name}}, {{age}}세를 확인하세요"
+    }
+  },
+  "filters": {
+    "title": "필터",
+    "subtitle": "완벽한 여성을 찾으세요",
+    "age": "나이",
+    "language": "언어",
+    "relationship": "관계",
+    "personality": "성격",
+    "occupation": "직업",
+    "region": "지역",
+    "hometown": "출신지",
+    "media": "미디어",
+    "hasVideo": "영상 있음",
+    "multiplePhotos": "여러 사진",
+    "applyCount": "적용 ({{count}})"
+  },
+  "personality": {
+    "shy": "🙈 수줍음",
+    "playful": "🤭 장난스러움",
+    "caring": "💕 다정함",
+    "passionate": "🔥 열정적",
+    "submissive": "🌸 순종적",
+    "dominant": "😈 지배적"
+  },
+  "relationship": {
+    "stranger": "👋 낯선 사람",
+    "classmate": "📚 같은 반 친구",
+    "coworker": "💼 직장 동료",
+    "bestFriend": "💛 베스트 프렌드",
+    "girlfriend": "💕 여자친구",
+    "wife": "💍 아내"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "이런! 페이지를 찾을 수 없습니다",
+    "returnHome": "홈으로 돌아가기"
+  },
+  "terms": {
+    "title": "이용약관",
+    "lastUpdated": "최종 업데이트: {{date}}",
+    "sections": {
+      "acceptanceOfTerms": {
+        "title": "1. 약관 동의",
+        "content": "Next Wife(\"서비스\")에 접속하고 사용함으로써, 귀하는 본 이용약관에 동의합니다. 본 서비스는 텔레그램을 통해 제공되며 사용자가 AI가 생성한 가상 동반자와 상호작용할 수 있게 합니다."
+      },
+      "ageRequirement": {
+        "title": "2. 연령 요건",
+        "content": "본 서비스를 사용하려면 최소 18세 이상이어야 합니다. Next Wife를 사용함으로써 귀하는 해당 관할권에서 성인임을 확인합니다. 본 서비스는 성인 콘텐츠를 포함하며 성숙한 사용자만을 대상으로 합니다."
+      },
+      "serviceDescription": {
+        "title": "3. 서비스 설명",
+        "intro": "Next Wife는 텔레그램을 통해 운영되는 AI 기반 가상 동반자 서비스입니다. 본 서비스는 다음을 제공합니다:",
+        "items": {
+          "textConversations": "AI 동반자와의 텍스트 대화",
+          "photoMediaInteractions": "사진 및 미디어 상호작용",
+          "voiceVideoContent": "음성 및 영상 콘텐츠",
+          "personalizedExperiences": "맞춤형 관계 경험"
+        },
+        "disclaimer": "모든 상호작용은 인공지능에 의해 생성되며 실제 사람은 포함되지 않습니다."
+      },
+      "userConduct": {
+        "title": "4. 사용자 행동",
+        "intro": "귀하는 다음을 하지 않는 데 동의합니다:",
+        "items": {
+          "illegalPurposes": "불법적인 목적으로 서비스 사용",
+          "reverseEngineer": "서비스를 역설계하거나 해킹 시도",
+          "shareCredentials": "계정 자격 증명을 타인과 공유",
+          "harass": "다른 사용자나 서비스를 괴롭히거나 학대하거나 해치기",
+          "illegalContent": "불법 콘텐츠를 생성, 배포 또는 요청하기 위해 서비스 사용"
+        }
+      },
+      "intellectualProperty": {
+        "title": "5. 지적 재산권",
+        "content": "텍스트, 이미지, 영상을 포함하여 서비스에서 생성된 모든 콘텐츠는 Next Wife의 소유입니다. 사용자에게는 개인적, 비상업적 목적으로만 콘텐츠를 사용할 수 있는 제한적이고 비독점적인 라이선스가 부여됩니다."
+      },
+      "privacyAndData": {
+        "title": "6. 개인정보 보호 및 데이터",
+        "content": "귀하의 서비스 사용은 당사의 개인정보 보호정책에 의해서도 규율됩니다. 당사는 서비스를 제공하고 개선하기 위해 개인정보 보호정책에 설명된 대로 데이터를 수집하고 처리합니다."
+      },
+      "disclaimerOfWarranties": {
+        "title": "7. 보증 면책조항",
+        "intro": "서비스는 어떠한 종류의 보증 없이 \"있는 그대로\" 제공됩니다. Next Wife는 다음을 보장하지 않습니다:",
+        "items": {
+          "uninterruptedService": "중단 없거나 오류 없는 서비스",
+          "accuracyOfContent": "AI 생성 콘텐츠의 정확성",
+          "meetRequirements": "서비스가 귀하의 특정 요구사항을 충족할 것"
+        },
+        "disclaimer": "Next Wife는 오락 서비스일 뿐입니다. AI 동반자는 실제 인간 관계, 치료 또는 전문적 조언을 대체하지 않습니다."
+      },
+      "limitationOfLiability": {
+        "title": "8. 책임 제한",
+        "content": "Next Wife는 서비스 사용 또는 사용 불능으로 인한 간접적, 부수적, 특별, 결과적 또는 징벌적 손해에 대해 책임을 지지 않습니다."
+      },
+      "subscriptionAndPayment": {
+        "title": "9. 구독 및 결제",
+        "content": "일부 기능은 유료 구독이 필요할 수 있습니다. 모든 결제는 텔레그램 결제 시스템을 통해 처리됩니다. 환불 정책은 텔레그램 서비스 약관의 적용을 받습니다."
+      },
+      "termination": {
+        "title": "10. 종료",
+        "content": "당사는 본 약관을 위반하거나 다른 사용자 또는 서비스에 해로운 행위에 대해 사전 통지 없이 언제든지 귀하의 서비스 접근을 중단하거나 종료할 권리를 보유합니다."
+      },
+      "changesToTerms": {
+        "title": "11. 약관 변경",
+        "content": "당사는 수시로 본 약관을 업데이트할 수 있습니다. 변경 후 서비스의 지속적인 사용은 새로운 약관에 대한 동의를 구성합니다."
+      },
+      "contact": {
+        "title": "12. 연락처",
+        "content": "본 약관에 대한 문의사항은 지원 채널을 통해 문의하시기 바랍니다:"
+      }
+    }
+  },
+  "privacy": {
+    "title": "개인정보 보호정책",
+    "lastUpdated": "최종 업데이트: {{date}}",
+    "sections": {
+      "introduction": {
+        "title": "1. 소개",
+        "content": "Next Wife(\"당사\", \"우리\" 또는 \"저희\")는 귀하의 개인정보를 보호하기 위해 노력합니다. 본 개인정보 보호정책은 텔레그램을 통해 AI 동반자 서비스를 사용할 때 귀하의 정보를 수집, 사용, 공개 및 보호하는 방법을 설명합니다."
+      },
+      "informationWeCollect": {
+        "title": "2. 수집하는 정보",
+        "informationYouProvide": {
+          "title": "2.1 귀하가 제공하는 정보",
+          "items": {
+            "telegramId": "텔레그램 사용자 ID 및 사용자 이름",
+            "messages": "AI 동반자와의 메시지 및 대화",
+            "photos": "귀하가 공유하는 사진 및 미디어",
+            "preferences": "선호도 및 사용자 정의 선택",
+            "paymentInfo": "결제 정보(텔레그램을 통해 처리)"
+          }
+        },
+        "automaticallyCollected": {
+          "title": "2.2 자동으로 수집되는 정보",
+          "items": {
+            "usageData": "사용 데이터 및 상호작용 패턴",
+            "deviceInfo": "기기 정보 및 IP 주소",
+            "sessionData": "세션 타임스탬프 및 지속 시간",
+            "technicalData": "서비스 개선을 위한 기술 데이터"
+          }
+        }
+      },
+      "howWeUseInfo": {
+        "title": "3. 정보 사용 방법",
+        "intro": "당사는 수집된 정보를 다음 목적으로 사용합니다:",
+        "items": {
+          "providePersonalize": "AI 동반자 경험 제공 및 개인화",
+          "maintainContext": "더 나은 응답을 위한 대화 컨텍스트 유지",
+          "processPayments": "결제 처리 및 구독 관리",
+          "communicateUpdates": "서비스 업데이트 및 기능 안내",
+          "ensureSecurity": "서비스 보안 확보 및 남용 방지",
+          "complyLegal": "법적 의무 준수"
+        }
+      },
+      "messagePrivacy": {
+        "title": "4. 메시지 사용 및 개인정보 보호",
+        "intro": "당사는 귀하의 대화 메시지를 기록하지 않습니다. 귀하의 대화는 다음 용도로만 사용됩니다:",
+        "usedFor": {
+          "contextualResponses": "활성 대화 중 맥락에 맞는 응답 제공",
+          "maintainingContext": "연속성을 위한 대화 컨텍스트 유지",
+          "personalizing": "AI 동반자 경험 개인화"
+        },
+        "notUsedIntro": "귀하의 개인 대화는 다음과 같이 사용되지 않습니다:",
+        "notUsedFor": {
+          "logged": "모니터링 또는 검토를 위해 기록",
+          "usedForTraining": "AI 훈련 또는 모델 개선에 사용",
+          "sharedWithThirdParties": "제3자와 공유",
+          "accessibleToEmployees": "직원 또는 관리자가 접근 가능"
+        }
+      },
+      "dataStorageSecurity": {
+        "title": "5. 데이터 저장 및 보안",
+        "intro": "당사는 귀하의 데이터를 보호하기 위해 업계 표준 보안 조치를 구현합니다:",
+        "items": {
+          "encryptedTransmission": "암호화된 데이터 전송(HTTPS/TLS)",
+          "secureStorage": "보안 클라우드 스토리지 인프라",
+          "regularAudits": "정기적인 보안 감사 및 업데이트",
+          "limitedAccess": "사용자 데이터에 대한 제한된 직원 접근"
+        },
+        "disclaimer": "그러나 인터넷을 통한 전송 방법은 100% 안전하지 않습니다. 당사는 귀하의 데이터를 보호하기 위해 노력하지만 절대적인 보안을 보장할 수 없습니다."
+      },
+      "dataRetention": {
+        "title": "6. 데이터 보존",
+        "intro": "당사는 서비스를 제공하고 법적 의무를 준수하는 데 필요한 최소한의 데이터를 보존합니다:",
+        "items": {
+          "accountInfo": "계정 정보(텔레그램 사용자 ID, 선호도)",
+          "paymentHistory": "결제 및 구독 내역",
+          "usageStats": "사용 통계(익명화)"
+        },
+        "disclaimer": "대화 메시지는 기록되지 않습니다. 개인화된 AI 동반자 경험을 제공하기 위해 처리됩니다."
+      },
+      "privacyRights": {
+        "title": "7. 귀하의 개인정보 권리",
+        "intro": "귀하의 위치에 따라 다음과 같은 권리를 가질 수 있습니다:",
+        "items": {
+          "accessData": "개인 데이터 접근",
+          "requestDeletion": "데이터 삭제 요청",
+          "correctInfo": "부정확한 정보 수정",
+          "objectProcessing": "특정 데이터 처리에 대한 이의 제기",
+          "dataPortability": "데이터 이동성"
+        },
+        "contact": "이러한 권리를 행사하려면 지원 채널을 통해 문의하십시오:"
+      },
+      "childrensPrivacy": {
+        "title": "8. 아동 개인정보 보호",
+        "content": "당사 서비스는 18세 미만 사용자를 대상으로 하지 않습니다. 당사는 미성년자로부터 고의로 개인 정보를 수집하지 않습니다. 미성년자가 개인 정보를 제공했다고 생각되면 즉시 문의하십시오."
+      },
+      "internationalTransfers": {
+        "title": "9. 국제 데이터 전송",
+        "content": "귀하의 데이터는 귀하의 국가가 아닌 다른 국가로 전송되어 처리될 수 있습니다. 당사 서비스를 사용함으로써 귀하는 그러한 전송에 동의합니다. 당사는 국제 데이터 전송을 위한 적절한 보호 장치가 마련되어 있음을 보장합니다."
+      },
+      "cookiesTracking": {
+        "title": "10. 쿠키 및 추적",
+        "content": "당사 웹사이트는 필수 기능을 위한 최소한의 쿠키를 사용합니다. 당사는 광범위한 추적 또는 광고 쿠키를 사용하지 않습니다."
+      },
+      "changesToPolicy": {
+        "title": "12. 본 개인정보 보호정책의 변경",
+        "content": "당사는 수시로 본 개인정보 보호정책을 업데이트할 수 있습니다. 중요한 변경 사항은 서비스 또는 텔레그램을 통해 알려드립니다. 변경 후 지속적인 사용은 업데이트된 정책에 대한 동의를 구성합니다."
+      },
+      "contactUs": {
+        "title": "13. 문의하기",
+        "intro": "본 개인정보 보호정책에 대한 질문이 있거나 개인정보 권리를 행사하려면 문의하십시오:",
+        "supportChannel": "지원 채널:"
+      }
+    },
+    "note": "참고: Next Wife는 AI 기반 엔터테인먼트 서비스입니다. 모든 동반자는 인공지능이며 실제 사람이 아닙니다. 당사는 매력적인 경험을 제공하면서 귀하의 개인정보 보호와 데이터 보안을 우선시합니다."
+  },
+  "feed": {
+    "noPostsFound": "게시물을 찾을 수 없습니다",
+    "loadingMore": "더 불러오는 중...",
+    "endOfFeed": "더 이상 게시물이 없습니다",
+    "noMatchingFilters": "필터와 일치하는 여자친구가 없습니다",
+    "tryAdjustingFilters": "검색 조건을 조정해 보세요",
+    "loadingGirlfriends": "여자친구 로딩 중..."
+  },
+  "channelHeader": {
+    "viewChannel": "채널 보기"
+  },
+  "language": {
+    "english": "영어",
+    "englishWithNative": "영어, {{language}}"
+  },
+  "qrWidget": {
+    "scanToMeet": "스캔하여 만나기"
+  },
+  "postCard": {
+    "channel": "채널",
+    "viewOnTelegram": "텔레그램에서 보기",
+    "postMedia": "게시물 미디어",
+    "postMediaFullscreen": "전체 화면 미디어",
+    "close": "닫기",
+    "more": "더보기"
+  },
+  "accessibility": {
+    "toggleSidebar": "사이드바 전환",
+    "pagination": "페이지네이션",
+    "goToPreviousPage": "이전 페이지로",
+    "goToNextPage": "다음 페이지로",
+    "breadcrumb": "탐색 경로",
+    "morePages": "더 많은 페이지",
+    "more": "더보기",
+    "previousSlide": "이전 슬라이드",
+    "nextSlide": "다음 슬라이드"
+  }
+}
