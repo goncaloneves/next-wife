@@ -34,6 +34,9 @@ export function DiscoverFilterModal({
     loading, 
     personalityOptions, 
     relationshipOptions,
+    regionOptions,
+    occupationOptions,
+    languageOptions,
     valuesToLabels,
     labelsToValues,
     getActiveCount 
@@ -65,6 +68,21 @@ export function DiscoverFilterModal({
   const selectedRelationshipLabels = useMemo(() => 
     valuesToLabels.relationships(localFilters.relationships),
     [valuesToLabels, localFilters.relationships]
+  );
+
+  const selectedRegionLabels = useMemo(() => 
+    valuesToLabels.regions(localFilters.regions),
+    [valuesToLabels, localFilters.regions]
+  );
+
+  const selectedOccupationLabels = useMemo(() => 
+    valuesToLabels.occupations(localFilters.occupationCategories),
+    [valuesToLabels, localFilters.occupationCategories]
+  );
+
+  const selectedLanguageLabels = useMemo(() => 
+    valuesToLabels.languages(localFilters.languages),
+    [valuesToLabels, localFilters.languages]
   );
 
   const activeFilterCount = useMemo(() => getActiveCount(localFilters), [getActiveCount, localFilters]);
@@ -149,12 +167,15 @@ export function DiscoverFilterModal({
 
                   <FilterSection
                     title={t('filters.language')}
-                    options={filterOptions.languages}
-                    selected={localFilters.languages}
-                    onToggle={(value) => setLocalFilters(prev => ({
-                      ...prev,
-                      languages: toggleArrayValue(prev.languages, value)
-                    }))}
+                    options={languageOptions}
+                    selected={selectedLanguageLabels}
+                    onToggle={(label) => {
+                      const value = labelsToValues.language(label);
+                      setLocalFilters(prev => ({
+                        ...prev,
+                        languages: toggleArrayValue(prev.languages, value)
+                      }));
+                    }}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, languages: [] }))}
                   />
 
@@ -190,23 +211,29 @@ export function DiscoverFilterModal({
 
                   <FilterSection
                     title={t('filters.occupation')}
-                    options={filterOptions.occupationCategories}
-                    selected={localFilters.occupationCategories}
-                    onToggle={(value) => setLocalFilters(prev => ({
-                      ...prev,
-                      occupationCategories: toggleArrayValue(prev.occupationCategories, value)
-                    }))}
+                    options={occupationOptions}
+                    selected={selectedOccupationLabels}
+                    onToggle={(label) => {
+                      const value = labelsToValues.occupation(label);
+                      setLocalFilters(prev => ({
+                        ...prev,
+                        occupationCategories: toggleArrayValue(prev.occupationCategories, value)
+                      }));
+                    }}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, occupationCategories: [] }))}
                   />
 
                   <FilterSection
                     title={t('filters.region')}
-                    options={filterOptions.regions}
-                    selected={localFilters.regions}
-                    onToggle={(value) => setLocalFilters(prev => ({
-                      ...prev,
-                      regions: toggleArrayValue(prev.regions, value)
-                    }))}
+                    options={regionOptions}
+                    selected={selectedRegionLabels}
+                    onToggle={(label) => {
+                      const value = labelsToValues.region(label);
+                      setLocalFilters(prev => ({
+                        ...prev,
+                        regions: toggleArrayValue(prev.regions, value)
+                      }));
+                    }}
                     onClearAll={() => setLocalFilters(prev => ({ ...prev, regions: [] }))}
                   />
 
