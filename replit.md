@@ -79,6 +79,7 @@ The application uses i18next for internationalization with 12 supported language
 - **URL Parameter Override:** Use `?lang=en` or `?lang=fr` etc. to force a specific language. Invalid values fall back to English.
 - **Language Detection Priority:** 1) URL `?lang=` parameter, 2) Browser language (navigator), 3) Fallback to English
 - **Language Code Normalization:** Uses `load: 'languageOnly'` so `en-US` → `en`, `fr-FR` → `fr`, `pt-BR` → `pt`, etc.
-- **Language Picker UI:** Globe icon in header (next to filter icon) opens a dropdown with 12 languages displayed in their native names. Available on both homepage feed and profile pages. Matches dark theme with gradient styling.
+- **Language Picker UI:** Globe icon in header opens language selection. Homepage uses a dropdown, profile pages use a bottom sheet modal (same style/animation as filter modal). 12 languages displayed in native names with semibold font for consistent weight across scripts. Globe only highlights when dropdown/modal is open.
+- **Localized Relative Times:** Post timestamps ("about 1 hour ago") are translated using date-fns locales (`src/lib/dateLocale.ts`). All 12 languages supported with automatic locale detection based on current i18n language.
 - **Nationality Translations:** 46 nationalities translated to all 12 languages with variant mappings ("India"→indian, "Uruguaya"→uruguayan).
 - **Adding Languages:** Create new locale files following the same structure as `en.json`
