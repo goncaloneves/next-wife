@@ -81,15 +81,15 @@ if (urlLang) {
   storeLanguage(urlLang);
 }
 
-// Priority: URL param > localStorage > browser detection
-const initialLang = urlLang || storedLang || undefined;
+// Priority: URL param > localStorage > browser detection > fallback to English
+const initialLang = urlLang || storedLang;
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: initialLang,
+    ...(initialLang ? { lng: initialLang } : {}),
     fallbackLng: 'en',
     load: 'languageOnly',
     debug: false,
@@ -97,9 +97,11 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: initialLang ? [] : ['navigator', 'htmlTag'],
+      order: ['navigator', 'htmlTag'],
       caches: [],
+      lookupFromPathIndex: 0,
     },
+    supportedLngs: SUPPORTED_LANGUAGES,
   });
 
 // Store language whenever it changes (from picker or any other source)
