@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useTelegram } from "@/hooks/use-telegram";
 
 const Discover = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [error, setError] = useState(false);
@@ -15,18 +17,15 @@ const Discover = () => {
   useEffect(() => {
     const navigateToProfile = async () => {
       try {
-        // Check if there's a specific post ID saved from clicking on a card
         const savedPostId = sessionStorage.getItem('nextwife_last_viewed');
         
         if (savedPostId) {
-          // Clear it after reading so it doesn't persist
           sessionStorage.removeItem('nextwife_last_viewed');
           const queryString = view ? `?view=${view}` : "";
           navigate(`/profile/${savedPostId}${queryString}`, { replace: true });
           return;
         }
         
-        // Otherwise fetch the latest post
         const response = await fetch("/api/tg-channel-feed?channel=nextwife_ai&limit=1");
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
@@ -50,14 +49,14 @@ const Discover = () => {
   if (error) {
     return (
       <div className="bg-black flex flex-col items-center justify-center min-h-screen text-white">
-        <h1 className="text-xl font-bold mb-4">No profiles available</h1>
+        <h1 className="text-xl font-bold mb-4">{t('discover.noProfilesAvailable')}</h1>
         {isAppView ? (
           <button 
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 rounded-full text-white font-medium"
             data-testid="button-retry"
           >
-            Try Again
+            {t('common.retry')}
           </button>
         ) : (
           <button 
@@ -65,7 +64,7 @@ const Discover = () => {
             className="px-4 py-2 bg-gradient-to-r from-orange-500 to-rose-500 rounded-full text-white font-medium"
             data-testid="button-go-home"
           >
-            Browse All Profiles
+            {t('discover.browseAllProfiles')}
           </button>
         )}
       </div>

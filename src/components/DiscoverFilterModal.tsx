@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ export function DiscoverFilterModal({
   filters, 
   onFiltersChange 
 }: DiscoverFilterModalProps) {
+  const { t } = useTranslation();
   const { 
     filterOptions, 
     loading, 
@@ -104,8 +106,8 @@ export function DiscoverFilterModal({
               <div className="flex items-center gap-3">
                 <SlidersHorizontal className="w-5 h-5 text-white/80" />
                 <div>
-                  <h2 className="text-lg font-semibold text-white">Filters</h2>
-                  <p className="text-xs text-white/50">Find your perfect woman</p>
+                  <h2 className="text-lg font-semibold text-white">{t('filters.title')}</h2>
+                  <p className="text-xs text-white/50">{t('filters.subtitle')}</p>
                 </div>
               </div>
               <button
@@ -134,7 +136,7 @@ export function DiscoverFilterModal({
               ) : (
                 <>
                   <FilterSection
-                    title="Age"
+                    title={t('filters.age')}
                     options={filterOptions.ageBrackets}
                     selected={localFilters.ageBrackets}
                     onToggle={(value) => setLocalFilters(prev => ({
@@ -146,7 +148,7 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
-                    title="Language"
+                    title={t('filters.language')}
                     options={filterOptions.languages}
                     selected={localFilters.languages}
                     onToggle={(value) => setLocalFilters(prev => ({
@@ -157,7 +159,7 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
-                    title="Relationship"
+                    title={t('filters.relationship')}
                     options={relationshipOptions}
                     selected={selectedRelationshipLabels}
                     onToggle={(label) => {
@@ -172,7 +174,7 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
-                    title="Personality"
+                    title={t('filters.personality')}
                     options={personalityOptions}
                     selected={selectedPersonalityLabels}
                     onToggle={(label) => {
@@ -187,7 +189,7 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
-                    title="Occupation"
+                    title={t('filters.occupation')}
                     options={filterOptions.occupationCategories}
                     selected={localFilters.occupationCategories}
                     onToggle={(value) => setLocalFilters(prev => ({
@@ -198,7 +200,7 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
-                    title="Region"
+                    title={t('filters.region')}
                     options={filterOptions.regions}
                     selected={localFilters.regions}
                     onToggle={(value) => setLocalFilters(prev => ({
@@ -209,7 +211,7 @@ export function DiscoverFilterModal({
                   />
 
                   <FilterSection
-                    title="Hometown"
+                    title={t('filters.hometown')}
                     options={Object.values(filterOptions.hometowns).flat()}
                     selected={localFilters.hometowns}
                     onToggle={(value) => setLocalFilters(prev => ({
@@ -220,15 +222,15 @@ export function DiscoverFilterModal({
                   />
 
                   <div className="space-y-3">
-                    <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">Media</h3>
+                    <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">{t('filters.media')}</h3>
                     <div className="flex flex-wrap gap-2">
                       <Chip
-                        label="Has Video"
+                        label={t('filters.hasVideo')}
                         selected={localFilters.hasVideo}
                         onClick={() => setLocalFilters(prev => ({ ...prev, hasVideo: !prev.hasVideo }))}
                       />
                       <Chip
-                        label="Multiple Photos"
+                        label={t('filters.multiplePhotos')}
                         selected={localFilters.hasMultipleMedia}
                         onClick={() => setLocalFilters(prev => ({ ...prev, hasMultipleMedia: !prev.hasMultipleMedia }))}
                       />
@@ -247,7 +249,7 @@ export function DiscoverFilterModal({
                   className="flex-1 py-3.5 rounded-full border border-white/20 text-white/70 font-medium hover:bg-white/10 transition-colors"
                   data-testid="clear-profile-filters"
                 >
-                  Clear All
+                  {t('common.clearAll')}
                 </button>
               )}
               <button
@@ -261,7 +263,7 @@ export function DiscoverFilterModal({
                 )}
                 data-testid="apply-profile-filters"
               >
-                {activeFilterCount > 0 ? `Apply (${activeFilterCount})` : "Show All"}
+                {activeFilterCount > 0 ? t('filters.applyCount', { count: activeFilterCount }) : t('common.showAll')}
               </button>
             </div>
             </div>

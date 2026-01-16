@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -91,6 +92,7 @@ export function FilterSection({
   emptyMessage,
   testIdPrefix = "chip"
 }: FilterSectionProps) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(showAll);
   const responsiveMaxVisible = useResponsiveMaxVisible();
   const maxVisible = maxVisibleProp ?? (showAll ? options.length : responsiveMaxVisible);
@@ -106,7 +108,7 @@ export function FilterSection({
       ) : (
         <div className="flex flex-wrap gap-2">
           <Chip
-            label="All"
+            label={t('common.all')}
             selected={isAllSelected}
             onClick={onClearAll}
             testIdPrefix={testIdPrefix}
@@ -129,9 +131,9 @@ export function FilterSection({
               data-testid={`expand-${title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
             >
               {expanded ? (
-                <>Show less <ChevronUp className="w-4 h-4" /></>
+                <>{t('common.showLess')} <ChevronUp className="w-4 h-4" /></>
               ) : (
-                <>{options.length - maxVisible} more <ChevronDown className="w-4 h-4" /></>
+                <>{options.length - maxVisible} {t('common.more')} <ChevronDown className="w-4 h-4" /></>
               )}
             </button>
           )}

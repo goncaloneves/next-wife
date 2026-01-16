@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const Privacy = () => {
+  const { t } = useTranslation();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -12,122 +15,110 @@ const Privacy = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <Link to="/">
           <Button variant="ghost" className="mb-8" data-testid="button-back">
-            ← Back to Home
+            {t('common.backToHome')}
           </Button>
         </Link>
 
-        <h1 className="text-4xl font-bold mb-8 text-foreground">Privacy Policy</h1>
+        <h1 className="text-4xl font-bold mb-8 text-foreground">{t('privacy.title')}</h1>
         
         <div className="prose prose-lg dark:prose-invert max-w-none space-y-6 text-muted-foreground">
-          <p className="text-sm text-muted-foreground">Last updated: {new Date().toLocaleDateString()}</p>
+          <p className="text-sm text-muted-foreground">{t('privacy.lastUpdated', { date: new Date().toLocaleDateString() })}</p>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">1. Introduction</h2>
-            <p>
-              Next Wife ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we 
-              collect, use, disclose, and safeguard your information when you use our AI companion service through Telegram.
-            </p>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.introduction.title')}</h2>
+            <p>{t('privacy.sections.introduction.content')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">2. Information We Collect</h2>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.informationWeCollect.title')}</h2>
             
-            <h3 className="text-xl font-semibold text-foreground mt-6 mb-3">2.1 Information You Provide</h3>
+            <h3 className="text-xl font-semibold text-foreground mt-6 mb-3">{t('privacy.sections.informationWeCollect.informationYouProvide.title')}</h3>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Telegram user ID and username</li>
-              <li>Messages and conversations with AI companions</li>
-              <li>Photos and media you share</li>
-              <li>Preferences and customization choices</li>
-              <li>Payment information (processed through Telegram)</li>
+              <li>{t('privacy.sections.informationWeCollect.informationYouProvide.items.telegramId')}</li>
+              <li>{t('privacy.sections.informationWeCollect.informationYouProvide.items.messages')}</li>
+              <li>{t('privacy.sections.informationWeCollect.informationYouProvide.items.photos')}</li>
+              <li>{t('privacy.sections.informationWeCollect.informationYouProvide.items.preferences')}</li>
+              <li>{t('privacy.sections.informationWeCollect.informationYouProvide.items.paymentInfo')}</li>
             </ul>
 
-            <h3 className="text-xl font-semibold text-foreground mt-6 mb-3">2.2 Automatically Collected Information</h3>
+            <h3 className="text-xl font-semibold text-foreground mt-6 mb-3">{t('privacy.sections.informationWeCollect.automaticallyCollected.title')}</h3>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Usage data and interaction patterns</li>
-              <li>Device information and IP addresses</li>
-              <li>Session timestamps and duration</li>
-              <li>Technical data for service improvement</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">3. How We Use Your Information</h2>
-            <p>We use collected information to:</p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Provide and personalize AI companion experiences</li>
-              <li>Maintain conversation context for better responses</li>
-              <li>Process payments and manage subscriptions</li>
-              <li>Communicate service updates and features</li>
-              <li>Ensure service security and prevent abuse</li>
-              <li>Comply with legal obligations</li>
+              <li>{t('privacy.sections.informationWeCollect.automaticallyCollected.items.usageData')}</li>
+              <li>{t('privacy.sections.informationWeCollect.automaticallyCollected.items.deviceInfo')}</li>
+              <li>{t('privacy.sections.informationWeCollect.automaticallyCollected.items.sessionData')}</li>
+              <li>{t('privacy.sections.informationWeCollect.automaticallyCollected.items.technicalData')}</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">4. Message Usage and Privacy</h2>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.howWeUseInfo.title')}</h2>
+            <p>{t('privacy.sections.howWeUseInfo.intro')}</p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>{t('privacy.sections.howWeUseInfo.items.providePersonalize')}</li>
+              <li>{t('privacy.sections.howWeUseInfo.items.maintainContext')}</li>
+              <li>{t('privacy.sections.howWeUseInfo.items.processPayments')}</li>
+              <li>{t('privacy.sections.howWeUseInfo.items.communicateUpdates')}</li>
+              <li>{t('privacy.sections.howWeUseInfo.items.ensureSecurity')}</li>
+              <li>{t('privacy.sections.howWeUseInfo.items.complyLegal')}</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.messagePrivacy.title')}</h2>
             <p>
-              <strong>We do NOT log your conversation messages.</strong> Your conversations are used exclusively for:
+              <strong>{t('privacy.sections.messagePrivacy.intro')}</strong>
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Providing contextual responses during active conversations</li>
-              <li>Maintaining conversation context for continuity</li>
-              <li>Personalizing your AI companion experience</li>
+              <li>{t('privacy.sections.messagePrivacy.usedFor.contextualResponses')}</li>
+              <li>{t('privacy.sections.messagePrivacy.usedFor.maintainingContext')}</li>
+              <li>{t('privacy.sections.messagePrivacy.usedFor.personalizing')}</li>
             </ul>
-            <p className="mt-4 font-semibold">
-              Your private conversations are NOT:
-            </p>
+            <p className="mt-4 font-semibold">{t('privacy.sections.messagePrivacy.notUsedIntro')}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Logged for monitoring or review</li>
-              <li>Used for AI training or model improvement</li>
-              <li>Shared with third parties</li>
-              <li>Accessible to employees or administrators</li>
+              <li>{t('privacy.sections.messagePrivacy.notUsedFor.logged')}</li>
+              <li>{t('privacy.sections.messagePrivacy.notUsedFor.usedForTraining')}</li>
+              <li>{t('privacy.sections.messagePrivacy.notUsedFor.sharedWithThirdParties')}</li>
+              <li>{t('privacy.sections.messagePrivacy.notUsedFor.accessibleToEmployees')}</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">5. Data Storage and Security</h2>
-            <p>
-              We implement industry-standard security measures to protect your data:
-            </p>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.dataStorageSecurity.title')}</h2>
+            <p>{t('privacy.sections.dataStorageSecurity.intro')}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Encrypted data transmission (HTTPS/TLS)</li>
-              <li>Secure cloud storage infrastructure</li>
-              <li>Regular security audits and updates</li>
-              <li>Limited employee access to user data</li>
+              <li>{t('privacy.sections.dataStorageSecurity.items.encryptedTransmission')}</li>
+              <li>{t('privacy.sections.dataStorageSecurity.items.secureStorage')}</li>
+              <li>{t('privacy.sections.dataStorageSecurity.items.regularAudits')}</li>
+              <li>{t('privacy.sections.dataStorageSecurity.items.limitedAccess')}</li>
+            </ul>
+            <p className="mt-4">{t('privacy.sections.dataStorageSecurity.disclaimer')}</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.dataRetention.title')}</h2>
+            <p>{t('privacy.sections.dataRetention.intro')}</p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>{t('privacy.sections.dataRetention.items.accountInfo')}</li>
+              <li>{t('privacy.sections.dataRetention.items.paymentHistory')}</li>
+              <li>{t('privacy.sections.dataRetention.items.usageStats')}</li>
             </ul>
             <p className="mt-4">
-              However, no method of transmission over the internet is 100% secure. While we strive to protect your data, 
-              we cannot guarantee absolute security.
+              <strong>{t('privacy.sections.dataRetention.disclaimer')}</strong>
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">6. Data Retention</h2>
-            <p>
-              We retain minimal data necessary to provide the Service and comply with legal obligations:
-            </p>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.privacyRights.title')}</h2>
+            <p>{t('privacy.sections.privacyRights.intro')}</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Account information (Telegram user ID, preferences)</li>
-              <li>Payment and subscription history</li>
-              <li>Usage statistics (anonymized)</li>
+              <li>{t('privacy.sections.privacyRights.items.accessData')}</li>
+              <li>{t('privacy.sections.privacyRights.items.requestDeletion')}</li>
+              <li>{t('privacy.sections.privacyRights.items.correctInfo')}</li>
+              <li>{t('privacy.sections.privacyRights.items.objectProcessing')}</li>
+              <li>{t('privacy.sections.privacyRights.items.dataPortability')}</li>
             </ul>
             <p className="mt-4">
-              <strong>Conversation messages are NOT logged.</strong> They are processed to provide personalized AI companion experiences.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">7. Your Privacy Rights</h2>
-            <p>Depending on your location, you may have the right to:</p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Access your personal data</li>
-              <li>Request data deletion</li>
-              <li>Correct inaccurate information</li>
-              <li>Object to certain data processing</li>
-              <li>Data portability</li>
-            </ul>
-            <p className="mt-4">
-              To exercise these rights, contact us through our support channel:{" "}
+              {t('privacy.sections.privacyRights.contact')}{" "}
               <a 
                 href="https://t.me/nextwifesupport" 
                 target="_blank" 
@@ -140,44 +131,31 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">8. Children's Privacy</h2>
-            <p>
-              Our Service is not intended for users under 18 years of age. We do not knowingly collect personal information 
-              from minors. If you believe a minor has provided us with personal information, please contact us immediately.
-            </p>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.childrensPrivacy.title')}</h2>
+            <p>{t('privacy.sections.childrensPrivacy.content')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">9. International Data Transfers</h2>
-            <p>
-              Your data may be transferred to and processed in countries other than your own. By using our Service, you 
-              consent to such transfers. We ensure appropriate safeguards are in place for international data transfers.
-            </p>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.internationalTransfers.title')}</h2>
+            <p>{t('privacy.sections.internationalTransfers.content')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">10. Cookies and Tracking</h2>
-            <p>
-              Our website uses minimal cookies for essential functionality. We do not use extensive tracking or advertising cookies.
-            </p>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.cookiesTracking.title')}</h2>
+            <p>{t('privacy.sections.cookiesTracking.content')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">12. Changes to This Privacy Policy</h2>
-            <p>
-              We may update this Privacy Policy from time to time. We will notify you of significant changes through the Service 
-              or via Telegram. Your continued use after changes constitutes acceptance of the updated policy.
-            </p>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.changesToPolicy.title')}</h2>
+            <p>{t('privacy.sections.changesToPolicy.content')}</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">13. Contact Us</h2>
-            <p>
-              If you have questions about this Privacy Policy or want to exercise your privacy rights, contact us:
-            </p>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('privacy.sections.contactUs.title')}</h2>
+            <p>{t('privacy.sections.contactUs.intro')}</p>
             <ul className="list-none space-y-2 mt-4">
               <li>
-                <strong>Support Channel:</strong>{" "}
+                <strong>{t('privacy.sections.contactUs.supportChannel')}</strong>{" "}
                 <a 
                   href="https://t.me/nextwifesupport" 
                   target="_blank" 
@@ -192,8 +170,7 @@ const Privacy = () => {
 
           <section className="mt-12 p-6 bg-muted/50 rounded-lg">
             <p className="text-sm">
-              <strong>Note:</strong> Next Wife is an AI-powered entertainment service. All companions are artificial intelligence 
-              and not real people. We prioritize your privacy and data security while providing an engaging experience.
+              <strong>Note:</strong> {t('privacy.note')}
             </p>
           </section>
         </div>

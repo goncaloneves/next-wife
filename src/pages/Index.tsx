@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useSearchParams, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/next-wife-logo-sunset.jpeg";
@@ -10,6 +11,7 @@ import { useFilters } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -53,12 +55,10 @@ const Index = () => {
   useEffect(() => {
     const state = location.state as { restoreScroll?: boolean } | null;
     if (state?.restoreScroll) {
-      // Scroll restoration is handled by TelegramChannelFeed when restoring from cache
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
 
-  // Pause/play background videos based on hero section visibility
   useEffect(() => {
     if (!heroRef.current) return;
 
@@ -86,39 +86,38 @@ const Index = () => {
   const features = [
     {
       icon: "🌺",
-      title: "Authentic Daily Life",
-      description: "Experience genuine moments and authentic interactions in her daily life",
+      title: t('home.features.authenticDailyLife.title'),
+      description: t('home.features.authenticDailyLife.description'),
     },
     {
       icon: "🥂",
-      title: "Discover New Relationships",
-      description: "Create multiple unique girlfriends and explore different connections",
+      title: t('home.features.discoverNewRelationships.title'),
+      description: t('home.features.discoverNewRelationships.description'),
     },
     {
       icon: "💖",
-      title: "Romantic Moments",
-      description: "Discover intimate conversations and build meaningful connections",
+      title: t('home.features.romanticMoments.title'),
+      description: t('home.features.romanticMoments.description'),
     },
     {
       icon: "📸",
-      title: "Photo, Voice & Video",
-      description: "Engage with photos, voice messages and videos for deeper connections",
+      title: t('home.features.photoVoiceVideo.title'),
+      description: t('home.features.photoVoiceVideo.description'),
     },
     {
       icon: "🔥",
-      title: "Secret Stories",
-      description: "Uncover hidden desires and exclusive intimate moments",
+      title: t('home.features.secretStories.title'),
+      description: t('home.features.secretStories.description'),
     },
     {
       icon: "🤩",
-      title: "Earn Telegram Stars",
-      description: "Earn 20% lifetime commission with our affiliate program",
+      title: t('home.features.earnTelegramStars.title'),
+      description: t('home.features.earnTelegramStars.description'),
     },
   ];
 
   return (
     <div className="min-h-screen">
-      {/* Fixed Video Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-30">
           {!isMobile && (
@@ -176,47 +175,40 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Scrollable Content */}
       <div className="relative z-10">
-        {/* Hero Section */}
         <header
           ref={heroRef}
           className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden opacity-0"
           style={{ paddingBottom: 'max(3rem, calc(env(safe-area-inset-bottom) + 2rem))' }}
         >
-          {/* Top Navigation Bar */}
           <div 
             className="absolute left-8 z-20 flex items-center gap-4"
             style={{ top: 'max(2rem, calc(env(safe-area-inset-top) + 1rem))' }}
           >
-            {/* Logo - Left */}
             <img
               src={logo}
-              alt="Next Wife"
+              alt={t('home.title')}
               className="w-12 h-12 rounded-full object-cover shadow-lg"
               style={{ boxShadow: "var(--shadow-glow)" }}
             />
 
-            {/* Next Wife Title */}
             <h1
               className="text-white text-4xl font-bold"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Next Wife
+              {t('home.title')}
             </h1>
           </div>
 
-          {/* Gradient Overlay for Text Readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
 
-          {/* Hero Content */}
           <div className="relative z-10 container mx-auto px-4 text-center">
             <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-              Create your wife on Telegram
+              {t('home.heroTitle')}
             </p>
 
             <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
-              Meet the woman you create and embark on a romantic journey, sharing unique stories from around the globe.
+              {t('home.heroSubtitle')}
             </p>
 
             <div className="flex flex-col items-center gap-3">
@@ -238,32 +230,28 @@ const Index = () => {
                 }}
                 data-testid="button-pick-your-woman"
               >
-                Find Your Woman 🌻
+                {t('home.findYourWoman')}
               </Button>
               <button
                 className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
                 onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
                 data-testid="button-create-telegram"
               >
-                or create your own on Telegram
+                {t('home.orCreateOnTelegram')}
               </button>
             </div>
           </div>
 
-          {/* QR Code positioned in bottom right of video section */}
           {isQRVisible && <TelegramQRWidget onClose={() => setIsQRVisible(false)} />}
         </header>
 
-        {/* Features Section - Scrolls over the fixed background */}
         <section className="relative w-full bg-black py-14">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            {/* Section Title */}
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
-              Your Girlfriend Experience ✨
+              {t('home.yourGirlfriendExperience')}
             </h2>
             
-            {/* Features Grid */}
             <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {features.map((feature, index) => (
                 <div
@@ -274,9 +262,7 @@ const Index = () => {
                     boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)",
                   }}
                 >
-                  {/* Card Content */}
                   <div className="relative z-10">
-                    {/* Icon */}
                     <div className="mb-4">
                       <div
                         className="w-24 h-24 flex items-center justify-center text-5xl"
@@ -285,7 +271,6 @@ const Index = () => {
                       </div>
                     </div>
                     
-                    {/* Text Content */}
                     <h3 className="text-lg font-bold mb-2 text-white">
                       {feature.title}
                     </h3>
@@ -300,14 +285,13 @@ const Index = () => {
         </div>
       </section>
 
-        {/* Telegram Channel Feed Section - Scrolls over the fixed background */}
         <section ref={feedContentRef} className="hidden md:block relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto relative">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex-1" />
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading text-center text-white whitespace-nowrap">
-                  Find Your Woman 🌻
+                  {t('home.findYourWoman')}
                 </h2>
                 <div className="flex-1 flex justify-end">
                   <DiscoverFilterButton 
@@ -335,7 +319,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Footer - Scrolls over the fixed background */}
         <footer className="bg-black py-8 text-center">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-4">
@@ -345,7 +328,7 @@ const Index = () => {
                 className="hover:text-white transition-colors"
                 data-testid="link-terms"
               >
-                Terms & Conditions
+                {t('navigation.termsAndConditions')}
               </Link>
               <span>•</span>
               <Link 
@@ -353,7 +336,7 @@ const Index = () => {
                 className="hover:text-white transition-colors"
                 data-testid="link-privacy"
               >
-                Privacy Policy
+                {t('navigation.privacyPolicy')}
               </Link>
               <span>•</span>
               <a
@@ -363,7 +346,7 @@ const Index = () => {
                 className="hover:text-white transition-colors"
                 data-testid="link-support"
               >
-                Support
+                {t('common.support')}
               </a>
             </div>
             <p className="text-white/70 font-body text-sm">
@@ -373,7 +356,7 @@ const Index = () => {
               >
                 @nextwifebot
               </span>
-              {" "}- Made with 💖
+              {" "}- {t('common.madeWith')}
             </p>
           </div>
         </div>

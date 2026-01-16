@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -105,6 +106,7 @@ interface ProfileProps {
 }
 
 const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -498,8 +500,12 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
 
   const handleShare = async () => {
     const url = window.location.href;
-    const title = `Meet ${post?.profileData?.name} on Next Wife`;
-    const text = `Check out ${post?.profileData?.name}, ${post?.profileData?.age} from ${post?.profileData?.hometown}`;
+    const title = t('profile.share.title', { name: post?.profileData?.name });
+    const text = t('profile.share.text', { 
+      name: post?.profileData?.name, 
+      age: post?.profileData?.age, 
+      hometown: post?.profileData?.hometown 
+    });
     
     try {
       if (navigator.share) {
@@ -523,17 +529,17 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   if (!post?.profileData) {
     return (
       <div className="bg-black flex flex-col items-center justify-center" style={{ minHeight: '100svh' }}>
-        <h1 className="text-2xl font-bold mb-4 text-white">Profile not found</h1>
+        <h1 className="text-2xl font-bold mb-4 text-white">{t('profile.profileNotFound')}</h1>
         {isAppView ? (
           <Button 
             onClick={() => navigate("/find?view=app", { replace: true })} 
             className="bg-gradient-to-r from-orange-500 to-rose-500 text-white border-0"
           >
-            Find Someone New
+            {t('profile.findSomeoneNew')}
           </Button>
         ) : (
           <Button onClick={() => navigate("/")} variant="outline" className="text-white border-white/30">
-            Back to Home
+            {t('common.backToHome')}
           </Button>
         )}
       </div>
@@ -950,7 +956,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                                 {profileData.about && (
                                   <div className="pt-2 mt-2 border-t border-white/[0.08]">
                                     <span className="text-xs font-medium text-white/50 uppercase tracking-wide block mb-2">
-                                      About Me
+                                      {t('profile.aboutMe')}
                                     </span>
                                     <p className="text-[15px] text-white/80 leading-relaxed">
                                       {profileData.about}
@@ -1024,15 +1030,15 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       <div className="hidden md:flex fixed bottom-4 right-4 items-center gap-3 text-white/40 text-xs bg-black/40 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10">
         <div className="flex items-center gap-1">
           <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-white/60 font-mono">←</kbd>
-          <span>Back</span>
+          <span>{t('profile.keyboardHints.back')}</span>
         </div>
         <div className="flex items-center gap-1">
           <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-white/60 font-mono">→</kbd>
-          <span>Skip</span>
+          <span>{t('profile.keyboardHints.skip')}</span>
         </div>
         <div className="flex items-center gap-1">
           <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-white/60 font-mono">Space</kbd>
-          <span>Meet</span>
+          <span>{t('profile.keyboardHints.meet')}</span>
         </div>
       </div>
 
@@ -1040,10 +1046,10 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         <DialogContent className="bg-black/95 border-white/10 text-white max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
-              Ready to meet {post?.profileData?.name}?
+              {t('profile.readyToMeet', { name: post?.profileData?.name })}
             </DialogTitle>
             <DialogDescription className="text-white/70 text-center">
-              She's waiting for you on Telegram.
+              {t('profile.waitingForYou')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center">
@@ -1052,7 +1058,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
               className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0 w-full sm:w-auto"
             >
               <Heart className="w-4 h-4 mr-2" />
-              Meet on Telegram
+              {t('profile.meetOnTelegram')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,6 +1,7 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface TelegramChannelHeaderProps {
   channelUsername: string;
@@ -16,6 +17,7 @@ export const TelegramChannelHeader = ({
   channelUsername, 
   channelInfo 
 }: TelegramChannelHeaderProps) => {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center gap-4 p-6 bg-card/80 backdrop-blur border-b border-border">
       <Avatar className="w-20 h-20">
@@ -55,7 +57,7 @@ export const TelegramChannelHeader = ({
           target="_blank"
           rel="noopener noreferrer"
         >
-          View Channel <ExternalLink className="w-4 h-4" />
+          {t('channelHeader.viewChannel')} <ExternalLink className="w-4 h-4" />
         </a>
       </Button>
     </div>

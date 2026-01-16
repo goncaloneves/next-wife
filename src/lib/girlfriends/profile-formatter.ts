@@ -1,33 +1,42 @@
+import i18n from '@/i18n';
+
 export const PERSONALITY_LABELS: Record<string, string> = {
-  shy: '🙈 Shy',
-  playful: '🤭 Playful',
-  caring: '💕 Caring',
-  passionate: '🔥 Passionate',
-  submissive: '🌸 Submissive',
-  dominant: '😈 Dominant',
+  shy: 'personality.shy',
+  playful: 'personality.playful',
+  caring: 'personality.caring',
+  passionate: 'personality.passionate',
+  submissive: 'personality.submissive',
+  dominant: 'personality.dominant',
 };
 
 export const RELATIONSHIP_TYPE_LABELS: Record<string, string> = {
-  stranger: '👋 Stranger',
-  classmate: '📚 Classmate',
-  coworker: '💼 Coworker',
-  'best friend': '💛 Best Friend',
-  bestfriend: '💛 Best Friend',
-  girlfriend: '💕 Girlfriend',
-  wife: '💍 Wife',
+  stranger: 'relationship.stranger',
+  classmate: 'relationship.classmate',
+  coworker: 'relationship.coworker',
+  'best friend': 'relationship.bestFriend',
+  bestfriend: 'relationship.bestFriend',
+  girlfriend: 'relationship.girlfriend',
+  wife: 'relationship.wife',
 };
 
 export function getPersonalityLabel(personality: string | null): string | null {
   if (!personality) return null;
-  return PERSONALITY_LABELS[personality.toLowerCase()] || personality;
+  const key = PERSONALITY_LABELS[personality.toLowerCase()];
+  if (key) {
+    return i18n.t(key);
+  }
+  return personality;
 }
 
 export function getRelationshipLabel(relationship: string | null): string | null {
   if (!relationship) return null;
-  return RELATIONSHIP_TYPE_LABELS[relationship.toLowerCase()] || relationship;
+  const key = RELATIONSHIP_TYPE_LABELS[relationship.toLowerCase()];
+  if (key) {
+    return i18n.t(key);
+  }
+  return relationship;
 }
 
-// Format language display: "English" for English speakers, "English, [Native]" for others
 export function getLanguageDisplay(nativeLanguage: string | null): string {
   if (!nativeLanguage) return 'English';
   if (nativeLanguage.toLowerCase() === 'english') return 'English';

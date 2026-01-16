@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { FilterProvider } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import "@/i18n";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Discover from "./pages/Discover";
