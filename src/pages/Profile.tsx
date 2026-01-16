@@ -16,7 +16,7 @@ import {
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay, getNationalityDisplay } from "@/lib/girlfriends/profile-formatter";
 import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
-import { LanguagePicker } from "@/components/LanguagePicker";
+import { LanguageModal } from "@/components/LanguageModal";
 import { type SharedFilters } from "@/lib/filterStorage";
 import { useFilters } from "@/contexts/FilterContext";
 
@@ -137,6 +137,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [tapFeedback, setTapFeedback] = useState<'left' | 'right' | null>(null);
   const [showPlayOverlay, setShowPlayOverlay] = useState(false);
   const { filters, setFilters, activeFilterCount } = useFilters();
@@ -822,7 +823,13 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                     </span>
                   )}
                 </button>
-                <LanguagePicker />
+                <button
+                  onClick={() => setShowLanguageModal(true)}
+                  className="p-2 text-white transition-all hover:scale-110 [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.5))_drop-shadow(0_0_3px_rgba(0,0,0,0.3))_drop-shadow(0_2px_4px_rgba(0,0,0,0.25))]"
+                  data-testid="open-language-modal"
+                >
+                  <Globe className="w-5 h-5" />
+                </button>
                 <button
                   onClick={() => handleShare()}
                   className="p-2 text-white transition-all hover:scale-110 [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.5))_drop-shadow(0_0_3px_rgba(0,0,0,0.3))_drop-shadow(0_2px_4px_rgba(0,0,0,0.25))]"
@@ -1072,6 +1079,11 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         channel="nextwife_ai"
         filters={filters}
         onFiltersChange={handleFiltersChange}
+      />
+
+      <LanguageModal
+        isOpen={showLanguageModal}
+        onClose={() => setShowLanguageModal(false)}
       />
     </div>
   );
