@@ -335,6 +335,9 @@
     "goToPreviousPage": "Go to previous page",
     "goToNextPage": "Go to next page",
     "breadcrumb": "breadcrumb",
-    "morePages": "More pages"
+    "morePages": "More pages",
+    "more": "More",
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide"
   }
 }
