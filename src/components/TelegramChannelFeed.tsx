@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { BadgeCheck, MapPin, Flame } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
@@ -76,6 +77,7 @@ export const TelegramChannelFeed = ({
   onProfileOverlay,
   hideNotifications = false,
 }: TelegramChannelFeedProps) => {
+  const { t } = useTranslation();
   const [allPosts, setAllPosts] = useState<TelegramPost[]>([]);
   const [channelInfo, setChannelInfo] = useState<ChannelInfo | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -681,8 +683,8 @@ export const TelegramChannelFeed = ({
         {!loading && postsWithMedia.length === 0 && hasActiveFilters && (
           <div className="flex items-center justify-center py-12 text-muted-foreground">
             <div className="text-center">
-              <p className="text-lg">No girlfriends match your filters</p>
-              <p className="text-sm mt-2">Try adjusting your search criteria</p>
+              <p className="text-lg">{t('feed.noMatchingFilters')}</p>
+              <p className="text-sm mt-2">{t('feed.tryAdjustingFilters')}</p>
               {filterContext && (
                 <Button
                   variant="ghost"
@@ -690,7 +692,7 @@ export const TelegramChannelFeed = ({
                   className="mt-4 text-white/60 hover:text-white hover:bg-white/10"
                   data-testid="button-clear-filters-empty"
                 >
-                  Clear Filters
+                  {t('filters.clearFilters')}
                 </Button>
               )}
             </div>
@@ -700,7 +702,7 @@ export const TelegramChannelFeed = ({
         {/* Empty state for no posts at all */}
         {!loading && allPosts.length === 0 && !hasActiveFilters && (
           <div className="flex items-center justify-center py-12 text-muted-foreground">
-            <p>Loading girlfriends...</p>
+            <p>{t('feed.loadingGirlfriends')}</p>
           </div>
         )}
         

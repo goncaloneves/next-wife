@@ -12,7 +12,11 @@
     "more": "more",
     "apply": "Apply",
     "clearAll": "Clear All",
-    "showAll": "Show All"
+    "showAll": "Show All",
+    "note": "Note",
+    "previous": "Previous",
+    "next": "Next",
+    "morePages": "More pages"
   },
   "navigation": {
     "termsAndConditions": "Terms & Conditions",
@@ -302,7 +306,10 @@
   "feed": {
     "noPostsFound": "No posts found",
     "loadingMore": "Loading more...",
-    "endOfFeed": "No more posts"
+    "endOfFeed": "No more posts",
+    "noMatchingFilters": "No girlfriends match your filters",
+    "tryAdjustingFilters": "Try adjusting your search criteria",
+    "loadingGirlfriends": "Loading girlfriends..."
   },
   "channelHeader": {
     "viewChannel": "View Channel"
@@ -313,5 +320,21 @@
   },
   "qrWidget": {
     "scanToMeet": "Scan to meet"
+  },
+  "postCard": {
+    "channel": "Channel",
+    "viewOnTelegram": "View on Telegram",
+    "postMedia": "Post media",
+    "postMediaFullscreen": "Post media fullscreen",
+    "close": "Close",
+    "more": "more"
+  },
+  "accessibility": {
+    "toggleSidebar": "Toggle Sidebar",
+    "pagination": "pagination",
+    "goToPreviousPage": "Go to previous page",
+    "goToNextPage": "Go to next page",
+    "breadcrumb": "breadcrumb",
+    "morePages": "More pages"
   }
 }

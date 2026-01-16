@@ -170,7 +170,7 @@ const Privacy = () => {
 
           <section className="mt-12 p-6 bg-muted/50 rounded-lg">
             <p className="text-sm">
-              <strong>Note:</strong> {t('privacy.note')}
+              <strong>{t('common.note')}:</strong> {t('privacy.note')}
             </p>
           </section>
         </div>

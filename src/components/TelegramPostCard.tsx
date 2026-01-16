@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,6 +28,7 @@ interface TelegramPostCardProps {
 }
 
 export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cacheBuster }: TelegramPostCardProps) => {
+  const { t } = useTranslation();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -74,16 +76,16 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
           <Avatar className="w-10 h-10">
             <AvatarImage 
               src={post.avatar || channelInfo?.avatar || undefined} 
-              alt={channelInfo?.name || 'Channel'}
+              alt={channelInfo?.name || t('postCard.channel')}
             />
             <AvatarFallback className="bg-primary/10 text-primary text-sm">
-              {(channelInfo?.name || 'CH').slice(0, 2).toUpperCase()}
+              {(channelInfo?.name || t('postCard.channel')).slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           
           <div className="flex-1">
             <p className="font-semibold text-sm text-foreground">
-              {channelInfo?.name || 'Channel'}
+              {channelInfo?.name || t('postCard.channel')}
             </p>
             <p className="text-xs text-muted-foreground">
               {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
@@ -96,7 +98,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors group"
-            aria-label="View on Telegram"
+            aria-label={t('postCard.viewOnTelegram')}
           >
             <ExternalLink className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
           </a>
@@ -110,7 +112,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
             )}
             <img
               src={mediaSrc}
-              alt="Post media"
+              alt={t('postCard.postMedia')}
               className={`w-full object-cover transition-opacity duration-300 hover:opacity-90 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0'
               }`}
@@ -133,7 +135,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
                   }}
                   className="text-muted-foreground hover:text-foreground ml-1"
                 >
-                  more
+                  {t('postCard.more')}
                 </button>
               )}
             </p>
@@ -152,13 +154,13 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
             variant="ghost"
             size="icon"
             className="absolute top-4 right-4 z-50 rounded-full hover:bg-primary/20"
-            aria-label="Close"
+            aria-label={t('postCard.close')}
           >
             <X className="w-5 h-5" />
           </Button>
           <img
             src={mediaSrc}
-            alt="Post media fullscreen"
+            alt={t('postCard.postMediaFullscreen')}
             className="w-auto h-auto max-w-full max-h-[95vh] object-contain"
           />
         </DialogContent>

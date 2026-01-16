@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -35,6 +36,7 @@ const DialogContent = React.forwardRef<
   }
 >(({ className, children, hideClose, ...props }, ref) => {
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   
   return (
     <DialogPortal>
@@ -52,7 +54,7 @@ const DialogContent = React.forwardRef<
         {!hideClose && (
           <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full p-1 text-white/70 hover:text-white hover:bg-white/10 transition-all focus:outline-none disabled:pointer-events-none">
             <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{t('common.close')}</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
