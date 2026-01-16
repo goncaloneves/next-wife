@@ -118,7 +118,7 @@ export function LanguagePicker() {
                   )}
                   data-testid={`language-option-${lang.code}`}
                 >
-                  <span className="font-medium">{lang.native}</span>
+                  <span className="font-semibold">{lang.native}</span>
                   {lang.code === currentLanguage && (
                     <span className="text-xs text-orange-400">✓</span>
                   )}
