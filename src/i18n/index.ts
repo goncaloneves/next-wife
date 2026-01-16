@@ -30,6 +30,7 @@ const resources = {
 };
 
 const RTL_LANGUAGES = ['ar'];
+const SUPPORTED_LANGUAGES = ['en', 'pt', 'es', 'fr', 'de', 'it', 'ru', 'uk', 'ar', 'ko', 'ms', 'nl'];
 
 const updateDocumentDirection = (language: string) => {
   const baseLanguage = language.split('-')[0].toLowerCase();
@@ -38,11 +39,23 @@ const updateDocumentDirection = (language: string) => {
   document.documentElement.lang = language;
 };
 
+const getLanguageFromUrl = (): string | null => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const langParam = urlParams.get('lang')?.toLowerCase();
+  if (langParam && SUPPORTED_LANGUAGES.includes(langParam)) {
+    return langParam;
+  }
+  return null;
+};
+
+const urlLang = getLanguageFromUrl();
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
+    lng: urlLang || undefined,
     fallbackLng: 'en',
     load: 'languageOnly',
     debug: false,
@@ -50,8 +63,8 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
+      order: urlLang ? [] : ['localStorage', 'navigator', 'htmlTag'],
+      caches: urlLang ? [] : ['localStorage'],
     },
   });
 
