@@ -16,7 +16,8 @@
     "note": "Note",
     "previous": "Previous",
     "next": "Next",
-    "morePages": "More pages"
+    "morePages": "More pages",
+    "language": "Language"
   },
   "navigation": {
     "termsAndConditions": "Terms & Conditions",

@@ -16,7 +16,8 @@
     "note": "Примечание",
     "previous": "Назад",
     "next": "Далее",
-    "morePages": "Ещё страницы"
+    "morePages": "Ещё страницы",
+    "language": "Язык"
   },
   "navigation": {
     "termsAndConditions": "Условия использования",
