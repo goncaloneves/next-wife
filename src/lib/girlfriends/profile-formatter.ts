@@ -128,7 +128,6 @@ export const PERSONALITY_LABELS: Record<string, string> = {
   passionate: 'personality.passionate',
   submissive: 'personality.submissive',
   dominant: 'personality.dominant',
-  'турботлива': 'personality.caring',
 };
 
 export const RELATIONSHIP_TYPE_LABELS: Record<string, string> = {
@@ -139,7 +138,6 @@ export const RELATIONSHIP_TYPE_LABELS: Record<string, string> = {
   bestfriend: 'relationship.bestFriend',
   girlfriend: 'relationship.girlfriend',
   wife: 'relationship.wife',
-  'дівчина': 'relationship.girlfriend',
 };
 
 export function getPersonalityLabel(personality: string | null): string | null {
