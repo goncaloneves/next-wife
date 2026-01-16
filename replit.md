@@ -65,3 +65,12 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Telegram API:** For scraping channel posts and media.
 - **PostgreSQL Database:** Primary data store for girlfriend profiles and associated metadata.
 - **`countries-list` (npm package):** Used for accurate nationality-to-language mapping.
+- **i18next + react-i18next:** Internationalization framework with browser language detection.
+
+## Internationalization (i18n)
+The application uses i18next for internationalization support:
+- **Configuration:** `src/i18n/index.ts` - Sets up i18next with browser language detection
+- **Translations:** `src/i18n/locales/en.json` - English translation file with all user-facing strings
+- **Key Structure:** Translations are organized by domain (common, navigation, home, profile, filters, terms, privacy, etc.)
+- **Dynamic Values:** Use interpolation syntax like `{{name}}` for dynamic content
+- **Adding Languages:** Create new locale files (e.g., `es.json`, `fr.json`) following the same structure as `en.json`
