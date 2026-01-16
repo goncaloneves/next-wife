@@ -6,7 +6,7 @@ import { BadgeCheck, MapPin, Flame } from "lucide-react";
 import { TelegramPostCard } from "./TelegramPostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatDistanceToNow } from "date-fns";
+import { formatRelativeTime } from "@/lib/dateLocale";
 import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
 import { getStoredFilters, type SharedFilters } from "@/lib/filterStorage";
 import { useFiltersOptional } from "@/contexts/FilterContext";
@@ -769,7 +769,7 @@ export const TelegramChannelFeed = ({
                     )}
                     <div className="absolute top-3 left-3 z-20 pointer-events-none">
                       <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg">
-                        {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
+                        {formatRelativeTime(post.date)}
                       </div>
                     </div>
                     {post.profileData && (

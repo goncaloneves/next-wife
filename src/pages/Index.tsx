@@ -295,11 +295,11 @@ const Index = () => {
                   {t('home.findYourWoman')}
                 </h2>
                 <div className="flex-1 flex justify-end items-center gap-1">
-                  <LanguagePicker />
                   <DiscoverFilterButton 
                     onClick={() => setShowFilters(!showFilters)} 
                     activeCount={activeFilterCount}
                   />
+                  <LanguagePicker />
                 </div>
               </div>
               <DiscoverFilterModal

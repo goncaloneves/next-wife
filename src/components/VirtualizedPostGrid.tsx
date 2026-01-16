@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react
 import { useNavigate } from "react-router-dom";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatDistanceToNow } from "date-fns";
+import { formatRelativeTime } from "@/lib/dateLocale";
 import { BadgeCheck, MapPin, Flame } from "lucide-react";
 import { getPersonalityLabel, getRelationshipLabel } from "@/lib/girlfriends/profile-formatter";
 import { type SharedFilters } from "@/lib/filterStorage";
@@ -334,7 +334,7 @@ export const VirtualizedPostGrid = ({
               data-testid={`badge-date-${post.id}`}
             >
               <div className="bg-black/60 backdrop-blur-sm text-white/90 px-2 py-1 rounded-full text-xs font-medium shadow-lg">
-                {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
+                {formatRelativeTime(post.date)}
               </div>
             </div>
             

@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { formatDistanceToNow } from "date-fns";
+import { formatRelativeTime } from "@/lib/dateLocale";
 import { ExternalLink, X } from "lucide-react";
 
 interface TelegramPostCardProps {
@@ -88,7 +88,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
               {channelInfo?.name || t('postCard.channel')}
             </p>
             <p className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(post.date), { addSuffix: true })}
+              {formatRelativeTime(post.date)}
             </p>
           </div>
 
