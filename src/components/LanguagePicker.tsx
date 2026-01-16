@@ -98,7 +98,7 @@ export function LanguagePicker() {
         >
           <div className="relative">
             {canScrollMore && (
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
+              <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none z-10" />
             )}
             <div 
               ref={scrollRef}
