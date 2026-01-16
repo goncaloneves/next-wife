@@ -71,8 +71,9 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 The application uses i18next for internationalization with 12 supported languages:
 - **Configuration:** `src/i18n/index.ts` - Sets up i18next with browser language detection and RTL support
 - **Languages:** English (en), Portuguese (pt), Spanish (es), French (fr), German (de), Italian (it), Russian (ru), Ukrainian (uk), Arabic (ar), Korean (ko), Malay (ms), Dutch (nl)
-- **Translation Files:** `src/i18n/locales/*.json` - Each language has 350+ translation keys
-- **Key Structure:** Translations organized by domain (common, navigation, home, profile, filters, terms, privacy, etc.)
+- **Translation Files:** `src/i18n/locales/*.json` - Each language has 420+ translation keys
+- **Key Structure:** Translations organized by domain (common, navigation, home, profile, filters, personality, relationship, region, occupation, spokenLanguage, terms, privacy, etc.)
+- **Filter Translations:** Regions (8 values), occupation categories (12 values), and spoken languages (56 values) are fully translated. The `useFilterOptions` hook maps API values to translation keys for display and reverse maps labels back to values for filtering.
 - **Dynamic Values:** Use interpolation syntax like `{{name}}` for dynamic content
 - **RTL Support:** Arabic (ar) automatically sets document direction to right-to-left, with language code normalization (handles ar-SA, ar-EG variants)
 - **URL Parameter Override:** Use `?lang=en` or `?lang=fr` etc. to force a specific language. Invalid values fall back to English.
