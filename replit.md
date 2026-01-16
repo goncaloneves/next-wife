@@ -75,4 +75,7 @@ The application uses i18next for internationalization with 12 supported language
 - **Key Structure:** Translations organized by domain (common, navigation, home, profile, filters, terms, privacy, etc.)
 - **Dynamic Values:** Use interpolation syntax like `{{name}}` for dynamic content
 - **RTL Support:** Arabic (ar) automatically sets document direction to right-to-left, with language code normalization (handles ar-SA, ar-EG variants)
+- **URL Parameter Override:** Use `?lang=en` or `?lang=fr` etc. to force a specific language. Invalid values fall back to English.
+- **Language Detection Priority:** 1) URL `?lang=` parameter, 2) Browser language (navigator), 3) Fallback to English
+- **Language Code Normalization:** Uses `load: 'languageOnly'` so `en-US` → `en`, `fr-FR` → `fr`, `pt-BR` → `pt`, etc.
 - **Adding Languages:** Create new locale files following the same structure as `en.json`
