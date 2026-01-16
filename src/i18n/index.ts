@@ -48,14 +48,48 @@ const getLanguageFromUrl = (): string | null => {
   return null;
 };
 
+const STORAGE_KEY = 'nextwife-language';
+
+const getStoredLanguage = (): string | null => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored && SUPPORTED_LANGUAGES.includes(stored)) {
+      return stored;
+    }
+  } catch (e) {
+    // localStorage may not be available
+  }
+  return null;
+};
+
+const storeLanguage = (language: string) => {
+  try {
+    const baseLanguage = language.split('-')[0].toLowerCase();
+    if (SUPPORTED_LANGUAGES.includes(baseLanguage)) {
+      localStorage.setItem(STORAGE_KEY, baseLanguage);
+    }
+  } catch (e) {
+    // localStorage may not be available
+  }
+};
+
 const urlLang = getLanguageFromUrl();
+const storedLang = getStoredLanguage();
+
+// If URL has lang param, store it
+if (urlLang) {
+  storeLanguage(urlLang);
+}
+
+// Priority: URL param > localStorage > browser detection
+const initialLang = urlLang || storedLang || undefined;
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: urlLang || undefined,
+    lng: initialLang,
     fallbackLng: 'en',
     load: 'languageOnly',
     debug: false,
@@ -63,12 +97,16 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: urlLang ? [] : ['navigator', 'htmlTag'],
+      order: initialLang ? [] : ['navigator', 'htmlTag'],
       caches: [],
     },
   });
 
-i18n.on('languageChanged', updateDocumentDirection);
+// Store language whenever it changes (from picker or any other source)
+i18n.on('languageChanged', (language) => {
+  updateDocumentDirection(language);
+  storeLanguage(language);
+});
 
 if (i18n.language) {
   updateDocumentDirection(i18n.language);
