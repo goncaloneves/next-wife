@@ -1,5 +1,56 @@
 import i18n from '@/i18n';
 
+// Map nationality values to translation keys
+const NATIONALITY_KEYS: Record<string, string> = {
+  american: 'nationality.american',
+  argentine: 'nationality.argentine',
+  australian: 'nationality.australian',
+  austrian: 'nationality.austrian',
+  balinese: 'nationality.balinese',
+  brazilian: 'nationality.brazilian',
+  british: 'nationality.british',
+  canadian: 'nationality.canadian',
+  'cape verdean': 'nationality.capeVerdean',
+  chinese: 'nationality.chinese',
+  colombian: 'nationality.colombian',
+  croatian: 'nationality.croatian',
+  czech: 'nationality.czech',
+  danish: 'nationality.danish',
+  dutch: 'nationality.dutch',
+  english: 'nationality.english',
+  filipino: 'nationality.filipino',
+  finnish: 'nationality.finnish',
+  french: 'nationality.french',
+  german: 'nationality.german',
+  greek: 'nationality.greek',
+  hungarian: 'nationality.hungarian',
+  india: 'nationality.indian',
+  indian: 'nationality.indian',
+  irish: 'nationality.irish',
+  israeli: 'nationality.israeli',
+  italian: 'nationality.italian',
+  japanese: 'nationality.japanese',
+  korean: 'nationality.korean',
+  lebanese: 'nationality.lebanese',
+  mexican: 'nationality.mexican',
+  moroccan: 'nationality.moroccan',
+  norwegian: 'nationality.norwegian',
+  polish: 'nationality.polish',
+  portuguese: 'nationality.portuguese',
+  russian: 'nationality.russian',
+  scottish: 'nationality.scottish',
+  spanish: 'nationality.spanish',
+  swedish: 'nationality.swedish',
+  swiss: 'nationality.swiss',
+  telugu: 'nationality.telugu',
+  thai: 'nationality.thai',
+  turkish: 'nationality.turkish',
+  ukrainian: 'nationality.ukrainian',
+  uruguaya: 'nationality.uruguayan',
+  uruguayan: 'nationality.uruguayan',
+  vietnamese: 'nationality.vietnamese',
+};
+
 // Map spoken language values to translation keys
 const SPOKEN_LANGUAGE_KEYS: Record<string, string> = {
   english: 'spokenLanguage.english',
@@ -121,4 +172,15 @@ export function getLanguageDisplay(nativeLanguage: string | null): string {
   if (nativeLanguage.toLowerCase() === 'english') return i18n.t('language.english');
   const translatedLanguage = translateSpokenLanguage(nativeLanguage);
   return i18n.t('language.englishWithNative', { language: translatedLanguage });
+}
+
+export function getNationalityDisplay(nationality: string | null): string {
+  if (!nationality) return '';
+  const cleanNationality = nationality.replace(/\.$/, '').trim();
+  const key = NATIONALITY_KEYS[cleanNationality.toLowerCase()];
+  if (key) {
+    return i18n.t(key);
+  }
+  // Fallback to original if no translation key found
+  return cleanNationality;
 }

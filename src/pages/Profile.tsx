@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ArrowLeft, MessageCircle, BadgeCheck, MapPin, Briefcase, Globe, MessageSquare, Share2, Undo2, X, Heart, Flame, SlidersHorizontal } from "lucide-react";
-import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay } from "@/lib/girlfriends/profile-formatter";
+import { getPersonalityLabel, getRelationshipLabel, getLanguageDisplay, getNationalityDisplay } from "@/lib/girlfriends/profile-formatter";
 import { DiscoverFilterModal, type DiscoverFilters } from "@/components/DiscoverFilterModal";
 import { type SharedFilters } from "@/lib/filterStorage";
 import { useFilters } from "@/contexts/FilterContext";
@@ -946,7 +946,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                                 </div>
                                 <div className="flex items-center gap-3 text-white">
                                   <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
-                                  <span className="text-sm">{profileData.nationality?.replace(/\.$/, '')}</span>
+                                  <span className="text-sm">{getNationalityDisplay(profileData.nationality)}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-white">
                                   <MessageSquare className="w-4 h-4 text-amber-400 flex-shrink-0" />
