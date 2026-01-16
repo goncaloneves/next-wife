@@ -941,7 +941,7 @@ const syncState = {
   inFlight: false
 };
 const SYNC_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes between syncs
-const SYNC_WINDOW = 200; // Check the most recent 200 posts
+const SYNC_WINDOW = 1000; // Check the most recent 1000 posts for deletions
 
 async function detectDeletedPosts(channel = 'nextwife_ai') {
   if (!db) return { deleted: 0, resurrected: 0 };
