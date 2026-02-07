@@ -103,6 +103,7 @@ export const TelegramChannelFeed = ({
   const postsRef = useRef<TelegramPost[]>([]);
   const nearTopRef = useRef(true);
   const fetchInFlightRef = useRef(false);
+  const loadingMoreRef = useRef(false);
   const isFilterChangeRef = useRef(false);
   const hasInitializedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -239,8 +240,9 @@ export const TelegramChannelFeed = ({
   }, [channelUsername, filters.regions, filters.ageBrackets, filters.occupationCategories, filters.languages, filters.hometowns, filters.personalities, filters.relationships, filters.hasVideo, filters.hasMultipleMedia, fingerprint]);
 
   const fetchNextPage = useCallback(async () => {
-    if (!hasMore || isLoadingMore || !nextCursor) return;
+    if (!hasMore || loadingMoreRef.current || !nextCursor) return;
 
+    loadingMoreRef.current = true;
     setIsLoadingMore(true);
 
     try {
@@ -275,23 +277,23 @@ export const TelegramChannelFeed = ({
       const data = await response.json();
       const newPosts = data.posts || [];
 
-      // Deduplicate using Set
-      const existingIds = new Set(allPosts.map((p) => p.id));
-      const uniqueNewPosts = newPosts.filter((p: TelegramPost) => !existingIds.has(p.id));
-
-      setAllPosts((prev) => [...prev, ...uniqueNewPosts]);
+      setAllPosts((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const uniqueNewPosts = newPosts.filter((p: TelegramPost) => !existingIds.has(p.id));
+        console.log(
+          `Fetched ${uniqueNewPosts.length} more posts (${newPosts.length - uniqueNewPosts.length} dupes filtered), nextCursor: ${data.nextBefore}, hasMore: ${data.hasMore}`,
+        );
+        return [...prev, ...uniqueNewPosts];
+      });
       setNextCursor(data.nextBefore);
       setHasMore(data.hasMore);
-
-      console.log(
-        `Fetched ${uniqueNewPosts.length} more posts, nextCursor: ${data.nextBefore}, hasMore: ${data.hasMore}`,
-      );
     } catch (err) {
       console.error("Error fetching more posts:", err);
     } finally {
+      loadingMoreRef.current = false;
       setIsLoadingMore(false);
     }
-  }, [hasMore, isLoadingMore, nextCursor, channelUsername, allPosts, filters]);
+  }, [hasMore, nextCursor, channelUsername, filters]);
 
   const checkForNewPosts = useCallback(async () => {
     // Skip checking for new posts when filters are active
@@ -370,7 +372,11 @@ export const TelegramChannelFeed = ({
             // User scrolled down: silently prepend new posts without changing scroll position
             console.log('[checkForNewPosts] -> Silently prepending', newPosts.length, 'new posts');
             if (newPosts.length > 0) {
-              setAllPosts(prev => [...newPosts, ...prev]);
+              setAllPosts(prev => {
+                const existingIds = new Set(prev.map(p => p.id));
+                const unique = newPosts.filter((p: TelegramPost) => !existingIds.has(p.id));
+                return unique.length > 0 ? [...unique, ...prev] : prev;
+              });
               topFingerprintRef.current = newFp;
             }
           }
