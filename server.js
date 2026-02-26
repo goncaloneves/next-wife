@@ -2369,12 +2369,6 @@ app.get('/sitemap.xml', async (req, res) => {
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/find</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
   </url>`;
     
     // Add profile URLs
@@ -2582,6 +2576,20 @@ const socialCrawlers = [
   'bingbot',
   'Baiduspider',
   'DuckDuckBot',
+  'Applebot',
+  'YandexBot',
+  'AhrefsBot',
+  'SemrushBot',
+  'MJ12bot',
+  'Sogou',
+  'Exabot',
+  'ia_archiver',
+  'archive.org_bot',
+  'CCBot',
+  'GPTBot',
+  'ChatGPT-User',
+  'anthropic-ai',
+  'Claude-Web',
 ];
 
 function isSocialCrawler(userAgent) {
@@ -2604,13 +2612,30 @@ app.get('/profile/:id', async (req, res, next) => {
   
   try {
     const profileId = req.params.id;
+
+    // Check if the profile exists at all (including deleted)
+    const existsResult = await pool.query(
+      `SELECT id, deleted_at FROM telegram_posts WHERE id = $1 AND channel = 'nextwifeai'`,
+      [profileId]
+    );
+
+    if (existsResult.rows.length === 0) {
+      return next(); // Never existed, let SPA handle
+    }
+
+    // Profile was deleted — tell crawlers to stop indexing it
+    if (existsResult.rows[0].deleted_at) {
+      res.redirect(301, 'https://nextwife.ai/');
+      return;
+    }
+
     const result = await pool.query(
       `SELECT * FROM telegram_posts WHERE id = $1 AND channel = 'nextwifeai' AND deleted_at IS NULL`,
       [profileId]
     );
     
     if (result.rows.length === 0) {
-      return next(); // Profile not found, let SPA handle 404
+      return next();
     }
     
     const post = result.rows[0];
@@ -2620,25 +2645,54 @@ app.get('/profile/:id', async (req, res, next) => {
     const hometown = post.hometown || '';
     const work = post.work || '';
     const about = post.about || '';
+    const language = post.language || '';
     
     // Get the first media URL for the image
     let imageUrl = 'https://nextwife.ai/og-image.jpg';
     if (post.media_urls && post.media_urls.length > 0) {
       const firstMedia = post.media_urls.find(m => m.type === 'photo') || post.media_urls[0];
       if (firstMedia && firstMedia.url) {
-        // Use our proxy to serve the image to avoid CORS issues
         imageUrl = `https://nextwife.ai/api/tg-image-proxy?u=${encodeURIComponent(firstMedia.url)}`;
       }
     } else if (post.media) {
       imageUrl = `https://nextwife.ai/api/tg-image-proxy?u=${encodeURIComponent(post.media)}`;
     }
     
-    const title = `${name}${age ? `, ${age}` : ''} - Next Wife`;
+    const title = `${name}${age ? `, ${age}` : ''}${nationality ? ` - ${nationality}` : ''} | Next Wife`;
     const description = about 
       ? about.substring(0, 200) + (about.length > 200 ? '...' : '')
-      : `${nationality ? nationality + ' ' : ''}${work ? work + '. ' : ''}Meet ${name} on Telegram.`;
+      : `Meet ${name}${age ? `, ${age}` : ''}${nationality ? ` from ${nationality}` : ''}${work ? ` — ${work}` : ''}. Create your ideal AI companion on Telegram.`;
     const profileUrl = `https://nextwife.ai/profile/${profileId}`;
-    
+
+    const hreflangLinks = [
+      'en', 'pt', 'es', 'fr', 'de', 'it', 'ru', 'uk', 'ar', 'ko', 'ms', 'nl'
+    ].map(lang => `  <link rel="alternate" hreflang="${lang}" href="${profileUrl}?lang=${lang}">`).join('\n');
+
+    // Schema.org JSON-LD structured data
+    const schemaData = {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: name,
+      ...(age && { age: age }),
+      ...(nationality && { nationality: nationality }),
+      ...(hometown && { homeLocation: { '@type': 'Place', name: hometown } }),
+      ...(work && { jobTitle: work }),
+      ...(about && { description: about }),
+      ...(language && { knowsLanguage: language }),
+      image: imageUrl,
+      url: profileUrl,
+      mainEntityOfPage: profileUrl,
+    };
+
+    // Build details list for body text
+    const details = [
+      age ? `Age: ${age}` : '',
+      nationality ? `Nationality: ${nationality}` : '',
+      hometown ? `From: ${hometown}` : '',
+      work ? `Occupation: ${work}` : '',
+      language ? `Language: ${language}` : '',
+    ].filter(Boolean).map(d => `<p>${escapeHtml(d)}</p>`).join('\n  ');
+
     // Serve HTML with dynamic meta tags
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -2647,7 +2701,10 @@ app.get('/profile/:id', async (req, res, next) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}">
-  
+  <link rel="canonical" href="${profileUrl}">
+${hreflangLinks}
+  <link rel="alternate" hreflang="x-default" href="${profileUrl}">
+
   <!-- Open Graph -->
   <meta property="og:type" content="profile">
   <meta property="og:site_name" content="Next Wife">
@@ -2664,18 +2721,16 @@ app.get('/profile/:id', async (req, res, next) => {
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <meta name="twitter:image" content="${imageUrl}">
-  
-  <!-- Redirect to actual page for users -->
-  <meta http-equiv="refresh" content="0;url=${profileUrl}">
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">${JSON.stringify(schemaData)}</script>
 </head>
 <body>
   <h1>${escapeHtml(name)}</h1>
-  ${age ? `<p>Age: ${age}</p>` : ''}
-  ${nationality ? `<p>Nationality: ${nationality}</p>` : ''}
-  ${hometown ? `<p>From: ${escapeHtml(hometown)}</p>` : ''}
-  ${work ? `<p>Work: ${escapeHtml(work)}</p>` : ''}
+  ${details}
   ${about ? `<p>${escapeHtml(about)}</p>` : ''}
-  <p><a href="${profileUrl}">View Profile on Next Wife</a></p>
+  <p><a href="${profileUrl}">View ${escapeHtml(name)}'s profile on Next Wife</a></p>
+  <p><a href="https://nextwife.ai/">Browse all AI companions on Next Wife</a></p>
 </body>
 </html>`;
     
