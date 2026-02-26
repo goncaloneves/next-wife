@@ -2620,7 +2620,8 @@ app.get('/profile/:id', async (req, res, next) => {
     );
 
     if (existsResult.rows.length === 0) {
-      return next(); // Never existed, let SPA handle
+      res.status(404).send('<!DOCTYPE html><html><head><title>Profile Not Found | Next Wife</title><meta name="robots" content="noindex"></head><body><h1>Profile Not Found</h1><p>This profile does not exist.</p><p><a href="https://nextwife.ai/">Browse all AI companions</a></p></body></html>');
+      return;
     }
 
     // Profile was deleted — tell crawlers to stop indexing it
