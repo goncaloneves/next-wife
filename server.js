@@ -2597,6 +2597,50 @@ function isSocialCrawler(userAgent) {
   return socialCrawlers.some(crawler => userAgent.includes(crawler));
 }
 
+// Prevent terms/privacy from being indexed as the main page
+const staticPageMeta = {
+  '/terms': {
+    title: 'Terms of Service | Next Wife',
+    description: 'Terms of Service for Next Wife — AI companion service on Telegram.',
+    noindex: true,
+  },
+  '/privacy': {
+    title: 'Privacy Policy | Next Wife',
+    description: 'Privacy Policy for Next Wife — AI companion service on Telegram.',
+    noindex: true,
+  },
+};
+
+Object.entries(staticPageMeta).forEach(([route, meta]) => {
+  app.get(route, (req, res, next) => {
+    const userAgent = req.headers['user-agent'] || '';
+    if (!isSocialCrawler(userAgent)) return next();
+
+    const pageUrl = `https://nextwife.ai${route}`;
+    const robotsContent = meta.noindex ? 'noindex, nofollow' : 'index, follow';
+    res.set('Content-Type', 'text/html');
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>${meta.title}</title>
+  <meta name="description" content="${meta.description}">
+  <meta name="robots" content="${robotsContent}">
+  <link rel="canonical" href="${pageUrl}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Next Wife">
+  <meta property="og:url" content="${pageUrl}">
+  <meta property="og:title" content="${meta.title}">
+  <meta property="og:description" content="${meta.description}">
+</head>
+<body>
+  <p><a href="https://nextwife.ai/">Back to Next Wife</a></p>
+</body>
+</html>`);
+  });
+});
+
 // Serve dynamic meta tags for profile pages when accessed by social crawlers
 app.get('/profile/:id', async (req, res, next) => {
   const userAgent = req.headers['user-agent'] || '';
