@@ -2412,6 +2412,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /terms
+Disallow: /privacy
 
 Sitemap: https://nextwife.ai/sitemap.xml
 `;
