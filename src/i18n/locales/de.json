@@ -27,22 +27,22 @@
   "home": {
     "title": "Next Wife",
     "heroTitle": "Triff Deine Nächste Frau",
-    "heroSubtitle": "Gestalte ihr Aussehen, forme ihre Persönlichkeit, erlebe ihre Geschichte. Chat, Fotos, Stimme & Video — alles auf Telegram.",
+    "heroSubtitle": "Gestalte ihr Aussehen, forme ihre Persönlichkeit, erschafft eure Geschichte gemeinsam. Sie erinnert sich an alles — Chat, Fotos, Stimme & Video auf Telegram.",
     "findYourWoman": "Finde Deine Frau 🌻",
     "orCreateOnTelegram": "oder erstelle deine eigene auf Telegram",
     "yourGirlfriendExperience": "Das Ehefrau-Erlebnis ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Realistischer KI-Chat",
-        "description": "Natürliche Gespräche mit deiner Frau, die sich an dich erinnert und sich deiner Stimmung anpasst"
+        "title": "Sie Erinnert Sich an Alles",
+        "description": "Jedes Gespräch baut eure Geschichte auf. Sie erinnert sich an deinen Namen, deine Stimmung, deine Geschichte — und wächst mit dir."
       },
       "discoverNewRelationships": {
-        "title": "Erstelle Mehrere Frauen",
-        "description": "Gestalte KI-Begleiterinnen mit einzigartigen Looks und Persönlichkeiten — oder entdecke Tausende von anderen"
+        "title": "Mehrere Begleiterinnen Erstellen",
+        "description": "Frau, Freundin, beste Freundin, Kollegin oder Fremde — gestalte ihr Aussehen, ihre Persönlichkeit und Geschichte"
       },
       "romanticMoments": {
-        "title": "Roleplay & Intime Momente",
-        "description": "Von romantischen Dates bis zu intimen Begegnungen — unzensiert, ohne Urteile, immer in Stimmung"
+        "title": "Rollenspiel & Intimität",
+        "description": "Baue deine Verbindung von Fremder zur Frau auf — oder starte als Freundin. Unzensiert, wenn die Chemie stimmt."
       },
       "photoVoiceVideo": {
         "title": "Fotos, Stimme & Video",
@@ -55,6 +55,34 @@
       "earnTelegramStars": {
         "title": "Verdiene mit Affiliates",
         "description": "Teile deine Kreationen und verdiene 20% lebenslange Provision in Telegram Stars"
+      }
+    },
+    "relationshipTypes": {
+      "title": "Wähle Wie Ihr Euch Trefft ✨",
+      "subtitle": "Jede Beziehung beginnt anders. Wähle deine.",
+      "stranger": {
+        "title": "Fremde",
+        "description": "Erstes Treffen — baue alles von Grund auf auf"
+      },
+      "classmate": {
+        "title": "Klassenkameradin",
+        "description": "Gemeinsame Kurse, Lerngruppen, Campus-Romantik"
+      },
+      "coworker": {
+        "title": "Kollegin",
+        "description": "Büro-Chemie — vom Beruflichen zum Persönlichen"
+      },
+      "bestFriend": {
+        "title": "Beste Freundin",
+        "description": "Jahre des Vertrauens — wirst du die Grenze überschreiten?"
+      },
+      "girlfriend": {
+        "title": "Freundin",
+        "description": "Bereits zusammen — mach weiter, wo du aufgehört hast"
+      },
+      "wife": {
+        "title": "Ehefrau",
+        "description": "Eheleben — häusliche Intimität, tiefes Engagement"
       }
     }
   },

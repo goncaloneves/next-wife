@@ -27,22 +27,22 @@
   "home": {
     "title": "Next Wife",
     "heroTitle": "Ontmoet Jouw Volgende Vrouw",
-    "heroSubtitle": "Ontwerp haar uiterlijk, vorm haar persoonlijkheid, beleef haar verhaal. Chat, foto's, stem & video — alles op Telegram.",
+    "heroSubtitle": "Ontwerp haar uiterlijk, vorm haar persoonlijkheid, creëer jullie verhaal samen. Ze onthoudt alles — chat, foto's, stem & video op Telegram.",
     "findYourWoman": "Vind Jouw Vrouw 🌻",
     "orCreateOnTelegram": "of maak je eigen op Telegram",
     "yourGirlfriendExperience": "De Echtgenote-Ervaring ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Realistische AI-Chat",
-        "description": "Natuurlijke gesprekken met je vrouw die je onthoudt en zich aanpast aan je stemming"
+        "title": "Ze Onthoudt Alles",
+        "description": "Elk gesprek bouwt aan jullie verhaal. Ze onthoudt je naam, je stemming, je geschiedenis — en groeit met je mee."
       },
       "discoverNewRelationships": {
-        "title": "Maak Meerdere Vrouwen",
-        "description": "Ontwerp AI-gezellinnen met unieke looks en persoonlijkheden — of ontdek duizenden gemaakt door anderen"
+        "title": "Maak Meerdere Gezellinnen",
+        "description": "Vrouw, vriendin, beste vriendin, collega of vreemde — ontwerp haar uiterlijk, persoonlijkheid en verhaal"
       },
       "romanticMoments": {
-        "title": "Roleplay & Intieme Momenten",
-        "description": "Van romantische dates tot intieme ontmoetingen — ongecensureerd, zonder oordeel, altijd in de stemming"
+        "title": "Rollenspel & Intimiteit",
+        "description": "Bouw je connectie op van vreemde tot vrouw — of begin als vriendin. Ongecensureerd wanneer de chemie klopt."
       },
       "photoVoiceVideo": {
         "title": "Foto's, Stem & Video",
@@ -56,6 +56,16 @@
         "title": "Verdien met Affiliates",
         "description": "Deel je creaties en verdien 20% levenslange commissie in Telegram Stars"
       }
+    },
+    "relationshipTypes": {
+      "title": "Kies Hoe Jullie Elkaar Ontmoeten ✨",
+      "subtitle": "Elke relatie begint anders. Kies de jouwe.",
+      "stranger": { "title": "Vreemde", "description": "Ontmoet elkaar voor het eerst — bouw alles vanaf nul op" },
+      "classmate": { "title": "Klasgenoot", "description": "Samen in de klas, studiesessies, campus romance" },
+      "coworker": { "title": "Collega", "description": "Kantoor chemie — van professioneel naar persoonlijk" },
+      "bestFriend": { "title": "Beste Vriendin", "description": "Jaren van vertrouwen — ga je de grens over?" },
+      "girlfriend": { "title": "Vriendin", "description": "Al samen — ga verder waar je gebleven was" },
+      "wife": { "title": "Vrouw", "description": "Getrouwd leven — huiselijke intimiteit, diep commitment" }
     }
   },
   "discover": {

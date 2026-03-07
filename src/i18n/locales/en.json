@@ -27,22 +27,22 @@
   "home": {
     "title": "Next Wife",
     "heroTitle": "Meet Your Next Wife",
-    "heroSubtitle": "Design her look, shape her personality, live her story. Chat, photos, voice & video — all on Telegram.",
+    "heroSubtitle": "Design her look, shape her personality, create your story together. She remembers everything — chat, photos, voice & video on Telegram.",
     "findYourWoman": "Find Your Wife 🌻",
     "orCreateOnTelegram": "or create your own on Telegram",
     "yourGirlfriendExperience": "The Wife Experience ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Realistic AI Chat",
-        "description": "Natural conversations with your wife who remembers you and adapts to your mood"
+        "title": "She Remembers Everything",
+        "description": "Every conversation builds your story. She remembers your name, your mood, your history — and grows with you."
       },
       "discoverNewRelationships": {
-        "title": "Create Multiple Wives",
-        "description": "Design AI companions with unique looks and personalities — or discover thousands made by others"
+        "title": "Create Multiple Companions",
+        "description": "Wife, girlfriend, best friend, coworker or stranger — design her look, personality and story"
       },
       "romanticMoments": {
-        "title": "Roleplay & Intimate Moments",
-        "description": "From romantic dates to intimate encounters — uncensored, judgment-free, always in the mood"
+        "title": "Roleplay & Intimacy",
+        "description": "Build your connection from stranger to wife — or start as her girlfriend. Uncensored when the chemistry is right."
       },
       "photoVoiceVideo": {
         "title": "Photos, Voice & Video",
@@ -55,6 +55,34 @@
       "earnTelegramStars": {
         "title": "Earn with Affiliates",
         "description": "Share your creations and earn 20% lifetime commission in Telegram Stars"
+      }
+    },
+    "relationshipTypes": {
+      "title": "Choose How You Meet ✨",
+      "subtitle": "Every relationship starts differently. Pick yours.",
+      "stranger": {
+        "title": "Stranger",
+        "description": "Meet for the first time — build everything from scratch"
+      },
+      "classmate": {
+        "title": "Classmate",
+        "description": "Shared classes, study sessions, campus romance"
+      },
+      "coworker": {
+        "title": "Coworker",
+        "description": "Office chemistry — from professional to personal"
+      },
+      "bestFriend": {
+        "title": "Best Friend",
+        "description": "Years of trust — will you cross the line?"
+      },
+      "girlfriend": {
+        "title": "Girlfriend",
+        "description": "Already dating — pick up where you left off"
+      },
+      "wife": {
+        "title": "Wife",
+        "description": "Married life — domestic intimacy, deep commitment"
       }
     }
   },

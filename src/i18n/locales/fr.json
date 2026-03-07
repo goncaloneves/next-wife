@@ -27,22 +27,22 @@
   "home": {
     "title": "Next Wife",
     "heroTitle": "Rencontre Ta Prochaine Femme",
-    "heroSubtitle": "Dessine son look, façonne sa personnalité, vis son histoire. Chat, photos, voix et vidéo — tout sur Telegram.",
+    "heroSubtitle": "Dessine son look, façonne sa personnalité, créez votre histoire ensemble. Elle se souvient de tout — chat, photos, voix et vidéo sur Telegram.",
     "findYourWoman": "Trouve Ta Femme 🌻",
     "orCreateOnTelegram": "ou crée la tienne sur Telegram",
     "yourGirlfriendExperience": "L'Expérience Épouse ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Chat IA Réaliste",
-        "description": "Des conversations naturelles avec ta femme qui se souvient de toi et s'adapte à ton humeur"
+        "title": "Elle Se Souvient de Tout",
+        "description": "Chaque conversation construit votre histoire. Elle se souvient de ton nom, ton humeur, ton passé — et grandit avec toi."
       },
       "discoverNewRelationships": {
-        "title": "Crée Plusieurs Femmes",
-        "description": "Conçois des compagnes IA avec des looks et personnalités uniques — ou découvre des milliers créées par d'autres"
+        "title": "Créer Plusieurs Compagnes",
+        "description": "Femme, petite amie, meilleure amie, collègue ou inconnue — dessine son look, sa personnalité et son histoire"
       },
       "romanticMoments": {
-        "title": "Roleplay et Moments Intimes",
-        "description": "Des rendez-vous romantiques aux rencontres intimes — sans censure, sans jugement, toujours disponible"
+        "title": "Roleplay & Intimité",
+        "description": "Construis ta connexion d'inconnue à femme — ou commence comme petite amie. Sans censure quand la chimie est là."
       },
       "photoVoiceVideo": {
         "title": "Photos, Voix et Vidéo",
@@ -55,6 +55,34 @@
       "earnTelegramStars": {
         "title": "Gagne avec les Affiliés",
         "description": "Partage tes créations et gagne 20% de commission à vie en Telegram Stars"
+      }
+    },
+    "relationshipTypes": {
+      "title": "Choisis Comment Vous Vous Rencontrez ✨",
+      "subtitle": "Chaque relation commence différemment. Choisis la tienne.",
+      "stranger": {
+        "title": "Inconnue",
+        "description": "Première rencontre — construis tout de zéro"
+      },
+      "classmate": {
+        "title": "Camarade de Classe",
+        "description": "Cours en commun, révisions, romance sur le campus"
+      },
+      "coworker": {
+        "title": "Collègue",
+        "description": "Alchimie au bureau — du professionnel au personnel"
+      },
+      "bestFriend": {
+        "title": "Meilleure Amie",
+        "description": "Des années de confiance — vas-tu franchir la ligne ?"
+      },
+      "girlfriend": {
+        "title": "Petite Amie",
+        "description": "Déjà ensemble — reprends là où tu t'es arrêté"
+      },
+      "wife": {
+        "title": "Femme",
+        "description": "Vie de couple — intimité domestique, engagement profond"
       }
     }
   },

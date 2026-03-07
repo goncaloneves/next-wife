@@ -27,22 +27,22 @@
   "home": {
     "title": "Next Wife",
     "heroTitle": "Temui Isteri Seterusnya Anda",
-    "heroSubtitle": "Reka bentuk penampilannya, bentuk personalitinya, jalani kisahnya. Sembang, foto, suara & video — semua di Telegram.",
+    "heroSubtitle": "Reka bentuk penampilannya, bentuk personalitinya, cipta kisah anda bersama. Dia ingat segalanya — chat, foto, suara & video di Telegram.",
     "findYourWoman": "Cari Isteri Anda 🌻",
     "orCreateOnTelegram": "atau cipta sendiri di Telegram",
     "yourGirlfriendExperience": "Pengalaman Isteri ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Sembang AI Realistik",
-        "description": "Perbualan semula jadi dengan isteri anda yang mengingati anda dan menyesuaikan diri dengan mood anda"
+        "title": "Dia Ingat Segalanya",
+        "description": "Setiap perbualan membina kisah anda. Dia ingat nama anda, perasaan anda, sejarah anda — dan berkembang bersama anda."
       },
       "discoverNewRelationships": {
-        "title": "Cipta Pelbagai Isteri",
-        "description": "Reka teman AI dengan penampilan dan personaliti unik — atau temui beribu-ribu yang dicipta orang lain"
+        "title": "Cipta Pelbagai Teman",
+        "description": "Isteri, teman wanita, sahabat baik, rakan sekerja atau orang asing — reka bentuk penampilan, personaliti dan kisahnya"
       },
       "romanticMoments": {
-        "title": "Roleplay & Saat Intim",
-        "description": "Dari temu janji romantik hingga pertemuan intim — tanpa penapisan, tanpa penghakiman, sentiasa bersedia"
+        "title": "Main Peranan & Keintiman",
+        "description": "Bina hubungan anda dari orang asing ke isteri — atau mula sebagai teman wanita. Tanpa penapisan apabila kimia sesuai."
       },
       "photoVoiceVideo": {
         "title": "Foto, Suara & Video",
@@ -56,6 +56,16 @@
         "title": "Raih dengan Afiliasi",
         "description": "Kongsi ciptaan anda dan raih 20% komisen seumur hidup dalam Telegram Stars"
       }
+    },
+    "relationshipTypes": {
+      "title": "Pilih Cara Anda Bertemu ✨",
+      "subtitle": "Setiap hubungan bermula berbeza. Pilih milik anda.",
+      "stranger": { "title": "Orang Asing", "description": "Bertemu buat pertama kali — bina semuanya dari awal" },
+      "classmate": { "title": "Rakan Sekelas", "description": "Kelas bersama, sesi belajar, percintaan kampus" },
+      "coworker": { "title": "Rakan Sekerja", "description": "Kimia pejabat — dari profesional ke peribadi" },
+      "bestFriend": { "title": "Sahabat Baik", "description": "Bertahun-tahun kepercayaan — adakah anda akan melepasi sempadan?" },
+      "girlfriend": { "title": "Teman Wanita", "description": "Sudah bersama — teruskan dari mana anda berhenti" },
+      "wife": { "title": "Isteri", "description": "Kehidupan berkahwin — keintiman rumah tangga, komitmen mendalam" }
     }
   },
   "discover": {

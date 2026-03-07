@@ -287,6 +287,47 @@ const Index = () => {
         </div>
       </section>
 
+        <section className="relative w-full bg-black py-14">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-3 text-center text-white">
+                {t('home.relationshipTypes.title')}
+              </h2>
+              <p className="text-white/60 text-center mb-8 text-lg">
+                {t('home.relationshipTypes.subtitle')}
+              </p>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {[
+                  { icon: "🤝", key: "stranger" },
+                  { icon: "📚", key: "classmate" },
+                  { icon: "💼", key: "coworker" },
+                  { icon: "💛", key: "bestFriend" },
+                  { icon: "💖", key: "girlfriend" },
+                  { icon: "💍", key: "wife" },
+                ].map((rt) => (
+                  <div
+                    key={rt.key}
+                    className="relative p-6 rounded-2xl bg-black/40 backdrop-blur-md"
+                    style={{
+                      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)",
+                    }}
+                  >
+                    <div className="relative z-10">
+                      <div className="text-4xl mb-3">{rt.icon}</div>
+                      <h3 className="text-lg font-bold mb-2 text-white">
+                        {t(`home.relationshipTypes.${rt.key}.title`)}
+                      </h3>
+                      <p className="text-[15px] text-white/70 leading-relaxed">
+                        {t(`home.relationshipTypes.${rt.key}.description`)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section ref={feedContentRef} className="hidden md:block relative py-12 bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto relative">
