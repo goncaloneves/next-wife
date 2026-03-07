@@ -26,35 +26,35 @@
   },
   "home": {
     "title": "Next Wife",
-    "heroTitle": "Crée ta femme sur Telegram",
-    "heroSubtitle": "Rencontre la femme que tu crées et embarque dans un voyage romantique, partageant des histoires uniques du monde entier.",
+    "heroTitle": "Rencontre Ta Prochaine Femme",
+    "heroSubtitle": "Dessine son look, façonne sa personnalité, vis son histoire. Chat, photos, voix et vidéo — tout sur Telegram.",
     "findYourWoman": "Trouve Ta Femme 🌻",
     "orCreateOnTelegram": "ou crée la tienne sur Telegram",
-    "yourGirlfriendExperience": "Ton Expérience Petite Amie ✨",
+    "yourGirlfriendExperience": "L'Expérience Épouse ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Vie Quotidienne Authentique",
-        "description": "Vis des moments authentiques et des interactions réelles dans sa vie quotidienne"
+        "title": "Chat IA Réaliste",
+        "description": "Des conversations naturelles avec ta femme qui se souvient de toi et s'adapte à ton humeur"
       },
       "discoverNewRelationships": {
-        "title": "Découvre de Nouvelles Relations",
-        "description": "Crée plusieurs petites amies uniques et explore différentes connexions"
+        "title": "Crée Plusieurs Femmes",
+        "description": "Conçois des compagnes IA avec des looks et personnalités uniques — ou découvre des milliers créées par d'autres"
       },
       "romanticMoments": {
-        "title": "Moments Romantiques",
-        "description": "Découvre des conversations intimes et construis des connexions significatives"
+        "title": "Roleplay et Moments Intimes",
+        "description": "Des rendez-vous romantiques aux rencontres intimes — sans censure, sans jugement, toujours disponible"
       },
       "photoVoiceVideo": {
-        "title": "Photo, Voix et Vidéo",
-        "description": "Interagis avec des photos, messages vocaux et vidéos pour des connexions plus profondes"
+        "title": "Photos, Voix et Vidéo",
+        "description": "Reçois des selfies générés par IA, écoute sa voix et regarde des vidéos"
       },
       "secretStories": {
-        "title": "Histoires Secrètes",
-        "description": "Découvre des désirs cachés et des moments intimes exclusifs"
+        "title": "Privé et Sans Censure",
+        "description": "Tout reste entre vous — pas de logs, pas de filtres, pas de limites à ce que tu explores"
       },
       "earnTelegramStars": {
-        "title": "Gagne des Étoiles Telegram",
-        "description": "Gagne 20% de commission à vie avec notre programme d'affiliation"
+        "title": "Gagne avec les Affiliés",
+        "description": "Partage tes créations et gagne 20% de commission à vie en Telegram Stars"
       }
     }
   },
@@ -67,7 +67,7 @@
     "findSomeoneNew": "Trouver Quelqu'un de Nouveau",
     "aboutMe": "À Propos de Moi",
     "readyToMeet": "Prêt à rencontrer {{name}}?",
-    "waitingForYou": "Elle t'attend sur Telegram.",
+    "waitingForYou": "Elle est prête à discuter sur Telegram.",
     "meetOnTelegram": "Rencontrer sur Telegram",
     "keyboardHints": {
       "back": "Retour",
@@ -441,9 +441,9 @@
     "noPostsFound": "Aucune publication trouvée",
     "loadingMore": "Chargement...",
     "endOfFeed": "Plus de publications",
-    "noMatchingFilters": "Aucune petite amie ne correspond à vos filtres",
+    "noMatchingFilters": "Aucune femme ne correspond à vos filtres",
     "tryAdjustingFilters": "Essayez d'ajuster vos critères de recherche",
-    "loadingGirlfriends": "Chargement des petites amies..."
+    "loadingGirlfriends": "Chargement des femmes..."
   },
   "channelHeader": {
     "viewChannel": "Voir la Chaîne"

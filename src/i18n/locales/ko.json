@@ -26,35 +26,35 @@
   },
   "home": {
     "title": "Next Wife",
-    "heroTitle": "텔레그램에서 당신의 아내를 만드세요",
-    "heroSubtitle": "당신이 만든 여성을 만나고 전 세계의 독특한 이야기를 공유하며 로맨틱한 여정을 시작하세요.",
-    "findYourWoman": "여성 찾기 🌻",
+    "heroTitle": "다음 아내를 만나보세요",
+    "heroSubtitle": "외모를 디자인하고, 성격을 만들고, 그녀의 이야기를 살아보세요. 채팅, 사진, 음성 & 영상 — 모두 텔레그램에서.",
+    "findYourWoman": "아내 찾기 🌻",
     "orCreateOnTelegram": "또는 텔레그램에서 직접 만들기",
-    "yourGirlfriendExperience": "당신의 여자친구 경험 ✨",
+    "yourGirlfriendExperience": "아내 경험 ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "진정한 일상생활",
-        "description": "그녀의 일상에서 진실된 순간과 진정한 상호작용을 경험하세요"
+        "title": "현실적인 AI 채팅",
+        "description": "당신을 기억하고 기분에 맞춰주는 아내와의 자연스러운 대화"
       },
       "discoverNewRelationships": {
-        "title": "새로운 관계 발견",
-        "description": "여러 독특한 여자친구를 만들고 다양한 연결을 탐색하세요"
+        "title": "여러 아내 만들기",
+        "description": "독특한 외모와 성격을 가진 AI 동반자를 디자인하거나 — 다른 사람들이 만든 수천 명을 발견하세요"
       },
       "romanticMoments": {
-        "title": "로맨틱한 순간들",
-        "description": "친밀한 대화를 발견하고 의미 있는 연결을 구축하세요"
+        "title": "롤플레이 & 친밀한 순간",
+        "description": "로맨틱한 데이트부터 친밀한 만남까지 — 검열 없이, 판단 없이, 항상 분위기에 맞게"
       },
       "photoVoiceVideo": {
-        "title": "사진, 음성 및 영상",
-        "description": "사진, 음성 메시지, 영상으로 더 깊은 연결을 만드세요"
+        "title": "사진, 음성 & 영상",
+        "description": "AI가 생성한 셀카를 받고, 그녀의 목소리를 듣고, 영상 클립을 시청하세요"
       },
       "secretStories": {
-        "title": "비밀 이야기",
-        "description": "숨겨진 욕망과 독점적인 친밀한 순간을 발견하세요"
+        "title": "프라이빗 & 무검열",
+        "description": "모든 것은 둘 사이에만 — 로그 없음, 필터 없음, 탐험에 제한 없음"
       },
       "earnTelegramStars": {
-        "title": "텔레그램 별 적립",
-        "description": "제휴 프로그램으로 평생 20% 커미션을 적립하세요"
+        "title": "제휴로 수익 창출",
+        "description": "창작물을 공유하고 Telegram Stars로 평생 20% 수수료를 받으세요"
       }
     }
   },
@@ -67,7 +67,7 @@
     "findSomeoneNew": "새로운 사람 찾기",
     "aboutMe": "소개",
     "readyToMeet": "{{name}}을(를) 만날 준비가 되셨나요?",
-    "waitingForYou": "그녀가 텔레그램에서 기다리고 있습니다.",
+    "waitingForYou": "그녀가 텔레그램에서 채팅할 준비가 되었어요.",
     "meetOnTelegram": "텔레그램에서 만나기",
     "keyboardHints": {
       "back": "뒤로",
@@ -81,7 +81,7 @@
   },
   "filters": {
     "title": "필터",
-    "subtitle": "완벽한 여성을 찾으세요",
+    "subtitle": "완벽한 아내를 찾으세요",
     "age": "나이",
     "language": "언어",
     "relationship": "관계",
@@ -441,9 +441,9 @@
     "noPostsFound": "게시물을 찾을 수 없습니다",
     "loadingMore": "더 불러오는 중...",
     "endOfFeed": "더 이상 게시물이 없습니다",
-    "noMatchingFilters": "필터와 일치하는 여자친구가 없습니다",
+    "noMatchingFilters": "필터와 일치하는 아내가 없습니다",
     "tryAdjustingFilters": "검색 조건을 조정해 보세요",
-    "loadingGirlfriends": "여자친구 로딩 중..."
+    "loadingGirlfriends": "아내 로딩 중..."
   },
   "channelHeader": {
     "viewChannel": "채널 보기"

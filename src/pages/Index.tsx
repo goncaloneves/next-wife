@@ -197,16 +197,17 @@ const Index = () => {
               className="text-white text-4xl font-bold"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              {t('home.title')}
+              <span className="sr-only">Next Wife — AI Wife on Telegram</span>
+              <span aria-hidden="true">{t('home.title')}</span>
             </h1>
           </div>
 
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
 
           <div className="relative z-10 container mx-auto px-4 text-center">
-            <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
               {t('home.heroTitle')}
-            </p>
+            </h2>
 
             <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
               {t('home.heroSubtitle')}

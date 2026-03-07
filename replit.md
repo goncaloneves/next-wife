@@ -46,7 +46,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Occupation Categories:** Groups 283 job titles into 12 broad categories for simplified filtering.
 - **Silent Error Handling:** API failures are handled silently without displaying error blocks to the user.
 - **Dynamic SEO Files:** Server generates `/sitemap.xml` and `/robots.txt` dynamically. Sitemap includes all active profile URLs with proper lastmod dates for search engine indexing. Cached for 1 hour.
-- **Social Media Previews:** Dynamic Open Graph and Twitter Card meta tags for profile pages. When social crawlers (Facebook, Twitter, LinkedIn, WhatsApp, Discord, etc.) access a profile URL, they receive custom HTML with the woman's photo, name, age, and description for rich link previews.
+- **Social Media Previews:** Dynamic Open Graph and Twitter Card meta tags for profile pages. When social crawlers (Facebook, Twitter, LinkedIn, WhatsApp, Discord, etc.) access a profile URL, they receive custom HTML with the wife's photo, name, age, and description for rich link previews.
 
 **System Design Choices:**
 - **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media), `click_count` for conversion tracking, and `photo_file_ids` for high-resolution media access.

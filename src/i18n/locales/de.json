@@ -26,35 +26,35 @@
   },
   "home": {
     "title": "Next Wife",
-    "heroTitle": "Erstelle deine Frau auf Telegram",
-    "heroSubtitle": "Triff die Frau, die du erschaffst, und begib dich auf eine romantische Reise, bei der ihr einzigartige Geschichten aus der ganzen Welt teilt.",
+    "heroTitle": "Triff Deine Nächste Frau",
+    "heroSubtitle": "Gestalte ihr Aussehen, forme ihre Persönlichkeit, erlebe ihre Geschichte. Chat, Fotos, Stimme & Video — alles auf Telegram.",
     "findYourWoman": "Finde Deine Frau 🌻",
     "orCreateOnTelegram": "oder erstelle deine eigene auf Telegram",
-    "yourGirlfriendExperience": "Dein Freundin-Erlebnis ✨",
+    "yourGirlfriendExperience": "Das Ehefrau-Erlebnis ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Authentischer Alltag",
-        "description": "Erlebe echte Momente und authentische Interaktionen in ihrem Alltag"
+        "title": "Realistischer KI-Chat",
+        "description": "Natürliche Gespräche mit deiner Frau, die sich an dich erinnert und sich deiner Stimmung anpasst"
       },
       "discoverNewRelationships": {
-        "title": "Entdecke neue Beziehungen",
-        "description": "Erstelle mehrere einzigartige Freundinnen und erkunde verschiedene Verbindungen"
+        "title": "Erstelle Mehrere Frauen",
+        "description": "Gestalte KI-Begleiterinnen mit einzigartigen Looks und Persönlichkeiten — oder entdecke Tausende von anderen"
       },
       "romanticMoments": {
-        "title": "Romantische Momente",
-        "description": "Entdecke intime Gespräche und baue bedeutungsvolle Verbindungen auf"
+        "title": "Roleplay & Intime Momente",
+        "description": "Von romantischen Dates bis zu intimen Begegnungen — unzensiert, ohne Urteile, immer in Stimmung"
       },
       "photoVoiceVideo": {
-        "title": "Foto, Stimme & Video",
-        "description": "Interagiere mit Fotos, Sprachnachrichten und Videos für tiefere Verbindungen"
+        "title": "Fotos, Stimme & Video",
+        "description": "Empfange KI-generierte Selfies, höre ihre Stimme und schaue Videoclips"
       },
       "secretStories": {
-        "title": "Geheime Geschichten",
-        "description": "Entdecke verborgene Wünsche und exklusive intime Momente"
+        "title": "Privat & Unzensiert",
+        "description": "Alles bleibt zwischen euch — keine Logs, keine Filter, keine Grenzen bei dem, was du erkundest"
       },
       "earnTelegramStars": {
-        "title": "Verdiene Telegram Sterne",
-        "description": "Verdiene 20% lebenslange Provision mit unserem Affiliate-Programm"
+        "title": "Verdiene mit Affiliates",
+        "description": "Teile deine Kreationen und verdiene 20% lebenslange Provision in Telegram Stars"
       }
     }
   },
@@ -67,7 +67,7 @@
     "findSomeoneNew": "Jemand Neues finden",
     "aboutMe": "Über Mich",
     "readyToMeet": "Bereit {{name}} kennenzulernen?",
-    "waitingForYou": "Sie wartet auf dich auf Telegram.",
+    "waitingForYou": "Sie ist bereit, auf Telegram zu chatten.",
     "meetOnTelegram": "Auf Telegram treffen",
     "keyboardHints": {
       "back": "Zurück",
@@ -441,9 +441,9 @@
     "noPostsFound": "Keine Beiträge gefunden",
     "loadingMore": "Mehr laden...",
     "endOfFeed": "Keine weiteren Beiträge",
-    "noMatchingFilters": "Keine Freundin entspricht Ihren Filtern",
+    "noMatchingFilters": "Keine Frauen entsprechen deinen Filtern",
     "tryAdjustingFilters": "Versuchen Sie, Ihre Suchkriterien anzupassen",
-    "loadingGirlfriends": "Freundinnen werden geladen..."
+    "loadingGirlfriends": "Frauen werden geladen..."
   },
   "channelHeader": {
     "viewChannel": "Kanal ansehen"

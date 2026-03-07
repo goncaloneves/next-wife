@@ -26,35 +26,35 @@
   },
   "home": {
     "title": "Next Wife",
-    "heroTitle": "Creëer je vrouw op Telegram",
-    "heroSubtitle": "Ontmoet de vrouw die je creëert en begin aan een romantische reis, waarin je unieke verhalen van over de hele wereld deelt.",
-    "findYourWoman": "Vind Jouw Vrouw 🌻",
+    "heroTitle": "Ontmoet Je Volgende Vrouw",
+    "heroSubtitle": "Ontwerp haar uiterlijk, vorm haar persoonlijkheid, beleef haar verhaal. Chat, foto's, stem & video — alles op Telegram.",
+    "findYourWoman": "Vind Je Vrouw 🌻",
     "orCreateOnTelegram": "of maak je eigen op Telegram",
-    "yourGirlfriendExperience": "Jouw Vriendin Ervaring ✨",
+    "yourGirlfriendExperience": "De Echtgenote-Ervaring ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Authentiek Dagelijks Leven",
-        "description": "Ervaar oprechte momenten en authentieke interacties in haar dagelijks leven"
+        "title": "Realistische AI-Chat",
+        "description": "Natuurlijke gesprekken met je vrouw die je onthoudt en zich aanpast aan je stemming"
       },
       "discoverNewRelationships": {
-        "title": "Ontdek Nieuwe Relaties",
-        "description": "Creëer meerdere unieke vriendinnen en verken verschillende connecties"
+        "title": "Maak Meerdere Vrouwen",
+        "description": "Ontwerp AI-gezellinnen met unieke looks en persoonlijkheden — of ontdek duizenden gemaakt door anderen"
       },
       "romanticMoments": {
-        "title": "Romantische Momenten",
-        "description": "Ontdek intieme gesprekken en bouw betekenisvolle connecties op"
+        "title": "Roleplay & Intieme Momenten",
+        "description": "Van romantische dates tot intieme ontmoetingen — ongecensureerd, zonder oordeel, altijd in de stemming"
       },
       "photoVoiceVideo": {
-        "title": "Foto, Stem & Video",
-        "description": "Communiceer met foto's, spraakberichten en video's voor diepere connecties"
+        "title": "Foto's, Stem & Video",
+        "description": "Ontvang AI-gegenereerde selfies, hoor haar stem en bekijk videoclips"
       },
       "secretStories": {
-        "title": "Geheime Verhalen",
-        "description": "Ontdek verborgen verlangens en exclusieve intieme momenten"
+        "title": "Privé & Ongecensureerd",
+        "description": "Alles blijft tussen jullie — geen logs, geen filters, geen grenzen aan wat je verkent"
       },
       "earnTelegramStars": {
-        "title": "Verdien Telegram Sterren",
-        "description": "Verdien 20% levenslange commissie met ons affiliateprogramma"
+        "title": "Verdien met Affiliates",
+        "description": "Deel je creaties en verdien 20% levenslange commissie in Telegram Stars"
       }
     }
   },
@@ -67,7 +67,7 @@
     "findSomeoneNew": "Iemand Nieuws Vinden",
     "aboutMe": "Over Mij",
     "readyToMeet": "Klaar om {{name}} te ontmoeten?",
-    "waitingForYou": "Ze wacht op je op Telegram.",
+    "waitingForYou": "Ze is klaar om te chatten op Telegram.",
     "meetOnTelegram": "Ontmoeten op Telegram",
     "keyboardHints": {
       "back": "Terug",
@@ -81,7 +81,7 @@
   },
   "filters": {
     "title": "Filters",
-    "subtitle": "Vind jouw perfecte vrouw",
+    "subtitle": "Vind je perfecte vrouw",
     "age": "Leeftijd",
     "language": "Taal",
     "relationship": "Relatie",
@@ -441,9 +441,9 @@
     "noPostsFound": "Geen berichten gevonden",
     "loadingMore": "Meer laden...",
     "endOfFeed": "Geen berichten meer",
-    "noMatchingFilters": "Geen vriendin komt overeen met uw filters",
+    "noMatchingFilters": "Geen vrouwen komen overeen met je filters",
     "tryAdjustingFilters": "Probeer uw zoekcriteria aan te passen",
-    "loadingGirlfriends": "Vriendinnen laden..."
+    "loadingGirlfriends": "Vrouwen laden..."
   },
   "channelHeader": {
     "viewChannel": "Bekijk Kanaal"

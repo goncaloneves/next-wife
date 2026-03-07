@@ -26,35 +26,35 @@
   },
   "home": {
     "title": "Next Wife",
-    "heroTitle": "Crie sua esposa no Telegram",
-    "heroSubtitle": "Conheça a mulher que você cria e embarque numa jornada romântica, compartilhando histórias únicas de todo o mundo.",
-    "findYourWoman": "Encontre Sua Mulher 🌻",
+    "heroTitle": "Conheça Sua Próxima Esposa",
+    "heroSubtitle": "Desenhe o visual dela, molde a personalidade, viva a história dela. Chat, fotos, voz e vídeo — tudo no Telegram.",
+    "findYourWoman": "Encontre Sua Esposa 🌻",
     "orCreateOnTelegram": "ou crie a sua no Telegram",
-    "yourGirlfriendExperience": "Sua Experiência de Namorada ✨",
+    "yourGirlfriendExperience": "A Experiência da Esposa ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Vida Diária Autêntica",
-        "description": "Viva momentos genuínos e interações autênticas no dia-a-dia dela"
+        "title": "Chat IA Realista",
+        "description": "Conversas naturais com a sua esposa que se lembra de si e se adapta ao seu humor"
       },
       "discoverNewRelationships": {
-        "title": "Descubra Novos Relacionamentos",
-        "description": "Crie múltiplas namoradas únicas e explore diferentes conexões"
+        "title": "Crie Várias Esposas",
+        "description": "Crie companheiras IA com visuais e personalidades únicas — ou descubra milhares criadas por outros"
       },
       "romanticMoments": {
-        "title": "Momentos Românticos",
-        "description": "Descubra conversas íntimas e construa conexões significativas"
+        "title": "Roleplay e Momentos Íntimos",
+        "description": "De encontros românticos a momentos íntimos — sem censura, sem julgamentos, sempre disponível"
       },
       "photoVoiceVideo": {
-        "title": "Foto, Voz e Vídeo",
-        "description": "Interaja com fotos, mensagens de voz e vídeos para conexões mais profundas"
+        "title": "Fotos, Voz e Vídeo",
+        "description": "Receba selfies geradas por IA, ouça a voz dela e assista vídeos"
       },
       "secretStories": {
-        "title": "Histórias Secretas",
-        "description": "Descubra desejos ocultos e momentos íntimos exclusivos"
+        "title": "Privado e Sem Censura",
+        "description": "Tudo fica entre vocês — sem registos, sem filtros, sem limites no que explorar"
       },
       "earnTelegramStars": {
-        "title": "Ganhe Estrelas do Telegram",
-        "description": "Ganhe 20% de comissão vitalícia com nosso programa de afiliados"
+        "title": "Ganhe com Afiliados",
+        "description": "Partilhe as suas criações e ganhe 20% de comissão vitalícia em Telegram Stars"
       }
     }
   },
@@ -67,7 +67,7 @@
     "findSomeoneNew": "Encontrar Alguém Novo",
     "aboutMe": "Sobre Mim",
     "readyToMeet": "Pronto para conhecer {{name}}?",
-    "waitingForYou": "Ela está esperando por você no Telegram.",
+    "waitingForYou": "Ela está pronta para conversar no Telegram.",
     "meetOnTelegram": "Conhecer no Telegram",
     "keyboardHints": {
       "back": "Voltar",
@@ -81,7 +81,7 @@
   },
   "filters": {
     "title": "Filtros",
-    "subtitle": "Encontre sua mulher perfeita",
+    "subtitle": "Encontre sua esposa perfeita",
     "age": "Idade",
     "language": "Idioma",
     "relationship": "Relacionamento",
@@ -441,9 +441,9 @@
     "noPostsFound": "Nenhuma postagem encontrada",
     "loadingMore": "Carregando mais...",
     "endOfFeed": "Não há mais postagens",
-    "noMatchingFilters": "Nenhuma namorada corresponde aos seus filtros",
+    "noMatchingFilters": "Nenhuma esposa corresponde aos seus filtros",
     "tryAdjustingFilters": "Tente ajustar seus critérios de busca",
-    "loadingGirlfriends": "Carregando namoradas..."
+    "loadingGirlfriends": "Carregando esposas..."
   },
   "channelHeader": {
     "viewChannel": "Ver Canal"

@@ -26,35 +26,35 @@
   },
   "home": {
     "title": "Next Wife",
-    "heroTitle": "Cipta isteri anda di Telegram",
-    "heroSubtitle": "Temui wanita yang anda cipta dan mulakan perjalanan romantik, berkongsi cerita unik dari seluruh dunia.",
-    "findYourWoman": "Cari Wanita Anda 🌻",
+    "heroTitle": "Temui Isteri Seterusnya Anda",
+    "heroSubtitle": "Reka bentuk penampilannya, bentuk personalitinya, jalani kisahnya. Sembang, foto, suara & video — semua di Telegram.",
+    "findYourWoman": "Cari Isteri Anda 🌻",
     "orCreateOnTelegram": "atau cipta sendiri di Telegram",
-    "yourGirlfriendExperience": "Pengalaman Teman Wanita Anda ✨",
+    "yourGirlfriendExperience": "Pengalaman Isteri ✨",
     "features": {
       "authenticDailyLife": {
-        "title": "Kehidupan Harian Autentik",
-        "description": "Alami momen tulen dan interaksi autentik dalam kehidupan hariannya"
+        "title": "Sembang AI Realistik",
+        "description": "Perbualan semula jadi dengan isteri anda yang mengingati anda dan menyesuaikan diri dengan mood anda"
       },
       "discoverNewRelationships": {
-        "title": "Temui Hubungan Baru",
-        "description": "Cipta beberapa teman wanita unik dan teroka pelbagai hubungan"
+        "title": "Cipta Pelbagai Isteri",
+        "description": "Reka teman AI dengan penampilan dan personaliti unik — atau temui beribu-ribu yang dicipta orang lain"
       },
       "romanticMoments": {
-        "title": "Momen Romantik",
-        "description": "Temui perbualan intim dan bina hubungan yang bermakna"
+        "title": "Roleplay & Saat Intim",
+        "description": "Dari temu janji romantik hingga pertemuan intim — tanpa penapisan, tanpa penghakiman, sentiasa bersedia"
       },
       "photoVoiceVideo": {
         "title": "Foto, Suara & Video",
-        "description": "Berinteraksi dengan foto, mesej suara dan video untuk hubungan yang lebih mendalam"
+        "description": "Terima swafoto jana AI, dengar suaranya dan tonton klip video"
       },
       "secretStories": {
-        "title": "Cerita Rahsia",
-        "description": "Temui keinginan tersembunyi dan momen intim eksklusif"
+        "title": "Peribadi & Tanpa Penapisan",
+        "description": "Semuanya kekal antara anda — tiada log, tiada penapis, tiada had untuk apa yang anda terokai"
       },
       "earnTelegramStars": {
-        "title": "Peroleh Bintang Telegram",
-        "description": "Peroleh 20% komisen seumur hidup dengan program afiliasi kami"
+        "title": "Raih dengan Afiliasi",
+        "description": "Kongsi ciptaan anda dan raih 20% komisen seumur hidup dalam Telegram Stars"
       }
     }
   },
@@ -67,7 +67,7 @@
     "findSomeoneNew": "Cari Seseorang Baru",
     "aboutMe": "Tentang Saya",
     "readyToMeet": "Bersedia untuk bertemu {{name}}?",
-    "waitingForYou": "Dia menunggu anda di Telegram.",
+    "waitingForYou": "Dia bersedia untuk berbual di Telegram.",
     "meetOnTelegram": "Jumpa di Telegram",
     "keyboardHints": {
       "back": "Kembali",
@@ -81,7 +81,7 @@
   },
   "filters": {
     "title": "Penapis",
-    "subtitle": "Cari wanita sempurna anda",
+    "subtitle": "Cari isteri sempurna anda",
     "age": "Umur",
     "language": "Bahasa",
     "relationship": "Hubungan",
@@ -441,9 +441,9 @@
     "noPostsFound": "Tiada siaran dijumpai",
     "loadingMore": "Memuatkan lagi...",
     "endOfFeed": "Tiada lagi siaran",
-    "noMatchingFilters": "Tiada teman wanita sepadan dengan penapis anda",
+    "noMatchingFilters": "Tiada isteri sepadan dengan penapis anda",
     "tryAdjustingFilters": "Cuba laraskan kriteria carian anda",
-    "loadingGirlfriends": "Memuatkan teman wanita..."
+    "loadingGirlfriends": "Memuatkan isteri..."
   },
   "channelHeader": {
     "viewChannel": "Lihat Saluran"
