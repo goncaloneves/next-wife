@@ -867,7 +867,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                             {firstName && <span>{firstName} </span>}
                             <span className="inline-flex items-center gap-[5px] whitespace-nowrap">
                               <span>{lastName}</span>
-                              <span className="text-[1.5rem] font-normal text-white ml-[6px] -mt-[0.25rem]">
+                              <span className="text-[1.5rem] font-normal text-white ml-[6px]">
                                 {profileData.age}
                               </span>
                               <BadgeCheck 
