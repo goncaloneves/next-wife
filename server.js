@@ -2398,19 +2398,7 @@ app.get('/sitemap.xml', async (req, res) => {
 
 // Dynamic robots.txt endpoint
 app.get('/robots.txt', (req, res) => {
-  const robotsTxt = `User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: *
+  const robotsTxt = `User-agent: *
 Allow: /
 Disallow: /terms
 Disallow: /privacy
