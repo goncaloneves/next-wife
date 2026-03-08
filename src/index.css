@@ -141,7 +141,7 @@ All colors MUST be HSL.
     @apply bg-background text-foreground font-body;
     line-height: 1.6;
     letter-spacing: 0.01em;
-    font-weight: 400;
+    font-weight: 500;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -157,7 +157,7 @@ All colors MUST be HSL.
   p {
     line-height: 1.7;
     letter-spacing: 0.015em;
-    font-weight: 400;
+    font-weight: 500;
   }
 }
 
