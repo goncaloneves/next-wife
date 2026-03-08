@@ -20,7 +20,12 @@ const Index = () => {
   const { filters, setFilters, activeFilterCount } = useFilters();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [headerVideoUrls, setHeaderVideoUrls] = useState<string[]>([]);
+  const headerVideoUrls = [
+    '/videos/video-2-loop.mp4',
+    '/videos/video-3-loop.mp4',
+    '/videos/video-4-loop.mp4',
+    '/videos/video-5-loop.mp4',
+  ];
   
   const featuresRef = useRef<HTMLDivElement>(null);
   const relationshipRef = useRef<HTMLDivElement>(null);
@@ -89,21 +94,6 @@ const Index = () => {
 
     observer.observe(heroRef.current);
     return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    fetch('/api/tg-channel-feed?hasVideo=true&limit=8&channel=nextwifeai')
-      .then(res => res.json())
-      .then(data => {
-        const urls: string[] = [];
-        for (const post of data.posts || []) {
-          if (urls.length >= 4) break;
-          const videoItem = (post.mediaItems || []).find((m: { type: string; url: string }) => m.type === 'video');
-          if (videoItem?.url) urls.push(`/api/pingpong-video?u=${encodeURIComponent(videoItem.url)}`);
-        }
-        if (urls.length > 0) setHeaderVideoUrls(urls);
-      })
-      .catch(() => {});
   }, []);
 
   const features = [
