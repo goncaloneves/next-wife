@@ -2589,7 +2589,7 @@ async function generatePingpong(videoUrl) {
     await execAsync(
       `ffmpeg -y -i "${inputPath}" ` +
       `-filter_complex "[0:v]split=2[fwd][rev];[rev]reverse[rev2];[fwd][rev2]concat=n=2:v=1:a=0,setpts=PTS-STARTPTS[out]" ` +
-      `-map "[out]" -an -c:v libx264 -preset ultrafast -crf 26 -movflags +faststart "${cachePath}"`,
+      `-map "[out]" -an -c:v libx264 -preset ultrafast -profile:v baseline -level 3.1 -pix_fmt yuv420p -crf 26 -movflags +faststart "${cachePath}"`,
       { timeout: 90000 }
     );
     try { fs.unlinkSync(inputPath); } catch (_) {}
