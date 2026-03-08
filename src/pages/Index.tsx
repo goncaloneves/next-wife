@@ -101,6 +101,46 @@ const Index = () => {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (headerVideoUrls.length === 0) return;
+    const videos = videoRefs.current.filter(Boolean) as HTMLVideoElement[];
+    const cleanups: (() => void)[] = [];
+
+    videos.forEach(video => {
+      let rafId: number;
+      let lastTimestamp: number | null = null;
+      let reversing = false;
+
+      const reverseStep = (timestamp: number) => {
+        if (!reversing) return;
+        const delta = lastTimestamp !== null ? (timestamp - lastTimestamp) / 1000 : 0;
+        lastTimestamp = timestamp;
+        video.currentTime = Math.max(0, video.currentTime - delta);
+        if (video.currentTime <= 0) {
+          reversing = false;
+          lastTimestamp = null;
+          video.play().catch(() => {});
+        } else {
+          rafId = requestAnimationFrame(reverseStep);
+        }
+      };
+
+      const onEnded = () => {
+        reversing = true;
+        lastTimestamp = null;
+        rafId = requestAnimationFrame(reverseStep);
+      };
+
+      video.addEventListener('ended', onEnded);
+      cleanups.push(() => {
+        video.removeEventListener('ended', onEnded);
+        cancelAnimationFrame(rafId);
+      });
+    });
+
+    return () => cleanups.forEach(fn => fn());
+  }, [headerVideoUrls]);
+
   const features = [
     {
       icon: "💌",
@@ -147,7 +187,6 @@ const Index = () => {
                   ref={(el) => { videoRefs.current[i] = el; }}
                   autoPlay
                   muted
-                  loop
                   playsInline
                   preload="metadata"
                   className="w-full h-full object-cover opacity-0 animate-fade-in"
