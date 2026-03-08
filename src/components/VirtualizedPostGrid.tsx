@@ -676,7 +676,7 @@ const ProfileBadge = ({ post }: ProfileBadgeProps) => {
           {firstName && <>{firstName} </>}
           <span className="inline-flex items-center gap-1 whitespace-nowrap">
             <span>{lastName}</span>
-            <span className="text-[22px] font-normal ml-2">
+            <span className="text-[22px] font-normal ml-2 -mt-[0.25rem]">
               {post.profileData.age}
             </span>
             <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
