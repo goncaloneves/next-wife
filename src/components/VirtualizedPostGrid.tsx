@@ -79,9 +79,9 @@ interface VirtualizedPostGridProps {
 }
 
 const GAP = 2;
-const MIN_OVERSCAN = 8;
-const LOAD_MORE_THRESHOLD = 12;
-const PRELOAD_BUFFER = 10;
+const MIN_OVERSCAN = 20;
+const LOAD_MORE_THRESHOLD = 20;
+const PRELOAD_BUFFER = 25;
 
 function getColumns(width: number): number {
   if (width >= 1280) return 4;
@@ -189,7 +189,7 @@ export const VirtualizedPostGrid = ({
     return () => resizeObserver.disconnect();
   }, [layoutReady]);
 
-  const dynamicOverscan = Math.max(MIN_OVERSCAN, Math.ceil((window.innerHeight / effectiveRowHeight) * 1));
+  const dynamicOverscan = Math.max(MIN_OVERSCAN, Math.ceil((window.innerHeight / effectiveRowHeight) * 3));
 
   const virtualizer = useWindowVirtualizer({
     count: rowCount,
