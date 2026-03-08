@@ -29,7 +29,7 @@ The application features a dual-server architecture with a Vite, React, TypeScri
 - **Feed Management:** Hides service messages, detects new posts, and provides a refresh capability.
 - **Scroll Position Restoration:** Caches feed state in `sessionStorage` for accurate scroll position restoration with virtualized lists.
 - **Desktop Profile Overlay:** Profiles open as full-screen overlays on desktop, preserving background feed state.
-- **Virtualized Feed Grid:** Uses TanStack Virtual for performance, supporting smooth scrolling through thousands of posts with dynamic row height calculation and responsive columns.
+- **Virtualized Feed Grid:** Uses TanStack Virtual (`useWindowVirtualizer`) for performance, supporting smooth scrolling through thousands of posts with dynamic row height calculation and responsive columns. Overscan is dynamically calculated as `max(20, 3× viewport height in rows)` to eliminate card pop-in while scrolling. Image preload buffer is 25 rows in each direction. Next-page fetch triggers 20 rows before the end.
 - **Conversion Tracking:** Tracks "Meet on Telegram" clicks for analytics.
 - **Swipe Visual Feedback:** Provides distinct visual feedback for left and right swipes.
 - **Mini App Direct Redirect:** In Telegram Mini App, right swipe or heart tap directly redirects to Telegram without confirmation.
@@ -54,6 +54,7 @@ The application features a dual-server architecture with a Vite, React, TypeScri
 - **Ping-Pong Video System:** `generatePingpong(url)` is the core function — downloads the source video, runs FFmpeg (`split→reverse→concat`, `libx264 ultrafast`), and writes to `/tmp/nextwife-pingpong/<md5hash>.mp4`. Cache is capped at 20 files (oldest evicted). If the file already exists, it returns instantly with no work. `prewarmPingpongCache()` queries the DB for the 4 most recent video posts and runs all 4 through `generatePingpong` in parallel via `Promise.all`.
 - **Sync-Integrated Cache Warming:** Video cache warming is treated as part of the sync, not a side effect. Both `backgroundSync` and `syncNewPosts` `await prewarmPingpongCache()` before returning, so the cache is always warm when sync completes. On server startup, `prewarmPingpongCache()` is called 3 seconds after boot.
 - **FFmpeg:** Installed as a Nix system dependency (declared in `.replit` `[nix] packages`) so it is available in both dev and production environments.
+- **OG Image:** `public/og-image.jpg` (1200×630) and source `public/og-image.svg` — dark `#1a1a2e` background with chili + text logos. Sizes are pixel-accurate to the website header: chili element height is 81% of text element height, derived from measured SVG content fill ratios (chili fills 64.9%, text fills 87.3% of their element boxes), which produces identical visual content proportions to the CSS `h-24`/`h-40` ratio. Visual centers of both elements are aligned to the same Y coordinate. Generated via ImageMagick from the two source SVGs.
 
 ## External Dependencies
 - **Telegram API:** For scraping channel posts and media, and for high-resolution media via the Bot API.
