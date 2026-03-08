@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        'heading': ['Nunito', 'sans-serif'],
-        'body': ['Nunito', 'sans-serif'],
+        'heading': ['Raleway', 'sans-serif'],
+        'body': ['Raleway', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
