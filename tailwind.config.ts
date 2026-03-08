@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        'heading': ['Cal Sans', 'sans-serif'],
-        'body': ['Cal Sans', 'sans-serif'],
+        'heading': ['Playfair Display', 'Georgia', 'serif'],
+        'body': ['DM Sans', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
