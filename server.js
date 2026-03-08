@@ -873,7 +873,7 @@ async function backgroundSync(channel = 'nextwife_ai', maxPages = 10) {
   }
   
   console.log(`✅ Background sync complete: ${totalSynced} posts synced`);
-  if (totalSynced > 0) prewarmPingpongCache().catch(() => {});
+  if (totalSynced > 0) await prewarmPingpongCache();
   return totalSynced;
 }
 
@@ -922,7 +922,7 @@ async function syncNewPosts(channel = 'nextwife_ai') {
         if (synced > 0) {
           console.log(`⚡ Quick sync: ${synced} new posts from page ${page + 1}`);
           const hasNewVideo = newPosts.some(p => p.mediaUrls?.some(m => m.type === 'video'));
-          if (hasNewVideo) prewarmPingpongCache().catch(() => {});
+          if (hasNewVideo) await prewarmPingpongCache();
         }
       }
       
@@ -2635,12 +2635,12 @@ async function prewarmPingpongCache() {
       if (videoItem?.url) urls.push(videoItem.url);
     }
     if (urls.length === 0) return;
-    console.log(`[pingpong] Pre-warming ${urls.length} video(s) in background...`);
-    for (const url of urls) {
+    console.log(`[pingpong] Pre-warming ${urls.length} video(s)...`);
+    await Promise.all(urls.map(url =>
       generatePingpong(url)
         .then(() => console.log(`[pingpong] Pre-warmed: ${url.slice(-40)}`))
-        .catch(err => console.error(`[pingpong] Pre-warm failed: ${err.message}`));
-    }
+        .catch(err => console.error(`[pingpong] Pre-warm failed: ${err.message}`))
+    ));
   } catch (err) {
     console.error('[pingpong] Pre-warm query error:', err.message);
   }
