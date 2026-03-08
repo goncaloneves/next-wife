@@ -3,8 +3,7 @@ import { Link, useSearchParams, useLocation, useNavigate } from "react-router-do
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import logo from "@/assets/next-wife-chili.svg";
-import nextwifeText from "@/assets/next-wife-text.svg";
+import logo from "@/assets/next-wife-logo.svg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
@@ -183,32 +182,18 @@ const Index = () => {
           className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden opacity-0"
           style={{ paddingBottom: 'max(3rem, calc(env(safe-area-inset-bottom) + 2rem))' }}
         >
-          <div 
-            className="absolute left-8 z-20 flex items-center gap-4"
-            style={{ top: 'max(1.25rem, calc(env(safe-area-inset-top) + 0.75rem))' }}
-          >
-            <h1>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
+
+          <div className="relative z-10 container mx-auto px-4 text-center">
+            <h1 className="mb-6">
               <span className="sr-only">Next Wife — AI Wife on Telegram</span>
               <img
                 src={logo}
                 alt="Next Wife"
-                className="h-24 w-auto"
-                style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.65) 0px 2px 14px)' }}
-              />
-            </h1>
-          </div>
-
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
-
-          <div className="relative z-10 container mx-auto px-4 text-center">
-            <h2 className="mb-6">
-              <img
-                src={nextwifeText}
-                alt={t('home.heroTitle')}
                 className="h-24 md:h-32 lg:h-40 w-auto mx-auto"
                 style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.5) 0px 2px 16px)' }}
               />
-            </h2>
+            </h1>
 
             <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
               {t('home.heroSubtitle')}
