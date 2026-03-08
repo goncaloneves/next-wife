@@ -3,7 +3,8 @@ import { Link, useSearchParams, useLocation, useNavigate } from "react-router-do
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import logo from "@/assets/next-wife-logo.svg";
+import logo from "@/assets/next-wife-chili.svg";
+import nextwifeText from "@/assets/next-wife-text.svg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
@@ -200,8 +201,13 @@ const Index = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
 
           <div className="relative z-10 container mx-auto px-4 text-center">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-              {t('home.heroTitle')}
+            <h2 className="mb-6">
+              <img
+                src={nextwifeText}
+                alt={t('home.heroTitle')}
+                className="h-24 md:h-32 lg:h-40 w-auto mx-auto"
+                style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.5) 0px 2px 16px)' }}
+              />
             </h2>
 
             <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
