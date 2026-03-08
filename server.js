@@ -7,18 +7,6 @@ import pg from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { eq, desc, and, inArray, sql } from 'drizzle-orm';
 import { countries, languages } from 'countries-list';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import crypto from 'crypto';
-import fs from 'fs';
-import os from 'os';
-
-const execAsync = promisify(exec);
-const PINGPONG_CACHE_DIR = path.join(os.tmpdir(), 'nextwife-pingpong');
-const pingPongInProgress = new Map();
-try {
-  if (!fs.existsSync(PINGPONG_CACHE_DIR)) fs.mkdirSync(PINGPONG_CACHE_DIR, { recursive: true });
-} catch (e) { console.error('Failed to create pingpong cache dir:', e); }
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -2560,64 +2548,6 @@ app.get('/api/tg-image-proxy', async (req, res) => {
   } catch (error) {
     console.error('Error proxying image:', error);
     res.status(500).json({ error: 'Failed to proxy image', message: error.message });
-  }
-});
-
-// Ping-pong video endpoint: forward + reverse concatenated into one loopable file
-app.get('/api/pingpong-video', async (req, res) => {
-  try {
-    const videoUrl = req.query.u;
-    if (!videoUrl) return res.status(400).json({ error: 'Missing url parameter "u"' });
-
-    const url = new URL(videoUrl);
-    const hostname = url.hostname.toLowerCase();
-    const allowedPatterns = ['telegram-cdn.org', 'telegram.org', 'telesco.pe'];
-    const isAllowed = allowedPatterns.some(p => hostname === p || hostname.endsWith(`.${p}`));
-    if (!isAllowed) return res.status(403).json({ error: 'Host not allowed' });
-
-    const hash = crypto.createHash('md5').update(videoUrl).digest('hex');
-    const cachePath = path.join(PINGPONG_CACHE_DIR, `${hash}.mp4`);
-
-    const streamCached = () => {
-      res.set({ 'Content-Type': 'video/mp4', 'Cache-Control': 'public, max-age=604800', 'Access-Control-Allow-Origin': '*' });
-      fs.createReadStream(cachePath).pipe(res);
-    };
-
-    if (fs.existsSync(cachePath)) return streamCached();
-
-    if (pingPongInProgress.has(hash)) {
-      await pingPongInProgress.get(hash);
-      return streamCached();
-    }
-
-    const inputPath = path.join(PINGPONG_CACHE_DIR, `${hash}_in.mp4`);
-
-    const processPromise = (async () => {
-      const videoResponse = await fetch(videoUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-      if (!videoResponse.ok) throw new Error(`Download failed: ${videoResponse.status}`);
-      const buffer = await videoResponse.buffer();
-      fs.writeFileSync(inputPath, buffer);
-
-      await execAsync(
-        `ffmpeg -y -i "${inputPath}" ` +
-        `-filter_complex "[0:v]split=2[fwd][rev];[rev]reverse[rev2];[fwd][rev2]concat=n=2:v=1:a=0,setpts=PTS-STARTPTS[out]" ` +
-        `-map "[out]" -an -c:v libx264 -preset ultrafast -crf 26 -movflags +faststart "${cachePath}"`,
-        { timeout: 90000 }
-      );
-      try { fs.unlinkSync(inputPath); } catch (_) {}
-    })();
-
-    pingPongInProgress.set(hash, processPromise);
-    try {
-      await processPromise;
-    } finally {
-      pingPongInProgress.delete(hash);
-    }
-
-    streamCached();
-  } catch (error) {
-    console.error('pingpong-video error:', error.message);
-    res.status(500).json({ error: 'Failed to process video' });
   }
 });
 

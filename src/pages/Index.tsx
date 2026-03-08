@@ -94,7 +94,7 @@ const Index = () => {
         for (const post of data.posts || []) {
           if (urls.length >= 4) break;
           const videoItem = (post.mediaItems || []).find((m: { type: string; url: string }) => m.type === 'video');
-          if (videoItem?.url) urls.push(`/api/pingpong-video?u=${encodeURIComponent(videoItem.url)}`);
+          if (videoItem?.url) urls.push(videoItem.url);
         }
         if (urls.length > 0) setHeaderVideoUrls(urls);
       })
@@ -146,10 +146,10 @@ const Index = () => {
                   key={url}
                   ref={(el) => { videoRefs.current[i] = el; }}
                   autoPlay
-                  loop
                   muted
+                  loop
                   playsInline
-                  preload="auto"
+                  preload="metadata"
                   className="w-full h-full object-cover opacity-0 animate-fade-in"
                   style={{ animationDelay: `${i * 0.1}s`, animationFillMode: "forwards" }}
                 >
