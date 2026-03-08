@@ -87,12 +87,12 @@ const Index = () => {
 
   const features = [
     {
-      icon: "🌺",
+      icon: "🧠",
       title: t('home.features.authenticDailyLife.title'),
       description: t('home.features.authenticDailyLife.description'),
     },
     {
-      icon: "🥂",
+      icon: "🎨",
       title: t('home.features.discoverNewRelationships.title'),
       description: t('home.features.discoverNewRelationships.description'),
     },
@@ -107,12 +107,12 @@ const Index = () => {
       description: t('home.features.photoVoiceVideo.description'),
     },
     {
-      icon: "🔥",
+      icon: "🔐",
       title: t('home.features.secretStories.title'),
       description: t('home.features.secretStories.description'),
     },
     {
-      icon: "🤩",
+      icon: "⭐",
       title: t('home.features.earnTelegramStars.title'),
       description: t('home.features.earnTelegramStars.description'),
     },
