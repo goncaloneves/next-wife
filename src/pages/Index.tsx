@@ -251,10 +251,13 @@ const Index = () => {
         <section className="relative w-full bg-black py-14">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-8 text-center text-white">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-3 text-center text-white">
               {t('home.yourGirlfriendExperience')}
             </h2>
-            
+            <p className="text-white/60 text-center mb-8 text-lg">
+              {t('home.yourGirlfriendExperienceSubtitle')}
+            </p>
+
             <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {features.map((feature, index) => (
                 <div
