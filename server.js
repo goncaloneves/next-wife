@@ -2659,8 +2659,34 @@ app.get('/api/pingpong-video', async (req, res) => {
     if (!isAllowed) return res.status(403).json({ error: 'Host not allowed' });
 
     const cachePath = await generatePingpong(videoUrl);
-    res.set({ 'Content-Type': 'video/mp4', 'Cache-Control': 'public, max-age=604800', 'Access-Control-Allow-Origin': '*' });
-    fs.createReadStream(cachePath).pipe(res);
+    const stat = fs.statSync(cachePath);
+    const fileSize = stat.size;
+    const rangeHeader = req.headers['range'];
+
+    if (rangeHeader) {
+      const parts = rangeHeader.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const chunkSize = end - start + 1;
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunkSize,
+        'Content-Type': 'video/mp4',
+        'Cache-Control': 'public, max-age=604800',
+        'Access-Control-Allow-Origin': '*',
+      });
+      fs.createReadStream(cachePath, { start, end }).pipe(res);
+    } else {
+      res.writeHead(200, {
+        'Content-Length': fileSize,
+        'Content-Type': 'video/mp4',
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': 'public, max-age=604800',
+        'Access-Control-Allow-Origin': '*',
+      });
+      fs.createReadStream(cachePath).pipe(res);
+    }
   } catch (error) {
     console.error('pingpong-video error:', error.message);
     res.status(500).json({ error: 'Failed to process video' });
