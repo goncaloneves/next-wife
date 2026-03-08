@@ -2614,6 +2614,19 @@ app.get('/api/pingpong-video', async (req, res) => {
       pingPongInProgress.delete(hash);
     }
 
+    // Clean up stale cached files that are no longer being served or processed
+    try {
+      const files = fs.readdirSync(PINGPONG_CACHE_DIR);
+      for (const file of files) {
+        if (!file.endsWith('.mp4')) continue;
+        const fileHash = file.slice(0, -4);
+        if (fileHash === hash) continue;
+        if (pingPongInProgress.has(fileHash)) continue;
+        fs.unlinkSync(path.join(PINGPONG_CACHE_DIR, file));
+        console.log(`[pingpong] Removed stale cache: ${file}`);
+      }
+    } catch (_) {}
+
     streamCached();
   } catch (error) {
     console.error('pingpong-video error:', error.message);
