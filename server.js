@@ -2617,6 +2617,9 @@ Object.entries(staticPageMeta).forEach(([route, meta]) => {
   <title>${meta.title}</title>
   <meta name="description" content="${meta.description}">
   <meta name="robots" content="${robotsContent}">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="canonical" href="${pageUrl}">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Next Wife">
@@ -2736,6 +2739,9 @@ app.get('/profile/:id', async (req, res, next) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="canonical" href="${profileUrl}">
 ${hreflangLinks}
   <link rel="alternate" hreflang="x-default" href="${profileUrl}">
