@@ -192,7 +192,7 @@ const Index = () => {
               <img
                 src={logo}
                 alt="Next Wife"
-                className="h-16 w-auto"
+                className="h-24 w-auto"
                 style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.65) 0px 2px 14px)' }}
               />
             </h1>
