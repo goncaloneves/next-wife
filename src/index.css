@@ -27,6 +27,7 @@ All colors MUST be HSL.
   html, body {
     overscroll-behavior: none;
     font-family: 'Raleway', 'Noto Sans Arabic', 'Noto Sans KR', sans-serif;
+    font-variant-numeric: lining-nums;
   }
   
   :root {
