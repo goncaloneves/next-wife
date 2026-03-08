@@ -2614,16 +2614,16 @@ app.get('/api/pingpong-video', async (req, res) => {
       pingPongInProgress.delete(hash);
     }
 
-    // Clean up stale cached files that are no longer being served or processed
+    // Keep only the 4 most recently created cached videos
     try {
-      const files = fs.readdirSync(PINGPONG_CACHE_DIR);
-      for (const file of files) {
-        if (!file.endsWith('.mp4')) continue;
-        const fileHash = file.slice(0, -4);
-        if (fileHash === hash) continue;
-        if (pingPongInProgress.has(fileHash)) continue;
-        fs.unlinkSync(path.join(PINGPONG_CACHE_DIR, file));
-        console.log(`[pingpong] Removed stale cache: ${file}`);
+      const files = fs.readdirSync(PINGPONG_CACHE_DIR)
+        .filter(f => f.endsWith('.mp4'))
+        .map(f => ({ name: f, mtime: fs.statSync(path.join(PINGPONG_CACHE_DIR, f)).mtimeMs }))
+        .sort((a, b) => a.mtime - b.mtime);
+      while (files.length > 4) {
+        const oldest = files.shift();
+        fs.unlinkSync(path.join(PINGPONG_CACHE_DIR, oldest.name));
+        console.log(`[pingpong] Evicted oldest cache: ${oldest.name}`);
       }
     } catch (_) {}
 
