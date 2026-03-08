@@ -121,7 +121,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-50">
+        <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-70">
           {!isMobile && (
             <video
               ref={(el) => { videoRefs.current[0] = el; }}
