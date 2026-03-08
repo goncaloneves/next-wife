@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useLayoutEffect, useMemo, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -81,7 +81,7 @@ interface VirtualizedPostGridProps {
 const GAP = 2;
 const MIN_OVERSCAN = 8;
 const LOAD_MORE_THRESHOLD = 12;
-const PRELOAD_BUFFER = 10;
+const PRELOAD_BUFFER = 3;
 
 function getColumns(width: number): number {
   if (width >= 1280) return 4;
@@ -117,6 +117,7 @@ export const VirtualizedPostGrid = ({
 }: VirtualizedPostGridProps) => {
   const navigate = useNavigate();
   const listRef = useRef<HTMLDivElement>(null);
+  const preloadedRows = useRef<Set<number>>(new Set());
   
   // Initialize with cached dimensions for instant restoration
   const [rowHeight, setRowHeight] = useState<number | null>(() => {
@@ -151,7 +152,10 @@ export const VirtualizedPostGrid = ({
   const effectiveColumns = columns ?? 4;
   const effectiveRowHeight = rowHeight ?? 320;
 
-  const visiblePosts = posts.filter(post => !hiddenIds.has(post.id));
+  const visiblePosts = useMemo(
+    () => posts.filter(post => !hiddenIds.has(post.id)),
+    [posts, hiddenIds]
+  );
   const rowCount = Math.ceil(visiblePosts.length / effectiveColumns);
 
   useLayoutEffect(() => {
@@ -172,7 +176,8 @@ export const VirtualizedPostGrid = ({
         const calculatedHeight = cardWidth * (4 / 3);
         
         setColumns(prev => prev !== newColumns ? newColumns : prev);
-        setRowHeight(calculatedHeight + GAP);
+        const newRowHeight = calculatedHeight + GAP;
+        setRowHeight(prev => prev !== newRowHeight ? newRowHeight : prev);
         
         if (!layoutReady) {
           setLayoutReady(true);
@@ -189,7 +194,10 @@ export const VirtualizedPostGrid = ({
     return () => resizeObserver.disconnect();
   }, [layoutReady]);
 
-  const dynamicOverscan = Math.max(MIN_OVERSCAN, Math.ceil((window.innerHeight / effectiveRowHeight) * 1));
+  const dynamicOverscan = useMemo(
+    () => Math.max(MIN_OVERSCAN, Math.ceil(window.innerHeight / effectiveRowHeight)),
+    [effectiveRowHeight]
+  );
 
   const virtualizer = useWindowVirtualizer({
     count: rowCount,
@@ -216,6 +224,9 @@ export const VirtualizedPostGrid = ({
     const preloadEnd = Math.min(rowCount - 1, lastRowIndex + PRELOAD_BUFFER);
     
     for (let rowIdx = preloadStart; rowIdx <= preloadEnd; rowIdx++) {
+      if (preloadedRows.current.has(rowIdx)) continue;
+      preloadedRows.current.add(rowIdx);
+      
       const startIdx = rowIdx * effectiveColumns;
       const endIdx = Math.min(startIdx + effectiveColumns, visiblePosts.length);
       
@@ -228,7 +239,7 @@ export const VirtualizedPostGrid = ({
         }
       }
     }
-  }, [virtualItems, effectiveColumns, visiblePosts, rowCount, buildSrc, layoutReady]);
+  }, [virtualItems, effectiveColumns, visiblePosts, rowCount, layoutReady]);
 
   useEffect(() => {
     if (rowCount === 0) return;
@@ -281,6 +292,9 @@ export const VirtualizedPostGrid = ({
     const firstMediaItem = post.mediaItems?.[0];
     const firstMediaLegacy = post.mediaUrls?.[0];
     const isVideo = firstMediaItem?.type === 'video' || firstMediaLegacy?.type === 'video';
+    const isLoaded = imageLoadStates[post.id] ?? false;
+    const errorCount = imageErrors[post.id] ?? 0;
+    const isPlaying = playingVideos.has(post.id);
 
     return (
       <div
@@ -296,19 +310,19 @@ export const VirtualizedPostGrid = ({
           animationFillMode: "forwards"
         }}
       >
-        {!imageLoadStates[post.id] && (
+        {!isLoaded && (
           <Skeleton className="absolute inset-0 w-full h-full z-10" />
         )}
         
         {isVideo ? (
           <VideoCard
             post={post}
-            imageLoadStates={imageLoadStates}
+            isLoaded={isLoaded}
+            errorCount={errorCount}
+            isPlaying={isPlaying}
             setImageLoadStates={setImageLoadStates}
-            imageErrors={imageErrors}
             setImageErrors={setImageErrors}
             setHiddenIds={setHiddenIds}
-            playingVideos={playingVideos}
             setPlayingVideos={setPlayingVideos}
             videoRefs={videoRefs}
             progressCircleRefs={progressCircleRefs}
@@ -318,16 +332,16 @@ export const VirtualizedPostGrid = ({
         ) : (
           <ImageCard
             post={post}
-            imageLoadStates={imageLoadStates}
+            isLoaded={isLoaded}
+            errorCount={errorCount}
             setImageLoadStates={setImageLoadStates}
-            imageErrors={imageErrors}
             setImageErrors={setImageErrors}
             setHiddenIds={setHiddenIds}
             buildSrc={buildSrc}
           />
         )}
         
-        {imageLoadStates[post.id] && (
+        {isLoaded && (
           <>
             <div 
               className="absolute top-3 left-3 z-20 pointer-events-none"
@@ -346,8 +360,8 @@ export const VirtualizedPostGrid = ({
       </div>
     );
   }, [
-    refreshKey, skipAnimation, imageLoadStates, setImageLoadStates, imageErrors, 
-    setImageErrors, hiddenIds, setHiddenIds, playingVideos, setPlayingVideos, 
+    refreshKey, skipAnimation, imageLoadStates, imageErrors, playingVideos,
+    setImageLoadStates, setImageErrors, setHiddenIds, setPlayingVideos, 
     videoRefs, progressCircleRefs, rafRefs, buildSrc, handleCardClick
   ]);
 
@@ -414,12 +428,12 @@ export const VirtualizedPostGrid = ({
 
 interface VideoCardProps {
   post: TelegramPost;
-  imageLoadStates: Record<string, boolean>;
+  isLoaded: boolean;
+  errorCount: number;
+  isPlaying: boolean;
   setImageLoadStates: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  imageErrors: Record<string, number>;
   setImageErrors: React.Dispatch<React.SetStateAction<Record<string, number>>>;
   setHiddenIds: React.Dispatch<React.SetStateAction<Set<string>>>;
-  playingVideos: Set<string>;
   setPlayingVideos: React.Dispatch<React.SetStateAction<Set<string>>>;
   videoRefs: React.MutableRefObject<Record<string, HTMLVideoElement | null>>;
   progressCircleRefs: React.MutableRefObject<Record<string, SVGCircleElement | null>>;
@@ -427,14 +441,14 @@ interface VideoCardProps {
   buildSrc: (url: string, postId: string) => string;
 }
 
-const VideoCard = ({
+const VideoCard = memo(({
   post,
-  imageLoadStates,
+  isLoaded,
+  errorCount,
+  isPlaying: _isPlaying,
   setImageLoadStates,
-  imageErrors,
   setImageErrors,
   setHiddenIds,
-  playingVideos,
   setPlayingVideos,
   videoRefs,
   progressCircleRefs,
@@ -449,10 +463,9 @@ const VideoCard = ({
   const getVideoSrc = () => {
     const firstMedia = post.mediaItems?.[0];
     const firstMediaLegacy = post.mediaUrls?.[0];
-    const tries = imageErrors[post.id] || 0;
     
     if (firstMedia) {
-      if (tries === 0) {
+      if (errorCount === 0) {
         return firstMedia.url;
       } else if (firstMedia.previewUrl) {
         return firstMedia.previewUrl;
@@ -535,25 +548,24 @@ const VideoCard = ({
         muted
         loop
         playsInline
-        preload="auto"
+        preload="none"
         className={`w-full h-full object-cover transition-all duration-300 ${
-          imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
+          isLoaded ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
         }`}
         onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
         onError={() => {
-          const currentTries = imageErrors[post.id] || 0;
-          if (currentTries >= 2) {
+          if (errorCount >= 2) {
             setHiddenIds(s => new Set(s).add(post.id));
             return;
           }
-          const delay = currentTries === 0 ? 100 : 300;
+          const delay = errorCount === 0 ? 100 : 300;
           setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
           setTimeout(() => {
             setImageErrors(prev => ({ ...prev, [post.id]: (prev[post.id] || 0) + 1 }));
           }, delay);
         }}
       />
-      {imageLoadStates[post.id] && (
+      {isLoaded && (
         <div className="absolute top-[11px] right-3 pointer-events-none opacity-90 group-hover:opacity-100 transition-opacity duration-300">
           <svg className="w-7 h-7" viewBox="0 0 36 36">
             <circle
@@ -575,23 +587,23 @@ const VideoCard = ({
       )}
     </div>
   );
-};
+});
 
 interface ImageCardProps {
   post: TelegramPost;
-  imageLoadStates: Record<string, boolean>;
+  isLoaded: boolean;
+  errorCount: number;
   setImageLoadStates: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  imageErrors: Record<string, number>;
   setImageErrors: React.Dispatch<React.SetStateAction<Record<string, number>>>;
   setHiddenIds: React.Dispatch<React.SetStateAction<Set<string>>>;
   buildSrc: (url: string, postId: string) => string;
 }
 
-const ImageCard = ({
+const ImageCard = memo(({
   post,
-  imageLoadStates,
+  isLoaded,
+  errorCount,
   setImageLoadStates,
-  imageErrors,
   setImageErrors,
   setHiddenIds,
   buildSrc,
@@ -608,14 +620,12 @@ const ImageCard = ({
   };
 
   const handleError = () => {
-    const currentTries = imageErrors[post.id] || 0;
-    
-    if (currentTries >= 2) {
+    if (errorCount >= 2) {
       setHiddenIds(s => new Set(s).add(post.id));
       return;
     }
     
-    const delay = currentTries === 0 ? 100 : 300;
+    const delay = errorCount === 0 ? 100 : 300;
     setImageLoadStates((prev) => ({ ...prev, [post.id]: false }));
     
     setTimeout(() => {
@@ -625,13 +635,10 @@ const ImageCard = ({
 
   const getImageSrc = () => {
     const firstMedia = post.mediaItems?.[0];
-    const tries = imageErrors[post.id] || 0;
     
     if (firstMedia) {
-      if (tries === 0) {
+      if (errorCount === 0) {
         return firstMedia.url;
-      } else if (tries === 1 && firstMedia.previewUrl) {
-        return firstMedia.previewUrl;
       } else if (firstMedia.previewUrl) {
         return firstMedia.previewUrl;
       }
@@ -643,26 +650,26 @@ const ImageCard = ({
 
   return (
     <img
-      key={`img-${post.id}-${imageErrors[post.id] || 0}`}
+      key={`img-${post.id}-${errorCount}`}
       src={getImageSrc()}
       alt=""
       loading="eager"
       decoding="async"
       referrerPolicy="no-referrer"
       className={`w-full h-full object-cover transition-all duration-300 ${
-        imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
+        isLoaded ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
       }`}
       onLoad={handleLoad}
       onError={handleError}
     />
   );
-};
+});
 
 interface ProfileBadgeProps {
   post: TelegramPost;
 }
 
-const ProfileBadge = ({ post }: ProfileBadgeProps) => {
+const ProfileBadge = memo(({ post }: ProfileBadgeProps) => {
   if (!post.profileData) return null;
 
   const nameParts = post.profileData.name.split(' ');
@@ -712,4 +719,4 @@ const ProfileBadge = ({ post }: ProfileBadgeProps) => {
       </div>
     </div>
   );
-};
+});
