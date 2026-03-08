@@ -3,7 +3,7 @@ import { Link, useSearchParams, useLocation, useNavigate } from "react-router-do
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import logo from "@/assets/next-wife-logo-sunset.jpeg";
+import logo from "@/assets/next-wife-logo.svg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
@@ -186,19 +186,13 @@ const Index = () => {
             className="absolute left-8 z-20 flex items-center gap-4"
             style={{ top: 'max(2rem, calc(env(safe-area-inset-top) + 1rem))' }}
           >
-            <img
-              src={logo}
-              alt={t('home.title')}
-              className="w-12 h-12 rounded-full object-cover shadow-lg"
-              style={{ boxShadow: "var(--shadow-glow)" }}
-            />
-
-            <h1
-              className="text-white text-4xl font-bold"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
+            <h1>
               <span className="sr-only">Next Wife — AI Wife on Telegram</span>
-              <span aria-hidden="true">{t('home.title')}</span>
+              <img
+                src={logo}
+                alt="Next Wife"
+                className="h-12 w-auto"
+              />
             </h1>
           </div>
 
