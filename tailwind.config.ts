@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        'heading': ['Urbanist', 'sans-serif'],
-        'body': ['Urbanist', 'sans-serif'],
+        'heading': ['Outfit', 'sans-serif'],
+        'body': ['Outfit', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
