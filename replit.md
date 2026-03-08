@@ -1,87 +1,59 @@
 # Next Wife - Telegram Channel Feed Viewer
 
 ## Overview
-Next Wife is a web application designed to display posts from the @nextwife_ai Telegram channel, which provides an AI companion/virtual girlfriend service. The platform allows users to discover virtual girlfriends from various global locations. The project aims to provide a rich, interactive user experience similar to dating apps, facilitating user engagement with the AI companions.
+Next Wife is a web application that displays posts from the @nextwife_ai Telegram channel, offering an AI companion/virtual girlfriend service. The platform aims to provide a rich, interactive user experience, similar to dating apps, to engage users with AI companions globally. The project focuses on facilitating discovery and interaction with virtual girlfriends through an intuitive interface.
 
 ## User Preferences
 - Keep all 43 unused shadcn/ui components for future use
 - Privacy commitment: Messages NOT logged, NOT used for AI training
 
 ## System Architecture
-The application uses a dual-server architecture: a frontend built with Vite, React, TypeScript, shadcn/ui, and Tailwind CSS, and a Node.js Express backend. The Express server is responsible for Telegram data scraping, image proxying, and serving the static frontend assets in production. PostgreSQL is used for persistent storage of girlfriend profiles, enabling efficient filtering and querying.
+The application features a dual-server architecture with a Vite, React, TypeScript, shadcn/ui, and Tailwind CSS frontend, and a Node.js Express backend. The Express server handles Telegram data scraping, image proxying, and serves static frontend assets. PostgreSQL is used for persistent storage of girlfriend profiles, enabling efficient filtering and querying.
 
 **UI/UX Decisions:**
-- **Tinder-style Navigation:** Implemented swipe gestures, keyboard shortcuts, side arrow buttons, and a bottom action bar for navigating between profiles.
-- **Profile Badges:** Tinder-style overlay badges on images display Name, Age, Nationality, Hometown, and Work.
-- **Responsive Design:** Features a horizontal scroll carousel for mobile/tablet (90vw width, snap-scroll) and a grid view for desktop (4 columns with hover interactions).
-- **Filter UI:** Redesigned filters from dropdowns to horizontal scrollable chips with gradient styling and multi-select capabilities. An active filter count badge is displayed.
-- **Dark Theme:** Supports a dark theme for consistent user experience.
+- **Navigation:** Implements Tinder-style swipe gestures, keyboard shortcuts, side arrow buttons, and a bottom action bar.
+- **Profile Display:** Uses Tinder-style overlay badges for key profile information and supports responsive layouts (horizontal carousel for mobile, grid for desktop).
+- **Filter System:** Redesigned filters as horizontal scrollable chips with multi-select and an active filter count badge.
+- **Theme:** Supports a dark theme.
 
 **Technical Implementations & Feature Specifications:**
-- **Real-time Feed & Filtering:** Displays Telegram channel posts with filtering capabilities by Region, Age bracket, Occupation Category, Personality, Relationship, and Media type (Has Video, Multiple Photos). Filters are multi-selectable.
-- **Dedicated Profile Pages:** Individual profile pages (`/profile/:id`) with shareable URLs, displaying full details and a "Message on Telegram" CTA.
-- **Bot Entry Point:** Special `/find` URL for Telegram bot integration that opens the latest profile in full Tinder-style profile view with swipe navigation. Use `/find?view=app` to disable all exit navigation for embedded mini app mode.
-- **Telegram Mini App Support:** Integrated with Telegram WebApp SDK (only when `view=app`):
-  - Auto-expands to full screen on load via `expand()` + retry logic
-  - Disables vertical swipes to prevent accidental closure via `disableVerticalSwipes()`
-  - Safe area handling for device notches/home indicators
-  - "Meet on Telegram" opens link and closes mini app via `openTelegramLink()` + `close()`
-- **Profile Layout:** Fixed footer with action buttons (skip/heart/undo) that stays in place when About Me expands. About Me section can expand to full image height without scroll.
-- **Multi-Media Carousel:** Profiles with multiple photos/videos display an Instagram-style carousel with segmented progress bars at the top. Users can tap left/right sides of the image to navigate between media. Media stored as JSONB array [{type: 'photo'|'video', url: string}] in `media_urls` column. Videos are always sorted first in the array for immediate engagement.
-- **Instagram-style Auto-Advance:** Media carousel auto-advances like Instagram Stories - each photo/video shows for 5 seconds with an animated progress bar, then advances to the next. After the last media item, it loops back to the first. Progress bars show: filled (past), animating (current), dimmed (upcoming).
-- **Video Playback:** Videos play with muted autoplay, no looping - they advance to next media when finished. Progress bar syncs with video playback duration.
-- **Bot Link Handling:** Special handling for `@nextwifebot` links; clicking an image with a bot link redirects to the bot, otherwise opens a lightbox. The backend extracts these links.
-- **Image Loading:** Includes a retry mechanism (3 attempts with progressive timing) for robust image loading.
-- **Post Filtering:** Hides service messages from the feed.
-- **Automatic New Post Detection:** Detects new posts and provides a refresh capability.
-- **Content Parsing:** Extracts personality and relationship types from Telegram post text.
-- **Language Display:** Uses `countries-list` to derive and display native languages alongside English.
-- **Scroll Position Restoration:** Caches feed state in `sessionStorage` to restore scroll position upon returning from profile pages. Uses anchor post ID with virtualizer.scrollToIndex for accurate restoration with virtualized lists.
-- **Desktop Profile Overlay:** On desktop, clicking a profile opens it as a full-screen overlay instead of navigating away. The feed stays mounted in the background, preserving video playback and scroll position. Uses React Router's background location pattern: URL changes to `/profile/:id`, back button closes overlay, skip/undo use replace navigation. Mobile continues to use full page navigation.
-- **Virtualized Feed Grid:** Uses TanStack Virtual (@tanstack/react-virtual) with window-based virtualization for performance. Only renders ~20-40 visible rows at once, enabling smooth scrolling through 4000+ posts. Uses padding-based approach (paddingTop/paddingBottom) instead of absolute positioning for reliable scroll behavior. Responsive columns: 2 (768-1024px), 3 (1024-1280px), 4 (1280px+). Dynamic row height calculation via ResizeObserver maintains 3:4 aspect ratio.
-- **Conversion Tracking:** Tracks when users click "Meet on Telegram" (the final conversion point) rather than feed clicks. The `click_count` field stores these conversions for future analytics.
-- **Swipe Visual Feedback:** Left swipe darkens the card, right swipe shows a warm sunset gradient overlay covering the entire card (image, titles, buttons).
-- **Mini App Direct Redirect:** In Telegram Mini App (detected via SDK `window.Telegram.WebApp`), swiping right or tapping heart skips the confirmation popup and goes directly to Telegram. The `?view=app` URL parameter separately controls UI (hides back button, disables Escape key exit).
-- **Automatic Deleted Post Detection:** A background scheduler soft-deletes posts removed from Telegram, and a quick sync mechanism handles instant updates on page load.
-- **Occupation Categories:** Groups 283 job titles into 12 broad categories for simplified filtering.
-- **Silent Error Handling:** API failures are handled silently without displaying error blocks to the user.
-- **Dynamic SEO Files:** Server generates `/sitemap.xml` and `/robots.txt` dynamically. Sitemap includes all active profile URLs with proper lastmod dates for search engine indexing. Cached for 1 hour. `robots.txt` uses a single `User-agent: *` block — all crawlers can index everything except `/terms` and `/privacy` which are disallowed and also served with `noindex, nofollow` meta tags.
-- **Social Media Previews:** Dynamic Open Graph and Twitter Card meta tags for profile pages. When social crawlers (Facebook, Twitter, LinkedIn, WhatsApp, Discord, etc.) access a profile URL, they receive custom HTML with the wife's photo, name, age, and description for rich link previews.
+- **Real-time Feed & Filtering:** Displays Telegram channel posts with multi-selectable filters for Region, Age bracket, Occupation Category, Personality, Relationship, and Media type.
+- **Dedicated Profile Pages:** Individual, shareable profile pages with full details and a "Message on Telegram" call-to-action.
+- **Bot Integration:** Special `/find` URL for Telegram bot integration, opening profiles in a Tinder-style view with swipe navigation, and `/find?view=app` for embedded mini-app mode.
+- **Telegram Mini App Support:** Integrates with Telegram WebApp SDK for full-screen display, disabled vertical swipes, safe area handling, and direct Telegram link opening.
+- **Profile Layout:** Fixed footer with action buttons and an expandable "About Me" section.
+- **Multi-Media Carousel:** Instagram-style carousel with segmented progress bars for profiles with multiple photos/videos. Supports tap navigation, auto-advance, and muted autoplay for videos. Videos are always sorted first in the array.
+- **Bot Link Handling:** Special handling for `@nextwifebot` links, redirecting to the bot or opening a lightbox.
+- **Robust Image Loading:** Includes a retry mechanism for image loading.
+- **Content Enrichment:** Extracts personality and relationship types from Telegram post text and derives native languages using `countries-list`.
+- **Feed Management:** Hides service messages, detects new posts, and provides a refresh capability.
+- **Scroll Position Restoration:** Caches feed state in `sessionStorage` for accurate scroll position restoration with virtualized lists.
+- **Desktop Profile Overlay:** Profiles open as full-screen overlays on desktop, preserving background feed state.
+- **Virtualized Feed Grid:** Uses TanStack Virtual for performance, supporting smooth scrolling through thousands of posts with dynamic row height calculation and responsive columns.
+- **Conversion Tracking:** Tracks "Meet on Telegram" clicks for analytics.
+- **Swipe Visual Feedback:** Provides distinct visual feedback for left and right swipes.
+- **Mini App Direct Redirect:** In Telegram Mini App, right swipe or heart tap directly redirects to Telegram without confirmation.
+- **Automatic Deleted Post Detection:** Background scheduler soft-deletes removed posts with instant sync updates.
+- **Occupation Categories:** Groups 283 job titles into 12 broad categories.
+- **Error Handling:** API failures are handled silently.
+- **Dynamic SEO:** Server generates dynamic `/sitemap.xml` and `/robots.txt` with proper indexing rules.
+- **Social Media Previews:** Dynamic Open Graph and Twitter Card meta tags for rich link previews of profile pages.
 
 **System Design Choices:**
-- **PostgreSQL Database:** Stores girlfriend profiles with derived fields (region, age_bracket, occupation category, personality, relationship, language, has_video, has_multiple_media), `click_count` for conversion tracking, and `photo_file_ids` for high-resolution media access.
-- **Background Sync Service:** Regularly fetches posts from Telegram and updates the database, enriching data with derived fields.
-- **Image Proxy:** Proxies Telegram CDN images to prevent CORS issues.
-- **High-Resolution Media (Bot API):** Telegram Bot API is the PRIMARY source for new posts. The `pollBotUpdates()` function runs FIRST during sync, creating posts directly with file IDs from the start. It parses caption text to extract profile data (name, age, nationality, etc.), extracts bot links from entities, and groups updates by `media_group_id` for multi-photo albums. The scraper (telesco.pe) runs AFTER and enriches posts with media_urls for fallback. The `/api/tg-highres-image?file_id=XXX` endpoint streams high-res images from Bot API.
-- **Persistent Bot State:** The `bot_state` table stores `last_update_id` to survive server restarts, preventing lost Bot API updates. Also stores `backfill_chat_id` for auto-backfill destination.
-- **Auto-Fix File ID Mismatches:** Every 10 minutes, the scheduler automatically re-fetches file_ids using `forwardMessage` for posts where count doesn't match `media_urls` count. Prioritizes fixing mismatches first, then backfills missing file_ids. Processes 30 posts per sync cycle. Requires `backfill_chat_id` to be configured.
-- **Manual Backfill API:** POST `/api/tg-set-backfill-chat` with `{"chat_id": YOUR_ID}` to configure destination. POST `/api/tg-backfill-file-ids?limit=50` to trigger batch backfill.
-- **High-Res URL Caching:** Server caches Bot API file URLs for 45 minutes in-memory (Map with TTL) to reduce API calls by ~95%. Automatic cleanup when cache exceeds 5000 entries. Use `?refresh=true` query param to force cache invalidation. Browser also caches for 45 minutes via Cache-Control header.
-- **Frontend Fallback:** If high-res image fails to load, frontend automatically falls back to preview/proxy URL (public channel images). The ImageCard component tracks error counts per image and switches to `previewUrl` from `mediaItems` on failure.
-- **Unified Media Array (mediaItems):** Server returns a `mediaItems` array with ready-to-use URLs. Each item has `{type, url, previewUrl, quality}`. Quality values: `high` (Bot API high-res), `preview` (proxy), `direct` (CDN for videos). Videos are NOT proxied - served directly from Telegram CDN. Frontend uses mediaItems as the canonical source; legacy `media`/`mediaUrls` preserved for backward compatibility.
-- **FilterContext Architecture:** Centralized filter state management using React Context (`FilterContext`). Single source of truth for filter state shared between homepage and profile pages. Filter changes sync to both localStorage and URL for persistence and shareability. URL params: `regions`, `age`, `occupation`, `languages`, `hometowns`, `personality`, `relationship`, `video=1`, `multi=1`. Both pages use `DiscoverFilterModal` for consistent filter UI.
+- **PostgreSQL Database:** Stores profiles with derived fields and `click_count`.
+- **Background Sync Service:** Regularly fetches, updates, and enriches data from Telegram.
+- **Image Proxy:** Proxies Telegram CDN images to resolve CORS issues.
+- **High-Resolution Media (Bot API):** Telegram Bot API is the primary source for new posts, providing high-res media via `file_ids`. A fallback mechanism uses telesco.pe for media URLs.
+- **Persistent Bot State:** Stores `last_update_id` and `backfill_chat_id` in `bot_state` table for server restart resilience and auto-backfill.
+- **Auto-Fix File ID Mismatches:** A scheduled task automatically re-fetches `file_ids` for mismatched posts.
+- **High-Res URL Caching:** Server-side in-memory cache for Bot API file URLs reduces API calls.
+- **Frontend Fallback:** If high-res images fail, the frontend falls back to preview URLs.
+- **Unified Media Array (`mediaItems`):** Server returns a standardized `mediaItems` array with type, URL, preview URL, and quality information.
+- **FilterContext Architecture:** Centralized React Context for filter state management, synchronizing with localStorage and URL parameters for persistence and shareability.
+- **Homepage Header Videos:** Displays 4 dynamic looped videos from the channel, pre-processed server-side into ping-pong loops and cached.
 
 ## External Dependencies
-- **Telegram API:** For scraping channel posts and media.
-- **PostgreSQL Database:** Primary data store for girlfriend profiles and associated metadata.
-- **`countries-list` (npm package):** Used for accurate nationality-to-language mapping.
-- **i18next + react-i18next:** Internationalization framework with browser language detection.
-
-## Internationalization (i18n)
-The application uses i18next for internationalization with 12 supported languages:
-- **Configuration:** `src/i18n/index.ts` - Sets up i18next with browser language detection and RTL support
-- **Languages:** English (en), Portuguese (pt), Spanish (es), French (fr), German (de), Italian (it), Russian (ru), Ukrainian (uk), Arabic (ar), Korean (ko), Malay (ms), Dutch (nl)
-- **Translation Files:** `src/i18n/locales/*.json` - Each language has 420+ translation keys
-- **Key Structure:** Translations organized by domain (common, navigation, home, profile, filters, personality, relationship, region, occupation, spokenLanguage, terms, privacy, etc.)
-- **Filter Translations:** Regions (8 values), occupation categories (12 values), and spoken languages (56 values) are fully translated. The `useFilterOptions` hook maps API values to translation keys for display and reverse maps labels back to values for filtering.
-- **Dynamic Values:** Use interpolation syntax like `{{name}}` for dynamic content
-- **RTL Support:** Arabic (ar) automatically sets document direction to right-to-left, with language code normalization (handles ar-SA, ar-EG variants)
-- **URL Parameter Override:** Use `?lang=en` or `?lang=fr` etc. to force a specific language. Invalid values fall back to English.
-- **Language Persistence:** User's language choice is stored in localStorage (`nextwife-language` key) and persists across sessions.
-- **Language Detection Priority:** 1) URL `?lang=` parameter (also saves to localStorage), 2) Stored localStorage value, 3) Browser language (navigator), 4) Fallback to English
-- **Language Code Normalization:** Uses `load: 'languageOnly'` so `en-US` → `en`, `fr-FR` → `fr`, `pt-BR` → `pt`, etc.
-- **Language Picker UI:** Globe icon in header opens language selection. Homepage uses a dropdown, profile pages use a bottom sheet modal (same style/animation as filter modal). 12 languages displayed in native names with semibold font for consistent weight across scripts. Globe only highlights when dropdown/modal is open.
-- **Localized Relative Times:** Post timestamps ("about 1 hour ago") are translated using date-fns locales (`src/lib/dateLocale.ts`). All 12 languages supported with automatic locale detection based on current i18n language.
-- **Nationality Translations:** 46 nationalities translated to all 12 languages with variant mappings ("India"→indian, "Uruguaya"→uruguayan).
-- **Adding Languages:** Create new locale files following the same structure as `en.json`
-- **Numeric Alignment:** `font-variant-numeric: lining-nums` set globally in `src/index.css` — forces Raleway's oldstyle figures (which have descenders on 4, 9, etc.) to render as flat lining numerals, ensuring consistent baseline alignment across all languages and UI contexts.
+- **Telegram API:** For scraping channel posts and media, and for high-resolution media via the Bot API.
+- **PostgreSQL Database:** Primary data store.
+- **`countries-list` (npm package):** Used for nationality-to-language mapping.
+- **i18next + react-i18next:** For internationalization.
