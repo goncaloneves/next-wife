@@ -857,7 +857,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                     }}
                     data-testid="profile-info-toggle"
                   >
-                    <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg mb-1">
+                    <h1 className="text-[1.75rem] font-bold text-white drop-shadow-lg mb-1 leading-snug">
                       {(() => {
                         const nameParts = profileData.name.split(' ');
                         const lastName = nameParts.pop() || '';
