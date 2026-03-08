@@ -97,9 +97,9 @@ const Index = () => {
       description: t('home.features.discoverNewRelationships.description'),
     },
     {
-      icon: "💖",
-      title: t('home.features.romanticMoments.title'),
-      description: t('home.features.romanticMoments.description'),
+      icon: "🌍",
+      title: t('home.features.speaksYourLanguage.title'),
+      description: t('home.features.speaksYourLanguage.description'),
     },
     {
       icon: "📸",

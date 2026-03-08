@@ -56,6 +56,10 @@
       "earnTelegramStars": {
         "title": "اربح مع الشركاء",
         "description": "شارك إبداعاتك واربح 20% عمولة مدى الحياة في Telegram Stars"
+      },
+      "speaksYourLanguage": {
+        "title": "تتحدث لغتك",
+        "description": "متاح بـ 12 لغة. تحدث وغازل وتواصل باللغة الأقرب إلى قلبك."
       }
     },
     "relationshipTypes": {

@@ -56,6 +56,10 @@
       "earnTelegramStars": {
         "title": "Raih dengan Afiliasi",
         "description": "Kongsi ciptaan anda dan raih 20% komisen seumur hidup dalam Telegram Stars"
+      },
+      "speaksYourLanguage": {
+        "title": "Berbicara Bahasa Anda",
+        "description": "Tersedia dalam 12 bahasa. Sembang, bergurau senda dan berhubung dalam bahasa yang paling dekat di hati anda."
       }
     },
     "relationshipTypes": {

@@ -56,6 +56,10 @@
       "earnTelegramStars": {
         "title": "Earn with Affiliates",
         "description": "Share your creations and earn 20% lifetime commission in Telegram Stars"
+      },
+      "speaksYourLanguage": {
+        "title": "Speaks Your Language",
+        "description": "Available in 12 languages. Chat, flirt and connect in the language closest to your heart."
       }
     },
     "relationshipTypes": {

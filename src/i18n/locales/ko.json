@@ -56,6 +56,10 @@
       "earnTelegramStars": {
         "title": "제휴로 수익 창출",
         "description": "창작물을 공유하고 Telegram Stars로 평생 20% 수수료를 받으세요"
+      },
+      "speaksYourLanguage": {
+        "title": "당신의 언어로",
+        "description": "12개 언어로 제공됩니다. 마음에 가장 가까운 언어로 채팅하고 연결하세요."
       }
     },
     "relationshipTypes": {

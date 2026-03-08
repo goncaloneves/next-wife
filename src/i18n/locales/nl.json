@@ -56,6 +56,10 @@
       "earnTelegramStars": {
         "title": "Verdien met Affiliates",
         "description": "Deel je creaties en verdien 20% levenslange commissie in Telegram Stars"
+      },
+      "speaksYourLanguage": {
+        "title": "Spreekt Jouw Taal",
+        "description": "Beschikbaar in 12 talen. Chat, flirt en maak verbinding in de taal die het dichtst bij je hart ligt."
       }
     },
     "relationshipTypes": {

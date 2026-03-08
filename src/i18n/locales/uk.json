@@ -56,6 +56,10 @@
       "earnTelegramStars": {
         "title": "Заробляй з Партнерами",
         "description": "Діліся своїми творіннями та отримуй 20% довічну комісію в Telegram Stars"
+      },
+      "speaksYourLanguage": {
+        "title": "Говорить Вашою Мовою",
+        "description": "Доступно на 12 мовах. Спілкуйтесь, фліртуйте та зближуйтесь мовою, близькою вашому серцю."
       }
     },
     "relationshipTypes": {

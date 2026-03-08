@@ -56,6 +56,10 @@
       "earnTelegramStars": {
         "title": "Verdiene mit Affiliates",
         "description": "Teile deine Kreationen und verdiene 20% lebenslange Provision in Telegram Stars"
+      },
+      "speaksYourLanguage": {
+        "title": "Spricht Deine Sprache",
+        "description": "Verfügbar in 12 Sprachen. Chatte, flirte und verbinde dich in der Sprache, die deinem Herzen am nächsten ist."
       }
     },
     "relationshipTypes": {

@@ -56,6 +56,10 @@
       "earnTelegramStars": {
         "title": "Guadagna con gli Affiliati",
         "description": "Condividi le tue creazioni e guadagna il 20% di commissione a vita in Telegram Stars"
+      },
+      "speaksYourLanguage": {
+        "title": "Parla La Tua Lingua",
+        "description": "Disponibile in 12 lingue. Chatta, flirta e connettiti nella lingua più vicina al tuo cuore."
       }
     },
     "relationshipTypes": {
