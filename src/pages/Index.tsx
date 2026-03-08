@@ -23,6 +23,7 @@ const Index = () => {
   const [headerVideoUrls, setHeaderVideoUrls] = useState<string[]>([]);
   
   const featuresRef = useRef<HTMLDivElement>(null);
+  const relationshipRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
@@ -49,6 +50,10 @@ const Index = () => {
     if (heroRef.current) observer.observe(heroRef.current);
     if (featuresRef.current) {
       const cards = featuresRef.current.querySelectorAll(".feature-card");
+      cards.forEach((card) => observer.observe(card));
+    }
+    if (relationshipRef.current) {
+      const cards = relationshipRef.current.querySelectorAll(".feature-card");
       cards.forEach((card) => observer.observe(card));
     }
 
@@ -284,7 +289,7 @@ const Index = () => {
               <p className="text-white/60 text-center mb-8 text-lg">
                 {t('home.relationshipTypes.subtitle')}
               </p>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div ref={relationshipRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {[
                   { icon: "🤝", key: "stranger" },
                   { icon: "📚", key: "classmate" },
@@ -292,16 +297,17 @@ const Index = () => {
                   { icon: "💛", key: "bestFriend" },
                   { icon: "💖", key: "girlfriend" },
                   { icon: "💍", key: "wife" },
-                ].map((rt) => (
+                ].map((rt, index) => (
                   <div
                     key={rt.key}
-                    className="relative p-6 rounded-2xl bg-black/40 backdrop-blur-md"
+                    className="feature-card relative p-6 rounded-2xl opacity-0 bg-black/40 backdrop-blur-md"
                     style={{
+                      animationDelay: `${index * 0.1}s`,
                       boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)",
                     }}
                   >
                     <div className="relative z-10">
-                      <div className="text-4xl mb-3">{rt.icon}</div>
+                      <div className="w-24 h-24 flex items-center justify-center text-5xl mb-4">{rt.icon}</div>
                       <h3 className="text-lg font-bold mb-2 text-white">
                         {t(`home.relationshipTypes.${rt.key}.title`)}
                       </h3>
