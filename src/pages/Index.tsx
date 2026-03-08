@@ -26,6 +26,7 @@ const Index = () => {
   const heroRef = useRef<HTMLElement>(null);
   const feedContentRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const videoPlaybackRef = useRef<Map<HTMLVideoElement, { start: () => void; stop: () => void }>>(new Map());
   const isMobile = useIsMobile();
   
   const handleProfileOverlay = useCallback((postId: string) => {
@@ -68,13 +69,11 @@ const Index = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          videoRefs.current.forEach((video) => {
-            if (video) {
-              if (entry.isIntersecting) {
-                video.play().catch(() => {});
-              } else {
-                video.pause();
-              }
+          videoPlaybackRef.current.forEach((controls) => {
+            if (entry.isIntersecting) {
+              controls.start();
+            } else {
+              controls.stop();
             }
           });
         });
@@ -107,39 +106,60 @@ const Index = () => {
     const cleanups: (() => void)[] = [];
 
     videos.forEach(video => {
-      let rafId: number;
+      let rafId: number | null = null;
       let lastTimestamp: number | null = null;
-      let reversing = false;
+      let direction = 1;
       let pos = 0;
+      let running = false;
 
-      const reverseStep = (timestamp: number) => {
-        if (!reversing) return;
+      const step = (timestamp: number) => {
+        if (!running) return;
         const delta = lastTimestamp !== null ? (timestamp - lastTimestamp) / 1000 : 0;
         lastTimestamp = timestamp;
-        pos = Math.max(0, pos - delta);
+        const duration = video.duration || 5;
+        pos += direction * delta;
+        if (pos >= duration) {
+          pos = duration;
+          direction = -1;
+        } else if (pos <= 0) {
+          pos = 0;
+          direction = 1;
+        }
         video.currentTime = pos;
-        if (pos <= 0) {
-          reversing = false;
-          lastTimestamp = null;
-          video.play().catch(() => {});
-        } else {
-          rafId = requestAnimationFrame(reverseStep);
+        rafId = requestAnimationFrame(step);
+      };
+
+      const start = () => {
+        if (running) return;
+        running = true;
+        lastTimestamp = null;
+        rafId = requestAnimationFrame(step);
+      };
+
+      const stop = () => {
+        running = false;
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
         }
       };
 
-      const onEnded = () => {
-        if (reversing) return;
-        reversing = true;
-        lastTimestamp = null;
-        pos = video.duration || 5;
-        rafId = requestAnimationFrame(reverseStep);
+      const onLoaded = () => {
+        video.pause();
+        videoPlaybackRef.current.set(video, { start, stop });
+        start();
       };
 
-      video.addEventListener('ended', onEnded);
+      if (video.readyState >= 2) {
+        onLoaded();
+      } else {
+        video.addEventListener('loadeddata', onLoaded, { once: true });
+      }
+
       cleanups.push(() => {
-        video.removeEventListener('ended', onEnded);
-        cancelAnimationFrame(rafId);
-        reversing = false;
+        video.removeEventListener('loadeddata', onLoaded);
+        stop();
+        videoPlaybackRef.current.delete(video);
       });
     });
 
@@ -190,7 +210,6 @@ const Index = () => {
                 <video
                   key={url}
                   ref={(el) => { videoRefs.current[i] = el; }}
-                  autoPlay
                   muted
                   playsInline
                   preload="auto"
