@@ -198,7 +198,7 @@ const Index = () => {
                 />
                 <img
                   src={logoText}
-                  alt="nextwife — Meet Your Next Wife"
+                  alt={t('common.logoAlt')}
                   className="h-24 md:h-32 lg:h-40 w-auto"
                   style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.8) 0px 2px 16px)' }}
                 />
