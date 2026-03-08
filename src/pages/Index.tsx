@@ -307,7 +307,7 @@ const Index = () => {
                     }}
                   >
                     <div className="relative z-10">
-                      <div className="w-24 h-24 flex items-center justify-center text-5xl mb-4">{rt.icon}</div>
+                      <div className="text-4xl mb-3">{rt.icon}</div>
                       <h3 className="text-lg font-bold mb-2 text-white">
                         {t(`home.relationshipTypes.${rt.key}.title`)}
                       </h3>
