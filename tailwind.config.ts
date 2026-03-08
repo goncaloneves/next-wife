@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        'heading': ['Playfair Display', 'Georgia', 'serif'],
+        'heading': ['Space Grotesk', 'sans-serif'],
         'body': ['DM Sans', 'sans-serif'],
       },
       colors: {
