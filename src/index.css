@@ -26,7 +26,7 @@ All colors MUST be HSL.
   /* Prevent overscroll bounce that reveals fixed background */
   html, body {
     overscroll-behavior: none;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Noto Sans', sans-serif;
   }
   
   :root {
