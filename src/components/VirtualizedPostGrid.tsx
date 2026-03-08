@@ -537,7 +537,7 @@ const VideoCard = ({
         playsInline
         preload="auto"
         className={`w-full h-full object-cover transition-all duration-300 ${
-          imageLoadStates[post.id] ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
+          imageLoadStates[post.id] ? "opacity-60 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
         }`}
         onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
         onError={() => {
