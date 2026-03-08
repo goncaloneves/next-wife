@@ -205,7 +205,7 @@ const Index = () => {
               </div>
             </h1>
 
-            <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto leading-relaxed font-bold">
+            <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl md:max-w-4xl mx-auto leading-relaxed font-bold">
               {t('home.heroSubtitle')}
             </p>
 
