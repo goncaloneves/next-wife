@@ -3,7 +3,7 @@ import { Link, useSearchParams, useLocation, useNavigate } from "react-router-do
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import logo from "@/assets/next-wife-logo.svg";
+import logo from "@/assets/next-wife-logo-v2.svg";
 import { TelegramQRWidget } from "@/components/TelegramQRWidget";
 import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
