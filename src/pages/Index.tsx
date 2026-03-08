@@ -20,6 +20,7 @@ const Index = () => {
   const { filters, setFilters, activeFilterCount } = useFilters();
   const [isQRVisible, setIsQRVisible] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [headerVideoUrls, setHeaderVideoUrls] = useState<string[]>([]);
   
   const featuresRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -85,6 +86,21 @@ const Index = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    fetch('/api/tg-channel-feed?hasVideo=true&limit=8&channel=nextwifeai')
+      .then(res => res.json())
+      .then(data => {
+        const urls: string[] = [];
+        for (const post of data.posts || []) {
+          if (urls.length >= 4) break;
+          const videoItem = (post.mediaItems || []).find((m: { type: string; url: string }) => m.type === 'video');
+          if (videoItem?.url) urls.push(videoItem.url);
+        }
+        if (urls.length > 0) setHeaderVideoUrls(urls);
+      })
+      .catch(() => {});
+  }, []);
+
   const features = [
     {
       icon: "💌",
@@ -121,60 +137,28 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-70">
-          {!isMobile && (
-            <video
-              ref={(el) => { videoRefs.current[0] = el; }}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="w-full h-full object-cover opacity-0 animate-fade-in"
-              style={{ animationDelay: "0s", animationFillMode: "forwards" }}
-            >
-              <source src="/videos/video-2-loop.mp4" type="video/mp4" />
-            </video>
-          )}
-          <video
-            ref={(el) => { videoRefs.current[1] = el; }}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className="w-full h-full object-cover opacity-0 animate-fade-in"
-            style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}
-          >
-            <source src="/videos/video-3-loop.mp4" type="video/mp4" />
-          </video>
-          <video
-            ref={(el) => { videoRefs.current[2] = el; }}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className="w-full h-full object-cover opacity-0 animate-fade-in"
-            style={{ animationDelay: "0.2s", animationFillMode: "forwards" }}
-          >
-            <source src="/videos/video-4-loop.mp4" type="video/mp4" />
-          </video>
-          {!isMobile && (
-            <video
-              ref={(el) => { videoRefs.current[3] = el; }}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="w-full h-full object-cover opacity-0 animate-fade-in"
-              style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
-            >
-              <source src="/videos/video-5-loop.mp4" type="video/mp4" />
-            </video>
-          )}
-        </div>
+        {headerVideoUrls.length > 0 && (
+          <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-70">
+            {headerVideoUrls.map((url, i) => {
+              if (isMobile && (i === 0 || i === 3)) return null;
+              return (
+                <video
+                  key={url}
+                  ref={(el) => { videoRefs.current[i] = el; }}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-full object-cover opacity-0 animate-fade-in"
+                  style={{ animationDelay: `${i * 0.1}s`, animationFillMode: "forwards" }}
+                >
+                  <source src={url} type="video/mp4" />
+                </video>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="relative z-10">
