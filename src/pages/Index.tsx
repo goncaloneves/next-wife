@@ -110,13 +110,15 @@ const Index = () => {
       let rafId: number;
       let lastTimestamp: number | null = null;
       let reversing = false;
+      let pos = 0;
 
       const reverseStep = (timestamp: number) => {
         if (!reversing) return;
         const delta = lastTimestamp !== null ? (timestamp - lastTimestamp) / 1000 : 0;
         lastTimestamp = timestamp;
-        video.currentTime = Math.max(0, video.currentTime - delta);
-        if (video.currentTime <= 0) {
+        pos = Math.max(0, pos - delta);
+        video.currentTime = pos;
+        if (pos <= 0) {
           reversing = false;
           lastTimestamp = null;
           video.play().catch(() => {});
@@ -126,8 +128,10 @@ const Index = () => {
       };
 
       const onEnded = () => {
+        if (reversing) return;
         reversing = true;
         lastTimestamp = null;
+        pos = video.duration || 5;
         rafId = requestAnimationFrame(reverseStep);
       };
 
@@ -135,6 +139,7 @@ const Index = () => {
       cleanups.push(() => {
         video.removeEventListener('ended', onEnded);
         cancelAnimationFrame(rafId);
+        reversing = false;
       });
     });
 
@@ -188,7 +193,7 @@ const Index = () => {
                   autoPlay
                   muted
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                   className="w-full h-full object-cover opacity-0 animate-fade-in"
                   style={{ animationDelay: `${i * 0.1}s`, animationFillMode: "forwards" }}
                 >
