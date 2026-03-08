@@ -867,17 +867,17 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                             {firstName && <span>{firstName} </span>}
                             <span className="whitespace-nowrap">
                               {lastName}
-                              <span className="inline-flex items-baseline gap-[5px] ml-[11px]">
+                              <span className="inline-flex items-center gap-[5px] ml-[11px]">
                                 <span className="text-[1.5rem] font-normal text-white">
                                   {profileData.age}
                                 </span>
                                 <BadgeCheck 
-                                  className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0 relative top-[3px]" 
+                                  className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0" 
                                   style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
                                 />
                                 {post.isHot && (
                                   <Flame 
-                                    className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0 relative top-[2px]" 
+                                    className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0" 
                                     style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                                   />
                                 )}
