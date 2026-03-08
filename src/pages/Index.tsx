@@ -184,19 +184,15 @@ const Index = () => {
         >
           <div 
             className="absolute left-8 z-20 flex items-center gap-4"
-            style={{ top: 'max(0px, env(safe-area-inset-top, 0px))' }}
+            style={{ top: 'max(1.25rem, calc(env(safe-area-inset-top) + 0.75rem))' }}
           >
             <h1>
               <span className="sr-only">Next Wife — AI Wife on Telegram</span>
               <img
                 src={logo}
                 alt="Next Wife"
-                className="h-52 w-auto"
-                style={{
-                  marginTop: '-50px',
-                  marginLeft: '-20px',
-                  filter: 'drop-shadow(rgba(0, 0, 0, 0.65) 0px 2px 14px)',
-                }}
+                className="h-16 w-auto"
+                style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.65) 0px 2px 14px)' }}
               />
             </h1>
           </div>
