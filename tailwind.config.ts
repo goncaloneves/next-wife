@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        'heading': ['Noto Sans', 'sans-serif'],
-        'body': ['Noto Sans', 'sans-serif'],
+        'heading': ['Raleway', 'Noto Sans Arabic', 'Noto Sans KR', 'sans-serif'],
+        'body': ['Raleway', 'Noto Sans Arabic', 'Noto Sans KR', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
