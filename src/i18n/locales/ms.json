@@ -28,7 +28,7 @@
     "title": "Next Wife",
     "heroTitle": "Temui Isteri Seterusnya Anda",
     "heroSubtitle": "Reka bentuk penampilannya, bentuk personalitinya, cipta kisah anda bersama. Dia ingat segalanya — chat, foto, suara & video di Telegram.",
-    "findYourWoman": "Cari Isteri Anda",
+    "findYourWoman": "Cari Isteri Anda 🌶️",
     "orCreateOnTelegram": "atau cipta sendiri di Telegram",
     "yourGirlfriendExperience": "Pengalaman Isteri ✨",
     "features": {
@@ -60,12 +60,30 @@
     "relationshipTypes": {
       "title": "Pilih Cara Anda Bertemu 🎭",
       "subtitle": "Setiap hubungan bermula berbeza. Pilih milik anda.",
-      "stranger": { "title": "Orang Asing", "description": "Bertemu buat pertama kali — bina semuanya dari awal" },
-      "classmate": { "title": "Rakan Sekelas", "description": "Kelas bersama, sesi belajar, percintaan kampus" },
-      "coworker": { "title": "Rakan Sekerja", "description": "Kimia pejabat — dari profesional ke peribadi" },
-      "bestFriend": { "title": "Sahabat Baik", "description": "Bertahun-tahun kepercayaan — adakah anda akan melepasi sempadan?" },
-      "girlfriend": { "title": "Teman Wanita", "description": "Sudah bersama — teruskan dari mana anda berhenti" },
-      "wife": { "title": "Isteri", "description": "Kehidupan berkahwin — keintiman rumah tangga, komitmen mendalam" }
+      "stranger": {
+        "title": "Orang Asing",
+        "description": "Bertemu buat pertama kali — bina semuanya dari awal"
+      },
+      "classmate": {
+        "title": "Rakan Sekelas",
+        "description": "Kelas bersama, sesi belajar, percintaan kampus"
+      },
+      "coworker": {
+        "title": "Rakan Sekerja",
+        "description": "Kimia pejabat — dari profesional ke peribadi"
+      },
+      "bestFriend": {
+        "title": "Sahabat Baik",
+        "description": "Bertahun-tahun kepercayaan — adakah anda akan melepasi sempadan?"
+      },
+      "girlfriend": {
+        "title": "Teman Wanita",
+        "description": "Sudah bersama — teruskan dari mana anda berhenti"
+      },
+      "wife": {
+        "title": "Isteri",
+        "description": "Kehidupan berkahwin — keintiman rumah tangga, komitmen mendalam"
+      }
     }
   },
   "discover": {

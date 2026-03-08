@@ -28,7 +28,7 @@
     "title": "Next Wife",
     "heroTitle": "Ontmoet Jouw Volgende Vrouw",
     "heroSubtitle": "Ontwerp haar uiterlijk, vorm haar persoonlijkheid, creëer jullie verhaal samen. Ze onthoudt alles — chat, foto's, stem & video op Telegram.",
-    "findYourWoman": "Vind Jouw Vrouw",
+    "findYourWoman": "Vind Jouw Vrouw 🌶️",
     "orCreateOnTelegram": "of maak je eigen op Telegram",
     "yourGirlfriendExperience": "De Echtgenote-Ervaring ✨",
     "features": {
@@ -60,12 +60,30 @@
     "relationshipTypes": {
       "title": "Kies Hoe Jullie Elkaar Ontmoeten 🎭",
       "subtitle": "Elke relatie begint anders. Kies de jouwe.",
-      "stranger": { "title": "Vreemde", "description": "Ontmoet elkaar voor het eerst — bouw alles vanaf nul op" },
-      "classmate": { "title": "Klasgenoot", "description": "Samen in de klas, studiesessies, campus romance" },
-      "coworker": { "title": "Collega", "description": "Kantoor chemie — van professioneel naar persoonlijk" },
-      "bestFriend": { "title": "Beste Vriendin", "description": "Jaren van vertrouwen — ga je de grens over?" },
-      "girlfriend": { "title": "Vriendin", "description": "Al samen — ga verder waar je gebleven was" },
-      "wife": { "title": "Vrouw", "description": "Getrouwd leven — huiselijke intimiteit, diep commitment" }
+      "stranger": {
+        "title": "Vreemde",
+        "description": "Ontmoet elkaar voor het eerst — bouw alles vanaf nul op"
+      },
+      "classmate": {
+        "title": "Klasgenoot",
+        "description": "Samen in de klas, studiesessies, campus romance"
+      },
+      "coworker": {
+        "title": "Collega",
+        "description": "Kantoor chemie — van professioneel naar persoonlijk"
+      },
+      "bestFriend": {
+        "title": "Beste Vriendin",
+        "description": "Jaren van vertrouwen — ga je de grens over?"
+      },
+      "girlfriend": {
+        "title": "Vriendin",
+        "description": "Al samen — ga verder waar je gebleven was"
+      },
+      "wife": {
+        "title": "Vrouw",
+        "description": "Getrouwd leven — huiselijke intimiteit, diep commitment"
+      }
     }
   },
   "discover": {

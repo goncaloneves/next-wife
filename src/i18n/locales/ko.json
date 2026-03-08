@@ -28,7 +28,7 @@
     "title": "Next Wife",
     "heroTitle": "다음 아내를 만나보세요",
     "heroSubtitle": "외모를 디자인하고, 성격을 만들고, 함께 이야기를 만들어가세요. 그녀는 모든 것을 기억합니다 — 채팅, 사진, 음성 & 영상 텔레그램에서.",
-    "findYourWoman": "아내 찾기",
+    "findYourWoman": "아내 찾기 🌶️",
     "orCreateOnTelegram": "또는 텔레그램에서 직접 만들기",
     "yourGirlfriendExperience": "아내 경험 ✨",
     "features": {
@@ -60,12 +60,30 @@
     "relationshipTypes": {
       "title": "만남의 방식을 선택하세요 🎭",
       "subtitle": "모든 관계는 다르게 시작됩니다. 당신의 것을 선택하세요.",
-      "stranger": { "title": "낯선 사람", "description": "처음 만남 — 모든 것을 처음부터 쌓아가세요" },
-      "classmate": { "title": "반 친구", "description": "같은 수업, 스터디 세션, 캠퍼스 로맨스" },
-      "coworker": { "title": "직장 동료", "description": "사무실 케미 — 업무에서 개인으로" },
-      "bestFriend": { "title": "절친", "description": "수년간의 신뢰 — 선을 넘을 건가요?" },
-      "girlfriend": { "title": "여자친구", "description": "이미 사귀는 중 — 이어서 계속하세요" },
-      "wife": { "title": "아내", "description": "결혼 생활 — 가정적 친밀감, 깊은 헌신" }
+      "stranger": {
+        "title": "낯선 사람",
+        "description": "처음 만남 — 모든 것을 처음부터 쌓아가세요"
+      },
+      "classmate": {
+        "title": "반 친구",
+        "description": "같은 수업, 스터디 세션, 캠퍼스 로맨스"
+      },
+      "coworker": {
+        "title": "직장 동료",
+        "description": "사무실 케미 — 업무에서 개인으로"
+      },
+      "bestFriend": {
+        "title": "절친",
+        "description": "수년간의 신뢰 — 선을 넘을 건가요?"
+      },
+      "girlfriend": {
+        "title": "여자친구",
+        "description": "이미 사귀는 중 — 이어서 계속하세요"
+      },
+      "wife": {
+        "title": "아내",
+        "description": "결혼 생활 — 가정적 친밀감, 깊은 헌신"
+      }
     }
   },
   "discover": {
