@@ -674,15 +674,15 @@ const ProfileBadge = ({ post }: ProfileBadgeProps) => {
       <div className="text-white">
         <p className="mb-1 text-2xl font-bold drop-shadow-lg leading-snug">
           {firstName && <>{firstName} </>}
-          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+          <span className="inline-flex items-center gap-1 whitespace-nowrap">
             <span>{lastName}</span>
             <span className="text-[22px] font-normal ml-2">
               {post.profileData.age}
             </span>
-            <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg relative top-[3px]" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
+            <BadgeCheck className="w-5 h-5 text-[#0099FF] drop-shadow-lg" style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} />
             {post.isHot && (
               <Flame 
-                className="w-5 h-5 drop-shadow-lg relative top-[3px]" 
+                className="w-5 h-5 drop-shadow-lg" 
                 style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
                 data-testid={`badge-hot-${post.id}`}
               />
