@@ -191,7 +191,7 @@ const Index = () => {
               <img
                 src={logo}
                 alt="Next Wife"
-                className="h-12 w-auto"
+                className="h-28 w-auto"
               />
             </h1>
           </div>
