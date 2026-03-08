@@ -19,7 +19,7 @@ const LANGUAGES = [
 ];
 
 export function LanguagePicker() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [canScrollMore, setCanScrollMore] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -86,7 +86,7 @@ export function LanguagePicker() {
           isOpen ? "text-orange-400" : "text-white"
         )}
         data-testid="language-picker-button"
-        aria-label="Select language"
+        aria-label={t('common.selectLanguage')}
       >
         <Globe className="w-5 h-5" />
       </button>
