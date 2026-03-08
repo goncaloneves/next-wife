@@ -45,7 +45,7 @@ The application uses a dual-server architecture: a frontend built with Vite, Rea
 - **Automatic Deleted Post Detection:** A background scheduler soft-deletes posts removed from Telegram, and a quick sync mechanism handles instant updates on page load.
 - **Occupation Categories:** Groups 283 job titles into 12 broad categories for simplified filtering.
 - **Silent Error Handling:** API failures are handled silently without displaying error blocks to the user.
-- **Dynamic SEO Files:** Server generates `/sitemap.xml` and `/robots.txt` dynamically. Sitemap includes all active profile URLs with proper lastmod dates for search engine indexing. Cached for 1 hour.
+- **Dynamic SEO Files:** Server generates `/sitemap.xml` and `/robots.txt` dynamically. Sitemap includes all active profile URLs with proper lastmod dates for search engine indexing. Cached for 1 hour. `robots.txt` uses a single `User-agent: *` block — all crawlers can index everything except `/terms` and `/privacy` which are disallowed and also served with `noindex, nofollow` meta tags.
 - **Social Media Previews:** Dynamic Open Graph and Twitter Card meta tags for profile pages. When social crawlers (Facebook, Twitter, LinkedIn, WhatsApp, Discord, etc.) access a profile URL, they receive custom HTML with the wife's photo, name, age, and description for rich link previews.
 
 **System Design Choices:**
@@ -84,3 +84,4 @@ The application uses i18next for internationalization with 12 supported language
 - **Localized Relative Times:** Post timestamps ("about 1 hour ago") are translated using date-fns locales (`src/lib/dateLocale.ts`). All 12 languages supported with automatic locale detection based on current i18n language.
 - **Nationality Translations:** 46 nationalities translated to all 12 languages with variant mappings ("India"→indian, "Uruguaya"→uruguayan).
 - **Adding Languages:** Create new locale files following the same structure as `en.json`
+- **Numeric Alignment:** `font-variant-numeric: lining-nums` set globally in `src/index.css` — forces Raleway's oldstyle figures (which have descenders on 4, 9, etc.) to render as flat lining numerals, ensuring consistent baseline alignment across all languages and UI contexts.
