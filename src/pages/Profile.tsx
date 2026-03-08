@@ -865,23 +865,21 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                         return (
                           <>
                             {firstName && <span>{firstName} </span>}
-                            <span className="whitespace-nowrap">
-                              {lastName}
-                              <span className="inline-flex items-center gap-[5px] ml-[11px]" style={{ verticalAlign: '0.25rem' }}>
-                                <span className="text-[1.5rem] font-normal text-white">
-                                  {profileData.age}
-                                </span>
-                                <BadgeCheck 
-                                  className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0" 
-                                  style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
-                                />
-                                {post.isHot && (
-                                  <Flame 
-                                    className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0" 
-                                    style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
-                                  />
-                                )}
+                            <span className="inline-flex items-center gap-[5px] whitespace-nowrap">
+                              <span>{lastName}</span>
+                              <span className="text-[1.5rem] font-normal text-white ml-[6px] -mt-[0.25rem]">
+                                {profileData.age}
                               </span>
+                              <BadgeCheck 
+                                className="w-[23px] h-[23px] text-[#0099FF] drop-shadow-lg flex-shrink-0" 
+                                style={{ fill: '#0099FF', stroke: 'white', strokeWidth: 2 }} 
+                              />
+                              {post.isHot && (
+                                <Flame 
+                                  className="w-[23px] h-[23px] drop-shadow-lg flex-shrink-0" 
+                                  style={{ fill: '#FF6B35', stroke: '#FF4500', strokeWidth: 1.5 }}
+                                />
+                              )}
                             </span>
                           </>
                         );
