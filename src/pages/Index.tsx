@@ -193,8 +193,9 @@ const Index = () => {
                 alt="Next Wife"
                 className="h-52 w-auto"
                 style={{
-                  marginTop: '-72px',
-                  filter: 'drop-shadow(0 2px 14px rgba(0,0,0,0.65))',
+                  marginTop: '-50px',
+                  marginLeft: '-20px',
+                  filter: 'drop-shadow(rgba(0, 0, 0, 0.65) 0px 2px 14px)',
                 }}
               />
             </h1>
