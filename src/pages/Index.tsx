@@ -206,7 +206,12 @@ const Index = () => {
             </h1>
 
             <p className="text-lg md:text-2xl text-white/90 mb-6 max-w-2xl md:max-w-4xl mx-auto leading-relaxed font-bold">
-              {t('home.heroSubtitle')}
+              {(() => {
+                const text = t('home.heroSubtitle');
+                const split = text.indexOf('. ');
+                if (split === -1) return text;
+                return <>{text.slice(0, split + 1)}<br />{text.slice(split + 2)}</>;
+              })()}
             </p>
 
             <div className="flex flex-col items-center gap-3">
