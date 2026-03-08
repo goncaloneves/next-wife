@@ -145,7 +145,7 @@ const Index = () => {
         {headerVideoUrls.length > 0 && (
           <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-70">
             {headerVideoUrls.map((url, i) => {
-              if (isMobile && (i === 0 || i === 3)) return null;
+              if (isMobile && (i === 0 || i === 1)) return null;
               return (
                 <video
                   key={url}
