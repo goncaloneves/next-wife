@@ -193,7 +193,7 @@ const Index = () => {
                   src={logoChili}
                   alt=""
                   aria-hidden="true"
-                  className="absolute right-full top-[38%] -translate-y-1/2 h-16 md:h-20 lg:h-24 w-auto pr-3"
+                  className="absolute right-full top-[44%] -translate-y-1/2 h-16 md:h-20 lg:h-24 w-auto pr-3"
                   style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.5) 0px 2px 14px)' }}
                 />
                 <img
