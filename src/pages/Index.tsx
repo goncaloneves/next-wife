@@ -121,7 +121,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-60">
+        <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 opacity-70">
           {!isMobile && (
             <video
               ref={(el) => { videoRefs.current[0] = el; }}
@@ -194,13 +194,13 @@ const Index = () => {
                   alt=""
                   aria-hidden="true"
                   className="absolute right-full top-[44%] -translate-y-1/2 h-16 md:h-20 lg:h-24 w-auto pr-3"
-                  style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.5) 0px 2px 14px)' }}
+                  style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.8) 0px 2px 14px)' }}
                 />
                 <img
                   src={logoText}
                   alt="nextwife — Meet Your Next Wife"
                   className="h-24 md:h-32 lg:h-40 w-auto"
-                  style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.5) 0px 2px 16px)' }}
+                  style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.8) 0px 2px 16px)' }}
                 />
               </div>
             </h1>
