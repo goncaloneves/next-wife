@@ -50,7 +50,10 @@ The application features a dual-server architecture with a Vite, React, TypeScri
 - **Frontend Fallback:** If high-res images fail, the frontend falls back to preview URLs.
 - **Unified Media Array (`mediaItems`):** Server returns a standardized `mediaItems` array with type, URL, preview URL, and quality information.
 - **FilterContext Architecture:** Centralized React Context for filter state management, synchronizing with localStorage and URL parameters for persistence and shareability.
-- **Homepage Header Videos:** Displays 4 dynamic looped videos from the channel, pre-processed server-side into ping-pong loops and cached.
+- **Homepage Header Videos:** Displays 4 dynamic looped videos from the channel. Videos are pre-processed server-side into ping-pong loops (forward + reverse concatenated via FFmpeg) and served from `/api/pingpong-video?u=<url>`.
+- **Ping-Pong Video System:** `generatePingpong(url)` is the core function — downloads the source video, runs FFmpeg (`split→reverse→concat`, `libx264 ultrafast`), and writes to `/tmp/nextwife-pingpong/<md5hash>.mp4`. Cache is capped at 20 files (oldest evicted). If the file already exists, it returns instantly with no work. `prewarmPingpongCache()` queries the DB for the 4 most recent video posts and runs all 4 through `generatePingpong` in parallel via `Promise.all`.
+- **Sync-Integrated Cache Warming:** Video cache warming is treated as part of the sync, not a side effect. Both `backgroundSync` and `syncNewPosts` `await prewarmPingpongCache()` before returning, so the cache is always warm when sync completes. On server startup, `prewarmPingpongCache()` is called 3 seconds after boot.
+- **FFmpeg:** Installed as a Nix system dependency (declared in `.replit` `[nix] packages`) so it is available in both dev and production environments.
 
 ## External Dependencies
 - **Telegram API:** For scraping channel posts and media, and for high-resolution media via the Bot API.
