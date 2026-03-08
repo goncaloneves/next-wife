@@ -113,7 +113,7 @@ const Index = () => {
       description: t('home.features.discoverNewRelationships.description'),
     },
     {
-      icon: "🌐",
+      icon: "🌍",
       title: t('home.features.speaksYourLanguage.title'),
       description: t('home.features.speaksYourLanguage.description'),
     },
