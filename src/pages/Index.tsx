@@ -304,7 +304,7 @@ const Index = () => {
                   { icon: "💼", key: "coworker" },
                   { icon: "💛", key: "bestFriend" },
                   { icon: "💖", key: "girlfriend" },
-                  { icon: "💒", key: "wife" },
+                  { icon: "💍", key: "wife" },
                 ].map((rt) => (
                   <div
                     key={rt.key}
