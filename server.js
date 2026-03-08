@@ -748,7 +748,7 @@ async function syncPostsToDatabase(posts, channel = 'nextwife_ai') {
       // Calculate media flags
       const hasVideo = post.mediaUrls ? post.mediaUrls.some(m => m.type === 'video') : false;
       const hasMultipleMedia = post.mediaUrls ? post.mediaUrls.length > 1 : false;
-      
+
       await pool.query(`
         INSERT INTO telegram_posts (id, channel, text, date, link, media, media_urls, avatar, bot_link, name, age, nationality, hometown, work, region, age_bracket, occupation_category, language, personality, relationship, about, has_video, has_multiple_media, updated_at, deleted_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, NOW(), NULL)
@@ -873,6 +873,7 @@ async function backgroundSync(channel = 'nextwife_ai', maxPages = 10) {
   }
   
   console.log(`✅ Background sync complete: ${totalSynced} posts synced`);
+  if (totalSynced > 0) prewarmPingpongCache().catch(() => {});
   return totalSynced;
 }
 
@@ -920,6 +921,8 @@ async function syncNewPosts(channel = 'nextwife_ai') {
         totalSynced += synced;
         if (synced > 0) {
           console.log(`⚡ Quick sync: ${synced} new posts from page ${page + 1}`);
+          const hasNewVideo = newPosts.some(p => p.mediaUrls?.some(m => m.type === 'video'));
+          if (hasNewVideo) prewarmPingpongCache().catch(() => {});
         }
       }
       
@@ -2563,6 +2566,86 @@ app.get('/api/tg-image-proxy', async (req, res) => {
   }
 });
 
+// Core ping-pong generation — download + FFmpeg encode, deduped by hash
+async function generatePingpong(videoUrl) {
+  const hash = crypto.createHash('md5').update(videoUrl).digest('hex');
+  const cachePath = path.join(PINGPONG_CACHE_DIR, `${hash}.mp4`);
+
+  if (fs.existsSync(cachePath)) return cachePath;
+
+  if (pingPongInProgress.has(hash)) {
+    await pingPongInProgress.get(hash);
+    return cachePath;
+  }
+
+  const inputPath = path.join(PINGPONG_CACHE_DIR, `${hash}_in.mp4`);
+
+  const processPromise = (async () => {
+    const videoResponse = await fetch(videoUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!videoResponse.ok) throw new Error(`Download failed: ${videoResponse.status}`);
+    const buffer = await videoResponse.buffer();
+    fs.writeFileSync(inputPath, buffer);
+
+    await execAsync(
+      `ffmpeg -y -i "${inputPath}" ` +
+      `-filter_complex "[0:v]split=2[fwd][rev];[rev]reverse[rev2];[fwd][rev2]concat=n=2:v=1:a=0,setpts=PTS-STARTPTS[out]" ` +
+      `-map "[out]" -an -c:v libx264 -preset ultrafast -crf 26 -movflags +faststart "${cachePath}"`,
+      { timeout: 90000 }
+    );
+    try { fs.unlinkSync(inputPath); } catch (_) {}
+
+    // Keep only the 20 most recently written cached videos
+    try {
+      const files = fs.readdirSync(PINGPONG_CACHE_DIR)
+        .filter(f => f.endsWith('.mp4') && !f.endsWith('_in.mp4'))
+        .map(f => ({ name: f, mtime: fs.statSync(path.join(PINGPONG_CACHE_DIR, f)).mtimeMs }))
+        .sort((a, b) => a.mtime - b.mtime);
+      while (files.length > 20) {
+        const oldest = files.shift();
+        fs.unlinkSync(path.join(PINGPONG_CACHE_DIR, oldest.name));
+        console.log(`[pingpong] Evicted oldest cache: ${oldest.name}`);
+      }
+    } catch (_) {}
+  })();
+
+  pingPongInProgress.set(hash, processPromise);
+  try {
+    await processPromise;
+  } finally {
+    pingPongInProgress.delete(hash);
+  }
+
+  return cachePath;
+}
+
+// Pre-warm ping-pong cache for the most recent video posts from DB
+async function prewarmPingpongCache() {
+  if (!pool) return;
+  try {
+    const result = await pool.query(`
+      SELECT media_urls FROM telegram_posts
+      WHERE deleted_at IS NULL AND has_video = true
+      ORDER BY date DESC LIMIT 10
+    `);
+    const urls = [];
+    for (const row of result.rows) {
+      if (urls.length >= 4) break;
+      const mediaUrls = Array.isArray(row.media_urls) ? row.media_urls : [];
+      const videoItem = mediaUrls.find(m => m.type === 'video');
+      if (videoItem?.url) urls.push(videoItem.url);
+    }
+    if (urls.length === 0) return;
+    console.log(`[pingpong] Pre-warming ${urls.length} video(s) in background...`);
+    for (const url of urls) {
+      generatePingpong(url)
+        .then(() => console.log(`[pingpong] Pre-warmed: ${url.slice(-40)}`))
+        .catch(err => console.error(`[pingpong] Pre-warm failed: ${err.message}`));
+    }
+  } catch (err) {
+    console.error('[pingpong] Pre-warm query error:', err.message);
+  }
+}
+
 // Ping-pong video endpoint: forward + reverse concatenated into one loopable file
 app.get('/api/pingpong-video', async (req, res) => {
   try {
@@ -2575,59 +2658,9 @@ app.get('/api/pingpong-video', async (req, res) => {
     const isAllowed = allowedPatterns.some(p => hostname === p || hostname.endsWith(`.${p}`));
     if (!isAllowed) return res.status(403).json({ error: 'Host not allowed' });
 
-    const hash = crypto.createHash('md5').update(videoUrl).digest('hex');
-    const cachePath = path.join(PINGPONG_CACHE_DIR, `${hash}.mp4`);
-
-    const streamCached = () => {
-      res.set({ 'Content-Type': 'video/mp4', 'Cache-Control': 'public, max-age=604800', 'Access-Control-Allow-Origin': '*' });
-      fs.createReadStream(cachePath).pipe(res);
-    };
-
-    if (fs.existsSync(cachePath)) return streamCached();
-
-    if (pingPongInProgress.has(hash)) {
-      await pingPongInProgress.get(hash);
-      return streamCached();
-    }
-
-    const inputPath = path.join(PINGPONG_CACHE_DIR, `${hash}_in.mp4`);
-
-    const processPromise = (async () => {
-      const videoResponse = await fetch(videoUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-      if (!videoResponse.ok) throw new Error(`Download failed: ${videoResponse.status}`);
-      const buffer = await videoResponse.buffer();
-      fs.writeFileSync(inputPath, buffer);
-
-      await execAsync(
-        `ffmpeg -y -i "${inputPath}" ` +
-        `-filter_complex "[0:v]split=2[fwd][rev];[rev]reverse[rev2];[fwd][rev2]concat=n=2:v=1:a=0,setpts=PTS-STARTPTS[out]" ` +
-        `-map "[out]" -an -c:v libx264 -preset ultrafast -crf 26 -movflags +faststart "${cachePath}"`,
-        { timeout: 90000 }
-      );
-      try { fs.unlinkSync(inputPath); } catch (_) {}
-    })();
-
-    pingPongInProgress.set(hash, processPromise);
-    try {
-      await processPromise;
-    } finally {
-      pingPongInProgress.delete(hash);
-    }
-
-    // Keep only the 4 most recently created cached videos
-    try {
-      const files = fs.readdirSync(PINGPONG_CACHE_DIR)
-        .filter(f => f.endsWith('.mp4'))
-        .map(f => ({ name: f, mtime: fs.statSync(path.join(PINGPONG_CACHE_DIR, f)).mtimeMs }))
-        .sort((a, b) => a.mtime - b.mtime);
-      while (files.length > 4) {
-        const oldest = files.shift();
-        fs.unlinkSync(path.join(PINGPONG_CACHE_DIR, oldest.name));
-        console.log(`[pingpong] Evicted oldest cache: ${oldest.name}`);
-      }
-    } catch (_) {}
-
-    streamCached();
+    const cachePath = await generatePingpong(videoUrl);
+    res.set({ 'Content-Type': 'video/mp4', 'Cache-Control': 'public, max-age=604800', 'Access-Control-Allow-Origin': '*' });
+    fs.createReadStream(cachePath).pipe(res);
   } catch (error) {
     console.error('pingpong-video error:', error.message);
     res.status(500).json({ error: 'Failed to process video' });
@@ -2909,7 +2942,10 @@ async function start() {
     if (dbConnected) {
       console.log('');
       setTimeout(() => backgroundSync('nextwifeai', 200), 2000); // Fetch up to 4000 posts
-      
+
+      // Pre-warm ping-pong cache for the 4 most recent video posts
+      setTimeout(() => prewarmPingpongCache(), 3000);
+
       // Start the background scheduler for deleted post detection
       startScheduler();
     }
