@@ -187,7 +187,7 @@ const Index = () => {
 
           <div className="relative z-10 container mx-auto px-4 text-center">
             <h1 className="mb-6 flex justify-center">
-              <span className="sr-only">Next Wife — AI Wife on Telegram</span>
+              <span className="sr-only">Meet Your Next Wife — AI Companion on Telegram</span>
               <div className="relative">
                 <img
                   src={logoChili}
@@ -198,7 +198,7 @@ const Index = () => {
                 />
                 <img
                   src={logoText}
-                  alt="nextwife"
+                  alt="nextwife — Meet Your Next Wife"
                   className="h-24 md:h-32 lg:h-40 w-auto"
                   style={{ filter: 'drop-shadow(rgba(0, 0, 0, 0.5) 0px 2px 16px)' }}
                 />
