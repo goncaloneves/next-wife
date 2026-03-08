@@ -548,10 +548,11 @@ const VideoCard = memo(({
         muted
         loop
         playsInline
-        preload="none"
+        preload="metadata"
         className={`w-full h-full object-cover transition-all duration-300 ${
           isLoaded ? "opacity-70 group-hover:opacity-100 group-hover:scale-105" : "opacity-0"
         }`}
+        onLoadedMetadata={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
         onLoadedData={() => setImageLoadStates((prev) => ({ ...prev, [post.id]: true }))}
         onError={() => {
           if (errorCount >= 2) {
