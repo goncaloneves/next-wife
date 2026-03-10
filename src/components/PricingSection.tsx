@@ -149,9 +149,9 @@ export const PricingSection = () => {
                       t("home.pricing.features.videos"),
                       plan.features.videos,
                     )}
-                    <div className="flex items-center gap-1.5 pt-2 text-white/40 text-xs">
-                      <span>✓</span>
-                      <span>{t("home.pricing.features.catalogWives")}</span>
+                    <div className="flex items-center gap-2 pt-3 mt-1 border-t border-white/10">
+                      <span className="text-green-400 text-sm">✓</span>
+                      <span className="text-white/80 text-sm font-medium">{t("home.pricing.features.catalogWives")}</span>
                     </div>
                   </div>
 
