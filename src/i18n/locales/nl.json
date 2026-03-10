@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "Kies Jouw Plan 💎",
-      "subtitle": "Ontmoet elke vrouw gratis. Plannen ontgrendelen meer berichten, media en eigen creaties.",
+      "title": "Plannen & Prijzen 💎",
+      "subtitle": "Begin gratis. Upgrade op elk moment via Telegram.",
       "monthly": "/maand",
       "popular": "Meest Populair",
+      "freeTrial": "Probeer gratis — 20 berichten, 2 afbeeldingen, 2 spraak & 1 video inbegrepen.",
       "note": "Betaald via Telegram Stars ⭐",
+      "approxDisclaimer": "Geschatte USD, buiten App Store en Play Store.",
       "plans": {
-        "free": { "name": "Gratis", "price": "Gratis", "cta": "Gratis Beginnen" },
-        "flirt": { "name": "Flirt", "cta": "Begin op Telegram" },
-        "lover": { "name": "Lover", "cta": "Begin op Telegram" },
-        "obsessed": { "name": "Obsessed", "cta": "Begin op Telegram" }
+        "flirt": { "name": "Flirt", "cta": "Kies Flirt" },
+        "lover": { "name": "Lover", "cta": "Kies Lover" },
+        "obsessed": { "name": "Obsessed", "cta": "Kies Obsessed" }
       },
       "features": {
         "wife": "Op Maat Gemaakte Vrouw",

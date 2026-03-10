@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "Выбери Свой План 💎",
-      "subtitle": "Познакомься с любой женой бесплатно. Планы открывают больше сообщений, медиа и собственных созданий.",
+      "title": "Планы и Цены 💎",
+      "subtitle": "Начни бесплатно. Улучшай план в любой момент в Telegram.",
       "monthly": "/мес",
       "popular": "Самый Популярный",
+      "freeTrial": "Попробуй бесплатно — 20 сообщений, 2 фото, 2 голосовых и 1 видео включены.",
       "note": "Оплата через Telegram Stars ⭐",
+      "approxDisclaimer": "Приблизительно в USD, вне App Store и Play Store.",
       "plans": {
-        "free": { "name": "Бесплатно", "price": "Бесплатно", "cta": "Начать Бесплатно" },
-        "flirt": { "name": "Flirt", "cta": "Начать в Telegram" },
-        "lover": { "name": "Lover", "cta": "Начать в Telegram" },
-        "obsessed": { "name": "Obsessed", "cta": "Начать в Telegram" }
+        "flirt": { "name": "Flirt", "cta": "Получить Flirt" },
+        "lover": { "name": "Lover", "cta": "Получить Lover" },
+        "obsessed": { "name": "Obsessed", "cta": "Получить Obsessed" }
       },
       "features": {
         "wife": "Индивидуальная Жена",

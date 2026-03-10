@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "Wähle Deinen Plan 💎",
-      "subtitle": "Triff jede Frau kostenlos. Pläne schalten mehr Nachrichten, Medien und eigene Kreationen frei.",
+      "title": "Pläne & Preise 💎",
+      "subtitle": "Starte kostenlos. Upgrade jederzeit auf Telegram.",
       "monthly": "/Monat",
       "popular": "Beliebteste",
+      "freeTrial": "Probiere es kostenlos — 20 Nachrichten, 2 Bilder, 2 Sprach- & 1 Video inklusive.",
       "note": "Bezahlt über Telegram Stars ⭐",
+      "approxDisclaimer": "Ungefährer USD-Preis, außerhalb von App Store und Play Store.",
       "plans": {
-        "free": { "name": "Kostenlos", "price": "Kostenlos", "cta": "Kostenlos Starten" },
-        "flirt": { "name": "Flirt", "cta": "Auf Telegram Starten" },
-        "lover": { "name": "Lover", "cta": "Auf Telegram Starten" },
-        "obsessed": { "name": "Obsessed", "cta": "Auf Telegram Starten" }
+        "flirt": { "name": "Flirt", "cta": "Flirt holen" },
+        "lover": { "name": "Lover", "cta": "Lover holen" },
+        "obsessed": { "name": "Obsessed", "cta": "Obsessed holen" }
       },
       "features": {
         "wife": "Maßgeschneiderte Frau",

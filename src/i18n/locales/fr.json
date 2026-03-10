@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "Choisis Ton Plan 💎",
-      "subtitle": "Rencontre n'importe quelle femme gratuitement. Les plans débloquent plus de messages, médias et créations personnalisées.",
+      "title": "Plans & Tarifs 💎",
+      "subtitle": "Commence gratuitement. Passe au niveau supérieur sur Telegram.",
       "monthly": "/mois",
       "popular": "Le Plus Populaire",
+      "freeTrial": "Essaie gratuitement — 20 messages, 2 images, 2 vocaux et 1 vidéo inclus.",
       "note": "Payé via Telegram Stars ⭐",
+      "approxDisclaimer": "USD approximatif, en dehors de l'App Store et du Play Store.",
       "plans": {
-        "free": { "name": "Gratuit", "price": "Gratuit", "cta": "Commencer Gratuitement" },
-        "flirt": { "name": "Flirt", "cta": "Commencer sur Telegram" },
-        "lover": { "name": "Lover", "cta": "Commencer sur Telegram" },
-        "obsessed": { "name": "Obsessed", "cta": "Commencer sur Telegram" }
+        "flirt": { "name": "Flirt", "cta": "Obtenir Flirt" },
+        "lover": { "name": "Lover", "cta": "Obtenir Lover" },
+        "obsessed": { "name": "Obsessed", "cta": "Obtenir Obsessed" }
       },
       "features": {
         "wife": "Femme Sur Mesure",

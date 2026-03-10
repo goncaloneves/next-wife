@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "플랜을 선택하세요 💎",
-      "subtitle": "어떤 아내든 무료로 만나세요. 플랜으로 더 많은 메시지, 미디어, 맞춤 창작물을 잠금 해제.",
+      "title": "플랜 & 가격 💎",
+      "subtitle": "무료로 시작하세요. 텔레그램에서 언제든 업그레이드.",
       "monthly": "/월",
       "popular": "가장 인기",
+      "freeTrial": "무료 체험 — 메시지 20개, 이미지 2개, 음성 2개, 영상 1개 포함.",
       "note": "Telegram Stars로 결제 ⭐",
+      "approxDisclaimer": "대략적인 USD 금액, App Store 및 Play Store 외부 기준.",
       "plans": {
-        "free": { "name": "무료", "price": "무료", "cta": "무료로 시작" },
-        "flirt": { "name": "Flirt", "cta": "텔레그램에서 시작" },
-        "lover": { "name": "Lover", "cta": "텔레그램에서 시작" },
-        "obsessed": { "name": "Obsessed", "cta": "텔레그램에서 시작" }
+        "flirt": { "name": "Flirt", "cta": "Flirt 시작" },
+        "lover": { "name": "Lover", "cta": "Lover 시작" },
+        "obsessed": { "name": "Obsessed", "cta": "Obsessed 시작" }
       },
       "features": {
         "wife": "맞춤 아내",

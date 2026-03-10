@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "Choose Your Plan 💎",
-      "subtitle": "Meet any wife for free. Plans unlock more messages, media & custom creations.",
+      "title": "Plans & Pricing 💎",
+      "subtitle": "Start free. Upgrade anytime on Telegram.",
       "monthly": "/mo",
       "popular": "Most Popular",
+      "freeTrial": "Try free first — 20 messages, 2 images, 2 voice & 1 video included.",
       "note": "Paid via Telegram Stars ⭐",
+      "approxDisclaimer": "Approximate USD, outside of App Store and Play Store.",
       "plans": {
-        "free": { "name": "Free", "price": "Free", "cta": "Start Free" },
-        "flirt": { "name": "Flirt", "cta": "Start on Telegram" },
-        "lover": { "name": "Lover", "cta": "Start on Telegram" },
-        "obsessed": { "name": "Obsessed", "cta": "Start on Telegram" }
+        "flirt": { "name": "Flirt", "cta": "Get Flirt" },
+        "lover": { "name": "Lover", "cta": "Get Lover" },
+        "obsessed": { "name": "Obsessed", "cta": "Get Obsessed" }
       },
       "features": {
         "wife": "Bespoke Wife",

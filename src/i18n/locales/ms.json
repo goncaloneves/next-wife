@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "Pilih Pelan Anda 💎",
-      "subtitle": "Temui mana-mana isteri secara percuma. Pelan membuka lebih banyak mesej, media dan ciptaan tersuai.",
+      "title": "Pelan & Harga 💎",
+      "subtitle": "Mula percuma. Naik taraf bila-bila masa di Telegram.",
       "monthly": "/bulan",
       "popular": "Paling Popular",
+      "freeTrial": "Cuba percuma dahulu — 20 mesej, 2 imej, 2 suara & 1 video disertakan.",
       "note": "Dibayar melalui Telegram Stars ⭐",
+      "approxDisclaimer": "Anggaran USD, di luar App Store dan Play Store.",
       "plans": {
-        "free": { "name": "Percuma", "price": "Percuma", "cta": "Mula Percuma" },
-        "flirt": { "name": "Flirt", "cta": "Mula di Telegram" },
-        "lover": { "name": "Lover", "cta": "Mula di Telegram" },
-        "obsessed": { "name": "Obsessed", "cta": "Mula di Telegram" }
+        "flirt": { "name": "Flirt", "cta": "Dapatkan Flirt" },
+        "lover": { "name": "Lover", "cta": "Dapatkan Lover" },
+        "obsessed": { "name": "Obsessed", "cta": "Dapatkan Obsessed" }
       },
       "features": {
         "wife": "Isteri Tempahan",

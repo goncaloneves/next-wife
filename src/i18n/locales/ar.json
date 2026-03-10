@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "💎 اختر خطتك",
-      "subtitle": "قابل أي زوجة مجاناً. الخطط تفتح المزيد من الرسائل والوسائط والإبداعات المخصصة.",
+      "title": "💎 الخطط والأسعار",
+      "subtitle": "ابدأ مجاناً. قم بالترقية في أي وقت على تيليجرام.",
       "monthly": "/شهر",
       "popular": "الأكثر شعبية",
+      "freeTrial": "جرّب مجاناً — 20 رسالة، 2 صور، 2 صوتية و1 فيديو مضمنة.",
       "note": "الدفع عبر Telegram Stars ⭐",
+      "approxDisclaimer": "تقريبي بالدولار، خارج App Store وPlay Store.",
       "plans": {
-        "free": { "name": "مجاني", "price": "مجاني", "cta": "ابدأ مجاناً" },
-        "flirt": { "name": "Flirt", "cta": "ابدأ على تيليجرام" },
-        "lover": { "name": "Lover", "cta": "ابدأ على تيليجرام" },
-        "obsessed": { "name": "Obsessed", "cta": "ابدأ على تيليجرام" }
+        "flirt": { "name": "Flirt", "cta": "احصل على Flirt" },
+        "lover": { "name": "Lover", "cta": "احصل على Lover" },
+        "obsessed": { "name": "Obsessed", "cta": "احصل على Obsessed" }
       },
       "features": {
         "wife": "زوجة مخصصة",

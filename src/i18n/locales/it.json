@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "Scegli il Tuo Piano 💎",
-      "subtitle": "Incontra qualsiasi moglie gratuitamente. I piani sbloccano più messaggi, media e creazioni personalizzate.",
+      "title": "Piani & Prezzi 💎",
+      "subtitle": "Inizia gratis. Aggiorna in qualsiasi momento su Telegram.",
       "monthly": "/mese",
       "popular": "Più Popolare",
+      "freeTrial": "Prova gratis — 20 messaggi, 2 immagini, 2 vocali e 1 video inclusi.",
       "note": "Pagato tramite Telegram Stars ⭐",
+      "approxDisclaimer": "USD approssimativo, al di fuori di App Store e Play Store.",
       "plans": {
-        "free": { "name": "Gratis", "price": "Gratis", "cta": "Inizia Gratis" },
-        "flirt": { "name": "Flirt", "cta": "Inizia su Telegram" },
-        "lover": { "name": "Lover", "cta": "Inizia su Telegram" },
-        "obsessed": { "name": "Obsessed", "cta": "Inizia su Telegram" }
+        "flirt": { "name": "Flirt", "cta": "Ottieni Flirt" },
+        "lover": { "name": "Lover", "cta": "Ottieni Lover" },
+        "obsessed": { "name": "Obsessed", "cta": "Ottieni Obsessed" }
       },
       "features": {
         "wife": "Moglie Su Misura",

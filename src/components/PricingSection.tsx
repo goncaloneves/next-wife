@@ -1,14 +1,31 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+const STARS_RATE_URL = "https://bes-dev.github.io/telegram_stars_rates/api.json";
+const CACHE_KEY = "stars_usd_rate";
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+const getStarRate = async (): Promise<number | null> => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const { rate, ts } = JSON.parse(cached);
+      if (Date.now() - ts < CACHE_TTL) return rate;
+    }
+    const res = await fetch(STARS_RATE_URL);
+    const data = await res.json();
+    const rate = data.usdt_per_star;
+    if (typeof rate === "number" && rate > 0) {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ rate, ts: Date.now() }));
+      return rate;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
 const plans = [
-  {
-    key: "free",
-    emoji: "🆓",
-    price: 0,
-    popular: false,
-    features: { wives: 1, texts: 20, images: 2, voice: 2, videos: 1 },
-  },
   {
     key: "flirt",
     emoji: "💕",
@@ -35,6 +52,11 @@ const plans = [
 export const PricingSection = () => {
   const { t } = useTranslation();
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [starRate, setStarRate] = useState<number | null>(null);
+
+  useEffect(() => {
+    getStarRate().then(setStarRate);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -66,25 +88,25 @@ export const PricingSection = () => {
   );
 
   return (
-    <section className="relative w-full bg-black py-14">
+    <section className="relative w-full bg-gradient-to-b from-black via-[#1a0a0e] to-black py-14">
       <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-3 text-center text-white">
             {t("home.pricing.title")}
           </h2>
-          <p className="text-white/60 text-center mb-8 text-lg">
+          <p className="text-white/70 text-center mb-8 text-lg">
             {t("home.pricing.subtitle")}
           </p>
 
           <div
             ref={sectionRef}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
           >
             {plans.map((plan, index) => (
               <div
                 key={plan.key}
                 className={`pricing-card relative p-6 rounded-2xl opacity-0 backdrop-blur-md flex flex-col ${
-                  plan.popular ? "bg-white/10" : "bg-black/40"
+                  plan.popular ? "bg-white/[0.12]" : "bg-white/[0.06]"
                 }`}
                 style={{
                   animationDelay: `${index * 0.1}s`,
@@ -108,22 +130,19 @@ export const PricingSection = () => {
                       {t(`home.pricing.plans.${plan.key}.name`)}
                     </h3>
                     <div className="flex items-baseline justify-center gap-1">
-                      {plan.price === 0 ? (
-                        <span className="text-3xl font-bold text-white">
-                          {t("home.pricing.plans.free.price")}
-                        </span>
-                      ) : (
-                        <>
-                          <span className="text-3xl font-bold text-white">
-                            {plan.price}
-                          </span>
-                          <span className="text-lg">⭐</span>
-                          <span className="text-white/50 text-sm">
-                            {t("home.pricing.monthly")}
-                          </span>
-                        </>
-                      )}
+                      <span className="text-3xl font-bold text-white">
+                        {plan.price}
+                      </span>
+                      <span className="text-lg">⭐</span>
+                      <span className="text-white/50 text-sm">
+                        {t("home.pricing.monthly")}
+                      </span>
                     </div>
+                    {starRate && (
+                      <div className="text-white/40 text-xs mt-1">
+                        ≈ ${Math.round(plan.price * starRate)} USD
+                      </div>
+                    )}
                   </div>
 
                   <div className="border-t border-white/10 pt-4 mb-4 flex-1">
@@ -176,9 +195,19 @@ export const PricingSection = () => {
             ))}
           </div>
 
-          <p className="text-white/30 text-center mt-6 text-sm">
-            {t("home.pricing.note")}
-          </p>
+          <div className="text-center mt-6 space-y-1">
+            <p className="text-white/60 text-sm">
+              {t("home.pricing.freeTrial")}
+            </p>
+            <p className="text-white/40 text-sm">
+              {t("home.pricing.note")}
+            </p>
+            {starRate && (
+              <p className="text-white/30 text-xs">
+                {t("home.pricing.approxDisclaimer")}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </section>

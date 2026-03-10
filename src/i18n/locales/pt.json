@@ -65,16 +65,17 @@
       }
     },
     "pricing": {
-      "title": "Escolha o Seu Plano 💎",
-      "subtitle": "Conheça qualquer esposa gratuitamente. Os planos desbloqueiam mais mensagens, média e criações personalizadas.",
+      "title": "Planos & Preços 💎",
+      "subtitle": "Comece grátis. Faça upgrade a qualquer momento no Telegram.",
       "monthly": "/mês",
       "popular": "Mais Popular",
+      "freeTrial": "Experimente grátis primeiro — 20 mensagens, 2 imagens, 2 voz e 1 vídeo incluídos.",
       "note": "Pago via Telegram Stars ⭐",
+      "approxDisclaimer": "USD aproximado, fora da App Store e Play Store.",
       "plans": {
-        "free": { "name": "Grátis", "price": "Grátis", "cta": "Começar Grátis" },
-        "flirt": { "name": "Flirt", "cta": "Começar no Telegram" },
-        "lover": { "name": "Lover", "cta": "Começar no Telegram" },
-        "obsessed": { "name": "Obsessed", "cta": "Começar no Telegram" }
+        "flirt": { "name": "Flirt", "cta": "Obter Flirt" },
+        "lover": { "name": "Lover", "cta": "Obter Lover" },
+        "obsessed": { "name": "Obsessed", "cta": "Obter Obsessed" }
       },
       "features": {
         "wife": "Esposa Personalizada",
