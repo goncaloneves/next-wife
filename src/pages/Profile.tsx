@@ -390,7 +390,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     }
   }, []);
 
-  const openTelegram = useCallback(() => {
+  const handleOpenTelegram = useCallback(() => {
     // In Telegram Mini App (detected via SDK), skip popup and go directly to Telegram
     if (isTelegramApp) {
       const url = post?.botLink || post?.link;
@@ -483,12 +483,12 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         skipProfile();
       } else if (e.key === " ") {
         e.preventDefault();
-        openTelegram();
+        handleOpenTelegram();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goBack, undoSkip, skipProfile, openTelegram, flashAction, skipHistory.length, nextId, showTelegramConfirm, isAppView]);
+  }, [goBack, undoSkip, skipProfile, handleOpenTelegram, flashAction, skipHistory.length, nextId, showTelegramConfirm, isAppView]);
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const { offset, velocity } = info;
@@ -496,7 +496,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     if ((offset.x < -100 || velocity.x < -500) && nextId) {
       skipProfile();
     } else if (offset.x > 100 || velocity.x > 500) {
-      openTelegram();
+      handleOpenTelegram();
     }
     x.set(0);
   };
@@ -1016,7 +1016,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                   </button>
 
                   <button
-                    onClick={openTelegram}
+                    onClick={handleOpenTelegram}
                     onPointerDownCapture={(e) => e.stopPropagation()}
                     className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-xl border-[3px] ${
                       isDragging && dragOffset > 30
