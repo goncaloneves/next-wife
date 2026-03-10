@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { openTelegram } from "@/lib/utils";
 
 const Privacy = () => {
   const { t } = useTranslation();
@@ -119,14 +120,12 @@ const Privacy = () => {
             </ul>
             <p className="mt-4">
               {t('privacy.sections.privacyRights.contact')}{" "}
-              <a 
-                href="https://t.me/nextwifesupport" 
-                target="_blank" 
-                rel="noopener noreferrer"
+              <button
+                onClick={() => openTelegram("https://t.me/nextwifesupport")}
                 className="text-primary hover:underline"
               >
                 @nextwifesupport
-              </a>
+              </button>
             </p>
           </section>
 
@@ -156,14 +155,12 @@ const Privacy = () => {
             <ul className="list-none space-y-2 mt-4">
               <li>
                 <strong>{t('privacy.sections.contactUs.supportChannel')}</strong>{" "}
-                <a 
-                  href="https://t.me/nextwifesupport" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => openTelegram("https://t.me/nextwifesupport")}
                   className="text-primary hover:underline"
                 >
                   @nextwifesupport
-                </a>
+                </button>
               </li>
             </ul>
           </section>

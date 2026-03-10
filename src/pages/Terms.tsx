@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { openTelegram } from "@/lib/utils";
 
 const Terms = () => {
   const { t } = useTranslation();
@@ -103,14 +104,12 @@ const Terms = () => {
             <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">{t('terms.sections.contact.title')}</h2>
             <p>
               {t('terms.sections.contact.content')}
-              <a 
-                href="https://t.me/nextwifesupport" 
-                target="_blank" 
-                rel="noopener noreferrer"
+              <button
+                onClick={() => openTelegram("https://t.me/nextwifesupport")}
                 className="text-primary hover:underline ml-1"
               >
                 @nextwifesupport
-              </a>
+              </button>
             </p>
           </section>
         </div>

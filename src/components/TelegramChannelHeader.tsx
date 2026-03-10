@@ -2,6 +2,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { openTelegram } from "@/lib/utils";
 
 interface TelegramChannelHeaderProps {
   channelUsername: string;
@@ -46,19 +47,13 @@ export const TelegramChannelHeader = ({
         )}
       </div>
       
-      <Button 
+      <Button
         variant="outline"
         size="sm"
-        asChild
         className="gap-2"
+        onClick={() => openTelegram(`https://t.me/${channelUsername}`)}
       >
-        <a
-          href={`https://t.me/${channelUsername}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {t('channelHeader.viewChannel')} <ExternalLink className="w-4 h-4" />
-        </a>
+        {t('channelHeader.viewChannel')} <ExternalLink className="w-4 h-4" />
       </Button>
     </div>
   );

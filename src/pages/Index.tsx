@@ -393,15 +393,13 @@ const Index = () => {
                 {t('navigation.privacyPolicy')}
               </Link>
               <span>•</span>
-              <a
-                href="https://t.me/nextwifesupport"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => openTelegram("https://t.me/nextwifesupport")}
                 className="hover:text-white transition-colors"
                 data-testid="link-support"
               >
                 {t('common.support')}
-              </a>
+              </button>
             </div>
             <p className="text-white/70 font-body text-sm">
               <span
