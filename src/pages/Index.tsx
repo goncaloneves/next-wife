@@ -13,6 +13,7 @@ import { PricingSection } from "@/components/PricingSection";
 import { PrivacySection } from "@/components/PrivacySection";
 import { useFilters } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { openTelegram } from "@/lib/utils";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -228,7 +229,7 @@ const Index = () => {
               </Button>
               <button
                 className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
-                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
+                onClick={() => openTelegram("now")}
                 data-testid="button-create-telegram"
               >
                 {t('home.orCreateOnTelegram')}
@@ -405,7 +406,7 @@ const Index = () => {
             <p className="text-white/70 font-body text-sm">
               <span
                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => window.open("https://t.me/nextwifebot?start=now", "_blank")}
+                onClick={() => openTelegram("now")}
               >
                 @nextwifebot
               </span>

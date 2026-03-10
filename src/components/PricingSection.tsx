@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { openTelegram } from "@/lib/utils";
 
 const STARS_RATE_URL = "https://bes-dev.github.io/telegram_stars_rates/api.json";
 const CACHE_KEY = "stars_usd_rate";
@@ -183,11 +184,9 @@ export const PricingSection = ({ onBrowseWives }: { onBrowseWives?: () => void }
                     </div>
                   </div>
 
-                  <a
-                    href={`https://t.me/nextwifebot?start=sub_${plan.key}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full text-center py-3 rounded-xl font-bold text-white transition-all duration-300 hover:brightness-110 active:scale-95"
+                  <button
+                    onClick={() => openTelegram(`sub_${plan.key}`)}
+                    className="block w-full text-center py-3 rounded-xl font-bold text-white transition-all duration-300 hover:brightness-110 active:scale-95 cursor-pointer"
                     style={{
                       background: plan.popular
                         ? "var(--gradient-sunset)"
@@ -198,7 +197,7 @@ export const PricingSection = ({ onBrowseWives }: { onBrowseWives?: () => void }
                     }}
                   >
                     {t(`home.pricing.plans.${plan.key}.cta`)}
-                  </a>
+                  </button>
                 </div>
               </div>
             ))}
