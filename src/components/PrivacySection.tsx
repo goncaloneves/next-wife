@@ -50,6 +50,7 @@ export const PrivacySection = () => {
                 className="privacy-item opacity-0 flex items-center gap-4 text-left px-6 py-4 rounded-xl bg-white/[0.07] backdrop-blur-md"
                 style={{
                   animationDelay: `${index * 0.1}s`,
+                  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(198, 58, 75, 0.3), 0 0 60px rgba(232, 115, 85, 0.15)",
                 }}
               >
                 <span className="text-2xl shrink-0">{point.icon}</span>
