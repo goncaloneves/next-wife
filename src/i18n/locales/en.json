@@ -64,6 +64,29 @@
         "description": "Available in 12 languages. Chat, flirt and connect in the language closest to your heart."
       }
     },
+    "pricing": {
+      "title": "Choose Your Plan 💎",
+      "subtitle": "Start free. Upgrade anytime on Telegram.",
+      "monthly": "/mo",
+      "popular": "Most Popular",
+      "note": "Paid via Telegram Stars ⭐",
+      "plans": {
+        "free": { "name": "Free", "price": "Free", "cta": "Start Free" },
+        "flirt": { "name": "Flirt", "cta": "Start on Telegram" },
+        "lover": { "name": "Lover", "cta": "Start on Telegram" },
+        "obsessed": { "name": "Obsessed", "cta": "Start on Telegram" }
+      },
+      "features": {
+        "wife": "Bespoke Wife",
+        "wives": "Bespoke Wives",
+        "texts": "Text Messages",
+        "images": "Images",
+        "voice": "Voice Messages",
+        "videos": "Videos",
+        "unlimited": "Unlimited",
+        "catalogWives": "Unlimited catalog wives"
+      }
+    },
     "relationshipTypes": {
       "title": "Choose How You Meet 🎭",
       "subtitle": "Every relationship starts differently. Pick yours.",

@@ -64,6 +64,29 @@
         "description": "Disponible en 12 idiomas. Chatea, flirtea y conéctate en el idioma más cercano a tu corazón."
       }
     },
+    "pricing": {
+      "title": "Elige Tu Plan 💎",
+      "subtitle": "Empieza gratis. Mejora en cualquier momento en Telegram.",
+      "monthly": "/mes",
+      "popular": "Más Popular",
+      "note": "Pagado vía Telegram Stars ⭐",
+      "plans": {
+        "free": { "name": "Gratis", "price": "Gratis", "cta": "Empezar Gratis" },
+        "flirt": { "name": "Flirt", "cta": "Empezar en Telegram" },
+        "lover": { "name": "Lover", "cta": "Empezar en Telegram" },
+        "obsessed": { "name": "Obsessed", "cta": "Empezar en Telegram" }
+      },
+      "features": {
+        "wife": "Esposa Personalizada",
+        "wives": "Esposas Personalizadas",
+        "texts": "Mensajes de Texto",
+        "images": "Imágenes",
+        "voice": "Mensajes de Voz",
+        "videos": "Videos",
+        "unlimited": "Ilimitado",
+        "catalogWives": "Esposas del catálogo ilimitadas"
+      }
+    },
     "relationshipTypes": {
       "title": "Elige Cómo se Conocen 🎭",
       "subtitle": "Cada relación empieza diferente. Elige la tuya.",

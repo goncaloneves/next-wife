@@ -64,6 +64,29 @@
         "description": "Beschikbaar in 12 talen. Chat, flirt en maak verbinding in de taal die het dichtst bij je hart ligt."
       }
     },
+    "pricing": {
+      "title": "Kies Jouw Plan 💎",
+      "subtitle": "Begin gratis. Upgrade wanneer je wilt op Telegram.",
+      "monthly": "/maand",
+      "popular": "Meest Populair",
+      "note": "Betaald via Telegram Stars ⭐",
+      "plans": {
+        "free": { "name": "Gratis", "price": "Gratis", "cta": "Gratis Beginnen" },
+        "flirt": { "name": "Flirt", "cta": "Begin op Telegram" },
+        "lover": { "name": "Lover", "cta": "Begin op Telegram" },
+        "obsessed": { "name": "Obsessed", "cta": "Begin op Telegram" }
+      },
+      "features": {
+        "wife": "Op Maat Gemaakte Vrouw",
+        "wives": "Op Maat Gemaakte Vrouwen",
+        "texts": "Tekstberichten",
+        "images": "Afbeeldingen",
+        "voice": "Spraakberichten",
+        "videos": "Video's",
+        "unlimited": "Onbeperkt",
+        "catalogWives": "Onbeperkte catalogus vrouwen"
+      }
+    },
     "relationshipTypes": {
       "title": "Kies Hoe Jullie Elkaar Ontmoeten 🎭",
       "subtitle": "Elke relatie begint anders. Kies de jouwe.",
