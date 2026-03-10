@@ -783,7 +783,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                             <div className="h-full bg-white/90 w-full" />
                           ) : (
                             <div 
-                              ref={el => progressRefs.current[idx] = el}
+                              ref={el => { if (el) progressRefs.current[idx] = el; }}
                               className="h-full bg-white/90 origin-left will-change-transform"
                               style={{ transform: 'scaleX(0)' }}
                             />
