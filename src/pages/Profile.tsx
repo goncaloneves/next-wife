@@ -636,7 +636,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                     media.type === 'video' ? (
                       <video
                         key={`video-${idx}`}
-                        ref={idx === mediaIndex ? videoRef : undefined}
+                        ref={idx === mediaIndex ? (el) => { if (el) videoRef.current = el; } : undefined}
                         src={media.url}
                         className={`absolute inset-0 w-full h-full object-cover ${
                           idx === mediaIndex ? (imageLoaded ? 'opacity-100' : 'opacity-0') : 'hidden'
