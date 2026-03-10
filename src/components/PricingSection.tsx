@@ -49,7 +49,7 @@ const plans = [
   },
 ];
 
-export const PricingSection = () => {
+export const PricingSection = ({ onBrowseWives }: { onBrowseWives?: () => void }) => {
   const { t } = useTranslation();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [starRate, setStarRate] = useState<number | null>(null);
@@ -170,7 +170,16 @@ export const PricingSection = () => {
                     )}
                     <div className="flex items-center gap-2 pt-3 mt-1 border-t border-white/10">
                       <span className="text-green-400 text-sm">✓</span>
-                      <span className="text-white/80 text-sm font-medium">{t("home.pricing.features.catalogWives")}</span>
+                      {onBrowseWives ? (
+                        <button
+                          onClick={onBrowseWives}
+                          className="text-white/80 text-sm font-medium hover:text-white transition-colors underline underline-offset-2 decoration-white/30 hover:decoration-white/60"
+                        >
+                          {t("home.pricing.features.catalogWives")}
+                        </button>
+                      ) : (
+                        <span className="text-white/80 text-sm font-medium">{t("home.pricing.features.catalogWives")}</span>
+                      )}
                     </div>
                   </div>
 

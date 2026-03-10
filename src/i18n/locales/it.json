@@ -85,7 +85,17 @@
         "voice": "Messaggi Vocali",
         "videos": "Video",
         "unlimited": "Illimitato",
-        "catalogWives": "Mogli gratuite illimitate"
+        "catalogWives": "Mogli gratuite illimitate su nextwife.ai"
+      }
+    },
+    "privacy": {
+      "title": "Privato per Design 🔒",
+      "subtitle": "I fatti tuoi restano tuoi. Lo abbiamo costruito così.",
+      "points": {
+        "noAccount": "Nessuna email, nessun account, nessuna registrazione.",
+        "burner": "Funziona con qualsiasi account Telegram — anche usa e getta.",
+        "noLogs": "Nessun log, nessun tracciamento, nessun dato venduto. Mai.",
+        "noApp": "Già sul tuo telefono — nessuna app extra da installare."
       }
     },
     "relationshipTypes": {

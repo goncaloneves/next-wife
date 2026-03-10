@@ -85,7 +85,17 @@
         "voice": "Sprachnachrichten",
         "videos": "Videos",
         "unlimited": "Unbegrenzt",
-        "catalogWives": "Unbegrenzte kostenlose Frauen"
+        "catalogWives": "Unbegrenzte kostenlose Frauen von nextwife.ai"
+      }
+    },
+    "privacy": {
+      "title": "Privat by Design 🔒",
+      "subtitle": "Deine Sache bleibt deine Sache. So haben wir es gebaut.",
+      "points": {
+        "noAccount": "Keine E-Mail, kein Konto, keine Anmeldung.",
+        "burner": "Funktioniert mit jedem Telegram-Konto — auch Wegwerf-Accounts.",
+        "noLogs": "Keine Logs, kein Tracking, keine Daten verkauft. Niemals.",
+        "noApp": "Schon auf deinem Handy — keine extra App nötig."
       }
     },
     "relationshipTypes": {

@@ -85,7 +85,17 @@
         "voice": "Mensajes de Voz",
         "videos": "Videos",
         "unlimited": "Ilimitado",
-        "catalogWives": "Esposas gratis ilimitadas"
+        "catalogWives": "Esposas gratis ilimitadas de nextwife.ai"
+      }
+    },
+    "privacy": {
+      "title": "Privado por Diseño 🔒",
+      "subtitle": "Tus asuntos son tuyos. Lo construimos así.",
+      "points": {
+        "noAccount": "Sin email, sin cuenta, sin registro.",
+        "burner": "Funciona con cualquier cuenta de Telegram — incluso desechable.",
+        "noLogs": "Sin registros, sin rastreo, sin venta de datos. Nunca.",
+        "noApp": "Ya está en tu teléfono — sin app extra que instalar."
       }
     },
     "relationshipTypes": {

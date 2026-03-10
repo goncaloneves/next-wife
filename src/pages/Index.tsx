@@ -10,6 +10,7 @@ import { TelegramChannelFeed } from "@/components/TelegramChannelFeed";
 import { DiscoverFilterModal, DiscoverFilterButton } from "@/components/DiscoverFilterModal";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { PricingSection } from "@/components/PricingSection";
+import { PrivacySection } from "@/components/PrivacySection";
 import { useFilters } from "@/contexts/FilterContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -323,7 +324,15 @@ const Index = () => {
           </div>
         </section>
 
-        <PricingSection />
+        <PricingSection onBrowseWives={() => {
+          if (window.innerWidth < 768) {
+            window.location.href = '/find';
+          } else {
+            feedContentRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }
+        }} />
+
+        <PrivacySection />
 
         <section ref={feedContentRef} className="hidden md:block relative py-12 bg-black">
           <div className="container mx-auto px-4">

@@ -85,7 +85,17 @@
         "voice": "Mesej Suara",
         "videos": "Video",
         "unlimited": "Tanpa Had",
-        "catalogWives": "Isteri percuma tanpa had"
+        "catalogWives": "Isteri percuma tanpa had dari nextwife.ai"
+      }
+    },
+    "privacy": {
+      "title": "Privasi Secara Reka Bentuk 🔒",
+      "subtitle": "Urusan anda milik anda. Kami membinanya begitu.",
+      "points": {
+        "noAccount": "Tanpa emel, tanpa akaun, tanpa pendaftaran.",
+        "burner": "Berfungsi dengan mana-mana akaun Telegram — walaupun sementara.",
+        "noLogs": "Tanpa log, tanpa penjejakan, tanpa penjualan data. Tidak pernah.",
+        "noApp": "Sudah ada di telefon anda — tanpa aplikasi tambahan."
       }
     },
     "relationshipTypes": {

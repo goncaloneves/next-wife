@@ -85,7 +85,17 @@
         "voice": "Voice Messages",
         "videos": "Videos",
         "unlimited": "Unlimited",
-        "catalogWives": "Unlimited free wives"
+        "catalogWives": "Unlimited free wives from nextwife.ai"
+      }
+    },
+    "privacy": {
+      "title": "Private by Design 🔒",
+      "subtitle": "Your business is yours. We built it that way.",
+      "points": {
+        "noAccount": "No email, no account, no signup required.",
+        "burner": "Works with any Telegram account — even a burner.",
+        "noLogs": "No logs, no tracking, no data sold. Ever.",
+        "noApp": "Already on your phone — no extra app to install."
       }
     },
     "relationshipTypes": {

@@ -85,7 +85,17 @@
         "voice": "음성 메시지",
         "videos": "영상",
         "unlimited": "무제한",
-        "catalogWives": "무료 아내 무제한"
+        "catalogWives": "nextwife.ai 무료 아내 무제한"
+      }
+    },
+    "privacy": {
+      "title": "프라이버시 우선 설계 🔒",
+      "subtitle": "당신의 일은 당신만의 것. 그렇게 만들었습니다.",
+      "points": {
+        "noAccount": "이메일 없이, 계정 없이, 가입 없이.",
+        "burner": "어떤 텔레그램 계정이든 사용 가능 — 일회용도 OK.",
+        "noLogs": "로그 없음, 추적 없음, 데이터 판매 없음. 절대로.",
+        "noApp": "이미 휴대폰에 있습니다 — 추가 앱 설치 불필요."
       }
     },
     "relationshipTypes": {
