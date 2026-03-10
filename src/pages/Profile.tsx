@@ -218,10 +218,9 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     if (mediaList[mediaIndex]?.type !== 'video') return;
 
     const video = videoRef.current;
-    if (!video) { console.log('[pb] nav: no videoRef'); return; }
-    console.log('[pb] nav: seek+play', key);
+    if (!video) return;
     video.currentTime = 0;
-    video.play().catch((e) => console.log('[pb] nav: play() rejected', String(e)));
+    video.play().catch(() => {});
   }, [mediaIndex, post?.id, post]);
 
   // ── Progress RAF effect: only polls currentTime, never touches seek/play ──
@@ -232,7 +231,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     }
 
     if (!post || !imageLoaded) {
-      console.log('[pb] raf: skip (post=' + !!post + ' imageLoaded=' + imageLoaded + ')');
       return () => {
         if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
       };
@@ -257,7 +255,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     if (currentMedia?.type === 'video') {
       const video = videoRef.current;
       if (!video || !progressBar) {
-        console.log('[pb] raf: no video or progressBar', { hasVideo: !!video, hasBar: !!progressBar });
         return () => {
           if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
         };
@@ -266,7 +263,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       progressBar.style.transform = 'scaleX(0)';
 
       const startPoll = () => {
-        console.log('[pb] raf: startPoll', { t: video.currentTime, dur: video.duration, paused: video.paused });
         if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
         const poll = () => {
           if (video.duration > 0) {
@@ -277,7 +273,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         rafRef.current = requestAnimationFrame(poll);
       };
 
-      console.log('[pb] raf: setup', { paused: video.paused, t: video.currentTime, dur: video.duration, mediaIdx: mediaIndex });
       if (!video.paused) {
         startPoll();
       } else {
@@ -285,7 +280,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       }
 
       return () => {
-        console.log('[pb] raf: cleanup', { mediaIndex, postId: post?.id });
         video.removeEventListener('playing', startPoll);
         if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
       };
