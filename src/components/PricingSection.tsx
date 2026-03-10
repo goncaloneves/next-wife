@@ -5,6 +5,7 @@ import { openTelegram } from "@/lib/utils";
 const STARS_RATE_URL = "https://bes-dev.github.io/telegram_stars_rates/api.json";
 const CACHE_KEY = "stars_usd_rate";
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+const APP_STORE_MARKUP = 1.4; // Approximate Apple/Google 30% commission markup
 
 const getStarRate = async (): Promise<number | null> => {
   try {
@@ -141,7 +142,7 @@ export const PricingSection = ({ onBrowseWives }: { onBrowseWives?: () => void }
                     </div>
                     {starRate && (
                       <div className="text-white/40 text-xs mt-1">
-                        ≈ ${Math.round(plan.price * starRate)} USD
+                        ≈ ${Math.round(plan.price * starRate * APP_STORE_MARKUP)} USD
                       </div>
                     )}
                   </div>
