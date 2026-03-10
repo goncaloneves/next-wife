@@ -33,7 +33,7 @@ export const PrivacySection = () => {
   }, []);
 
   return (
-    <section className="relative w-full bg-black py-14">
+    <section className="relative w-full bg-gradient-to-b from-black via-[#1a0f0a] to-black py-14">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-3 text-white">
@@ -47,7 +47,7 @@ export const PrivacySection = () => {
             {privacyPoints.map((point, index) => (
               <div
                 key={point.key}
-                className="privacy-item opacity-0 flex items-center gap-4 text-left px-6 py-4 rounded-xl bg-white/[0.04] backdrop-blur-md"
+                className="privacy-item opacity-0 flex items-center gap-4 text-left px-6 py-4 rounded-xl bg-white/[0.07] backdrop-blur-md"
                 style={{
                   animationDelay: `${index * 0.1}s`,
                 }}
