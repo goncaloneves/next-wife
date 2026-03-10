@@ -666,7 +666,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                   {/* Tap to play overlay for Safari — pointer-events-none so it never blocks navigation */}
                   {showPlayOverlay && currentMedia?.type === 'video' && (
                     <div 
-                      className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/60"
+                      className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
                       data-testid="video-play-overlay"
                     >
                       <div
