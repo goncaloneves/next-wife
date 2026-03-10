@@ -663,17 +663,19 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                     )
                   ))}
                   
-                  {/* Tap to play overlay for Safari */}
+                  {/* Tap to play overlay for Safari — pointer-events-none so it never blocks navigation */}
                   {showPlayOverlay && currentMedia?.type === 'video' && (
                     <div 
-                      className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleVideoPlay();
-                      }}
+                      className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 pointer-events-none"
                       data-testid="video-play-overlay"
                     >
-                      <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                      <div
+                        className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg cursor-pointer pointer-events-auto"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVideoPlay();
+                        }}
+                      >
                         <svg className="w-8 h-8 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5v14l11-7z"/>
                         </svg>
