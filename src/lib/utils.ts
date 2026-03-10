@@ -52,7 +52,7 @@ export function openTelegram(startOrUrl: string) {
   setTimeout(() => {
     cleanup();
     if (!opened) {
-      window.open(webFallback, "_blank");
+      window.location.href = webFallback;
     }
   }, 2500);
 }
