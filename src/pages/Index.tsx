@@ -103,7 +103,23 @@ const Index = () => {
     const onInteraction = () => tryPlayAll();
     const events = ['touchstart', 'pointerdown', 'scroll'] as const;
     events.forEach(e => document.addEventListener(e, onInteraction, { once: true, passive: true }));
-    return () => events.forEach(e => document.removeEventListener(e, onInteraction));
+
+    const onVisibility = () => {
+      if (document.visibilityState !== 'visible') return;
+      videoRefs.current.forEach(video => {
+        if (!video) return;
+        if (video.readyState === 0 || video.error) {
+          video.load();
+        }
+        video.play().catch(() => {});
+      });
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      events.forEach(e => document.removeEventListener(e, onInteraction));
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
 
   useEffect(() => {
