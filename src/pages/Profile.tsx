@@ -200,13 +200,38 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     setShowPlayOverlay(false);
   }, [post?.id, mediaIndex]);
 
+  // Seek video to start and trigger play only when navigating to a new media item.
+  // This is intentionally separate from the progress RAF effect so that
+  // video.currentTime = 0 never interrupts an already-autoplaying video when
+  // imageLoaded fires.
+  const prevNavigationKeyRef = useRef<string>('');
+  useEffect(() => {
+    if (!post) return;
+    const key = `${post.id}-${mediaIndex}`;
+    if (prevNavigationKeyRef.current === key) return;
+    prevNavigationKeyRef.current = key;
+
+    const mediaList = post.mediaItems && post.mediaItems.length > 0
+      ? post.mediaItems
+      : post.mediaUrls && post.mediaUrls.length > 0
+        ? post.mediaUrls
+        : [{ type: 'photo' as const }];
+    const currentMedia = mediaList[mediaIndex];
+    if (currentMedia?.type !== 'video') return;
+
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  }, [mediaIndex, post?.id, post]);
+
   useEffect(() => {
     // Cancel any existing RAF immediately on effect run
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
-    
+
     if (!post || !imageLoaded) {
       return () => {
         if (rafRef.current) {
@@ -215,25 +240,22 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         }
       };
     }
-    
+
     const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
     const currentMedia = mediaList[mediaIndex];
     const progressBar = progressRefs.current[mediaIndex];
-    
+
     // Reset all progress bars to proper state when mediaIndex changes
     progressRefs.current.forEach((bar, idx) => {
       if (bar) {
         if (idx < mediaIndex) {
-          // Past media: filled
           bar.style.transform = 'scaleX(1)';
         } else if (idx > mediaIndex) {
-          // Future media: empty
           bar.style.transform = 'scaleX(0)';
         }
-        // Current media handled below
       }
     });
-    
+
     if (currentMedia?.type === 'video') {
       const video = videoRef.current;
       if (!video || !progressBar) {
@@ -245,13 +267,8 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         };
       }
 
-      // Restart video from beginning when navigating to it
-      video.currentTime = 0;
-      video.play().catch(() => {});
-
-      // Poll currentTime every frame — no reliance on 'play' event timing.
-      // 'play' fires synchronously inside video.play() before any listener
-      // we attach here could catch it, so event-based approaches miss it.
+      // Poll currentTime every frame — no events needed, works whether video
+      // autoplayed or was started via user gesture.
       progressBar.style.transform = 'scaleX(0)';
       const poll = () => {
         if (video.duration > 0) {
@@ -261,7 +278,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       };
       rafRef.current = requestAnimationFrame(poll);
     } else {
-      // Photos: just show filled progress bar (no auto-advance)
       if (progressBar) {
         progressBar.style.transform = 'scaleX(1)';
       }
