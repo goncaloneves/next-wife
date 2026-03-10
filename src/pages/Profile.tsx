@@ -161,6 +161,14 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   }, [mediaIndex]);
 
   useEffect(() => {
+    if (!showPlayOverlay) return;
+    const onInteraction = () => handleVideoPlay();
+    const events = ['touchstart', 'pointerdown'] as const;
+    events.forEach(e => document.addEventListener(e, onInteraction, { once: true, passive: true }));
+    return () => events.forEach(e => document.removeEventListener(e, onInteraction));
+  }, [showPlayOverlay, handleVideoPlay]);
+
+  useEffect(() => {
     const isFromNav = sessionStorage.getItem(NAV_FLAG_KEY) === 'true';
     if (isFromNav) {
       sessionStorage.removeItem(NAV_FLAG_KEY);
