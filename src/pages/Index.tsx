@@ -324,6 +324,8 @@ const Index = () => {
           </div>
         </section>
 
+        <PrivacySection />
+
         <PricingSection onBrowseWives={() => {
           if (window.innerWidth < 768) {
             window.location.href = '/find';
@@ -331,8 +333,6 @@ const Index = () => {
             feedContentRef.current?.scrollIntoView({ behavior: 'smooth' });
           }
         }} />
-
-        <PrivacySection />
 
         <section ref={feedContentRef} className="hidden md:block relative py-12 bg-black">
           <div className="container mx-auto px-4">
