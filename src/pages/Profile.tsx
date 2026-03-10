@@ -236,9 +236,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     
     if (currentMedia?.type === 'video') {
       const video = videoRef.current;
-      console.log('[pb] video effect', { mediaIndex, hasVideo: !!video, hasBar: !!progressBar, duration: video?.duration, paused: video?.paused });
       if (!video || !progressBar) {
-        console.log('[pb] early-return — missing video or bar');
         return () => {
           if (rafRef.current) {
             cancelAnimationFrame(rafRef.current);
@@ -251,20 +249,39 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       video.currentTime = 0;
       video.play().catch(() => {});
 
-      // Poll currentTime every frame — no reliance on 'play' event timing.
       progressBar.style.transform = 'scaleX(0)';
-      let loggedFrames = 0;
-      const poll = () => {
-        if (loggedFrames < 3) {
-          console.log(`[pb] poll frame ${loggedFrames}`, { duration: video.duration, currentTime: video.currentTime, barConnected: document.contains(progressBar) });
-          loggedFrames++;
+
+      const startPoll = () => {
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
         }
-        if (video.duration > 0) {
-          progressBar.style.transform = `scaleX(${video.currentTime / video.duration})`;
-        }
+        const poll = () => {
+          if (video.duration > 0) {
+            progressBar.style.transform = `scaleX(${video.currentTime / video.duration})`;
+          }
+          rafRef.current = requestAnimationFrame(poll);
+        };
         rafRef.current = requestAnimationFrame(poll);
       };
-      rafRef.current = requestAnimationFrame(poll);
+
+      // If video is already playing (e.g. navigating back to it), start immediately.
+      // Otherwise wait for the 'playing' event — fires only when the browser is
+      // actually rendering frames, which on mobile can be seconds after
+      // onLoadedMetadata (when the video is still buffering/paused).
+      if (!video.paused) {
+        startPoll();
+      } else {
+        video.addEventListener('playing', startPoll, { once: true });
+      }
+
+      return () => {
+        video.removeEventListener('playing', startPoll);
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+      };
     } else {
       // Photos: just show filled progress bar (no auto-advance)
       if (progressBar) {
