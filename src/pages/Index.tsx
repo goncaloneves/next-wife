@@ -95,6 +95,18 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
+    const tryPlayAll = () => {
+      videoRefs.current.forEach(video => {
+        if (video && video.paused) video.play().catch(() => {});
+      });
+    };
+    const onInteraction = () => tryPlayAll();
+    const events = ['touchstart', 'pointerdown', 'scroll'] as const;
+    events.forEach(e => document.addEventListener(e, onInteraction, { once: true, passive: true }));
+    return () => events.forEach(e => document.removeEventListener(e, onInteraction));
+  }, []);
+
+  useEffect(() => {
     fetch('/api/tg-channel-feed?hasVideo=true&limit=8&channel=nextwifeai')
       .then(res => res.json())
       .then(data => {
