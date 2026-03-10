@@ -184,7 +184,7 @@ export const PricingSection = ({ onBrowseWives }: { onBrowseWives?: () => void }
                   </div>
 
                   <a
-                    href="https://t.me/nextwifebot?start=now"
+                    href={`https://t.me/nextwifebot?start=sub_${plan.key}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block w-full text-center py-3 rounded-xl font-bold text-white transition-all duration-300 hover:brightness-110 active:scale-95"

@@ -343,13 +343,16 @@ const Index = () => {
                   {t('home.findYourWoman')} 🌹
                 </h2>
                 <div className="flex-1 flex justify-end items-center gap-1">
-                  <DiscoverFilterButton 
-                    onClick={() => setShowFilters(!showFilters)} 
+                  <DiscoverFilterButton
+                    onClick={() => setShowFilters(!showFilters)}
                     activeCount={activeFilterCount}
                   />
                   <LanguagePicker />
                 </div>
               </div>
+              <p className="text-white/60 text-center mb-8 text-lg -mt-4">
+                {t('home.findYourWomanSubtitle')}
+              </p>
               <DiscoverFilterModal
                 isOpen={showFilters}
                 onClose={() => setShowFilters(false)}
