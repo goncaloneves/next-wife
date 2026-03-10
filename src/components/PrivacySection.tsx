@@ -33,7 +33,7 @@ export const PrivacySection = () => {
   }, []);
 
   return (
-    <section className="relative w-full bg-gradient-to-b from-black via-[#0a0d1a] to-black py-14">
+    <section className="relative w-full bg-black py-14">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading mb-3 text-white">
