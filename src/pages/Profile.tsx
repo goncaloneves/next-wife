@@ -201,10 +201,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   }, [post?.id, mediaIndex]);
 
   useEffect(() => {
-    let videoPlayListener: (() => void) | null = null;
-    let videoTimeUpdateListener: (() => void) | null = null;
-    let videoElement: HTMLVideoElement | null = null;
-    
     // Cancel any existing RAF immediately on effect run
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
@@ -248,56 +244,33 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
           }
         };
       }
-      
+
       // Restart video from beginning when navigating to it
       video.currentTime = 0;
       video.play().catch(() => {});
-      
-      videoElement = video;
-      
-      const updateVideoProgress = () => {
-        if (video.duration > 0) {
-          const percent = video.currentTime / video.duration;
-          progressBar.style.transform = `scaleX(${percent})`;
-        }
-        rafRef.current = requestAnimationFrame(updateVideoProgress);
-      };
-      
-      const startVideoLoop = () => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        progressBar.style.transform = 'scaleX(0)';
-        rafRef.current = requestAnimationFrame(updateVideoProgress);
-      };
-      
-      const onTimeUpdate = () => {
-        if (!rafRef.current) startVideoLoop();
-      };
 
-      videoPlayListener = startVideoLoop;
-      videoTimeUpdateListener = onTimeUpdate;
-      video.addEventListener('play', startVideoLoop);
-      video.addEventListener('timeupdate', onTimeUpdate);
-      
-      if (!video.paused) {
-        startVideoLoop();
-      }
+      // Poll currentTime every frame — no reliance on 'play' event timing.
+      // 'play' fires synchronously inside video.play() before any listener
+      // we attach here could catch it, so event-based approaches miss it.
+      progressBar.style.transform = 'scaleX(0)';
+      const poll = () => {
+        if (video.duration > 0) {
+          progressBar.style.transform = `scaleX(${video.currentTime / video.duration})`;
+        }
+        rafRef.current = requestAnimationFrame(poll);
+      };
+      rafRef.current = requestAnimationFrame(poll);
     } else {
       // Photos: just show filled progress bar (no auto-advance)
       if (progressBar) {
         progressBar.style.transform = 'scaleX(1)';
       }
     }
-    
+
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
-      }
-      if (videoElement && videoPlayListener) {
-        videoElement.removeEventListener('play', videoPlayListener);
-      }
-      if (videoElement && videoTimeUpdateListener) {
-        videoElement.removeEventListener('timeupdate', videoTimeUpdateListener);
       }
     };
   }, [mediaIndex, post?.id, imageLoaded, post]);
