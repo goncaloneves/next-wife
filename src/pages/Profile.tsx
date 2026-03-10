@@ -200,62 +200,70 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     setShowPlayOverlay(false);
   }, [post?.id, mediaIndex]);
 
+  // ── Navigation effect: seek to start and play whenever profile or media changes ──
+  // Kept separate from the progress RAF so it never interrupts an already-playing
+  // video when the post object re-renders with the same content.
+  const prevNavKeyRef = useRef('');
   useEffect(() => {
-    // Cancel any existing RAF immediately on effect run
+    if (!post) return;
+    const key = `${post.id}-${mediaIndex}`;
+    if (prevNavKeyRef.current === key) return;
+    prevNavKeyRef.current = key;
+
+    const mediaList = post.mediaItems && post.mediaItems.length > 0
+      ? post.mediaItems
+      : post.mediaUrls && post.mediaUrls.length > 0
+        ? post.mediaUrls
+        : [{ type: 'photo' as const }];
+    if (mediaList[mediaIndex]?.type !== 'video') return;
+
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  }, [mediaIndex, post?.id, post]);
+
+  // ── Progress RAF effect: only polls currentTime, never touches seek/play ──
+  useEffect(() => {
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
-    
+
     if (!post || !imageLoaded) {
       return () => {
-        if (rafRef.current) {
-          cancelAnimationFrame(rafRef.current);
-          rafRef.current = null;
-        }
+        if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
       };
     }
-    
-    const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+
+    const mediaList = post.mediaItems && post.mediaItems.length > 0
+      ? post.mediaItems
+      : post.mediaUrls && post.mediaUrls.length > 0
+        ? post.mediaUrls
+        : [{ type: 'photo' as const, url: post.media }];
     const currentMedia = mediaList[mediaIndex];
     const progressBar = progressRefs.current[mediaIndex];
-    
-    // Reset all progress bars to proper state when mediaIndex changes
+
+    // Reset neighbour bars immediately.
     progressRefs.current.forEach((bar, idx) => {
       if (bar) {
-        if (idx < mediaIndex) {
-          // Past media: filled
-          bar.style.transform = 'scaleX(1)';
-        } else if (idx > mediaIndex) {
-          // Future media: empty
-          bar.style.transform = 'scaleX(0)';
-        }
-        // Current media handled below
+        if (idx < mediaIndex) bar.style.transform = 'scaleX(1)';
+        else if (idx > mediaIndex) bar.style.transform = 'scaleX(0)';
       }
     });
-    
+
     if (currentMedia?.type === 'video') {
       const video = videoRef.current;
       if (!video || !progressBar) {
         return () => {
-          if (rafRef.current) {
-            cancelAnimationFrame(rafRef.current);
-            rafRef.current = null;
-          }
+          if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
         };
       }
-
-      // Restart video from beginning when navigating to it
-      video.currentTime = 0;
-      video.play().catch(() => {});
 
       progressBar.style.transform = 'scaleX(0)';
 
       const startPoll = () => {
-        if (rafRef.current) {
-          cancelAnimationFrame(rafRef.current);
-          rafRef.current = null;
-        }
+        if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
         const poll = () => {
           if (video.duration > 0) {
             progressBar.style.transform = `scaleX(${video.currentTime / video.duration})`;
@@ -265,10 +273,9 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         rafRef.current = requestAnimationFrame(poll);
       };
 
-      // If video is already playing (e.g. navigating back to it), start immediately.
-      // Otherwise wait for the 'playing' event — fires only when the browser is
-      // actually rendering frames, which on mobile can be seconds after
-      // onLoadedMetadata (when the video is still buffering/paused).
+      // Start immediately if already playing; otherwise wait for the 'playing'
+      // event which fires only when the browser is actually rendering frames.
+      // This avoids the bar being stuck at 0 while the video is still buffering.
       if (!video.paused) {
         startPoll();
       } else {
@@ -277,25 +284,16 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
 
       return () => {
         video.removeEventListener('playing', startPoll);
-        if (rafRef.current) {
-          cancelAnimationFrame(rafRef.current);
-          rafRef.current = null;
-        }
+        if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
       };
     } else {
-      // Photos: just show filled progress bar (no auto-advance)
-      if (progressBar) {
-        progressBar.style.transform = 'scaleX(1)';
-      }
+      if (progressBar) progressBar.style.transform = 'scaleX(1)';
     }
 
     return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
+      if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
     };
-  }, [mediaIndex, post?.id, imageLoaded, post]);
+  }, [mediaIndex, post?.id, imageLoaded]);
 
   const buildFilterQueryString = useCallback((overrideFilters?: SharedFilters) => {
     const f = overrideFilters || filters;
