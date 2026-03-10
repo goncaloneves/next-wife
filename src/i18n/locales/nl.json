@@ -90,12 +90,12 @@
     },
     "privacy": {
       "title": "Privé by Design 🔒",
-      "subtitle": "Jouw zaken zijn van jou. Zo hebben we het gebouwd.",
+      "subtitle": "Wat hier gebeurt, blijft hier.",
       "points": {
-        "noAccount": "Geen e-mail, geen account, geen registratie.",
-        "burner": "Werkt met elk Telegram-account — zelfs een wegwerp.",
-        "noLogs": "Geen logs, geen tracking, geen data verkocht. Nooit.",
-        "noApp": "Al op je telefoon — geen extra app nodig."
+        "noAccount": "Geen e-mail, geen account — zelfs een wegwerp-Telegram werkt.",
+        "noLogs": "Geen logs, geen tracking, geen data verkocht.",
+        "noApp": "Al op je telefoon — geen extra app nodig.",
+        "payment": "Betalingen blijven op Telegram — wij zien nooit je kaart."
       }
     },
     "relationshipTypes": {

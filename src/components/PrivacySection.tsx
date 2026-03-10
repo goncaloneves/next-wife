@@ -2,9 +2,9 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 const privacyPoints = [
-  { icon: "🚫", key: "noAccount" },
-  { icon: "👻", key: "burner" },
+  { icon: "👻", key: "noAccount" },
   { icon: "🔇", key: "noLogs" },
+  { icon: "💳", key: "payment" },
   { icon: "📱", key: "noApp" },
 ];
 

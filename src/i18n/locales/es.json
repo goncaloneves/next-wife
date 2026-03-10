@@ -90,12 +90,12 @@
     },
     "privacy": {
       "title": "Privado por Diseño 🔒",
-      "subtitle": "Tus asuntos son tuyos. Lo construimos así.",
+      "subtitle": "Lo que pasa aquí se queda aquí.",
       "points": {
-        "noAccount": "Sin email, sin cuenta, sin registro.",
-        "burner": "Funciona con cualquier cuenta de Telegram — incluso desechable.",
-        "noLogs": "Sin registros, sin rastreo, sin venta de datos. Nunca.",
-        "noApp": "Ya está en tu teléfono — sin app extra que instalar."
+        "noAccount": "Sin email, sin cuenta — incluso un Telegram desechable funciona.",
+        "noLogs": "Sin registros, sin rastreo, sin datos vendidos.",
+        "noApp": "Ya está en tu teléfono — sin app extra que instalar.",
+        "payment": "Los pagos se quedan en Telegram — nunca vemos tu tarjeta."
       }
     },
     "relationshipTypes": {

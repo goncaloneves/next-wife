@@ -90,12 +90,12 @@
     },
     "privacy": {
       "title": "Private by Design 🔒",
-      "subtitle": "Your business is yours. We built it that way.",
+      "subtitle": "What happens here stays here.",
       "points": {
-        "noAccount": "No email, no account, no signup required.",
-        "burner": "Works with any Telegram account — even a burner.",
-        "noLogs": "No logs, no tracking, no data sold. Ever.",
-        "noApp": "Already on your phone — no extra app to install."
+        "noAccount": "No email, no account — even a burner Telegram works.",
+        "noLogs": "No logs, no tracking, no data sold.",
+        "noApp": "Already on your phone — no extra app to install.",
+        "payment": "Payments stay on Telegram — we never see your card."
       }
     },
     "relationshipTypes": {

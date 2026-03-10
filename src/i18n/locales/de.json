@@ -90,12 +90,12 @@
     },
     "privacy": {
       "title": "Privat by Design 🔒",
-      "subtitle": "Deine Sache bleibt deine Sache. So haben wir es gebaut.",
+      "subtitle": "Was hier passiert, bleibt hier.",
       "points": {
-        "noAccount": "Keine E-Mail, kein Konto, keine Anmeldung.",
-        "burner": "Funktioniert mit jedem Telegram-Konto — auch Wegwerf-Accounts.",
-        "noLogs": "Keine Logs, kein Tracking, keine Daten verkauft. Niemals.",
-        "noApp": "Schon auf deinem Handy — keine extra App nötig."
+        "noAccount": "Keine E-Mail, kein Konto — selbst ein Wegwerf-Telegram funktioniert.",
+        "noLogs": "Keine Logs, kein Tracking, keine Daten verkauft.",
+        "noApp": "Schon auf deinem Handy — keine extra App nötig.",
+        "payment": "Zahlungen bleiben auf Telegram — wir sehen nie deine Karte."
       }
     },
     "relationshipTypes": {
