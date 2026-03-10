@@ -160,6 +160,17 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     mediaIndexRef.current = mediaIndex;
   }, [mediaIndex]);
 
+  const handleVideoPlay = useCallback(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.play().then(() => {
+        setShowPlayOverlay(false);
+      }).catch(() => {
+        setShowPlayOverlay(true);
+      });
+    }
+  }, []);
+
   useEffect(() => {
     if (!showPlayOverlay) return;
     const onInteraction = () => handleVideoPlay();
@@ -188,17 +199,6 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
   useEffect(() => {
     setShowPlayOverlay(false);
   }, [post?.id, mediaIndex]);
-
-  const handleVideoPlay = useCallback(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.play().then(() => {
-        setShowPlayOverlay(false);
-      }).catch(() => {
-        setShowPlayOverlay(true);
-      });
-    }
-  }, []);
 
   useEffect(() => {
     let videoPlayListener: (() => void) | null = null;
