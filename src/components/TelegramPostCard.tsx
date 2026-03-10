@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { openTelegram } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -50,7 +51,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
     if (target.tagName === 'BUTTON' || target.tagName === 'IMG') {
       return;
     }
-    window.open(post.link, '_blank', 'noopener,noreferrer');
+    openTelegram(post.link);
   };
 
   const handleImageClick = (e: React.MouseEvent) => {
@@ -58,7 +59,7 @@ export const TelegramPostCard = ({ post, channelInfo, index, animate = true, cac
     
     // If post has a botLink, navigate to it instead of opening lightbox
     if (post.botLink) {
-      window.open(post.botLink, '_blank', 'noopener,noreferrer');
+      openTelegram(post.botLink);
     } else {
       setLightboxOpen(true);
     }

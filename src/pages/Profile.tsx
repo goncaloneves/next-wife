@@ -5,6 +5,7 @@ import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from "
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTelegram, openTelegramLinkAndClose } from "@/hooks/use-telegram";
+import { openTelegram } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -414,7 +415,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       if (isTelegramApp) {
         openTelegramLinkAndClose(url);
       } else {
-        window.open(url, "_blank", "noopener,noreferrer");
+        openTelegram(url);
       }
     }
     setShowTelegramConfirm(false);
