@@ -236,7 +236,9 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     
     if (currentMedia?.type === 'video') {
       const video = videoRef.current;
+      console.log('[pb] video effect', { mediaIndex, hasVideo: !!video, hasBar: !!progressBar, duration: video?.duration, paused: video?.paused });
       if (!video || !progressBar) {
+        console.log('[pb] early-return — missing video or bar');
         return () => {
           if (rafRef.current) {
             cancelAnimationFrame(rafRef.current);
@@ -250,10 +252,13 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       video.play().catch(() => {});
 
       // Poll currentTime every frame — no reliance on 'play' event timing.
-      // 'play' fires synchronously inside video.play() before any listener
-      // we attach here could catch it, so event-based approaches miss it.
       progressBar.style.transform = 'scaleX(0)';
+      let loggedFrames = 0;
       const poll = () => {
+        if (loggedFrames < 3) {
+          console.log(`[pb] poll frame ${loggedFrames}`, { duration: video.duration, currentTime: video.currentTime, barConnected: document.contains(progressBar) });
+          loggedFrames++;
+        }
         if (video.duration > 0) {
           progressBar.style.transform = `scaleX(${video.currentTime / video.duration})`;
         }
