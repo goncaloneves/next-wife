@@ -241,46 +241,43 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       };
     }
 
-    const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
+    // Match JSX: mediaItems first, then mediaUrls, then single media fallback.
+    const mediaList = post.mediaItems && post.mediaItems.length > 0
+      ? post.mediaItems
+      : post.mediaUrls && post.mediaUrls.length > 0
+        ? post.mediaUrls
+        : [{ type: 'photo' as const, url: post.media }];
     const currentMedia = mediaList[mediaIndex];
-    const progressBar = progressRefs.current[mediaIndex];
 
-    // Reset all progress bars to proper state when mediaIndex changes
+    // Reset neighbour bars immediately (don't wait for the poll).
     progressRefs.current.forEach((bar, idx) => {
       if (bar) {
-        if (idx < mediaIndex) {
-          bar.style.transform = 'scaleX(1)';
-        } else if (idx > mediaIndex) {
-          bar.style.transform = 'scaleX(0)';
-        }
+        if (idx < mediaIndex) bar.style.transform = 'scaleX(1)';
+        else if (idx > mediaIndex) bar.style.transform = 'scaleX(0)';
       }
     });
 
     if (currentMedia?.type === 'video') {
-      const video = videoRef.current;
-      if (!video || !progressBar) {
-        return () => {
-          if (rafRef.current) {
-            cancelAnimationFrame(rafRef.current);
-            rafRef.current = null;
-          }
-        };
-      }
-
-      // Poll currentTime every frame — no events needed, works whether video
-      // autoplayed or was started via user gesture.
-      progressBar.style.transform = 'scaleX(0)';
+      // Read refs INSIDE the poll loop on every frame so we are immune to the
+      // exit-animation ref-cleanup race: the old card (key=oldPost.id) stays
+      // mounted during its AnimatePresence exit, and when it finally unmounts
+      // React calls progressRefs.current[idx] = null.  If that cleanup fires
+      // before this effect's early-return check, the bar would be null and the
+      // RAF would never start.  By reading fresh each frame we tolerate the
+      // brief null window and pick up the real element as soon as it arrives.
+      const capturedIndex = mediaIndex;
       const poll = () => {
-        if (video.duration > 0) {
-          progressBar.style.transform = `scaleX(${video.currentTime / video.duration})`;
+        const video = videoRef.current;
+        const bar = progressRefs.current[capturedIndex];
+        if (video && bar && video.duration > 0) {
+          bar.style.transform = `scaleX(${video.currentTime / video.duration})`;
         }
         rafRef.current = requestAnimationFrame(poll);
       };
       rafRef.current = requestAnimationFrame(poll);
     } else {
-      if (progressBar) {
-        progressBar.style.transform = 'scaleX(1)';
-      }
+      const bar = progressRefs.current[mediaIndex];
+      if (bar) bar.style.transform = 'scaleX(1)';
     }
 
     return () => {
