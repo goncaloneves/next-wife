@@ -202,6 +202,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
 
   useEffect(() => {
     let videoPlayListener: (() => void) | null = null;
+    let videoTimeUpdateListener: (() => void) | null = null;
     let videoElement: HTMLVideoElement | null = null;
     
     // Cancel any existing RAF immediately on effect run
@@ -268,8 +269,14 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         rafRef.current = requestAnimationFrame(updateVideoProgress);
       };
       
+      const onTimeUpdate = () => {
+        if (!rafRef.current) startVideoLoop();
+      };
+
       videoPlayListener = startVideoLoop;
+      videoTimeUpdateListener = onTimeUpdate;
       video.addEventListener('play', startVideoLoop);
+      video.addEventListener('timeupdate', onTimeUpdate);
       
       if (!video.paused) {
         startVideoLoop();
@@ -288,6 +295,9 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
       }
       if (videoElement && videoPlayListener) {
         videoElement.removeEventListener('play', videoPlayListener);
+      }
+      if (videoElement && videoTimeUpdateListener) {
+        videoElement.removeEventListener('timeupdate', videoTimeUpdateListener);
       }
     };
   }, [mediaIndex, post?.id, imageLoaded, post]);
