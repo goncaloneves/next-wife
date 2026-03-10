@@ -23,7 +23,8 @@
     "telegram": {
       "openApp": "Ouvrir dans Telegram",
       "getApp": "Pas de Telegram ? Téléchargez-le ici",
-      "opening": "Ouverture de Telegram..."
+      "opening": "Ouverture de Telegram...",
+      "manualOpen": "Pas ouvert ? Cliquez ici"
     }
   },
   "navigation": {

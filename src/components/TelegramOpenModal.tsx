@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { buildTelegramUrl } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -14,12 +12,15 @@ import {
 export const TelegramOpenModal = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [tgUrl, setTgUrl] = useState("");
+  const [redirected, setRedirected] = useState(false);
+  const tgUrlRef = useRef("");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handler = (e: Event) => {
       const { startOrUrl } = (e as CustomEvent).detail;
-      setTgUrl(buildTelegramUrl(startOrUrl));
+      tgUrlRef.current = buildTelegramUrl(startOrUrl);
+      setRedirected(false);
       setIsOpen(true);
     };
 
@@ -27,9 +28,21 @@ export const TelegramOpenModal = () => {
     return () => window.removeEventListener("open-telegram", handler);
   }, []);
 
-  const handleOpen = () => {
-    window.location.href = tgUrl;
-    setIsOpen(false);
+  useEffect(() => {
+    if (isOpen && !redirected) {
+      timerRef.current = setTimeout(() => {
+        setRedirected(true);
+        window.location.href = tgUrlRef.current;
+      }, 1500);
+    }
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [isOpen, redirected]);
+
+  const handleManualOpen = () => {
+    window.location.href = tgUrlRef.current;
   };
 
   return (
@@ -47,28 +60,31 @@ export const TelegramOpenModal = () => {
             </svg>
           </div>
           <DialogTitle className="text-xl font-bold text-center">
-            {t("common.telegram.openApp")}
+            {redirected
+              ? t("common.telegram.opening")
+              : t("common.telegram.openApp")
+            }
           </DialogTitle>
           <DialogDescription className="text-white/70 text-center">
             nextwife.ai
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-center">
-          <Button
-            onClick={handleOpen}
-            className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white hover:brightness-110 border-0 w-full sm:w-auto"
+        <div className="flex flex-col items-center gap-2">
+          <button
+            onClick={handleManualOpen}
+            className="text-white/50 hover:text-white/70 text-sm transition-colors underline underline-offset-2 decoration-white/30 hover:decoration-white/60"
           >
-            {t("common.telegram.openApp")}
-          </Button>
-        </DialogFooter>
-        <a
-          href="https://telegram.org/apps"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-center text-white/50 hover:text-white/70 text-sm transition-colors"
-        >
-          {t("common.telegram.getApp")}
-        </a>
+            {t("common.telegram.manualOpen")}
+          </button>
+          <a
+            href="https://telegram.org/apps"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/50 hover:text-white/70 text-sm transition-colors"
+          >
+            {t("common.telegram.getApp")}
+          </a>
+        </div>
       </DialogContent>
     </Dialog>
   );

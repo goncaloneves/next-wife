@@ -23,7 +23,8 @@
     "telegram": {
       "openApp": "텔레그램에서 열기",
       "getApp": "텔레그램이 없으신가요? 여기서 다운로드",
-      "opening": "텔레그램 여는 중..."
+      "opening": "텔레그램 여는 중...",
+      "manualOpen": "열리지 않았나요? 여기를 클릭"
     }
   },
   "navigation": {

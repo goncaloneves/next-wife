@@ -23,7 +23,8 @@
     "telegram": {
       "openApp": "Buka di Telegram",
       "getApp": "Tiada Telegram? Dapatkan di sini",
-      "opening": "Membuka Telegram..."
+      "opening": "Membuka Telegram...",
+      "manualOpen": "Tidak terbuka? Klik di sini"
     }
   },
   "navigation": {
