@@ -258,17 +258,16 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     });
 
     if (currentMedia?.type === 'video') {
-      // Read refs INSIDE the poll loop on every frame so we are immune to the
-      // exit-animation ref-cleanup race: the old card (key=oldPost.id) stays
-      // mounted during its AnimatePresence exit, and when it finally unmounts
-      // React calls progressRefs.current[idx] = null.  If that cleanup fires
-      // before this effect's early-return check, the bar would be null and the
-      // RAF would never start.  By reading fresh each frame we tolerate the
-      // brief null window and pick up the real element as soon as it arrives.
       const capturedIndex = mediaIndex;
+      console.log('[progress] starting RAF poll', { capturedIndex, video: !!videoRef.current, bar: !!progressRefs.current[capturedIndex] });
+      let frameCount = 0;
       const poll = () => {
         const video = videoRef.current;
         const bar = progressRefs.current[capturedIndex];
+        if (frameCount < 5) {
+          console.log(`[progress] frame ${frameCount}`, { video: !!video, bar: !!bar, duration: video?.duration, currentTime: video?.currentTime });
+          frameCount++;
+        }
         if (video && bar && video.duration > 0) {
           bar.style.transform = `scaleX(${video.currentTime / video.duration})`;
         }
