@@ -19,7 +19,12 @@
     "morePages": "Plus de pages",
     "language": "Langue",
     "logoAlt": "nextwife — Rencontrez Votre Prochaine Femme",
-    "selectLanguage": "Sélectionner la langue"
+    "selectLanguage": "Sélectionner la langue",
+    "telegram": {
+      "openApp": "Ouvrir dans Telegram",
+      "getApp": "Pas de Telegram ? Téléchargez-le ici",
+      "opening": "Ouverture de Telegram..."
+    }
   },
   "navigation": {
     "termsAndConditions": "Conditions Générales",

@@ -19,7 +19,12 @@
     "morePages": "Mais páginas",
     "language": "Idioma",
     "logoAlt": "nextwife — Conheça Sua Próxima Esposa",
-    "selectLanguage": "Selecionar idioma"
+    "selectLanguage": "Selecionar idioma",
+    "telegram": {
+      "openApp": "Abrir no Telegram",
+      "getApp": "Não tem Telegram? Instale aqui",
+      "opening": "A abrir o Telegram..."
+    }
   },
   "navigation": {
     "termsAndConditions": "Termos e Condições",

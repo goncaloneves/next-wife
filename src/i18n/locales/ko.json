@@ -19,7 +19,12 @@
     "morePages": "더 많은 페이지",
     "language": "언어",
     "logoAlt": "nextwife — 다음 아내를 만나보세요",
-    "selectLanguage": "언어 선택"
+    "selectLanguage": "언어 선택",
+    "telegram": {
+      "openApp": "텔레그램에서 열기",
+      "getApp": "텔레그램이 없으신가요? 여기서 다운로드",
+      "opening": "텔레그램 여는 중..."
+    }
   },
   "navigation": {
     "termsAndConditions": "이용약관",

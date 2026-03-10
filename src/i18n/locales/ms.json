@@ -19,7 +19,12 @@
     "morePages": "Lebih banyak halaman",
     "language": "Bahasa",
     "logoAlt": "nextwife — Temui Isteri Anda Seterusnya",
-    "selectLanguage": "Pilih bahasa"
+    "selectLanguage": "Pilih bahasa",
+    "telegram": {
+      "openApp": "Buka di Telegram",
+      "getApp": "Tiada Telegram? Dapatkan di sini",
+      "opening": "Membuka Telegram..."
+    }
   },
   "navigation": {
     "termsAndConditions": "Terma dan Syarat",

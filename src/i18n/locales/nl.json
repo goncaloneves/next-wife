@@ -19,7 +19,12 @@
     "morePages": "Meer pagina's",
     "language": "Taal",
     "logoAlt": "nextwife — Ontmoet Uw Volgende Vrouw",
-    "selectLanguage": "Taal selecteren"
+    "selectLanguage": "Taal selecteren",
+    "telegram": {
+      "openApp": "Openen in Telegram",
+      "getApp": "Geen Telegram? Download het hier",
+      "opening": "Telegram openen..."
+    }
   },
   "navigation": {
     "termsAndConditions": "Algemene Voorwaarden",

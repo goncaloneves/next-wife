@@ -19,7 +19,12 @@
     "morePages": "Ещё страницы",
     "language": "Язык",
     "logoAlt": "nextwife — Познакомьтесь с Вашей Следующей Женой",
-    "selectLanguage": "Выбрать язык"
+    "selectLanguage": "Выбрать язык",
+    "telegram": {
+      "openApp": "Открыть в Telegram",
+      "getApp": "Нет Telegram? Скачайте здесь",
+      "opening": "Открываем Telegram..."
+    }
   },
   "navigation": {
     "termsAndConditions": "Условия использования",

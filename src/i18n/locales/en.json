@@ -19,7 +19,12 @@
     "morePages": "More pages",
     "language": "Language",
     "logoAlt": "nextwife — Meet Your Next Wife",
-    "selectLanguage": "Select language"
+    "selectLanguage": "Select language",
+    "telegram": {
+      "openApp": "Open in Telegram",
+      "getApp": "Don't have Telegram? Get it here",
+      "opening": "Opening Telegram..."
+    }
   },
   "navigation": {
     "termsAndConditions": "Terms & Conditions",

@@ -19,7 +19,12 @@
     "morePages": "صفحات أخرى",
     "language": "اللغة",
     "logoAlt": "nextwife — قابل زوجتك القادمة",
-    "selectLanguage": "اختر اللغة"
+    "selectLanguage": "اختر اللغة",
+    "telegram": {
+      "openApp": "فتح في Telegram",
+      "getApp": "ليس لديك Telegram؟ حمّله من هنا",
+      "opening": "جارٍ فتح Telegram..."
+    }
   },
   "navigation": {
     "termsAndConditions": "الشروط والأحكام",
