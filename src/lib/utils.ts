@@ -7,9 +7,11 @@ export function cn(...inputs: ClassValue[]) {
 
 export function openTelegram(startOrUrl: string) {
   let tgUrl: string;
+  let webFallback: string;
 
   if (startOrUrl.startsWith("http")) {
     // Full URL like https://t.me/nextwifebot?start=gf_xxx
+    webFallback = startOrUrl;
     try {
       const url = new URL(startOrUrl);
       const domain = url.pathname.replace("/", "");
@@ -20,22 +22,37 @@ export function openTelegram(startOrUrl: string) {
     }
   } else {
     tgUrl = `tg://resolve?domain=nextwifebot&start=${startOrUrl}`;
+    webFallback = `https://t.me/nextwifebot?start=${startOrUrl}`;
   }
 
   let opened = false;
 
+  const cleanup = () => {
+    window.removeEventListener("blur", onBlur);
+    document.removeEventListener("visibilitychange", onVisibility);
+  };
+
   const onBlur = () => {
     opened = true;
+    cleanup();
+  };
+
+  const onVisibility = () => {
+    if (document.hidden) {
+      opened = true;
+      cleanup();
+    }
   };
 
   window.addEventListener("blur", onBlur);
+  document.addEventListener("visibilitychange", onVisibility);
 
   window.location.href = tgUrl;
 
   setTimeout(() => {
-    window.removeEventListener("blur", onBlur);
+    cleanup();
     if (!opened) {
-      window.open("https://telegram.org", "_blank");
+      window.open(webFallback, "_blank");
     }
-  }, 1500);
+  }, 2500);
 }
