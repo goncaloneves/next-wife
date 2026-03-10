@@ -43,7 +43,7 @@ export const PrivacySection = () => {
             {t("home.privacy.subtitle")}
           </p>
 
-          <div ref={sectionRef} className="space-y-4">
+          <div ref={sectionRef} className="space-y-5">
             {privacyPoints.map((point, index) => (
               <div
                 key={point.key}
