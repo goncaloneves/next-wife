@@ -60,10 +60,7 @@ export const TelegramOpenModal = () => {
             </svg>
           </div>
           <DialogTitle className="text-xl font-bold text-center">
-            {redirected
-              ? t("common.telegram.opening")
-              : t("common.telegram.openApp")
-            }
+            {t("common.telegram.opening")}
           </DialogTitle>
           <DialogDescription className="text-white/70 text-center">
             nextwife.ai
