@@ -200,38 +200,13 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
     setShowPlayOverlay(false);
   }, [post?.id, mediaIndex]);
 
-  // Seek video to start and trigger play only when navigating to a new media item.
-  // This is intentionally separate from the progress RAF effect so that
-  // video.currentTime = 0 never interrupts an already-autoplaying video when
-  // imageLoaded fires.
-  const prevNavigationKeyRef = useRef<string>('');
-  useEffect(() => {
-    if (!post) return;
-    const key = `${post.id}-${mediaIndex}`;
-    if (prevNavigationKeyRef.current === key) return;
-    prevNavigationKeyRef.current = key;
-
-    const mediaList = post.mediaItems && post.mediaItems.length > 0
-      ? post.mediaItems
-      : post.mediaUrls && post.mediaUrls.length > 0
-        ? post.mediaUrls
-        : [{ type: 'photo' as const }];
-    const currentMedia = mediaList[mediaIndex];
-    if (currentMedia?.type !== 'video') return;
-
-    const video = videoRef.current;
-    if (!video) return;
-    video.currentTime = 0;
-    video.play().catch(() => {});
-  }, [mediaIndex, post?.id, post]);
-
   useEffect(() => {
     // Cancel any existing RAF immediately on effect run
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
-
+    
     if (!post || !imageLoaded) {
       return () => {
         if (rafRef.current) {
@@ -240,43 +215,56 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
         }
       };
     }
-
-    // Match JSX: mediaItems first, then mediaUrls, then single media fallback.
-    const mediaList = post.mediaItems && post.mediaItems.length > 0
-      ? post.mediaItems
-      : post.mediaUrls && post.mediaUrls.length > 0
-        ? post.mediaUrls
-        : [{ type: 'photo' as const, url: post.media }];
+    
+    const mediaList = post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls : [{ type: 'photo' as const, url: post.media }];
     const currentMedia = mediaList[mediaIndex];
-
-    // Reset neighbour bars immediately (don't wait for the poll).
+    const progressBar = progressRefs.current[mediaIndex];
+    
+    // Reset all progress bars to proper state when mediaIndex changes
     progressRefs.current.forEach((bar, idx) => {
       if (bar) {
-        if (idx < mediaIndex) bar.style.transform = 'scaleX(1)';
-        else if (idx > mediaIndex) bar.style.transform = 'scaleX(0)';
+        if (idx < mediaIndex) {
+          // Past media: filled
+          bar.style.transform = 'scaleX(1)';
+        } else if (idx > mediaIndex) {
+          // Future media: empty
+          bar.style.transform = 'scaleX(0)';
+        }
+        // Current media handled below
       }
     });
-
+    
     if (currentMedia?.type === 'video') {
-      const capturedIndex = mediaIndex;
-      console.log('[progress] starting RAF poll', { capturedIndex, video: !!videoRef.current, bar: !!progressRefs.current[capturedIndex] });
-      let frameCount = 0;
+      const video = videoRef.current;
+      if (!video || !progressBar) {
+        return () => {
+          if (rafRef.current) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+          }
+        };
+      }
+
+      // Restart video from beginning when navigating to it
+      video.currentTime = 0;
+      video.play().catch(() => {});
+
+      // Poll currentTime every frame — no reliance on 'play' event timing.
+      // 'play' fires synchronously inside video.play() before any listener
+      // we attach here could catch it, so event-based approaches miss it.
+      progressBar.style.transform = 'scaleX(0)';
       const poll = () => {
-        const video = videoRef.current;
-        const bar = progressRefs.current[capturedIndex];
-        if (frameCount < 5) {
-          console.log(`[progress] frame ${frameCount}`, { video: !!video, bar: !!bar, duration: video?.duration, currentTime: video?.currentTime });
-          frameCount++;
-        }
-        if (video && bar && video.duration > 0) {
-          bar.style.transform = `scaleX(${video.currentTime / video.duration})`;
+        if (video.duration > 0) {
+          progressBar.style.transform = `scaleX(${video.currentTime / video.duration})`;
         }
         rafRef.current = requestAnimationFrame(poll);
       };
       rafRef.current = requestAnimationFrame(poll);
     } else {
-      const bar = progressRefs.current[mediaIndex];
-      if (bar) bar.style.transform = 'scaleX(1)';
+      // Photos: just show filled progress bar (no auto-advance)
+      if (progressBar) {
+        progressBar.style.transform = 'scaleX(1)';
+      }
     }
 
     return () => {
@@ -782,7 +770,7 @@ const Profile = ({ isOverlay: propIsOverlay = false }: ProfileProps = {}) => {
                             <div className="h-full bg-white/90 w-full" />
                           ) : (
                             <div 
-                              ref={el => { if (el) progressRefs.current[idx] = el; }}
+                              ref={el => progressRefs.current[idx] = el}
                               className="h-full bg-white/90 origin-left will-change-transform"
                               style={{ transform: 'scaleX(0)' }}
                             />
